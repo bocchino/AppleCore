@@ -1,0 +1,37 @@
+# -------------------------------------
+# TEST SIGNED AND UNSIGNED RIGHT SHIFT
+# -------------------------------------
+
+CONST MON_CROUT  $FD8E;
+
+DATA STR1 "SHOULD BE FF000000: ";
+DATA STR2 "SHOULD BE 00FF0000: ";
+DATA STR3 "SHOULD BE FFFF0000: ";
+
+FN PRINT_STRING(STR_PTR:2);
+FN PRINT_NUM(N_PTR:2,SIZE:1);
+
+FN MAIN() {
+   VAR N:4 = $FF000000;
+   VAR NS:4S = N;
+   # PRINT N
+   PRINT_STRING(STR1);   
+   PRINT_NUM(@N,4);
+   MON_CROUT();
+   # SHIFT N AND PRINT
+   PRINT_STRING(STR2);
+   SET N = N >> 8;
+   PRINT_NUM(@N,4);
+   MON_CROUT();
+   # PRINT NS
+   PRINT_STRING(STR1);   
+   PRINT_NUM(@NS,4);
+   MON_CROUT();
+   # SHIFT NS AND PRINT
+   PRINT_STRING(STR3);
+   SET NS = NS >> 8;
+   PRINT_NUM(@NS,4);
+   MON_CROUT();
+}
+
+INCLUDE "IO";

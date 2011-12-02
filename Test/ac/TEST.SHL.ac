@@ -1,0 +1,26 @@
+# -------------------------------------
+# TEST LEFT SHIFT
+# -------------------------------------
+
+CONST MON_CROUT  $FD8E;
+
+DATA STR1 "SHOULD BE FFFFFFFF: ";
+DATA STR2 "SHOULD BE FFFFFF00: ";
+
+FN PRINT_STRING(STR_PTR:2);
+FN PRINT_NUM(N_PTR:2,SIZE:1);
+
+FN MAIN() {
+   VAR N:4 = $FFFFFFFF;
+   # PRINT N
+   PRINT_STRING(STR1);   
+   PRINT_NUM(@N,4);
+   MON_CROUT();
+   PRINT_STRING(STR2);
+   # LEFT SHIFT 8 BITS AND PRINT
+   SET N = N<<8;
+   PRINT_NUM(@N,4);
+   MON_CROUT();
+}
+
+INCLUDE "IO";

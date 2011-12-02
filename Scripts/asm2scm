@@ -1,0 +1,18 @@
+#!/usr/bin/perl
+#
+# Convert a Unix asm file to a format suitable for import into the S-C
+# Macro assembler
+#
+while(<>) {
+    # Get rid of NL at end
+    chomp;
+    my $line = $_;
+    # Add tab at beginning of line, for assembler line numbering
+    # Add CR at end for line terminator
+    if ($line =~ /^:(.*)/) {
+	print "$1\r";
+    }
+    else {
+	print "\t$line\r";
+    }
+}

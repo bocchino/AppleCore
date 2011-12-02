@@ -1,0 +1,23 @@
+CONST MON_COUT   $FDED;
+CONST MON_PRBYTE $FDDA;
+
+FN PRINT_CHAR(CHAR:1) {
+  SET ^A = (CHAR OR $80);
+  MON_COUT();
+}
+
+FN PRINT_STRING(STR_PTR:2) {
+   WHILE (STR_PTR[0,1] > 0) {
+     PRINT_CHAR(STR_PTR[0,1]);
+     INCR STR_PTR;
+   }
+}
+
+FN PRINT_NUM(N_PTR:2,SIZE:1) {
+   VAR I:1=SIZE;
+   WHILE (I > 0) {
+     SET ^A=N_PTR[I-1,1];
+     MON_PRBYTE();
+     DECR I;
+   }
+} 

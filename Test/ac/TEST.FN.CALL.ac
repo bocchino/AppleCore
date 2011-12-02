@@ -1,0 +1,22 @@
+# --------------------------------------
+# FUNCTION CALL TEST
+# --------------------------------------
+
+CONST	MON_COUT	$FDED;
+CONST   MON_CROUT	$FD8E;
+CONST   ASCII_A		$C1;
+CONST   ASCII_B		$C2;
+
+FN A() {
+  B();
+  SET ^A = ASCII_A;
+  MON_COUT();
+  MON_CROUT();
+}
+
+FN B() {
+   SET ^A = ASCII_B;
+   MON_COUT();
+   MON_CROUT();
+}
+

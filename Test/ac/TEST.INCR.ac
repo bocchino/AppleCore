@@ -1,0 +1,16 @@
+# -------------------------------------
+# TEST INCR OPERATOR
+# -------------------------------------
+
+FN PRINT_CHAR(CHAR:1);
+
+FN MAIN() {
+   VAR A:1=$C1;
+   # PRINT 'A'
+   PRINT_CHAR(A);
+   INCR A;
+   # PRINT 'B'
+   PRINT_CHAR(A);
+}
+
+INCLUDE "IO";

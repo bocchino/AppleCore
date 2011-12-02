@@ -1,0 +1,3 @@
+CLASSES=/Users/bocchino/Computing/Apple-II/AppleCore/Compiler/classes
+
+java -cp ${CLASSES} AppleCoreCompiler/Compiler/Main $@

@@ -1,0 +1,7 @@
+CONST	MON_BELL $FBDD;
+
+FN TEST_GT() {
+   IF (1 > -1) {
+      MON_BELL();
+   }
+}

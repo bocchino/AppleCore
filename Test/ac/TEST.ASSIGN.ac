@@ -1,0 +1,16 @@
+# -------------------------------------
+# TEST ASSIGNMENT OF 4-BYTE VALUE
+# -------------------------------------
+
+DATA MSG1 "SHOULD BE 12345678: ";
+
+FN PRINT_STRING(STR_PTR:2);
+FN PRINT_NUM(N_PTR:2,SIZE:1);
+
+FN MAIN() {
+   VAR N:4 = $12345678;
+   PRINT_STRING(MSG1);   
+   PRINT_NUM(@N,4);
+}
+
+INCLUDE "IO";

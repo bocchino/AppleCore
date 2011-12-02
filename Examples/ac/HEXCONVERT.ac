@@ -1,0 +1,52 @@
+# -----------------------------------
+# HEX-DECIMAL CONVERSION
+# -----------------------------------
+CONST INBUF     $200;  # MONITOR INPUT BUFFER
+CONST CR        $0D;   # CARRIAGE RETURN
+CONST TRUE      1;
+CONST FALSE     0;
+
+DATA ERR_STR "ERROR";
+
+FN:1 GET_LINE();
+FN   PRINT_CHAR(CHAR:1);
+FN   NUM_TO_STR(NUM_PTR:2,NUM_SIZE:1,
+       RADIX:1,STR_PTR:2,STR_SIZE:2);
+FN:1 STR_TO_NUM(STR_PTR:2,RADIX:1,
+       NUM_PTR:2,SIZE:1);
+FN   PRINT_STRING(STR_PTR:2);
+
+FN MAIN() {
+  VAR VAL:2;
+  VAR OK:1;
+  VAR LEN:1;
+
+  WHILE (TRUE) {
+    SET OK = FALSE;
+    SET LEN = GET_LINE();
+    IF (LEN = 0) RETURN;
+    IF (INBUF[0,1] = '$') {
+      IF (LEN > 1) {
+        SET OK = STR_TO_NUM(INBUF+1,16,@VAL,2);
+        IF (OK) {
+          PRINT_CHAR('=');
+          NUM_TO_STR(@VAL,2,10,INBUF,255);
+	  PRINT_STRING(INBUF);
+        }
+      }
+    }
+    ELSE {
+      SET OK = STR_TO_NUM(INBUF,10,@VAL,2);
+      IF (OK = TRUE) {
+        PRINT_CHAR('=');
+	PRINT_CHAR('$');
+	NUM_TO_STR(@VAL,2,16,INBUF,255);
+	PRINT_STRING(INBUF);
+      }
+    }
+    IF (NOT OK) PRINT_STRING(ERR_STR);
+    PRINT_CHAR(CR);
+  }
+}
+
+

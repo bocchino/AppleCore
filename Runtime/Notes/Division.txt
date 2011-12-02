@@ -1,0 +1,18 @@
+Algorithm for A/B = Q r R
+N bits, unsigned
+
+SET Q=0;
+SET R=0;
+SET I=N;
+WHILE (I > 0) {
+  SET C = A>>(N-1) AND 1;
+  SET A = A<<1;
+  SET Q = Q<<1;
+  SET R = R<<1 OR C; 
+  IF (R >= B) {
+    SET R = R - B;
+    SET Q = Q OR 1;
+  }
+  DECR I;
+}
+

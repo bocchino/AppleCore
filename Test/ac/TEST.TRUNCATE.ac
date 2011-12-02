@@ -1,0 +1,28 @@
+# -------------------------------------
+# TEST TRUNCATION
+# -------------------------------------
+
+CONST MON_CROUT $FD8E;
+
+DATA STR_N  "SHOULD BE 0000FFFF: ";
+DATA STR_NT "SHOULD BE FFFF: ";
+
+FN PRINT_STRING(STR_PTR:2);
+FN PRINT_NUM(N_PTR:2,SIZE:1);
+
+FN MAIN() {
+   # INIT N WITH 4-BYTE VAL
+   VAR N:4   = $0000FFFF;
+   # TRUNCATE AND ASSIGN TO NT
+   VAR NT:2  = N;
+   # PRINT N
+   PRINT_STRING(STR_N);   
+   PRINT_NUM(@N,4);
+   MON_CROUT();
+   # PRINT NT
+   PRINT_STRING(STR_NT);
+   PRINT_NUM(@NT,2);
+   MON_CROUT();
+}
+
+INCLUDE "IO";

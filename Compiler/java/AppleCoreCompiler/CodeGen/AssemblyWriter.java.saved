@@ -1,0 +1,842 @@
+/**
+ * Generic pass for traversing the AST and writing out 6502 assembly
+ * code.  This pass factors out assembler-independent syntax details.
+ * To write code for a specific assembler, implement this pass and
+ * provide the assembler-specific code emitter functions.
+ *
+ * Code generation uses the Apple II stack (the "machine stack") only
+ * for JSR and RTS.  It uses a separately managed stack (the "program
+ * stack") with a 16-byte pointer for everything else.  That way,
+ * running our programs won't blow out the tiny 256-byte stack that
+ * the machine provides.  We do require that the size of all local
+ * vars (plus 2 bytes for saving the frame pointer) be <= 256 bytes;
+ * that lets us use one-byte indexing into local vars from the frame
+ * pointer.  However, dynamic frame sizes of > 256 bytes are possible,
+ * by allocating memory on the stack above the local variable slots.
+ *
+ * Code generation uses the following registers in 0-page memory:
+ *
+ * - Stack pointer, SP (2 bytes): points to first free byte after
+ *   stack top
+ * - Frame pointer FP (2 bytes): points to start of current frame in
+ *   program stack.
+ * - Index register A IRA (2 bytes): points to memory location being
+ *   indexed, if it's not a local variable (local vars use the
+ *   frame pointer).
+ * - OFFSETA (1 byte): offset from FP or IRA
+ * - IRB: second index register
+ * - OFFSETB: Offset from IRB
+ *
+ * To generate code, we walk the AST and
+ *
+ * - When we see an identifier corresonding to a local variable def or
+ *   a register expression, we emit code to store the offset from FP
+ *   in OFFSET.
+ *
+ * - When we see an identifier for a global variable, we store its
+ *   address in IRA.
+ *
+ * - When we see a constant or constant label, we save the value in a
+ *   field in pass for later use.  If the constant is used as an
+ *   address, we store it in IRA.
+ *
+ * - When we see a function call to a defined function, we emit code
+ *   to JSR to the function then copy the return value.
+ * 
+ * - When we see a function call to a constant label, we restore the
+ *   regs, do the JSR, and save the regs.
+ *
+ * - When we see a SET statement, we visit the LHS first and get the
+ *   address into IRA.  Then we visit the RHS, pushing IRA on the
+ *   stack if necessary.  Then we copy the RHS result to the LHS
+ *   address.
+ *
+ * - When we see a unary or binary operation, we emit code to allocate
+ *   space on the stack to hold the result if necessary.  For example,
+ *   A + B needs space on the stack; but INCR A doesn't.  At the end,
+ *   IRA holds a pointer to the result.
+ *
+ * - When we see a dereference @E, we visit the expression E to set
+ *   IR.  Then we allocate 2 bytes on the stack, load (IR) into it,
+ *   and set IR to point to the allocation.
+ * 
+ * - And so forth.
+ *
+ * The code generator depends on the prologue and epilogue code
+ * provided elsewhere.  The prologue code initializes the stack and
+ * frame pointers, while the epilogue code provides some boilerplate
+ * functions that the emitted code calls.
+ */
+package AppleCoreCompiler.CodeGen;
+
+import AppleCoreCompiler.AST.*;
+import AppleCoreCompiler.AST.Node.*;
+import AppleCoreCompiler.Errors.*;
+import AppleCoreCompiler.AST.Node.RegisterExpression.Register;
+
+import java.io.*;
+import java.util.*;
+import java.math.*;
+
+public abstract class AssemblyWriter
+    extends ASTScanner 
+    implements Pass
+{
+
+    /* Initialization stuff */
+    protected final PrintStream printStream;
+    protected final String inputFileName;
+    public AssemblyWriter(PrintStream printStream,
+			  String inputFileName) {
+	this.printStream = printStream;
+	this.inputFileName = inputFileName;
+    }
+
+    public void runOn(Program program) 
+	throws ACCError
+    {
+	scan(program);
+    }
+
+    /* State variables for tree traversal */
+    /**
+     * The value of the last-seen constant expression.
+     */
+    protected NumericConstant evaluatedConstant;
+
+    /**
+     * The function being processed
+     */
+    protected FunctionDecl currentFunction;
+
+    /**
+     * Counter for branch labels
+     */
+    protected int branchLabelCount = 1;
+
+    /**
+     * Whether an enclosing expression needs a pointer to the
+     * evaluated value, or just the value.
+     */
+    protected boolean needAddress;
+
+    /**
+     * Whether an enclosing expression needs the current value of the
+     * IRA.
+     */
+    protected boolean saveIRA;
+
+    /**
+     * Whether a subexpression saved the IRA on the stack during its
+     * evaluation.
+     */
+    protected boolean subexpSavedIRA;
+
+    /**
+     * The currently active index register
+     */
+    IndexRegister indexRegister;
+    public enum IndexRegister {
+	FP("ACC.FP"),IRA("ACC.IRA"),IRB("ACC.IRB");
+	String name;
+	IndexRegister(String name) {
+	    this.name = name;
+	}
+	public String toString() {
+	    return this.name;
+	}
+    }
+
+    /**
+     * Are we in debug mode?
+     */
+    public boolean debug = false;
+
+    /**
+     * Set of stack variables for the function currently being
+     * processed.
+     */
+    protected final List<StackVariable> stackVars = 
+	new LinkedList<StackVariable>();
+
+    /**
+     * The size of the current stack frame in bytes.
+     */
+    protected int frameSize;
+
+    /* Visitor methods */
+
+    /**
+     * evaluatedConstant should always be null, unless we come back
+     * from evaluating a constant.  So before scanning every node, we
+     * null it out.
+     */
+    public void visitBeforeScan(Node node) {
+	evaluatedConstant = null;
+    }
+
+    /* Leaf nodes */
+
+    public void visitConstantExpression(ConstantExpression node) 
+	throws ACCError
+    {
+	evaluateConstant(node.value);
+    }
+
+    public void visitIdentifier(Identifier node) 
+	throws ACCError 
+    {
+	Node def = node.def;
+	if (def instanceof VarDecl) {
+	    VarDecl varDecl = (VarDecl) def;
+	    // Set the index register
+	    indexRegister = varDecl.isLocalVariable ?
+		IndexRegister.FP : IndexRegister.IRA;
+	    if (!needAddress && node.size == 1) {
+		// If we don't need a pointer and the result fits in a
+		// register, then use the A-reg
+		loadVarIntoA(varDecl);
+	    }
+	    else {
+		// Otherwise store the address in the index reg.
+		storeVarAddr(varDecl);
+	    }
+	}
+	else if (def instanceof ConstDecl) {
+	    ConstDecl cd = (ConstDecl) def;
+	    evaluateConstant(cd.constant);
+	}
+	else if (def instanceof DataDecl) {
+	    DataDecl dataDecl = (DataDecl) def;
+	    indexRegister = IndexRegister.IRA;
+	    // Store the stack pointer in IRA
+	    emitComment("move SP to IRA");
+	    emitAbsoluteInstruction("JSR","ACC.SP.TO.IRA");
+	    // Save address of data decl at top of stack
+	    emitComment("save address of " + def + " at SP");
+	    emitImmediateInstruction("LDA",dataDecl.label,false);
+	    emitIndirectYInstruction("STA","ACC.SP");
+	    emitInstruction("INY");
+	    emitImmediateInstruction("LDA",dataDecl.label,true);
+	    emitIndirectYInstruction("STA","ACC.SP");
+	    // Bump stack pointer
+	    emitComment("bump SP");
+	    emitImmediateInstruction("LDX",2);
+	    emitAbsoluteInstruction("JSR","ACC.BUMP.STACK");
+	}
+    }
+
+    /* Non-leaf nodes */
+
+    public void visitProgram(Program node) 
+	throws ACCError
+    {
+	emitSeparatorComment();
+	emitComment("Assembly file generated by");
+	emitComment("the AppleCore Compiler, v1.0");
+	emitSeparatorComment();
+	emitComment("START OF FILE " + inputFileName);
+	emitSeparatorComment();
+	FunctionDecl  firstFunction = null;
+	for (Declaration decl : node.decls) {
+	    if (decl instanceof FunctionDecl) {
+		FunctionDecl functionDecl = (FunctionDecl) decl;
+		if (firstFunction == null && !functionDecl.isExternal) {
+		    firstFunction = (FunctionDecl) decl;
+		}
+	    }
+	}
+	if (firstFunction != null) {
+	    emitComment("jump to first function");
+	    emitAbsoluteInstruction("JMP",firstFunction.name);
+	}
+	super.visitProgram(node);
+	emitSeparatorComment();
+	emitComment("END OF FILE " + inputFileName);
+	emitSeparatorComment();
+    }
+
+    public void visitFunctionDecl(FunctionDecl node) 
+	throws ACCError
+    {
+	if (!node.isExternal) {
+	    emitSeparatorComment();
+	    emitComment("function " + node.name);
+	    emitSeparatorComment();
+
+	    printStatus("entering " + node);
+	    computeStackSlotsFor(node);
+	    
+	    currentFunction = node;
+	    
+	    emitLabel(node.name);
+	    emitLine();
+	    emitComment("set up stack frame");
+	    emitImmediateInstruction("LDX",frameSize);
+	    emitAbsoluteInstruction("JSR","ACC.FN.PROLOGUE");
+	    
+	    visitBeforeScan(node);
+	    scan(node.varDecls);
+	    scan(node.statements);
+	    visitAfterScan(node);
+
+	    if (!node.endsInReturnStatement()) {
+		emitComment("restore old frame and return");
+		emitAbsoluteInstruction("JMP","ACC.FN.EPILOGUE");
+	    }
+	}
+    }
+
+    public void visitConstDecl(ConstDecl node) {
+	if (!node.isExternal()) {
+	    String value = null;
+	    if (node.constant instanceof IntegerConstant) {
+		IntegerConstant numericConstant = (IntegerConstant) node.constant;
+		value = numericConstant.valueAsHexString();
+	    }
+	    else {
+		CharConstant charConstant = (CharConstant) node.constant;
+		value = "'" + charConstant.value + "'";
+	    }
+	    emitLabel(node.label);
+	    emitAbsoluteInstruction(".EQ",value);
+	}
+    }
+
+    public void visitDataDecl(DataDecl node) 
+	throws ACCError
+    {
+	emitLabel(node.label);
+	emitAsData(node.constant);
+    }
+
+    public void visitVarDecl(VarDecl node) 
+	throws ACCError
+    {
+	if (node.isLocalVariable) {
+	    if (node.init != null) {
+		// Similar to set.
+		emitTODO("initialize " + node);
+	    }
+	}
+	else {
+	    emitLabel(node.name);
+	    if (node.init == null) {
+		emitBlockStorage(node.size);
+	    }
+	    else {
+		// Attribution pass must ensure this cast will
+		// succeed.
+		ConstantExpression constExp = (ConstantExpression) node.init;
+		Constant constant = constExp.value;
+		emitAsData(constant, node.size);
+	    }
+	}
+    }
+
+    public void visitIfStatement(IfStatement node) 
+	throws ACCError
+    {
+	emitTODO(node);
+	super.visitIfStatement(node);
+    }
+
+    public void visitWhileStatement(WhileStatement node) 
+	throws ACCError
+    {
+	emitTODO(node);
+	super.visitWhileStatement(node);
+    }
+    
+    public void visitExpressionStatement(ExpressionStatement node) 
+	throws ACCError
+    {
+	// Nothing special to do 
+	super.visitExpressionStatement(node);
+    }
+
+    public void visitReturnStatement(ReturnStatement node)
+	throws ACCError 
+    {
+	super.visitReturnStatement(node);
+	if (node.expr != null) {
+	    emitComment("store return value");
+	    if (node.expr.size == 1) {
+		emitImmediateInstruction("LDY",2);
+		emitIndirectYInstruction("STA","ACC.FP");
+	    }
+	    else {
+		// Basically a set expression.
+		emitTODO(node);
+	    }
+	}
+	emitComment("restore old frame and return");
+	emitAbsoluteInstruction("JMP", "ACC.FN.EPILOGUE");
+    }
+
+    public void visitBlockStatement(BlockStatement node) 
+	throws ACCError
+    {
+	// Nothing special to do
+	super.visitBlockStatement(node);
+    }
+
+    public void visitIndexedExpression(IndexedExpression node)
+	throws ACCError
+    {
+	// Get addr of node.indexed into FP (if it's a local var)
+	// or IRA (if not).
+	needAddress = true;
+	scan(node.indexed);
+	needAddress = false;
+	if (node.index.size == 1) {
+	    // Get value of node.index into A
+	    scan(node.index);
+	    emitComment("calculate base address for " + node);
+	    emitAbsoluteInstruction("LDY", getOffsetRegFor(indexRegister));
+	    emitAbsoluteInstruction("JSR","ACC.ADD.A.TO."+indexRegister);
+	    indexRegister = IndexRegister.IRA;
+	} else {
+	    emitTODO(node);
+	}
+    }
+
+    public void visitCallExpression(CallExpression node) 
+	throws ACCError
+    {
+	super.visitCallExpression(node);
+	Node def = node.name.def;
+	if (def instanceof FunctionDecl) {
+	    FunctionDecl functionDecl = (FunctionDecl) def;
+	    if (functionDecl.params.size() > 0) {
+		// Similar to set.
+		emitTODO("bind arguments to params");
+	    }
+	    emitComment("call " + labelAsString(node.name.name));
+	    emitAbsoluteInstruction("JSR",labelAsString(node.name.name));
+	    if (functionDecl.size > 0) {
+		// Similar to set.
+		emitTODO("assign return value");
+	    }
+	}
+	else {
+	    // Calling a bare label: restore regs, JSR, and save regs.
+	    restoreRegisters();
+	    emitComment("call " + labelAsString(node.name.name));
+	    emitAbsoluteInstruction("JSR",labelAsString(node.name.name));
+	    saveRegisters();
+	}
+    }
+
+    public void visitRegisterExpression(RegisterExpression node) 
+	throws ACCError
+    {
+	emitComment("evaluate " + node);
+	if (needAddress) {
+	    storeStackVarOffset(node.register, IndexRegister.FP);
+	    indexRegister = IndexRegister.FP;
+	} else {
+	    emitImmediateInstruction("LDY",node.register.getOffset());
+	    emitIndirectYInstruction("LDA","ACC.FP");
+	}
+    }
+
+    public void visitSetExpression(SetExpression node) 
+	throws ACCError
+    {
+	// Evaluate LHS as address.
+	needAddress = true;
+	scan(node.lhs);
+	// Record whether IRA was saved during LHS evaluation.
+	boolean lhsSavedIRA = this.subexpSavedIRA;
+	// Record the index register holding the LHS.
+	IndexRegister lhsIndexRegister = indexRegister;
+	// If LHS register is IRA, then save it during RHS evaluation.
+	saveIRA = (lhsIndexRegister == IndexRegister.IRA);
+	// Evaluate RHS as value
+	needAddress = false;
+	scan(node.rhs);
+	if (node.rhs.getSize() == 1) {
+	    // Do the computation in registers
+	    if (evaluatedConstant != null) {
+		emitComment("store constant");
+		if (evaluatedConstant.getSize() == 1) {
+		    loadConstAtIndex(evaluatedConstant,0);
+		    emitAbsoluteInstruction("LDY","ACC.OFFSETA");
+		    emitIndirectYInstruction("STA",lhsIndexRegister.toString());
+		}
+	    } else {
+		storeAIntoVar(lhsIndexRegister);
+	    }
+	}
+	else {
+	    // Result is on stack
+	    
+	    emitTODO(node);
+	}
+	if (lhsSavedIRA) {
+	    // Restore the IRA saved by the LHS evaluation.
+	    emitAbsoluteInstruction("JSR","ACC.POP.IRA");
+	}
+    }
+
+    public void visitBinopExpression(BinopExpression node) 
+	throws ACCError
+    {
+	emitTODO(node);
+	super.visitBinopExpression(node);
+    }
+
+    public void visitUnopExpression(UnopExpression node) 
+	throws ACCError
+    {
+	emitTODO(node);
+	super.visitUnopExpression(node);
+    }
+
+    public void visitParensExpression(ParensExpression node) 
+	throws ACCError
+    {
+	// Nothing special to do
+	super.visitParensExpression(node);
+    }
+
+    /* Helper methods */
+
+    /**
+     * Get the offset corresponding to an index register
+     */
+    protected String getOffsetRegFor(IndexRegister indexRegister) {
+	if (indexRegister == IndexRegister.FP ||
+	    indexRegister == IndexRegister.IRA)
+	    return "ACC.OFFSETA";
+	return "ACC.OFFSETB";
+    }
+    
+    /**
+     * Print out debugging info
+     */
+    public void printStatus(String s) {
+	if (debug) {
+	    System.err.println(s);
+	}
+    }
+
+    /**
+     * Get a fresh branch label
+     */
+    protected String getLabel() {
+	return "." + branchLabelCount++;
+    }
+
+    /**
+     * Evaluate a numeric constant
+     */
+    protected void evaluateConstant(NumericConstant c) {
+	// Set the evaluated constant.
+	evaluatedConstant = c;
+	if (needAddress) {
+	    // If we need a pointer, then we load the value of the
+	    // constant into IRA.  The offset is 0.
+	    emitComment("evaluate " + c + " as address");
+	    loadConstAtIndex(c,0);
+	    emitAbsoluteInstruction("STA","ACC.IRA");
+	    loadConstAtIndex(c,1);
+	    emitAbsoluteInstruction("STA","ACC.IRA+1");
+	    emitImmediateInstruction("LDA",0);
+	    emitAbsoluteInstruction("STA","ACC.OFFSETA");
+	    indexRegister = IndexRegister.IRA;
+	}
+    }
+
+    /**
+     * Record the local variables in the current frame and compute
+     * their stack slots.
+     */
+    private void computeStackSlotsFor(FunctionDecl node) 
+	throws ACCError
+    {
+	// Clear out stack vars
+	stackVars.clear();
+	// Add function params
+	stackVars.addAll(node.params);
+	// Add local variables
+	stackVars.addAll(node.varDecls);
+	// Add saved regs
+	savedRegs.runOn(node);
+	// Compute and store the stack offsets.  Offset starts at 2 to
+	// hold saved FP.
+	int offset = 2;
+	printStatus("stack variables:");
+	for (StackVariable stackVar : stackVars) {
+	    stackVar.setOffset(offset);
+	    offset += stackVar.getSize();
+	    printStatus(" " + stackVar + ",offset=" + stackVar.getOffset());
+	}
+	// Compute and store the frame size.
+	frameSize = offset;
+	printStatus("frame size="+frameSize);
+    }
+
+    /**
+     * If a register expression for register R appears in the function
+     * body, then we need a stack slot for R.  Find all those
+     * registers now.
+     */
+    private SavedRegs savedRegs = new SavedRegs();
+    private class SavedRegs 
+	extends ASTScanner
+	implements FunctionPass 
+    {
+	public void runOn(FunctionDecl node)
+	    throws ACCError
+	{
+	    scan(node);
+	}
+
+	public void visitRegisterExpression(RegisterExpression node) {
+	    if (!stackVars.contains(node.register)) {
+		stackVars.add(node.register);
+	    }
+	}
+    }
+
+    /**
+     * Emit code to store the address of a variable in a pointer
+     * register.
+     */
+    protected void storeVarAddr(VarDecl node) {
+	emitComment("store address of " + node);
+	if (node.isLocalVariable) {
+	    storeStackVarOffset(node, indexRegister);
+	}
+	else {
+	    emitImmediateInstruction("LDA",node.name,false);
+	    emitAbsoluteInstruction("STA",indexRegister.toString());
+	    emitImmediateInstruction("LDA",node.name,true);
+	    emitAbsoluteInstruction("STA",indexRegister+"+1");
+	    emitImmediateInstruction("LDA",0);
+	    emitAbsoluteInstruction("STA",getOffsetRegFor(indexRegister));
+	}
+    }
+
+    /**
+     * Emit code to store the address of a stack variable (including a
+     * register spill slot) in a pointer register.
+     */
+    protected void storeStackVarOffset(StackVariable var, 
+				       IndexRegister indexRegister) {
+	emitImmediateInstruction("LDA",var.getOffset());
+	emitAbsoluteInstruction("STA",getOffsetRegFor(indexRegister));
+    }
+
+    /**
+     * Emit code to read the contents of a one-byte variable into the
+     * accumulator.
+     */
+    protected void loadVarIntoA(VarDecl node) {
+	emitComment("load " + node + " into A-reg");
+	if (node.isLocalVariable) {
+	    // Load offset
+	    emitImmediateInstruction("LDY",node.getOffset());
+	    // Load value
+	    emitIndirectYInstruction("LDA","ACC.FP");
+	}
+	else {
+	    emitAbsoluteInstruction("LDA",node.name);
+	}
+    }
+
+    /**
+     * Emit code to store A into one-byte variable
+     */
+    protected void storeAIntoVar(IndexRegister indexRegister) {
+	if (indexRegister == IndexRegister.FP) {
+	    emitAbsoluteInstruction("LDY",getOffsetRegFor(indexRegister));
+	    emitIndirectYInstruction("STA","ACC.FP");
+	}
+	else {
+	    emitImmediateInstruction("LDY",0);
+	    emitIndirectYInstruction("STA",indexRegister.toString());
+	}
+    }
+
+
+    /**
+     * Emit code to restore all registers to the values saved in their
+     * spill slots on the program stack.
+     */
+    protected void restoreRegisters() {
+	boolean YLoaded = false;
+	for (StackVariable sv : stackVars) {
+	    if (sv instanceof Register) {
+		if (!YLoaded) {
+		    emitComment("restore registers");
+		    emitImmediateInstruction("LDY",sv.getOffset());
+		} else {
+		    emitInstruction("INY");
+		}
+		restoreRegister((Register) sv);
+	    }
+	}
+    }
+
+    /**
+     * Emit code to save the regsiters on the program stack.
+     */
+    protected void saveRegisters() {
+	boolean YLoaded = false;
+	for (StackVariable sv : stackVars) {
+	    if (sv instanceof Register) {
+		if (!YLoaded) {
+		    emitComment("save registers");
+		    emitImmediateInstruction("LDY",sv.getOffset());
+		} else {
+		    emitInstruction("INY");
+		}
+		saveRegister((Register) sv);
+	    }
+	}
+    }
+
+    /**
+     * Emit code to restore the contents of a saved register from its
+     * spill slot on the program stack.  Y-reg must already contain
+     * the correct offset from the frame pointer.
+     */
+    protected void restoreRegister(Register reg) {
+	emitIndirectYInstruction("LDA","ACC.FP");
+	switch (reg) {
+	case A: 
+	    break;
+	case X: 
+	    emitInstruction("TAX");
+	    break;
+	case Y:
+	    emitInstruction("TAY");
+	    break;
+	case S:
+	    emitInstruction("TAX");
+	    emitInstruction("TXS");
+	    break;
+	case P:
+	    emitInstruction("PLA");
+	    emitInstruction("PLP");
+	    break;
+	}
+    }
+
+    /**
+     * Emit code to save the contents of a register to its spill slot
+     * on the program stack.  Y-reg must already contain the correct
+     * offset from the frame pointer.
+     */
+    protected void saveRegister(Register reg) {
+	switch(reg) {
+	case S:
+	    emitInstruction("TSX");
+	case X:
+	    emitInstruction("TXA");
+	case A:
+	    emitIndirectYInstruction("STA","ACC.FP");
+	    break;
+	case Y:
+	    emitInstruction("TYA");
+	    emitIndirectYInstruction("STA","ACC.FP");
+	    break;
+	case P:
+	    emitInstruction("PHP");
+	    emitInstruction("PLA");
+	    emitIndirectYInstruction("STA","ACC.FP");
+	    break;
+	}
+    }
+
+    /**
+     * Push a stored address on the machine stack
+     */
+    protected void pushAddrFrom(String ptr) {
+	emitComment("push address stored at " 
+		    + ptr + " on machine stack");
+	emitAbsoluteInstruction("LDA",ptr);
+	emitInstruction("PHA");
+	emitAbsoluteInstruction("LDA",ptr+"+1");
+	emitInstruction("PHA");
+    }
+
+    /**
+     * Pull a stored address from the machine stack.
+     */
+    protected void pullAddrTo(String ptr) {
+	emitComment("pull address on stack to " + ptr);
+	emitInstruction("PLA");
+	emitAbsoluteInstruction("STA",ptr);
+	emitInstruction("PLA");
+	emitAbsoluteInstruction("STA",ptr+1);
+    }
+
+    /**
+     * Emit code to load a byte of a constant value into the
+     * accumulator.
+     */
+    protected void loadConstAtIndex(Constant c, int idx) {
+	if (c instanceof IntegerConstant) {
+	    IntegerConstant intConst = (IntegerConstant) c;
+	    //int intVal = intConst.value.shiftRight(idx*8).
+	    //and(new BigInteger("FF",16)).intValue();
+	    emitImmediateInstruction("LDA",intConst.valueAtIndex(idx));
+	}
+	else if (c instanceof CharConstant) {
+	    CharConstant charConst = (CharConstant) c;
+	    emitImmediateInstruction("LDA","'"+charConst.value+"'",false);
+	}
+	else {
+	    StringConstant stringConst = (StringConstant) c;
+	    emitImmediateInstruction("LDA","'"+stringConst.value.charAt(idx)+"'",false);
+	}
+    }
+
+    /* Code emitter methods.  Override these to provide the syntax for
+     * your favorite assembler. */
+
+    protected void emitLine() {
+	printStream.println();
+    }
+
+    protected void emit(String s) {
+	printStream.print(s);
+    }
+
+    protected abstract String addrString(int addr);
+    protected abstract void emitInstruction(String s);
+    protected abstract void emitAbsoluteInstruction(String mnemonic, int addr);
+    protected abstract void emitAbsoluteInstruction(String mnemonic, 
+						    String label);
+    protected abstract void emitImmediateInstruction(String mnemonic, 
+						     String imm, boolean high);
+    protected abstract void emitImmediateInstruction(String mnemonic, int imm);
+    protected void emitIndirectYInstruction(String mnemonic, int addr) {
+	emitIndirectYInstruction(mnemonic, addrString(addr));
+    }
+    protected abstract void emitIndirectYInstruction(String mnemonic, String addr);
+    protected abstract void emitIndirectXInstruction(String mnemonic, int addr);
+    protected abstract void emitIndexedInstruction(String mnemonic, 
+						   int addr, String reg);
+    protected abstract void emitComment(String comment);
+    protected abstract void emitSeparatorComment();
+    protected void emitTODO(Object obj) {
+	emitComment("--->TODO " + obj + "<---");
+    }
+
+    protected void emitLabel(String label) {
+	emit(labelAsString(label));
+	branchLabelCount = 1;
+    }
+
+    protected abstract void emitAsData(Constant c);
+    protected abstract void emitAsData(Constant c, int sizeBound);
+    protected abstract void emitBlockStorage(int nbytes);
+
+    protected abstract String labelAsString(String label);
+
+}

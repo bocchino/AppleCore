@@ -1,0 +1,17 @@
+# --------------------------------------
+# A SIMPLE TEST PROGRAM
+# --------------------------------------
+
+CONST	MON_COUT	$FDED;
+CONST   MON_CROUT	$FD8E;
+CONST   ASCII_A	 	$C1;
+
+#
+# PRINT 'A' TO THE SCREEN
+#
+FN MAIN() {
+  SET ^A = ASCII_A;
+  MON_COUT();
+  MON_CROUT();
+}
+

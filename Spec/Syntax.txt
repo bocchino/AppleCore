@@ -1,0 +1,105 @@
+TOKENS
+======
+
+ADDRESS
+AND
+CONST
+DATA
+DECR
+FN
+IF
+INCR
+NOT
+OR
+RETURN
+SET
+VAR
+XOR
+WHILE
+@
+^
++
+-
+<<
+>>
+<
+<=
+>
+>=
+/
+\
+%
+*
+(
+)
+{
+}
+[
+]
+,
+;
+identifiers
+constants
+
+GRAMMAR
+=======
+
+Program         ::= Decl*
+
+Decl            ::= Address-Decl Const-Decl Data-Decl Var-Decl Fn-Decl
+
+Address-Decl    ::= 'ADDRESS' Size-Const ';'
+
+Const-Decl      ::= 'CONST' Ident Numeric-Const ';'
+
+Const           ::= Numeric-Const | String-Const
+Numeric-Const   ::= Size-Const | Char-Const
+Size-Const      ::= Hex-Const | Dec-Const
+Hex-Const       ::= $(Hex-Digit)+
+Hex-Digit       ::= Dec-Digit | [A-F]
+Dec-Const       ::= (Dec-Digit)+
+Dec-Digit       ::= [0-9]
+Char-Const      ::= '\'' Char '\''
+String-Const    ::= '"' Char* '"' '\'?
+
+Data-Decl       ::= 'DATA' Ident? Const ';'
+
+Var-Decl        ::= 'VAR' Ident Size ('=' Expr)? ';'
+Size            ::= ':' Size-Const Sign-Flag
+Sign-Flag       ::= 'S' | 'U'
+
+Fn-Decl         ::= 'FN' Size? Ident ('(' Param-List? ')' Fn-Body
+Param-List      ::= Param | Param,Param-List
+Param           ::= Ident Size
+Fn-Body         ::= '{' Var-Decl* Stmt-List '}'
+
+Stmt-List       ::= Stmt | Stmt Stmt-List
+Stmt            ::= If-Stmt | While-Stmt | Expr-Stmt | 
+                    Return-Stmt | Block-Stmt
+If-Stmt         ::= If-Only-Stmt | If-Else-Stmt
+If-Only-Stmt    ::= 'IF' '(' Expr ')' Stmt
+If-Else-Stmt    ::= If-Stmt 'ELSE' Stmt
+While-Stmt      ::= 'WHILE' '(' Expr ')' Stmt
+Expr-Stmt       ::= Expr ';'
+Return-Stmt     ::= 'RETURN' Expr ';'
+Block-Stmt      ::= '{' Stmt-List '}'
+
+Expr            ::= Ident | Indexed-Expr | Call-Expr | 
+		    Register-Expr | Set-Expr | Binop-Expr | 
+                    Unop-Expr | Numeric-Const | Parens-Expr |
+Indexed-Expr    ::= Ident[Expr]
+Call-Expr       ::= Ident '(' Expr-List? ')'
+Register-Expr   ::= ^X | ^Y | ^S | ^P | ^A
+Set-Expr        ::= 'SET' Expr '=' Expr
+Binop-Expr      ::= Expr Binop Expr
+Binop           ::= '=' | '>' | '<' | '<=' | '>=' | 
+                    'AND' | 'OR' | 'XOR' | '+' | '-' | 
+                    '*' | '/' | '%' | '<<' | '>>'
+Unop-Expr       ::= Unop Expr
+Unop            ::= '@' | 'NOT' | '-' | 'INCR' | 'DECR'
+Parens-Expr     ::= '(' Expr ')'
+
+Expr-List       ::= Expr | Expr,Arg-List 
+
+Ident           ::= ([A-Z] | _)([A-Z] | [0-9] | _)*
+
