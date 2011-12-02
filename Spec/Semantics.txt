@@ -9,12 +9,9 @@ Things to check:
 
    b. Different sizes and signednesses can be freely assigned to each
       other without any errors or warnings.  Assigning a bigger thing
-      to a smaller thing drops the high-order bytes.  Assiging a
-      smaller thing to a bigger thing leaves the high-order bytes
-      unchanged.  For example, if VAR1[0,4] is 1,2,3,4 (low- to
-      high-order) and VAR2[0,2] is 5,6, then SET VAR1[0,2]=VAR2[0,4]
-      puts 1,2 in VAR2[0,2], while SET VAR1[0,4]=VAR2[0,2] puts
-      5,6,3,4 in VAR1[0,4].
+      to a smaller thing causes either zero extension (if the smaller
+      thing is unsigned) or sign extension (if the smaller thing is
+      signed).
 
    c. Only one- or two-byte unsigned values can be indexed.
 
