@@ -747,42 +747,6 @@ public abstract class AssemblyWriter
 	}
     }
 
-    /**
-     * Emit code for a single-byte shift.  TODO: This is unused here;
-     * incorporate this code into the runtime.
-     */
-    protected void emitSingleByteShift(BinopExpression.Operator op,
-				       boolean isSigned) {
-	String label = getLabel();
-	String doLabel = "SHIFT.DO"+label;
-	String endLabel = "SHIFT.END"+label;
-	emitInstruction("TAX");
-	emitImmediateInstruction("LDY",0);
-	emitIndirectYInstruction("LDA","SP");
-	emitImmediateInstruction("CPX",0);
-	emitAbsoluteInstruction("BEQ",endLabel);
-	emitLabel(doLabel);
-	emit("\n");
-	if (op == BinopExpression.Operator.SHL) {
-	    emitInstruction("ASL");
-	}
-	else if (isSigned) {
-	    // Shift out sign bit
-	    emitInstruction("ASL");
-	    // Shift in sign bit twice
-	    emitInstruction("ROR");
-	    emitInstruction("ROR");
-	}
-	else {
-	    emitInstruction("LSR");
-	}
-	emitInstruction("DEX");
-	emitAbsoluteInstruction("BNE",doLabel);
-	emitLabel(endLabel);
-	emit("\n");
-	emitIndirectYInstruction("STA","SP");
-    }
-
     /* Code emitter methods.  Override these to provide the syntax for
      * your favorite assembler. */
 
