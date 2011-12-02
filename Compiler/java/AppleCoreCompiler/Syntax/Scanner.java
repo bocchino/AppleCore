@@ -1,6 +1,6 @@
 /**
  * This class provides methods for extracting tokens
- * from a line of text.
+ * from a stream of text.
  */
 package AppleCoreCompiler.Syntax;
 
@@ -70,7 +70,7 @@ public class Scanner {
     }
 
     /**
-     * Gets the next token from the line of text
+     * Gets the next token from the input stream
      * and stores it in the token buffer
      */
     public Token getNextToken()
