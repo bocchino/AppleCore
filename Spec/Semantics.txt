@@ -9,13 +9,12 @@ Things to check:
 
    b. Different sizes and signednesses can be freely assigned to each
       other without any errors or warnings.  Assigning a bigger thing
-      to a smaller thing causes either zero extension (if the smaller
-      thing is unsigned) or sign extension (if the smaller thing is
-      signed).
+      to a smaller thing causes truncation (i.e., dropping the high-
+      order bytes).  Assigning a smaller thing to a bigger thing causes
+      either zero extension (if the smaller thing is unsigned) or sign 
+      extension (if the smaller thing is signed).
 
-   c. Only one- or two-byte unsigned values can be indexed.
-
-   d. ADDRESS declarations must be one-or two-byte values.
+   c. Only one- or two-byte values can be indexed.
 
 3. Lvalues
 
