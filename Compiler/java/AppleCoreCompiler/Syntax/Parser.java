@@ -108,7 +108,8 @@ public class Parser {
     }
 
     /**
-     * Decl ::= Const-Decl | Data-Decl | Var-Decl | Fn-Decl
+     * Decl ::= Const-Decl | Data-Decl | Var-Decl | Fn-Decl 
+     *          | Include-Decl
      */
     private Declaration parseDecl() 
 	throws SyntaxError, IOException

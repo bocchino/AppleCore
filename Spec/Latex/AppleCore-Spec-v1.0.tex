@@ -1,0 +1,299 @@
+\documentclass[10pt]{article}
+
+\input{defs}
+
+\begin{document}
+
+\title{\bfseries{The AppleCore Language Specification, v1.0}}
+%
+\author{Robert L. Bocchino Jr.\\
+Pittsburgh, PA}
+%
+\date{Revised December 4, 2011}
+
+\maketitle
+
+TODO
+
+\section{Introduction and Rationale}
+
+TODO
+
+\section{Lexical Structure}
+
+Before parsing a source file, the source text is separated into
+\emph{tokens}.  There are four classes of tokens: identifiers,
+keywords, constants, and symbols.
+
+\subsection{White Space}
+\label{sec:lexical:white-space}
+
+White space consists of any sequence of the following characters:
+space (ASCII SP, value \$20), newline (ASCII NL, value \$0A), carriage
+return (ASCII CR, value \$0D), and horizontal tab (ASCII HT, value
+\$09).  Whitespace is always useful in formatting readable programs,
+but it is syntactically irrelevant except in the following two cases:
+%
+\begin{enumerate}
+%
+\item \ithead{Separation of tokens.} When a whitespace character or end of
+file appears immediately after a non-whitespace character, that
+signifies the end of a token.
+%
+\item \ithead{End of line.} An end-of-line sequence (\kwd{EOL}) is a
+  comment terminator (see Section~\ref{sec:lexical:comments}).  As
+  usual, the definition of \kwd{EOL} is platform-dependent: on the
+  Apple II it is CR, on UNIX it is NL, and on Windows it is CR
+  followed by NL.
+%
+\end{enumerate}
+%
+The lexer may also count source lines (using \kwd{EOL}) to provide
+line numbers for error messages.
+
+\subsection{Identifiers}\label{Identifiers}
+
+An identifier is a sequence of letters (including the underscore
+character) and digits that is not a keyword.  The first character must
+be a letter.  Upper and lower case letters are distinct.
+
+\subsection{Keywords}
+
+The following sequences of characters are reserved for use as keywords
+and may not be used as identifiers:
+\begin{ttfamily}
+\begin{center}
+\begin{tabular}{l l l l}
+AND & CONST & DATA & DECR \\
+%
+ELSE & FN & IF & INCLUDE \\
+%
+INCR & NOT & OR & RETURN \\
+%
+SET & VAR & XOR & WHILE \\
+\end{tabular}
+\end{center}
+\end{ttfamily}
+
+Following Apple II tradition (mostly because the original Apple II had
+no support for lower-case letters), AppleCore keywords are uppercase.
+That means that the same words in lowercase (or a combination of
+upper- and lowercase) are not recognized as keywords, so those
+sequences of characters are availble for use as identifiers.
+
+\subsection{Constants}\label{constants}
+
+There are three types of constants: integer constants, string
+constants, and character constants.  
+
+\bfhead{Integer constants.}  Integer constants may be written in
+decimal or hexadecimal form.  A decimal integer constant consists of
+an optional negative sign \kwd{-} followed by one or more decimal
+digits \kwd{0} through \kwd{9}.  For example, \kwd{1}, \kwd{-3}, and
+\kwd{123} are valid integer constants in decimal form.  A hexadecimal
+integer constant consists of an optional negative sign \kwd{-} follwed
+by a dollar sign \kwd{\$} followed by by one or more hexadecimal
+digits \kwd{0} through \kwd{9} or \kwd{A} through \kwd{F}.  For
+example, \kwd{\$1}, \kwd{-\$A}, and \kwd{\$00FF} are valid integer
+constants in hexadecimal form.
+
+\bfhead{String constants.} A string constant is a sequence of
+characters enclosed in double quotes (\kwd{"..."}), optionally
+followed by a backslash character \kwd{$\backslash$}.  A string
+constant represents a sequence of ASCII characters, one for each
+character appearing in the double-quotes, except that the character
+sequence \kwd{\bs\$} has the special meaning described below.
+
+If no backslash character appears after the second double-quote, then
+the string is null-terminated:  in addition to storing the characters
+appearing in the double-quotes, it stores a terminating NUL character
+(value \$00).  If a backslash character appears after the second
+double-quote, then the string is unterminated:  only the characters
+appearing between the double-quotes are stored.
+
+Since not all ASCII characters have printable representations, an
+\emph{escape sequence} may be used to represent an arbitrary ASCII
+value (printable or non-printable).  An escape sequence consists of a
+backslash \kwd{\bs} followed by a dollar sign \kwd{\$} followed by two
+hexadecimal digits, and it represents the single character with the
+ASCII value given by the digits.  For example, the string constant
+%
+$$\kwd{"Hello, world!\bs\$0D."}$$
+%
+represents a null-terminated string consisting of the characters
+\kwd{Hello, world!} followed by a CR character.
+
+\bfhead{Character constants.} A character constant consists of a
+single-quote character \kwd{'}, followed by a printable ASCII
+character, followed by another single-quote character.  It represents
+the ASCII value associated with the character.  For example, the
+constant \kwd{'A'} represents the value $\$41$.
+
+\subsection{Symbols}
+
+AppleCore uses the symbols shown in Figure~\ref{fig:symbols}, each of
+which is a separate token.
+
+\begin{figure}[th]
+\begin{center}
+\begin{tabular}{c l}
+\textbf{Symbol} & \textbf{Meaning} \\
+%
+\kwd{@} & Denotes the address of a variable \\
+%
+\kwd{\^} & Denotes a 6502 register expression \\
+\kwd{*}  & Multiplication \\
+\kwd{/}  & Division \\
+\kwd{+}  & Addition \\
+\kwd{-}  & Negation (as unary operator); subtraction (as binary
+operator) \\
+\kwd{<<} & Left shift \\
+\kwd{>>} & Right shift \\
+\kwd{>=} & Greater than or equal to \\
+\kwd{<=} & Less than or equal to \\
+\kwd{>}  & Greater than \\
+\kwd{<}  & Less than \\
+\kwd{=}  & Equal to; assignment \\
+\kwd{(} and \kwd{)} & Encloses function parameters and arguments, parenthesized expressions
+\\
+\kwd{\{} and \kwd{\}} & Encloses statement blocks \\
+\kwd{[} and \kwd{]} & Pointer dereference \\
+\kwd{;} & Terminates declarations and statements \\
+\kwd{:} & Separates variable declaration from size \\
+\kwd{,} & Separates function parameters and arguments; separates index from size in dereference \\
+\end{tabular}
+\end{center}
+\caption{Symbols used in AppleCore syntax.}
+\label{fig:symbols}
+\end{figure}
+
+\subsection{Comments}
+\label{sec:lexical:comments}
+
+The character \kwd{\#} in the source file indicates a comment; all
+text to the next end of line (or end of file, if there is no end of
+line) are ignored by the lexer.  Multiline comments are indicated by
+preceding each line with \kwd{\#}.
+
+\section{Syntax}
+\label{sec:syntax}
+
+The syntax description below follows the conventions for describing a
+context-free grammar, with the following additional rules:
+\begin{itemize}
+\item The regular expression symbols $^*$ and $^+$ denote zero or more
+  and one or more items, respectively.
+\item Brackets ($[$ $]$) signify that the enclosed symbols are
+  optional (i.e., they may occur zero or one time).
+\item The nonterminal \nonterm{identifier} stands for any identifier as
+defined in Section \ref{Identifiers} above.
+\item Text in \kwd{typewriter} font is literal program text.
+\end{itemize}
+
+\subsection{Source Files}
+\label{sec:syntax:source-files}
+
+The basic syntactic unit of an AppleCore program is a \emph{source
+  file}, i.e., an input file provided to the AppleCore compiler for
+compilation.  The compiler translates the source file into an assembly
+file which is then linked with other assembly files as discussed in
+Section~\ref{sec:compilation} to form a complete executable program.
+
+An AppleCore source file is given by zero or more
+declarations:
+%
+$$\nonterm{source-file} ::= \nonterm{decl}^*$$
+%
+A declaration is a constant declaration, a data declaration, a
+variable declaration, a function declaration, or an include
+declaration:
+%
+$$\nonterm{decl} ::= \mbox{\nonterm{const-decl} $|$
+  \nonterm{data-decl} $|$ \nonterm{var-decl} $|$ \nonterm{fn-decl}
+    $|$ \nonterm{include-decl}}$$
+
+\subsection{Declarations}
+\label{sec:syntax:declarations}
+
+\bfhead{Constant declarations.} A constant declaration consists of the
+keyword \kwd{CONST}, an identifier, an optional numeric constant, and
+a terminating semicolon:
+%
+$$\nonterm{const-decl} ::= \mbox{\kwd{CONST} \nonterm{identifier}
+  $[\nonterm{numeric-const}]$ \kwd{;}}$$
+
+\bfhead{Data declarations.} A data declaration consists of the keyword
+\kwd{DATA}, an optional identifier representing a label for the data,
+a constant, and a terminating semicolon:
+%
+$$\nonterm{const-decl} ::= \mbox{\kwd{DATA} $[\nonterm{identifier}]$
+  \nonterm{const} \kwd{;}}$$
+
+\bfhead{Variable declarations.} A variable declaration consists of the
+keyword \kwd{VAR}, an identifier representing the variable name, a
+signed or unsigned size, an optional initializer expression, and a
+terminating semicolon:
+%
+$$\nonterm{var-decl} ::= \mbox{\kwd{VAR} \nonterm{identifier} \kwd{:}
+  \nonterm{size} $[\kwd{S}]$ $[$\kwd{=} \nonterm{expr}$]$ \kwd{;}}$$
+
+\bfhead{Function declarations.} A function declaration consists of the
+keyword \kwd{FN}, an optional signed or unsigned size, an identifier
+representing the function name, the function parameters, and the
+function body:
+%
+$$\nonterm{fn-decl} ::= \mbox{\kwd{FN} \opt{\kwd{:} \nonterm{size}
+    \opt{\kwd{S}}} \nonterm{identifier} \kwd{(} \nonterm{fn-params}
+  \kwd{)} \nonterm{fn-body}}$$
+%
+The function parameters are a comma-separated list of zero or more
+parameters:
+%
+$$\nonterm{fn-params} ::= \mbox{\opt{\nonterm{fn-param} $($\kwd{,}
+  \nonterm{fn-param}$)^*$ }}$$
+%
+A parameter consists of an identifier representing the parameter name
+and a size:
+%
+$$\nonterm{fn-param} ::= \mbox{\nonterm{identifier} \kwd{:}
+  \nonterm{size} \opt{\kwd{S}}}$$
+%
+A function body is either a list of statements enclosed in braces, or
+a semicolon indicating an externally defined function:
+%
+$$\nonterm{fn-body} ::= \mbox{\kwd{\{} \nonterm{stmt-list} \kwd{\}}
+  $|$ \kwd{;}}$$
+
+\bfhead{Include declarations.} An include declaration consists of the
+keyword \kwd{INCLUDE}, a string constant, and a terminating semicolon:
+%
+$$\nonterm{include-decl} ::= \mbox{\kwd{INCLUDE}
+  \nonterm{string-const} \kwd{;}}$$
+%
+
+\subsection{Statements}
+\label{sec:syntax:statements}
+
+TODO
+
+\subsection{Expressions}
+\label{sec:syntax:expressions}
+
+TODO
+
+\subsection{Constants}
+\label{sec:syntax:constants}
+
+TODO
+
+\section{Semantics}
+\label{sec:syntax:semantics}
+
+TODO
+
+\section{Compilation and Linking}
+\label{sec:compilation}
+
+TODO
+
+\end{document}
