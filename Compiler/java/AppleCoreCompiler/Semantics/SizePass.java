@@ -175,11 +175,7 @@ public class SizePass
      * 2. For shifts, the size and signedness come from the left
      *    operand, and the right operand must be 1 byte unsigned.
      *
-     * 3. For DIV, the size is twice the maximum of the size of the
-     *    operands.  If either of the operands is signed, the result
-     *    is signed.  Otherwise, the result is unsigned.
-     *
-     * 4. For all other operations, the size is the maximum of the
+     * 3. For all other operations, the size is the maximum of the
      *    sizes of its operands.  If either of the operands is signed,
      *    the result is signed.  Otherwise, the result is unsigned.
      */
@@ -205,13 +201,6 @@ public class SizePass
 	    node.size = Math.max(node.left.size,node.right.size);
 	    node.isSigned = (node.left.isSigned || 
 			     node.right.isSigned);
-	    if (node.operator == BinopExpression.Operator.DIVIDE) {
-		node.size *= 2;
-		if (node.size > 255) {
-		    throw new SemanticError("size " + node.size + 
-					    " out of range", node);
-		}
-	    }
 	    break;
 	}
 	printStatus(node);
