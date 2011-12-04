@@ -1,0 +1,29 @@
+# -------------------------------------
+# TEST FUNCTION RETURN VALUE
+# -------------------------------------
+
+CONST MON_CROUT  $FD8E;
+
+DATA STR  "SHOULD BE 0000FFFF: ";
+
+FN PRINT_STRING(STR_PTR:2);
+FN PRINT_NUM(N_PTR:2,SIZE:1);
+
+FN MAIN() {
+   VAR A:4 = $FFFF;
+   VAR B:4 = RTN(A);
+   # PRINT A
+   PRINT_STRING(STR);   
+   PRINT_NUM(@A,4);
+   MON_CROUT();
+   # PRINT B
+   PRINT_STRING(STR);
+   PRINT_NUM(@B,4);
+   MON_CROUT();
+}
+
+FN:4 RTN(N:4) {
+   RETURN N;
+}
+
+INCLUDE "IO";

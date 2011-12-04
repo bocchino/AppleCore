@@ -339,12 +339,12 @@ public abstract class AssemblyWriter
 		       node.expr.isSigned);
 	    // Assign result and restore frame
 	    emitComment("assign result, restore frame, and exit");
-	    emitAbsoluteInstruction("JSR","ACC.PUSH.FP");
-	    assign(currentFunction.size);
-	    emitAbsoluteInstruction("JSR","ACC.SET.SP.TO.FP");
-	    emitAbsoluteInstruction("JMP","ACC.RESTORE.CALLER.FP");
 	    emitImmediateInstruction("LDA",currentFunction.size);
-	    emitAbsoluteInstruction("JMP","ACC.SP.UP.A");
+	    emitAbsoluteInstruction("JSR","ACC.SP.DOWN.A");
+	    emitAbsoluteInstruction("JSR","ACC.SET.IP.TO.SP");
+	    emitAbsoluteInstruction("JSR","ACC.SET.SP.TO.FP");
+	    emitAbsoluteInstruction("JSR","ACC.RESTORE.CALLER.FP");
+	    emitAbsoluteInstruction("JMP","ACC.EVAL.1");
 	}
 	else {
 	    emitComment("restore old frame and return");

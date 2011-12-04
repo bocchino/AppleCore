@@ -36,7 +36,6 @@ linked.asm/${FILE}.linked.asm : asm/${FILE}.asm linked.asm
 	echo "\t.IN ACC.COMPARE" >> $@
 	echo "\t.IN ACC.BITWISE" >> $@
 	echo "\t.IN ACC.STACK" >> $@
-	echo ":ASM" >> $@
 
 asm/${FILE}.asm : ac/${FILE}.ac asm
 	${ACC} $< > $@
