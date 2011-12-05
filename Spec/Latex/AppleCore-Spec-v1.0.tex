@@ -81,21 +81,20 @@ That means that the same words in lowercase (or a combination of
 upper- and lowercase) are not recognized as keywords, so those
 sequences of characters are availble for use as identifiers.
 
-\subsection{Constants}\label{constants}
+\subsection{Constants}
+\label{sec:lexical:constants}
 
 There are three types of constants: integer constants, string
 constants, and character constants.  
 
 \bfhead{Integer constants.}  Integer constants may be written in
 decimal or hexadecimal form.  A decimal integer constant consists of
-an optional negative sign \kwd{-} followed by one or more decimal
-digits \kwd{0} through \kwd{9}.  For example, \kwd{1}, \kwd{-3}, and
-\kwd{123} are valid integer constants in decimal form.  A hexadecimal
-integer constant consists of an optional negative sign \kwd{-} follwed
-by a dollar sign \kwd{\$} followed by by one or more hexadecimal
-digits \kwd{0} through \kwd{9} or \kwd{A} through \kwd{F}.  For
-example, \kwd{\$1}, \kwd{-\$A}, and \kwd{\$00FF} are valid integer
-constants in hexadecimal form.
+one or more decimal digits \kwd{0} through \kwd{9}.  For example,
+\kwd{1} and \kwd{123} are valid integer constants in decimal form.  A
+hexadecimal integer constant consists of a dollar sign \kwd{\$}
+followed by by one or more hexadecimal digits \kwd{0} through \kwd{9}
+or \kwd{A} through \kwd{F}.  For example, \kwd{\$1}, \kwd{\$A}, and
+\kwd{\$00FF} are valid integer constants in hexadecimal form.
 
 \bfhead{String constants.} A string constant is a sequence of
 characters enclosed in double quotes (\kwd{"..."}), optionally
@@ -114,14 +113,17 @@ appearing between the double-quotes are stored.
 Since not all ASCII characters have printable representations, an
 \emph{escape sequence} may be used to represent an arbitrary ASCII
 value (printable or non-printable).  An escape sequence consists of a
-backslash \kwd{\bs} followed by a dollar sign \kwd{\$} followed by two
-hexadecimal digits, and it represents the single character with the
-ASCII value given by the digits.  For example, the string constant
+backslash \kwd{\bs} followed by a dollar sign \kwd{\$} and two
+hexadecimal digits.  The whole sequence represents the single
+character with the ASCII value given by the digits.  For example, the
+string constant
 %
-$$\kwd{"Hello, world!\bs\$0D."}$$
+$$\kwd{"Hello, world!\bs\$0D"}$$
 %
 represents a null-terminated string consisting of the characters
-\kwd{Hello, world!} followed by a CR character.
+\kwd{Hello, world!} followed by a CR character.  Similarly, the quote
+character \kwd{"} can be embedded in a string constant with the
+sequence \kwd{\bs\$22}.
 
 \bfhead{Character constants.} A character constant consists of a
 single-quote character \kwd{'}, followed by a printable ASCII
@@ -178,16 +180,35 @@ preceding each line with \kwd{\#}.
 \section{Syntax}
 \label{sec:syntax}
 
-The syntax description below follows the conventions for describing a
-context-free grammar, with the following additional rules:
+The syntax description below uses the following conventions:
+%
 \begin{itemize}
-\item The regular expression symbols $^*$ and $^+$ denote zero or more
-  and one or more items, respectively.
-\item Brackets ($[$ $]$) signify that the enclosed symbols are
-  optional (i.e., they may occur zero or one time).
-\item The nonterminal \nonterm{identifier} stands for any identifier as
-defined in Section \ref{Identifiers} above.
-\item Text in \kwd{typewriter} font is literal program text.
+%
+\item The symbol $^*$ denotes zero or more instances of the entity
+  preceding it.
+%
+\item Italicized parentheses \group{} group the enclosed symbols and
+  do not denote program text.
+%
+\item Italicized brackets \opt{} signify that the enclosed symbols are
+  optional (i.e., they may occur zero or one time).  They do not
+  denote program text.
+%
+\item The nonterminal \nonterm{identifier} stands for any identifier
+  as defined in Section \ref{Identifiers}.
+%
+\item The nonterminals \nonterm{integer-const},
+  \nonterm{string-const}, and \nonterm{char-const} stand for integer,
+  string, and character constants as defined in
+  Section~\ref{sec:lexical:constants}.
+%
+\item The nonterminal \nonterm{size} refers to an integer constant
+  whose value is between 0 and 255 (inclusive).
+%
+\item Text and symbols in \kwd{typewriter} font (including
+  non-italicized parentheses and brackets) denote literal program
+  text.
+%
 \end{itemize}
 
 \subsection{Source Files}
@@ -197,7 +218,8 @@ The basic syntactic unit of an AppleCore program is a \emph{source
   file}, i.e., an input file provided to the AppleCore compiler for
 compilation.  The compiler translates the source file into an assembly
 file which is then linked with other assembly files as discussed in
-Section~\ref{sec:compilation} to form a complete executable program.
+Section~\ref{sec:semantics:compilation} to form a complete executable
+program.
 
 An AppleCore source file is given by zero or more
 declarations:
@@ -216,18 +238,18 @@ $$\nonterm{decl} ::= \mbox{\nonterm{const-decl} $|$
 \label{sec:syntax:declarations}
 
 \bfhead{Constant declarations.} A constant declaration consists of the
-keyword \kwd{CONST}, an identifier, an optional numeric constant, and
-a terminating semicolon:
+keyword \kwd{CONST}, an identifier, an optional expression, and a
+terminating semicolon:
 %
 $$\nonterm{const-decl} ::= \mbox{\kwd{CONST} \nonterm{identifier}
-  $[\nonterm{numeric-const}]$ \kwd{;}}$$
+  \opt{\nonterm{expr}} \kwd{;}}$$
 
 \bfhead{Data declarations.} A data declaration consists of the keyword
 \kwd{DATA}, an optional identifier representing a label for the data,
-a constant, and a terminating semicolon:
+an expression or a string constant, and a terminating semicolon:
 %
-$$\nonterm{const-decl} ::= \mbox{\kwd{DATA} $[\nonterm{identifier}]$
-  \nonterm{const} \kwd{;}}$$
+$$\nonterm{const-decl} ::= \mbox{\kwd{DATA} \opt{\nonterm{identifier}}
+  \group{\nonterm{expr} $|$ \nonterm{string-const}} \kwd{;}}$$
 
 \bfhead{Variable declarations.} A variable declaration consists of the
 keyword \kwd{VAR}, an identifier representing the variable name, a
@@ -235,7 +257,7 @@ signed or unsigned size, an optional initializer expression, and a
 terminating semicolon:
 %
 $$\nonterm{var-decl} ::= \mbox{\kwd{VAR} \nonterm{identifier} \kwd{:}
-  \nonterm{size} $[\kwd{S}]$ $[$\kwd{=} \nonterm{expr}$]$ \kwd{;}}$$
+  \nonterm{size} \opt{\kwd{S}} \opt{\kwd{=} \nonterm{expr}} \kwd{;}}$$
 
 \bfhead{Function declarations.} A function declaration consists of the
 keyword \kwd{FN}, an optional signed or unsigned size, an identifier
@@ -249,8 +271,8 @@ $$\nonterm{fn-decl} ::= \mbox{\kwd{FN} \opt{\kwd{:} \nonterm{size}
 The function parameters are a comma-separated list of zero or more
 parameters:
 %
-$$\nonterm{fn-params} ::= \mbox{\opt{\nonterm{fn-param} $($\kwd{,}
-    \nonterm{fn-param}$)^*$}}$$
+$$\nonterm{fn-params} ::= \mbox{\opt{\nonterm{fn-param} \group{\kwd{,}
+    \nonterm{fn-param}}$^*$}}$$
 %
 A parameter consists of an identifier representing the parameter name
 and a size:
@@ -322,20 +344,90 @@ $$\nonterm{expr-stmt} ::= \mbox{\nonterm{expr} \kwd{;}}$$
 \subsection{Expressions}
 \label{sec:syntax:expressions}
 
-TODO
+An expression is an lvalue expression, a call expression, a set
+expression, a binary operation expression, a unary operation
+expression, a numeric constant, or a parentheses expression:
+%
+$$\nonterm{expr} ::= \mbox{\nonterm{lvalue-expr} $|$
+  \nonterm{call-expr} $|$ \nonterm{set-expr} $|$ \nonterm{binop-expr}
+  $|$ \nonterm{unop-expr} $|$ \nonterm{numeric-const} $|$
+  \nonterm{parens-expr}}$$
+%
+An lvalue expression is an expression that may appear on the
+right-hand side of a set expression.  It is an identifier, an indexed
+expression, or a register expression:
+%
+$$\nonterm{lvalue-expr} ::= \mbox{\nonterm{identifier} $|$
+  \nonterm{indexed-expr} $|$ \nonterm{register-expr}}$$
+%
+A numeric constant is an integer or character constant:
+%
+$$\nonterm{numeric-const} ::= \mbox{\nonterm{integer-const} $|$
+  \nonterm{char-const}}$$
+%
 
-\subsection{Constants}
-\label{sec:syntax:constants}
+\bfhead{Indexed expressions.} An indexed expression consists of a
+base expression, an offset expression, and a size:
+%
+$$\nonterm{indexed-expr} ::= \mbox{\nonterm{expr} \kwd{[}
+    \nonterm{expr} \kwd{,} \nonterm{size} \kwd{]}}$$
+%
 
-TODO
+\bfhead{Register expressions.} A register expression consists of a
+caret character followed by a 6502 register name:
+%
+$$\nonterm{register-expr} ::= \mbox{\kwd{\^} \group{\kwd{A} $|$
+    \kwd{X} $|$ \kwd{Y} $|$ \kwd{P} $|$ \kwd{S}}}$$
+%
+
+\bfhead{Call expressions.} A call expression consists of an expression
+followed by an argument list enclosed in parentheses:
+%
+$$\nonterm{call-expr} ::= \mbox{\nonterm{expr} \kwd{(}
+  \opt{\nonterm{expr} \group{\kwd{,} \nonterm{expr}}$^*$} \kwd{)}}$$
+%
+
+
+\bfhead{Set expressions.} A set expression consists of the keyword
+\kwd{SET}, and lvalue expression, an equals sign, and a
+right-hand-side expression:
+%
+$$\nonterm{set-expr} ::= \mbox{\kwd{SET} \nonterm{lvalue-expr} \kwd{=}
+  \nonterm{expr}}$$
+%
+
+\bfhead{Binary operation expressions.} A binary operation expression
+consists of a left-hand-side expression, a binary operator, and a
+right-hand-side expression:
+%
+$$\nonterm{binop-expr} ::= \mbox{\nonterm{expr} \nonterm{binop} \nonterm{expr}}$$
+%
+$$\nonterm{binop} ::= \mbox{\kwd{>} $|$ \kwd{<} $|$ \kwd{<=} $|$
+  \kwd{>=} $|$ \kwd{AND} $|$ \kwd{OR} $|$ \kwd{XOR} $|$ \kwd{+} $|$
+  \kwd{-} $|$ \kwd{*} $|$ \kwd{/} $|$ \kwd{<<} $|$ \kwd{>>} $|$
+  \kwd{=}}$$
+%
+\bfhead{Unary operation expressions.} A unary operation expression
+consists of a unary operator followed by an expression:
+%
+$$\nonterm{binop-expr} ::= \mbox{\nonterm{unop} \nonterm{expr}}$$
+%
+$$\nonterm{unop} ::= \mbox{\kwd{@} $|$ \kwd{NOT} $|$ \kwd{-} $|$
+  \kwd{INCR} $|$ \kwd{DECR}}$$
+%
+\bfhead{Parentheses expressions.} A parentheses expression is an
+expression surrounded by parentheses:
+%
+$$\nonterm{parens-expr} ::= \mbox{\kwd{(} \nonterm{expr} \kwd{)}}$$
+%
 
 \section{Semantics}
-\label{sec:syntax:semantics}
+\label{sec:semantics}
 
 TODO
 
-\section{Compilation and Linking}
-\label{sec:compilation}
+\subsection{Compilation and Linking}
+\label{sec:semantics:compilation}
 
 TODO
 

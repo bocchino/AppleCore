@@ -1,6 +1,6 @@
 all : AppleCore-Spec-v1.0.pdf
 
-%.pdf : %.tex
+%.pdf : %.tex defs.tex
 	pdflatex $<
 	pdflatex $<
 
