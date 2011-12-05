@@ -9,7 +9,7 @@
 \author{Robert L. Bocchino Jr.\\
 Pittsburgh, PA}
 %
-\date{Revised December 4, 2011}
+%\date{Revised December 4, 2011}
 
 \maketitle
 
@@ -55,18 +55,18 @@ The goal of AppleCore is to rectify this situation by providing a
 low-level language with some minimal programming abstractions that's
 both useful and fun to program with.  First, it's a compiled language,
 so it should run faster than Applesoft.  Second, it's modular and
-supports separate compilation.  In particular, the entire core
-language needs only a few kilobytes of support routines; additional
-routines can be linked in as needed.  Third, AppleCore strikes a
-balance between power and efficiency.  Notably, it supports integer
-arithmetic on fixed-size variables of up to 255 bytes, so it
-essentially gives arbitrary-precision arithmetic.  This power does
-come at a cost in terms of speed for single-byte arithmetic that could
-be done in registers; however, if that speed is needed, one can easily
-call into assembly language arithmetic routines.  Fourth, it provides
-easy integration with assembly language routines; in particular, you
-can say things like ``load `A' into the accumulator and call \$FDED''
-that are impossible to say in Applesoft or other high-level languages
+supports separate compilation. The entire core language needs only a
+few kilobytes of support routines; additional routines can be linked
+in as needed.  Third, AppleCore strikes a balance between power and
+efficiency.  Notably, it supports integer arithmetic on fixed-size
+variables of up to 255 bytes, so it essentially gives
+arbitrary-precision arithmetic.  This power does come at a cost in
+terms of speed for single-byte arithmetic that could be done in
+registers; however, if that speed is needed, one can easily call into
+assembly language arithmetic routines.  Fourth, it provides easy
+integration with assembly language routines; in particular, you can
+say things like ``load `A' into the accumulator and call \$FDED'' that
+are impossible to say in Applesoft or other high-level languages
 without assembly-language wrapper code.
 
 The main things that AppleCore lacks, and that Applesoft provides, are
@@ -123,7 +123,7 @@ line numbers for error messages.
 
 An identifier is a sequence of letters (including the underscore
 character) and digits that is not a keyword.  The first character must
-be a letter.  Upper and lower case letters are distinct.
+be a letter.  Upper- and lowercase letters are distinct.
 
 \subsection{Keywords}
 
@@ -163,6 +163,10 @@ hexadecimal integer constant consists of a dollar sign \kwd{\$}
 followed by by one or more hexadecimal digits \kwd{0} through \kwd{9}
 or \kwd{A} through \kwd{F}.  For example, \kwd{\$1}, \kwd{\$A}, and
 \kwd{\$00FF} are valid integer constants in hexadecimal form.
+
+Integer constants represent values with up to 255 bytes of precision
+(i.e., $2^{255 \cdot 8}$).  It is a compile-time error to write an
+integer constant with a value larger than that.
 
 \bfhead{String constants.} A string constant is a sequence of
 characters enclosed in double quotes (\kwd{"..."}).  A string constant
@@ -263,7 +267,7 @@ The syntax description below uses the following conventions:
   Section~\ref{sec:lexical:constants}.
 %
 \item The nonterminal \nonterm{size} refers to an integer constant
-  whose value is between 0 and 255 (inclusive).
+  whose value is between 1 and 255 (inclusive).
 %
 \item Text and symbols in \kwd{typewriter} font (including
   non-italicized parentheses and brackets) denote literal program
@@ -495,13 +499,14 @@ compilation to halt.  Only semantically valid files go on to code
 generation as described in Section~\ref{sec:code-gen}.
 
 \subsection{Attribution}
+\label{sec:semantics:attr}
 
 During attribution, the compiler associates each identifier appearing
 in the source file with its corresponding definition.  For purposes of
 these rules, a \emph{definition} is a constant declaration, data
-declaration, variable declaration, or function declaration.  A
-\emph{use} is any identifier appearing in the source file not as part
-of a definition.
+declaration, variable declaration, function parameter declaration, or
+function declaration.  A \emph{use} is any identifier appearing in the
+source file not as part of a definition.
 
 The compiler matches definitions with uses in the following way:
 %
@@ -512,7 +517,7 @@ The compiler matches definitions with uses in the following way:
   global scope.  If there is no corresponding definition, or if any
   two definitions use the same identifier, then  report an error.
 %
-\item At function scope (i.e., inside a method body), for each use
+\item At function scope (i.e., inside a function body), for each use
   find the corresponding definition with the same identifier either at
   global scope or within the function body.  If there is no
   corresponding definition, or if any two definitions in the scope
@@ -522,9 +527,87 @@ The compiler matches definitions with uses in the following way:
 \end{enumerate}
 
 
-\subsection{Expression Sizes and Signedness}
+\subsection{Sizes and Signedness}
 
-TODO
+\bfhead{Expressions.} Every expression is given a \emph{size} and a
+\emph{signedness}, computed as follows:
+%
+\begin{itemize}
+%
+\item \ithead{Identifiers.} The size and signedness of an identifier
+  expression come from its definition
+  (Section~\ref{sec:semantics:attr}).
+%
+\item \ithead{Indexed expressions.} The size of an indexed expression
+  is given by the \nonterm{size} component of the expression.  It is
+  always unsigned.  The expression being indexed (before the first
+  bracket) must have size 1 or 2.
+%
+\item \ithead{Register expressions.} The size of a register expression
+  is 1.  It is unsigned.
+%
+\item \ithead{Call expressions.} (1) The called expression (i.e., the
+  expression before the first parenthesis) must either be an
+  identifier corresponding to a function definition or evaluate to a
+  1- or 2-byte value.  (2) If the called expression corresponds to a
+  function definition, then the size and signedness are the return
+  size and signedness of the function definition (see below);
+  otherwise the size is 0 and the signedness is unsigned.
+%
+\item \ithead{Set expressions.} The size and signedness of a set
+  expression come from the left-hand-side expression.  The right-hand
+  expression must have a nonzero size.
+%
+\item \ithead{Binary operation expressions.}  For comparison
+  operations, the size is 1 byte unsigned.  For shift operations, the
+  size and signedness come from the left operand, and the right
+  operand must be 1 byte unsigned.  For all other operations, the size
+  is the maximum of the sizes of its operands.  If either of the
+  operands is signed, then the result is signed.  Otherwise, the
+  result is unsigned.
+%
+\item \ithead{Unary operation expressions.} The size and signedness of
+  a unop expression come from the operand, except that (1) an address
+  operation \kwd{@} is two bytes unsigned, and (2) a negation
+  operation is signed.
+%
+\item \ithead{Numeric constants.} The size of a constant expression is
+  the size of the constant it represents.  A character constant has
+  size 1, and an integer constant has size equal to the smallest
+  number of bytes required to represent the value.  Numeric constant
+  expressions are unsigned.
+%
+\item \ithead{Parentheses expressions.} The size and signedness of a
+  parentheses expression come from the enclosed expression.
+%
+\end{itemize}
+
+\bfhead{Declarations and statements.} The following rules govern the
+size and signedness of declarations and statements:
+%
+\begin{itemize}
+%
+\item \ithead{Function return size and signedness.} The \emph{return
+  size and signedness} of a function definition are defined as
+  follows.  If a \nonterm{size} appears after the keyword \kwd{FN} in
+  the definition, then that is the size; otherwise the size is 0.  If
+  \kwd{S} appears after \nonterm{size} then the expression is signed,
+  otherwise unsigned.  
+%
+\item \ithead{Function frame size.} The \emph{frame size} of a
+  function with a body equals 2 (for the frame pointer) plus the sizes
+  of all the function parameters and local variables.  No function may
+  have a frame size of greater than 255 bytes.
+%
+\item \ithead{Return statements.} (1) If a function has nonzero return
+  size, and the function has a body, then (a) the body must end with a
+  return statement, and (b) every return statement appearing in the
+  body must contain an expression of nonzero size.  (2) If a function
+  has return size 0, then no return statement in the function body may
+  contain an expression of nonzero size.
+%
+\end{itemize}
+
 
 \subsection{Function Arguments}
 
@@ -537,6 +620,14 @@ TODO
 \subsection{Expression Statements}
 
 TODO
+
+\subsection{Expressions Appearing at Global Scope}
+
+An expression appearing at global scope (i.e., in a constant or data
+delcaration, or as the initializer of a global variable declaration)
+must evaluate to a compile-time constant according to the rules for
+expression evaluation stated in
+Section~\ref{sec:code-gen:expressions}.
 
 \section{Code Generation}
 \label{sec:code-gen}

@@ -93,7 +93,7 @@ public class SizePass
     /**
      * The size of an indexed expression comes from the expression
      * itself.  It is always unsigned.  The expression being indexed
-     * must be a 1- or 2- byte unsigned expression.
+     * must be a 1- or 2- byte expression.
      */
     public void visitIndexedExpression(IndexedExpression node) 
 	throws ACCError
@@ -210,7 +210,7 @@ public class SizePass
      * The size and signedness of a unop expression come from the
      * operand except in the following cases:
      *
-     * 1. A dereference operation @ is two bytes unsigned.
+     * 1. An address operation @ is two bytes unsigned.
      *
      * 2. A negation operation is signed.
      */
@@ -265,7 +265,7 @@ public class SizePass
     }
 
     /**
-     * Require a pointer, i.e., 1- or 2-byte unsigned value.
+     * Require a pointer, i.e., 1- or 2-byte value.
      */
     private void requirePointer(Node node) 
 	throws ACCError
