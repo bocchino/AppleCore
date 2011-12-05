@@ -13,11 +13,79 @@ Pittsburgh, PA}
 
 \maketitle
 
-TODO
-
 \section{Introduction and Rationale}
 
-TODO
+AppleCore is a C-like programming language for the Apple II series of
+computers.  A cross-compiler from Java (e.g., running on a Mac or PC)
+to the Apple II is under development; the goal is eventually to write
+an AppleCore compiler in AppleCore, thereby providing a compiler that
+works on the Apple II.
+
+The idea of AppleCore is to provide a ``core language for programming
+the Apple II.''  The motivation is as follows:
+%
+\begin{enumerate}
+%
+\item Programming the Apple II is both nostalgic and just plain fun.
+%
+\item The Apple II is a small machine.  Therefore it needs a
+  lightweight programming model (i.e., without complicated runtime
+  overhead in space or time).  The programming model must also provide
+  (1) tight control over the layout of generated code and (2) easy
+  integration with assembly-language support routines such as those
+  provided by the System Monitor or Applesoft.
+%
+\item The native programming models on the Apple II are inadequate.
+  Assembly language is powerful but painfully low-level.  Applesoft,
+  on the other hand, is a disaster.  It lacks even the most basic
+  abstraction required of a sane programming environment, including
+  scoped loops, scoped functions with local variables, and variable
+  names longer than \emph{two letters}!  Applesoft does have nice
+  support for numeric and string input and output, so if you just want
+  to write short programs that read and write things, it's handy. But
+  for any but the tiniest programs, Applesoft code becomes an
+  unreadable mess.  In terms of control abstraction Applesoft is
+  actually worse than assembly language, because it forces you to
+  branch to numbered lines, whereas in assembly language you can
+  \kwd{JMP} and \kwd{JSR} to symbolic labels with meaningful names.
+%
+\end{enumerate}
+
+The goal of AppleCore is to rectify this situation by providing a
+low-level language with some minimal programming abstractions that's
+both useful and fun to program with.  First, it's a compiled language,
+so it should run faster than Applesoft.  Second, it's modular and
+supports separate compilation.  In particular, the entire core
+language needs only a few kilobytes of support routines; additional
+routines can be linked in as needed.  Third, AppleCore strikes a
+balance between power and efficiency.  Notably, it supports integer
+arithmetic on fixed-size variables of up to 255 bytes, so it
+essentially gives arbitrary-precision arithmetic.  This power does
+come at a cost in terms of speed for single-byte arithmetic that could
+be done in registers; however, if that speed is needed, one can easily
+call into assembly language arithmetic routines.  Fourth, it provides
+easy integration with assembly language routines; in particular, you
+can say things like ``load `A' into the accumulator and call \$FDED''
+that are impossible to say in Applesoft or other high-level languages
+without assembly-language wrapper code.
+
+The main things that AppleCore lacks, and that Applesoft provides, are
+automatic memory management and support for floating-point
+computation.  I've left out memory management to keep things very
+simple.  Basically, as a programmer I can't live happily without
+control abstractions (loops and functions); but once I have them I'm
+perfectly content to synthesize data abstractions on my own.  If this
+becomes too much of a pain, a library for memory management can be
+added without difficulty, after the fashion of C.  (Applesoft actually
+provides garbage collection, but it works very poorly, causing the
+machine to seize up when the memory limit is reached.)  I've left out
+floating-point computation mainly because I'm most interested in text
+processing and integer computations; but again, FP computations can be
+added without too much difficulty.  In the mean time, one can fake FP
+computations by encoding FP literals as string data and calling into
+the Applesoft FP routines to convert from strings to FP numbers and
+back, and to compute using the FP numbers.  Applesoft is actually
+quite good at this.
 
 \section{Lexical Structure}
 
@@ -210,7 +278,7 @@ The basic syntactic unit of an AppleCore program is a \emph{source
   file}, i.e., an input file provided to the AppleCore compiler for
 compilation.  The compiler translates the source file into an assembly
 file which is then linked with other assembly files as discussed in
-Section~\ref{sec:semantics:compilation} to form a complete executable
+Section~\ref{sec:code-gen:source-files} to form a complete executable
 program.
 
 An AppleCore source file is given by zero or more
@@ -240,7 +308,8 @@ $$\nonterm{const-decl} ::= \mbox{\kwd{CONST} \nonterm{identifier}
 \kwd{DATA}, an optional identifier representing a label for the data,
 an expression or a string constant, and a terminating semicolon.  A
 backslash may optionally follow the string constant, indicating that
-the string is unterminated (see Section~\ref{}).
+the string is unterminated (see
+Section~\ref{sec:code-gen:declarations}).
 %
 $$\nonterm{const-decl} ::= \mbox{\kwd{DATA} \opt{\nonterm{identifier}}
   \group{\nonterm{expr} $|$ \group{\nonterm{string-const} \opt{\bs}}}
@@ -416,15 +485,98 @@ expression surrounded by parentheses:
 $$\nonterm{parens-expr} ::= \mbox{\kwd{(} \nonterm{expr} \kwd{)}}$$
 %
 
-\section{Semantics}
+\section{Semantic Checking}
 \label{sec:semantics}
 
-TODO
-
-\subsection{Compilation and Linking}
-\label{sec:semantics:compilation}
+\subsection{Attribution}
 
 TODO
+
+\subsection{Expression Sizes and Signedness}
+
+TODO
+
+\subsection{Function Arguments}
+
+TODO
+
+\subsection{LValues}
+
+TODO
+
+\subsection{Expression Statements}
+
+TODO
+
+\section{Code Generation}
+\label{sec:code-gen}
+
+\subsection{Source Files}
+\label{sec:code-gen:source-files}
+
+The AppleCore language is designed to support separate compilation.
+To do that, the compiler translates source files to assembly files in
+one of two modes: \emph{top-level mode} and \emph{include mode}.  The
+mode must be specified at the time the source file is translated to
+assembly, usually as a compiler option.
+
+\bfhead{Top-Level Mode.}  In top-level mode, the compiler translates
+the source file as follows:
+%
+\begin{enumerate}
+%
+\item Issue an assembler directive to include some preamble code that
+  sets up the program stack.
+%
+\item Issue a \kwd{JMP} instruction to the first function appearing in
+  the file.  There must be at least one such function, and it is a
+  compile-time error if not.
+%
+\item Translate all declarations in the source file as described in
+  Section~\ref{sec:code-gen:declarations}, in the order in which they
+  appear in the source file.  Include declarations may appear anywhere
+  in the file, and they are translated to directives to include the
+  corresponding assembly files.
+%
+\item Issue assembler directives to include the AppleCore support code
+  (for example, the code needed to do arithmetic operations).
+%
+\end{enumerate}
+
+\bfhead{Include Mode.} In include mode, the compiler translates just
+translates the declarations in the source file as described in
+Section~\ref{sec:code-gen:declarations}.  No include directive or
+\kwd{JMP} instruction to the first function is emitted.  In include
+mode, the source program may not contain any include directives, and
+it is a compile-time error for one to appear.
+
+\bfhead{Assembling and Symbol Resolution.} A user program consists of
+exactly one file translated in top-level mode and zero or more files
+translated in include mode.  The final step in compilation is to ask
+the assembler to assemble the file translated in top-level mode, which
+includes all the other files for assembly.  This assembly also causes
+name resolution for functions and constants defined in one file and
+used in another.  It is the user's responsibility to ensure that
+externally-defined names are both available and uniquely defined; the
+compiler cannot check this.  If a symbol used in one of the assembled
+files is not defined in any of the files (or if any symbol is multiply
+defined), then an assembler error will result.
+
+\subsection{Declarations}
+\label{sec:code-gen:declarations}
+
+TODO
+
+\subsection{Statements}
+\label{sec:code-gen:statements}
+
+TODO
+
+\subsection{Expressions}
+\label{sec:code-gen:expressions}
+
+TODO
+
 
 \begin{comment}
 If no backslash character appears after the second double-quote, then
