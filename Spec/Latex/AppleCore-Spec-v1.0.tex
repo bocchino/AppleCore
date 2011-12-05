@@ -488,9 +488,39 @@ $$\nonterm{parens-expr} ::= \mbox{\kwd{(} \nonterm{expr} \kwd{)}}$$
 \section{Semantic Checking}
 \label{sec:semantics}
 
+The compiler checks every source file for conformance to the semantic
+rules stated below.  A semantically invalid program (i.e., one that
+violates one of these rules) generates a compile-time error and causes
+compilation to halt.  Only semantically valid files go on to code
+generation as described in Section~\ref{sec:code-gen}.
+
 \subsection{Attribution}
 
-TODO
+During attribution, the compiler associates each identifier appearing
+in the source file with its corresponding definition.  For purposes of
+these rules, a \emph{definition} is a constant declaration, data
+declaration, variable declaration, or function declaration.  A
+\emph{use} is any identifier appearing in the source file not as part
+of a definition.
+
+The compiler matches definitions with uses in the following way:
+%
+\begin{enumerate}
+%
+\item At global scope (i.e., outside of any function body), for each
+  use find the corresponding definition with the same identifier at
+  global scope.  If there is no corresponding definition, or if any
+  two definitions use the same identifier, then  report an error.
+%
+\item At function scope (i.e., inside a method body), for each use
+  find the corresponding definition with the same identifier either at
+  global scope or within the function body.  If there is no
+  corresponding definition, or if any two definitions in the scope
+  consisting of the global scope plus the function body scope use the
+  same identifier, then report an error.
+%
+\end{enumerate}
+
 
 \subsection{Expression Sizes and Signedness}
 
