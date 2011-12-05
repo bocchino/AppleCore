@@ -520,7 +520,7 @@ one of two modes: \emph{top-level mode} and \emph{include mode}.  The
 mode must be specified at the time the source file is translated to
 assembly, usually as a compiler option.
 
-\bfhead{Top-Level Mode.}  In top-level mode, the compiler translates
+\bfhead{Top-level mode.}  In top-level mode, the compiler translates
 the source file as follows:
 %
 \begin{enumerate}
@@ -543,20 +543,20 @@ the source file as follows:
 %
 \end{enumerate}
 
-\bfhead{Include Mode.} In include mode, the compiler translates just
-translates the declarations in the source file as described in
+\bfhead{Include mode.} In include mode, the compiler just translates
+the declarations in the source file as described in
 Section~\ref{sec:code-gen:declarations}.  No include directive or
 \kwd{JMP} instruction to the first function is emitted.  In include
 mode, the source program may not contain any include directives, and
 it is a compile-time error for one to appear.
 
-\bfhead{Assembling and Symbol Resolution.} A user program consists of
-exactly one file translated in top-level mode and zero or more files
-translated in include mode.  The final step in compilation is to ask
-the assembler to assemble the file translated in top-level mode, which
-includes all the other files for assembly.  This assembly also causes
-name resolution for functions and constants defined in one file and
-used in another.  It is the user's responsibility to ensure that
+\bfhead{Final assembly and symbol resolution.} A user program consists
+of exactly one file translated in top-level mode and zero or more
+files translated in include mode.  The final step in compilation is to
+ask the assembler to assemble the file translated in top-level mode,
+which includes all the other files for assembly.  This assembly also
+causes name resolution for functions and constants defined in one file
+and used in another.  It is the user's responsibility to ensure that
 externally-defined names are both available and uniquely defined; the
 compiler cannot check this.  If a symbol used in one of the assembled
 files is not defined in any of the files (or if any symbol is multiply
