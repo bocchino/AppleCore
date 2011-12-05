@@ -227,7 +227,7 @@ public class Parser {
 
     /**
      * Fn-Decl ::= FN [':' Size ['S']] Ident '(' Params ')' Fn-Body
-     * Fn-Body ::= '{' Stmt-List '}' | ';'
+     * Fn-Body ::= '{' Var-Decl* Stmt* '}' | ';'
      */
     private FunctionDecl parseFunctionDecl()
 	throws SyntaxError, IOException
@@ -374,7 +374,7 @@ public class Parser {
     }
 
     /**
-     * Return-Stmt ::= RETURN Expr ';'
+     * Return-Stmt ::= RETURN [Expr] ';'
      */ 
     private ReturnStatement parseReturnStatement()
 	throws SyntaxError, IOException
@@ -418,9 +418,9 @@ public class Parser {
     }
 
     /**
-     * Expr ::= Ident | Indexed-Expr | Call-Expr | 
-     *          Register-Expr | Set-Expr | Binop-Expr | 
-     *          Unop-Expr | Numeric-Const | Parens-Expr 
+     * Expr ::= LValue-Expr | Call-Expr | Set-Expr | 
+     *          Binop-Expr | Unop-Expr | Numeric-Const | 
+     *          Parens-Expr 
      */
     private Expression parseExpression() 
 	throws SyntaxError, IOException

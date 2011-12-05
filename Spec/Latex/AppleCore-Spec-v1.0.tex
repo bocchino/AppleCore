@@ -239,8 +239,8 @@ $$\nonterm{var-decl} ::= \mbox{\kwd{VAR} \nonterm{identifier} \kwd{:}
 
 \bfhead{Function declarations.} A function declaration consists of the
 keyword \kwd{FN}, an optional signed or unsigned size, an identifier
-representing the function name, the function parameters, and the
-function body:
+representing the function name, the function parameters enclosed in
+parentheses, and the function body:
 %
 $$\nonterm{fn-decl} ::= \mbox{\kwd{FN} \opt{\kwd{:} \nonterm{size}
     \opt{\kwd{S}}} \nonterm{identifier} \kwd{(} \nonterm{fn-params}
@@ -250,7 +250,7 @@ The function parameters are a comma-separated list of zero or more
 parameters:
 %
 $$\nonterm{fn-params} ::= \mbox{\opt{\nonterm{fn-param} $($\kwd{,}
-  \nonterm{fn-param}$)^*$ }}$$
+    \nonterm{fn-param}$)^*$}}$$
 %
 A parameter consists of an identifier representing the parameter name
 and a size:
@@ -258,11 +258,12 @@ and a size:
 $$\nonterm{fn-param} ::= \mbox{\nonterm{identifier} \kwd{:}
   \nonterm{size} \opt{\kwd{S}}}$$
 %
-A function body is either a list of statements enclosed in braces, or
-a semicolon indicating an externally defined function:
+A function body is either zero or more variable declarations and
+statements enclosed in braces, or a semicolon indicating an externally
+defined function:
 %
-$$\nonterm{fn-body} ::= \mbox{\kwd{\{} \nonterm{stmt-list} \kwd{\}}
-  $|$ \kwd{;}}$$
+$$\nonterm{fn-body} ::= \mbox{\kwd{\{} \nonterm{var-decl}$^*$
+  \nonterm{stmt}$^*$ \kwd{\}} $|$ \kwd{;}}$$
 
 \bfhead{Include declarations.} An include declaration consists of the
 keyword \kwd{INCLUDE}, a string constant, and a terminating semicolon:
@@ -274,7 +275,49 @@ $$\nonterm{include-decl} ::= \mbox{\kwd{INCLUDE}
 \subsection{Statements}
 \label{sec:syntax:statements}
 
-TODO
+A statement is an if statement, a while statement, a return statement,
+a block statement, or an expression statement:
+%
+$$\nonterm{stmt} ::= \mbox{\nonterm{if-stmt} $|$ \nonterm{while-stmt}
+  $|$ \nonterm{return-stmt} $|$ \nonterm{block-stmt} $|$
+  \nonterm{expr-stmt}}$$
+%
+\bfhead{If statements.} An if statement consists of the keyword
+\kwd{IF}, a conditional expression enclosed in parentheses, a
+statement to execute if the condition is true, and optionally the
+keyword \kwd{ELSE} followed by a statement to execute if the condition
+is false:
+%
+$$\nonterm{if-stmt} ::= \mbox{\kwd{IF} \kwd{(} \nonterm{expr} \kwd{)}
+  \nonterm{stmt} \opt{\kwd{ELSE} \nonterm{stmt}}}$$
+%
+
+\bfhead{While statements.} A while statement consists of the keyword
+\kwd{WHILE}, a test expression enclosed in parentheses, and a
+statement to execute as long as the condition is true:
+%
+$$\nonterm{while-stmt} ::= \mbox{\kwd{WHILE} \kwd{(} \nonterm{expr}
+  \kwd{)} \nonterm{stmt}}$$
+%
+
+\bfhead{Return statements.} A return statement consists of the keyword
+\kwd{RETURN}, an optional expression, and a terminating semicolon:
+%
+$$\nonterm{return-stmt} ::= \mbox{\kwd{RETURN} \opt{\nonterm{expr}}
+    \kwd{;}}$$
+%
+
+\bfhead{Block statements.} A block statement consists of zero or more
+statements enclosed in braces:
+%
+$$\nonterm{block-stmt} ::= \mbox{\kwd{\{} \nonterm{stmt}$^*$
+  \kwd{\}}}$$
+%
+\bfhead{Expresson statements.} An expression statement consists of an
+expression followed by a terminating semicolon:
+%
+$$\nonterm{expr-stmt} ::= \mbox{\nonterm{expr} \kwd{;}}$$
+%
 
 \subsection{Expressions}
 \label{sec:syntax:expressions}
