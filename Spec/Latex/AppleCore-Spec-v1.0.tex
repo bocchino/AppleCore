@@ -97,18 +97,10 @@ or \kwd{A} through \kwd{F}.  For example, \kwd{\$1}, \kwd{\$A}, and
 \kwd{\$00FF} are valid integer constants in hexadecimal form.
 
 \bfhead{String constants.} A string constant is a sequence of
-characters enclosed in double quotes (\kwd{"..."}), optionally
-followed by a backslash character \kwd{$\backslash$}.  A string
-constant represents a sequence of ASCII characters, one for each
-character appearing in the double-quotes, except that the character
-sequence \kwd{\bs\$} has the special meaning described below.
-
-If no backslash character appears after the second double-quote, then
-the string is null-terminated:  in addition to storing the characters
-appearing in the double-quotes, it stores a terminating NUL character
-(value \$00).  If a backslash character appears after the second
-double-quote, then the string is unterminated:  only the characters
-appearing between the double-quotes are stored.
+characters enclosed in double quotes (\kwd{"..."}).  A string constant
+represents a sequence of ASCII characters, one for each character
+appearing in the double-quotes, except that the character sequence
+\kwd{\bs\$} has the special meaning described below.
 
 Since not all ASCII characters have printable representations, an
 \emph{escape sequence} may be used to represent an arbitrary ASCII
@@ -246,10 +238,13 @@ $$\nonterm{const-decl} ::= \mbox{\kwd{CONST} \nonterm{identifier}
 
 \bfhead{Data declarations.} A data declaration consists of the keyword
 \kwd{DATA}, an optional identifier representing a label for the data,
-an expression or a string constant, and a terminating semicolon:
+an expression or a string constant, and a terminating semicolon.  A
+backslash may optionally follow the string constant, indicating that
+the string is unterminated (see Section~\ref{}).
 %
 $$\nonterm{const-decl} ::= \mbox{\kwd{DATA} \opt{\nonterm{identifier}}
-  \group{\nonterm{expr} $|$ \nonterm{string-const}} \kwd{;}}$$
+  \group{\nonterm{expr} $|$ \group{\nonterm{string-const} \opt{\bs}}}
+  \kwd{;}}$$
 
 \bfhead{Variable declarations.} A variable declaration consists of the
 keyword \kwd{VAR}, an identifier representing the variable name, a
@@ -430,5 +425,14 @@ TODO
 \label{sec:semantics:compilation}
 
 TODO
+
+\begin{comment}
+If no backslash character appears after the second double-quote, then
+the string is null-terminated:  in addition to storing the characters
+appearing in the double-quotes, it stores a terminating NUL character
+(value \$00).  If a backslash character appears after the second
+double-quote, then the string is unterminated:  only the characters
+appearing between the double-quotes are stored.
+\end{comment}
 
 \end{document}
