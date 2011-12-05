@@ -552,7 +552,8 @@ The compiler matches definitions with uses in the following way:
   1- or 2-byte value.  (2) If the called expression corresponds to a
   function definition, then the size and signedness are the return
   size and signedness of the function definition (see below);
-  otherwise the size is 0 and the signedness is unsigned.
+  otherwise the size is 0 and the signedness is unsigned.  (3) Each
+  argument expression must have nonzero size.
 %
 \item \ithead{Set expressions.} The size and signedness of a set
   expression come from the left-hand-side expression.  The right-hand
@@ -599,12 +600,13 @@ size and signedness of declarations and statements:
   of all the function parameters and local variables.  No function may
   have a frame size of greater than 255 bytes.
 %
-\item \ithead{Return statements.} (1) If a function has nonzero return
+\item \ithead{Return statements.} (1) No return statement may contain
+  an expression of zero size.  (2) If a function has nonzero return
   size, and the function has a body, then (a) the body must end with a
-  return statement, and (b) every return statement appearing in the
-  body must contain an expression of nonzero size.  (2) If a function
-  has return size 0, then no return statement in the function body may
-  contain an expression of nonzero size.
+  return statement containing an expression, and (b) every return
+  statement appearing in the body must contain an expression.  (3) If
+  a function has return size 0, then no return statement in the
+  function body may contain an expression.
 %
 \end{itemize}
 
