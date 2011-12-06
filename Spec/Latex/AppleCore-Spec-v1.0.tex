@@ -314,7 +314,7 @@ $$\nonterm{const-decl} ::= \mbox{\kwd{CONST} \nonterm{identifier}
 an expression or a string constant, and a terminating semicolon.  A
 backslash may optionally follow the string constant, indicating that
 the string is unterminated (see
-Section~\ref{sec:code-gen:declarations}).
+Section~\ref{sec:code-gen:global-decls}).
 %
 $$\nonterm{const-decl} ::= \mbox{\kwd{DATA} \opt{\nonterm{identifier}}
   \group{\nonterm{expr} $|$ \group{\nonterm{string-const} \opt{\bs}}}
@@ -642,8 +642,8 @@ operator.
 
 The expression contained in an expression statement have an effect:
 that is, it must be a set, call, \kwd{INCR}, or \kwd{DECR} expression.
-This check traps the error of writing \kwd{X = 2;} (comparison) when
-you meant \kwd{SET X = 2;} (assignment).
+This check traps the error of writing \kwd{X = 2;} (comparison)
+instead of \kwd{SET X = 2;} (assignment).
 
 \subsection{Expressions Appearing at Global Scope}
 
@@ -670,18 +670,18 @@ the source file as follows:
 %
 \begin{enumerate}
 %
-\item Issue an assembler directive to include some preamble code that
-  sets up the program stack.
+\item Issue some code (or an assembler directive to include the code)
+  that sets up the program stack.
 %
-\item Issue a \kwd{JMP} instruction to the first function appearing in
-  the file.  There must be at least one such function, and it is a
-  compile-time error if not.
+\item Issue a \kwd{JMP} instruction to the first function with a body
+  that apepars in the file.  There must be at least one such function,
+  and it is a compile-time error if not.
 %
-\item Translate all declarations in the source file as described in
-  Section~\ref{sec:code-gen:declarations}, in the order in which they
-  appear in the source file.  Include declarations may appear anywhere
-  in the file, and they are translated to directives to include the
-  corresponding assembly files.
+\item Translate all global declarations in the source file as
+  described in Section~\ref{sec:code-gen:global-decls}, in the
+  order in which they appear in the source file.  Include declarations
+  may appear anywhere in the file, and they are translated to
+  directives to include the corresponding assembly files.
 %
 \item Issue assembler directives to include the AppleCore support code
   (for example, the code needed to do arithmetic operations).
@@ -690,7 +690,7 @@ the source file as follows:
 
 \bfhead{Include mode.} In include mode, the compiler just translates
 the declarations in the source file as described in
-Section~\ref{sec:code-gen:declarations}.  No include directive or
+Section~\ref{sec:code-gen:global-decls}.  No include directive or
 \kwd{JMP} instruction to the first function is emitted.  In include
 mode, the source program may not contain any include directives, and
 it is a compile-time error for one to appear.
@@ -707,8 +707,61 @@ compiler cannot check this.  If a symbol used in one of the assembled
 files is not defined in any of the files (or if any symbol is multiply
 defined), then an assembler error will result.
 
-\subsection{Declarations}
-\label{sec:code-gen:declarations}
+\subsection{Global Declarations}
+\label{sec:code-gen:global-decls}
+
+Global declarations are translated as follows, in the order in which
+they appear in the source file.
+
+\bfhead{Constant declarations.} The compiler (1) evaluates the
+expression of the constant declaration to a numeric constant according
+to the rules in Section~\ref{sec:code-gen:expressions} and (2)
+associates this value with the name given in the constant declaration.
+The compiler may, but need not, use assembler directives such as
+\kwd{.EQ} to implement this association (generally such directives
+work only for 1- or 2-byte values).  Alternatively, the compiler can
+materialze the value (or the component bytes of the value) at every
+use of the name.
+
+\bfhead{Data declarations.} (1) If an expression appears before the
+semicolon, then the compiler evaluates the expression to a numeric
+constant according to the rules in
+Section~\ref{sec:code-gen:expressions} and generates code to store the
+bytes of the constant in little-endian order.  (2) If a string
+constant appears before the semicolon, then the compiler generates
+assembly code to store the bytes of the string constant in
+left-to-right order.  (a) If no backslash \kwd{\bs} follows the string
+constant, then the compiler adds a terminating NUL (\$00) character
+after the last byte of string data. (b) If a backslash follows the
+string constant, then no NUL character is added.  (3) In any case, if
+an identifier appears after the keyword \kwd{DATA}, then the compiler
+associates the name with the lowest address in which data is stored.
+
+\bfhead{Global variable declarations.} The compiler sets aside a
+number of bytes of storage equal to the declared size of the variable
+and associates the identifier appearing after \kwd{VAR} with the
+lowest address of this storage.  If an expression appears before the
+semicolon, then the compiler evaluates the expression to a numeric
+constant according to the rules stated in
+Section~\ref{sec:code-gen:expressions} and issues assembly code to
+fill in the storage set aside for the variable with the bytes of the
+numeric constant, in little-endian order.
+
+\bfhead{Function declarations.} (1) A function declaration is
+\emph{external} if it has no body.  An external function declaration
+does not correspond to any generated code; its signature is used only
+for checking call expressions that invoke the function.  (2) A
+function declaration with a body causes code to be generated as stated
+in Section~\ref{sec:code-gen:fn-bodies}.
+
+\bfhead{Include declarations.}  In top-level mode (see
+Section~\ref{sec:code-gen:source-files}), the compiler translates an
+include declaration into an assembler directive to include the file
+named in the string constant.  In include mode, the presence of an
+include declaration in the source file causes an error.
+
+\subsection{Function Bodies}
+\label{sec:code-gen:fn-bodies}
 
 TODO
 

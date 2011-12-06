@@ -207,24 +207,6 @@ public abstract class AssemblyWriter
 	emitAbsoluteInstruction(".IN",node.filename);
     }
 
-    public void visitConstDecl(ConstDecl node) {
-	if (!node.isExternal()) {
-	    String value = null;
-	    if (node.constant instanceof IntegerConstant) {
-		IntegerConstant numericConstant = 
-		    (IntegerConstant) node.constant;
-		value = numericConstant.valueAsHexString();
-	    }
-	    else {
-		CharConstant charConstant = 
-		    (CharConstant) node.constant;
-		value = "'" + charConstant.value + "'";
-	    }
-	    emitLabel(node.label);
-	    emitAbsoluteInstruction(".EQ",value);
-	}
-    }
-
     public void visitDataDecl(DataDecl node) 
 	throws ACCError
     {
