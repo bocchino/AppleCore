@@ -99,8 +99,8 @@ keywords, constants, and symbols.
 White space consists of any sequence of the following characters:
 space (ASCII SP, value \$20), newline (ASCII NL, value \$0A), carriage
 return (ASCII CR, value \$0D), and horizontal tab (ASCII HT, value
-\$09).  Whitespace is always useful in formatting readable programs,
-but it is syntactically irrelevant except in the following two cases:
+\$09).  Whitespace is syntactically relevant only in the following
+ways:
 %
 \begin{enumerate}
 %
@@ -165,8 +165,9 @@ or \kwd{A} through \kwd{F}.  For example, \kwd{\$1}, \kwd{\$A}, and
 \kwd{\$00FF} are valid integer constants in hexadecimal form.
 
 Integer constants represent values with up to 255 bytes of precision
-(i.e., $2^{255 \cdot 8}$).  It is a compile-time error to write an
-integer constant with a value larger than that.
+(i.e., in the range $0$ through $2^{255 \cdot 8}-1$, inclusive).  It
+is a compile-time error to write an integer constant with a value
+larger than that.
 
 \bfhead{String constants.} A string constant is a sequence of
 characters enclosed in double quotes (\kwd{"..."}).  A string constant
@@ -302,11 +303,11 @@ $$\nonterm{decl} ::= \mbox{\nonterm{const-decl} $|$
 \label{sec:syntax:declarations}
 
 \bfhead{Constant declarations.} A constant declaration consists of the
-keyword \kwd{CONST}, an identifier, an optional expression, and a
-terminating semicolon:
+keyword \kwd{CONST}, an identifier, an expression, and a terminating
+semicolon:
 %
 $$\nonterm{const-decl} ::= \mbox{\kwd{CONST} \nonterm{identifier}
-  \opt{\nonterm{expr}} \kwd{;}}$$
+  \nonterm{expr} \kwd{;}}$$
 
 \bfhead{Data declarations.} A data declaration consists of the keyword
 \kwd{DATA}, an optional identifier representing a label for the data,
@@ -421,9 +422,9 @@ $$\nonterm{expr} ::= \mbox{\nonterm{lvalue-expr} $|$
   $|$ \nonterm{unop-expr} $|$ \nonterm{numeric-const} $|$
   \nonterm{parens-expr}}$$
 %
-An lvalue expression is an expression that may appear on the
-right-hand side of a set expression.  It is an identifier, an indexed
-expression, or a register expression:
+An lvalue expression is an expression that may appear on the left-hand
+side of a set expression.  It is an identifier, an indexed expression,
+or a register expression:
 %
 $$\nonterm{lvalue-expr} ::= \mbox{\nonterm{identifier} $|$
   \nonterm{indexed-expr} $|$ \nonterm{register-expr}}$$
@@ -506,7 +507,7 @@ in the source file with its corresponding definition.  For purposes of
 these rules, a \emph{definition} is a constant declaration, data
 declaration, variable declaration, function parameter declaration, or
 function declaration.  A \emph{use} is any identifier appearing in the
-source file not as part of a definition.
+source file not as the identifier of a definition.
 
 The compiler matches definitions with uses in the following way:
 %
@@ -518,11 +519,12 @@ The compiler matches definitions with uses in the following way:
   two definitions use the same identifier, then  report an error.
 %
 \item At function scope (i.e., inside a function body), for each use
-  find the corresponding definition with the same identifier either at
-  global scope or within the function body.  If there is no
-  corresponding definition, or if any two definitions in the scope
-  consisting of the global scope plus the function body scope use the
-  same identifier, then report an error.
+  find the corresponding definition with the same identifier either in
+  the function scope.  The function scope consists of the global scope
+  together with all function parameters and local variables declared
+  in the function.  If there is no corresponding definition, or if any
+  two definitions in the scope consisting of the function scope use
+  the same identifier, then report an error.
 %
 \end{enumerate}
 
@@ -536,28 +538,36 @@ The compiler matches definitions with uses in the following way:
 %
 \item \ithead{Identifiers.} The size and signedness of an identifier
   expression come from its definition
-  (Section~\ref{sec:semantics:attr}).
+  (Section~\ref{sec:semantics:attr}).  (1) If the definition is a
+  constant declaration, then the size and signedness are identical to
+  the size and signedness of the expression appearing in the
+  declaration.  (2) If the definition is a variable declaration or
+  function parameter declaration, then (a) the size is as given in the
+  declaration, and (b) the signedness is signed if \kwd{S} appears
+  after the size, otherwise unsigned.  (3) If the definition is a data
+  declaration or function declaration, then the size is 2 and the
+  signedness is unsigned.
 %
 \item \ithead{Indexed expressions.} The size of an indexed expression
   is given by the \nonterm{size} component of the expression.  It is
-  always unsigned.  The expression being indexed (before the first
+  always unsigned.  Both the expression being indexed (before the
+  first bracket) and the index expression (immediately after the first
   bracket) must have size 1 or 2.
 %
 \item \ithead{Register expressions.} The size of a register expression
   is 1.  It is unsigned.
 %
 \item \ithead{Call expressions.} (1) The called expression (i.e., the
-  expression before the first parenthesis) must either be an
-  identifier corresponding to a function definition or evaluate to a
-  1- or 2-byte value.  (2) If the called expression corresponds to a
-  function definition, then the size and signedness are the return
-  size and signedness of the function definition (see below);
-  otherwise the size is 0 and the signedness is unsigned.  (3) Each
-  argument expression must have nonzero size.
+  expression before the first parenthesis) must be an expression of
+  size 1 or 2.  (2) If the called expression is an identifier
+  corresponding to a function declaration, then the size and
+  signedness are the return size and signedness of the function
+  definition (see below); otherwise the size is 0 and the signedness
+  is unsigned.  (3) Each argument expression must have nonzero size.
 %
 \item \ithead{Set expressions.} The size and signedness of a set
   expression come from the left-hand-side expression.  The right-hand
-  expression must have a nonzero size.
+  expression must have nonzero size.
 %
 \item \ithead{Binary operation expressions.}  For comparison
   operations, the size is 1 byte unsigned.  For shift operations, the
@@ -583,45 +593,57 @@ The compiler matches definitions with uses in the following way:
 %
 \end{itemize}
 
-\bfhead{Declarations and statements.} The following rules govern the
-size and signedness of declarations and statements:
-%
-\begin{itemize}
-%
-\item \ithead{Function return size and signedness.} The \emph{return
-  size and signedness} of a function definition are defined as
-  follows.  If a \nonterm{size} appears after the keyword \kwd{FN} in
-  the definition, then that is the size; otherwise the size is 0.  If
-  \kwd{S} appears after \nonterm{size} then the expression is signed,
-  otherwise unsigned.  
-%
-\item \ithead{Function frame size.} The \emph{frame size} of a
-  function with a body equals 2 (for the frame pointer) plus the sizes
-  of all the function parameters and local variables.  No function may
-  have a frame size of greater than 255 bytes.
-%
-\item \ithead{Return statements.} (1) No return statement may contain
-  an expression of zero size.  (2) If a function has nonzero return
-  size, and the function has a body, then (a) the body must end with a
-  return statement containing an expression, and (b) every return
-  statement appearing in the body must contain an expression.  (3) If
-  a function has return size 0, then no return statement in the
-  function body may contain an expression.
-%
-\end{itemize}
+\bfhead{Function declarations.} (1) The \emph{return size and
+  signedness} of a function declaration are defined as follows.  If a
+\nonterm{size} appears after the keyword \kwd{FN} in the definition,
+then that is the return size; otherwise the return size is 0.  If
+\kwd{S} appears after \nonterm{size} then the return signedness is
+signed, otherwise unsigned. (2) The \emph{frame size} of a function
+declaration that contains a body equals 2 (for the frame pointer) plus
+the sizes of all the function parameters and local variables.  No
+function may have a frame size of greater than 255 bytes.
+
+\bfhead{Return statements.} (1) No return statement may contain an
+expression of zero size.  (2) If a function has nonzero return size,
+and the function has a body, then (a) the body must end with a return
+statement containing an expression, and (b) every return statement
+appearing in the body must contain an expression.  (3) If a function
+has return size 0, then no return statement in the function body may
+contain an expression.
 
 
-\subsection{Function Arguments}
+\subsection{Number of Function Arguments}
+\label{sec:semantics:fn-args}
 
-TODO
+At every call expression where the called expression is an identifier
+corresponding to a function declaration, the number of arguments must
+match the number of parameters given in the declaration.
 
-\subsection{LValues}
+\subsection{Semantic LValues}
+\label{sec:semantics:lvalues}
 
-TODO
+\bfhead{Definition of semantic lvalue.}  A \emph{semantic lvalue} is
+an expression that (1) is an lvalue expression
+(Section~\ref{sec:syntax:expressions}) and (2) if it is an identifier,
+then it corresponds to a variable or function parameter declaration.
+
+\bfhead{Requirement of semantic lvalues.}  (1) A semantic lvalue is
+required in the following places: (a) on the left-hand side of a set
+expression; and (b) as the operand of an address (\kwd{@}), increment
+(\kwd{INCR}), or decrement (\kwd{DECR}) operator.  If an expression
+that is not a semantic lvalue appears in any of these places, then a
+compile-time error results.  (2) A compile-time error results if a
+register expression appears as the operand of an address (\kwd{@})
+operator.
+
 
 \subsection{Expression Statements}
+\label{sec:semantics:expr-stmts}
 
-TODO
+The expression contained in an expression statement have an effect:
+that is, it must be a set, call, \kwd{INCR}, or \kwd{DECR} expression.
+This check traps the error of writing \kwd{X = 2;} (comparison) when
+you meant \kwd{SET X = 2;} (assignment).
 
 \subsection{Expressions Appearing at Global Scope}
 
