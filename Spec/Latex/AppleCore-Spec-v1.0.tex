@@ -9,7 +9,7 @@
 \author{Robert L. Bocchino Jr.\\
 Pittsburgh, PA}
 %
-%\date{Revised December 4, 2011}
+\date{Revised December 6, 2011}
 
 \maketitle
 
@@ -17,7 +17,7 @@ Pittsburgh, PA}
 
 AppleCore is a C-like programming language for the Apple II series of
 computers.  A cross-compiler from Java (e.g., running on a Mac or PC)
-to the Apple II is under development; the goal is eventually to write
+to the Apple II is under development; eventually I would like to write
 an AppleCore compiler in AppleCore, thereby providing a compiler that
 works on the Apple II.
 
@@ -70,22 +70,22 @@ are impossible to say in Applesoft or other high-level languages
 without assembly-language wrapper code.
 
 The main things that AppleCore lacks, and that Applesoft provides, are
-automatic memory management and support for floating-point
-computation.  I've left out memory management to keep things very
-simple.  Basically, as a programmer I can't live happily without
-control abstractions (loops and functions); but once I have them I'm
-perfectly content to synthesize data abstractions on my own.  If this
-becomes too much of a pain, a library for memory management can be
-added without difficulty, after the fashion of C.  (Applesoft actually
-provides garbage collection, but it works very poorly, causing the
-machine to seize up when the memory limit is reached.)  I've left out
-floating-point computation mainly because I'm most interested in text
-processing and integer computations; but again, FP computations can be
-added without too much difficulty.  In the mean time, one can fake FP
-computations by encoding FP literals as string data and calling into
-the Applesoft FP routines to convert from strings to FP numbers and
-back, and to compute using the FP numbers.  Applesoft is actually
-quite good at this.
+automatic memory management and floating-point computation.  I've left
+out memory management to keep things very simple.  Basically, as a
+programmer I can't live happily without control abstractions (loops
+and functions); but once I have them I'm perfectly content to
+synthesize data abstractions on my own.  If this becomes too much of a
+pain, a library for memory management can be added without difficulty,
+after the fashion of C.  (Applesoft actually provides garbage
+collection, but it works very poorly, causing the machine to seize up
+when the memory limit is reached.)  I've left out floating-point
+computation mainly because I'm most interested in text processing and
+integer computations; but again, FP computations can be added without
+too much difficulty.  In the mean time, one can fake FP computations
+by encoding FP literals as string data and calling into the Applesoft
+FP routines to convert from strings to FP numbers and back, and to
+compute using the FP numbers.  Applesoft is actually quite good at
+this.
 
 \section{Lexical Structure}
 
@@ -237,10 +237,10 @@ operator) \\
 \subsection{Comments}
 \label{sec:lexical:comments}
 
-The character \kwd{\#} in the source file indicates a comment; all
-text to the next end of line (or end of file, if there is no end of
-line) are ignored by the lexer.  Multiline comments are indicated by
-preceding each line with \kwd{\#}.
+The character \kwd{\#} indicates a comment; all text to the next end
+of line (or end of file, if there is no end of line) are ignored by
+the lexer.  Multiline comments are indicated by preceding each line
+with \kwd{\#}.
 
 \section{Syntax}
 \label{sec:syntax}
@@ -280,7 +280,7 @@ The syntax description below uses the following conventions:
 \label{sec:syntax:source-files}
 
 The basic syntactic unit of an AppleCore program is a \emph{source
-  file}, i.e., an input file provided to the AppleCore compiler for
+  file}, i.e., an input file presented to the AppleCore compiler for
 compilation.  The compiler translates the source file into an assembly
 file which is then linked with other assembly files as discussed in
 Section~\ref{sec:code-gen:source-files} to form a complete executable
@@ -291,6 +291,10 @@ declarations:
 %
 $$\nonterm{source-file} ::= \nonterm{decl}^*$$
 %
+
+\subsection{Declarations}
+\label{sec:syntax:declarations}
+
 A declaration is a constant declaration, a data declaration, a
 variable declaration, a function declaration, or an include
 declaration:
@@ -298,9 +302,6 @@ declaration:
 $$\nonterm{decl} ::= \mbox{\nonterm{const-decl} $|$
   \nonterm{data-decl} $|$ \nonterm{var-decl} $|$ \nonterm{fn-decl}
     $|$ \nonterm{include-decl}}$$
-
-\subsection{Declarations}
-\label{sec:syntax:declarations}
 
 \bfhead{Constant declarations.} A constant declaration consists of the
 keyword \kwd{CONST}, an identifier, an expression, and a terminating
@@ -421,15 +422,16 @@ $$\nonterm{expr} ::= \mbox{\nonterm{lvalue-expr} $|$
   \nonterm{call-expr} $|$ \nonterm{set-expr} $|$ \nonterm{binop-expr}
   $|$ \nonterm{unop-expr} $|$ \nonterm{numeric-const} $|$
   \nonterm{parens-expr}}$$
-%
-An lvalue expression is an expression that may appear on the left-hand
-side of a set expression.  It is an identifier, an indexed expression,
-or a register expression:
+
+\bfhead{Lvalue expressions.}  An lvalue expression is an expression
+that may appear on the left-hand side of a set expression.  It is an
+identifier, an indexed expression, or a register expression:
 %
 $$\nonterm{lvalue-expr} ::= \mbox{\nonterm{identifier} $|$
   \nonterm{indexed-expr} $|$ \nonterm{register-expr}}$$
-%
-A numeric constant is an integer or character constant:
+
+\bfhead{Numeric constants.}  A numeric constant is an integer or
+character constant:
 %
 $$\nonterm{numeric-const} ::= \mbox{\nonterm{integer-const} $|$
   \nonterm{char-const}}$$
