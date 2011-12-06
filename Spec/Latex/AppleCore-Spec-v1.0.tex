@@ -185,10 +185,9 @@ string constant
 %
 $$\kwd{"Hello, world!\bs\$0D"}$$
 %
-represents a null-terminated string consisting of the characters
-\kwd{Hello, world!} followed by a CR character.  Similarly, the quote
-character \kwd{"} can be embedded in a string constant with the
-sequence \kwd{\bs\$22}.
+represents a string consisting of the characters \kwd{Hello, world!}
+followed by a CR character.  Similarly, the quote character \kwd{"}
+can be embedded in a string constant with the sequence \kwd{\bs\$22}.
 
 \bfhead{Character constants.} A character constant consists of a
 single-quote character \kwd{'}, followed by a printable ASCII
@@ -287,13 +286,13 @@ Section~\ref{sec:code-gen:source-files} to form a complete executable
 program.
 
 An AppleCore source file is given by zero or more
-declarations:
+declarations (Section~\ref{sec:syntax:decls}):
 %
 $$\nonterm{source-file} ::= \nonterm{decl}^*$$
 %
 
 \subsection{Declarations}
-\label{sec:syntax:declarations}
+\label{sec:syntax:decls}
 
 A declaration is a constant declaration, a data declaration, a
 variable declaration, a function declaration, or an include
@@ -768,16 +767,16 @@ include declaration in the source file causes an error.
 \subsection{Function Bodies}
 \label{sec:code-gen:fn-bodies}
 
-The AppleCore language definition assumes a standard C-style call
-stack, such that a new frame appears at the top of the stack for each
-function call, and the frame is popped at the end of the call.  For
+The AppleCore language definition assumes a C-style function call
+stack as specified in Section~\ref{sec:code-gen:program-stack}.  For
 each function declaration that has a body, the compiler does the
 following:
 %
 \begin{itemize}
 %
-\item Generate code to reserve space on the call stack for the
-  function parameters and local variables.
+\item Generate code to reserve slots on the call stack for the
+  function parameters, local variables, and saved registers (see
+  Section~\ref{sec:code-gen:expressions}).
 %
 \item For each local variable declaration that includes an initializer
   expression, generate code to evaluate the expression according to
@@ -836,8 +835,9 @@ the statement (Section~\ref{sec:code-gen:expressions}).
 \subsection{Expressions}
 \label{sec:code-gen:expressions}
 
-The compiler generates code to do the following for each program
-expression.
+We define the semantics of expressions using an expression stack, as
+specified in Section~\ref{sec:code-gen:program-stack}.  The compiler
+generates code to do the following for each program expression.
 
 \bfhead{Identifiers.} TODO
 
@@ -904,6 +904,53 @@ match.  The following rules apply to size adjustment:
   source value is 1).
 %
 \end{enumerate}
+
+\subsection{Program Stack}
+\label{sec:code-gen:program-stack}
+
+This specification requires that the implementation provide three
+stacks for use at runtime, collectively referred to as the
+\emph{program stack}:
+%
+\begin{enumerate}
+%
+\item A C-style \emph{call stack}, such that a new frame appears at
+  the top of the stack for each function call, and the frame is popped
+  at the end of the call.  This stack is used in generating function
+  call code, as specified in Section~\ref{sec:code-gen:fn-bodies}.
+%
+\item An \emph{expression stack} for use during expression evaluation
+  as specified in Section~\ref{sec:code-gen:expressions}.
+%
+\item An \emph{allocation stack} that supports an \kwd{ALLOCATE}
+  library function that works as follows.  (1) \kwd{ALLOCATE} is only
+  ever called in a function scope, when no temporary expression result
+  is on the expression stack; otherwise the results are undefined.
+  (2) When \kwd{ALLOCATE} is called, it is passed a two-byte size
+  value $s$.  (3) (a) If there is enough space on the stack, then
+  \kwd{ALLOCATE} returns a pointer to $s$ bytes on the stack. (b) If
+  there are not $s$ bytes remaining on the stack, then the results are
+  undefined. (4) The $s$ bytes pointed to by the result of the
+  \kwd{ALLOCATE} call remain valid (i.e., are not modified except by
+  user-written code) during the lifetime of the call stack frame for
+  the function in which the \kwd{ALLOCATE} call occured.  (5) At the
+  end of the function in which the \kwd{ALLOCATE} call occurred, the
+  memory is deallocated and may be reused as program stack storage.
+%
+\end{enumerate}
+
+The compiler may provide this stack functionality in any way that is
+feasible.  Typically, the generated code would maintain its own
+two-byte stack pointer, because the native Apple II stack located at
+addresses \$200 through \$2FF is too small to serve as the program
+stack for this language.  However, this specification does not mandate
+any particular stack size; the actual available stack size depends on
+both the compiler implementation and the program memory requirements
+(for example, whether the graphics and/or language card areas are
+available for program heap and stack data).  Also, typically the same
+physical stack would be used for all three logical stacks (and the
+logical stacks have been specified so that this is possible), but this
+is not a requirement.
 
 
 \end{document}
