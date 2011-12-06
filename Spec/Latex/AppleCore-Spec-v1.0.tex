@@ -775,8 +775,9 @@ following:
 \begin{itemize}
 %
 \item Generate code to reserve slots on the call stack for the
-  function parameters, local variables, and saved registers (see
-  Section~\ref{sec:code-gen:expressions}).
+  function parameters, local variables, and saved registers.  The
+  saved registers are all the registers appearing in register
+  expressions in the function body.
 %
 \item For each local variable declaration that includes an initializer
   expression, generate code to evaluate the expression according to
@@ -804,33 +805,38 @@ The compiler generates code to do the following for each program
 statement.
 
 \bfhead{If statements.} Evaluate the conditional expression
-(Section~\ref{sec:code-gen:expressions}) and mask off all but the
-lowest bit to get the corresponding Boolean value
-(Section~\ref{sec:code-gen:boolean}).  If the result is 1 (true), then
-execute the true part.  If the result is 0 (false), either do nothing
-(if there is no optional \kwd{ELSE} clause) or execute the statement
-in the \kwd{ELSE} clause (if one is provided).
+(Section~\ref{sec:code-gen:expressions}), pop the result off the
+expression stack, and mask off all but the lowest bit of the result to
+get the corresponding Boolean value
+(Section~\ref{sec:code-gen:boolean}).  If the Boolean value of the
+result is 1 (true), then execute the true part.  If the Boolean value
+of the result is 0 (false), either do nothing (if there is no optional
+\kwd{ELSE} clause) or execute the statement in the \kwd{ELSE} clause
+(if one is provided).
 
 \bfhead{While statements.} Evaluate the conditional expression
-(Section~\ref{sec:code-gen:expressions}) and mask off all but the
-lowest bit to get the corresponding Boolean value
-(Section~\ref{sec:code-gen:boolean}).  If the result is 1 (true), then
-execute the body of the loop and repeat the whole process.  If the
-result is 0 (false), then do nothing.
+(Section~\ref{sec:code-gen:expressions}), pop the result off the
+expression stack, and mask off all but the lowest bit of the result to
+get the corresponding Boolean value
+(Section~\ref{sec:code-gen:boolean}).  If the Boolean value of the
+result is 1 (true), then execute the body of the loop and repeat the
+whole process.  If the Boolean value of the result is 0 (false), then
+do nothing.
 
 \bfhead{Return statements.} (1) If the statement contains an
 expression, then evaluate the expression
 (Section~\ref{sec:code-gen:expressions}).  (2) Pop the current frame
 off the call stack and restore the parent frame.  (3) If the statement
-contains an expression, then push the result of evaluating the
-expression on the stack so it can be accessed by the caller
-expression.
+contains an expression, then pop the result off the expression stack
+and push it on the call stack so it can be accessed by the caller
+expression on return.
 
 \bfhead{Block statements.} Execute each statement of the block in the
 order in which it appears in the program text.
 
-\bfhead{Expression statements.} Execute the expression contained in
-the statement (Section~\ref{sec:code-gen:expressions}).
+\bfhead{Expression statements.} Evaluate the expression contained in
+the statement (Section~\ref{sec:code-gen:expressions}) and pop the
+result off the expression stack.
 
 \subsection{Expressions}
 \label{sec:code-gen:expressions}
@@ -843,7 +849,10 @@ generates code to do the following for each program expression.
 
 \bfhead{Indexed expressions.} TODO
 
-\bfhead{Register expressions.} TODO
+\bfhead{Register expressions.} Evaluation of a register expression
+causes the current value stored in the function call stack slot for
+that register (Section~\ref{sec:code-gen:fn-bodies}) to be pushed on
+the expression stack.
 
 \bfhead{Call expressions.} TODO
 
@@ -855,7 +864,9 @@ generates code to do the following for each program expression.
 
 \bfhead{Numeric constants.} TODO
 
-\bfhead{Parentheses expressions.} TODO
+\bfhead{Parentheses expressions.} Evaluation of a parentheses
+expression is carried out by evaluating the expression inside the
+paretheses.
 
 
 \subsection{Boolean Values}
