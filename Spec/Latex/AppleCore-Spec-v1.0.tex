@@ -856,7 +856,39 @@ the expression stack.
 
 \bfhead{Call expressions.} TODO
 
-\bfhead{Set expressions.} TODO
+\bfhead{Set expressions.} Evaluation of a set expression proceeds as
+follows.  (1) Evaluate the right-hand side expression.  (2) Compute
+the address of left-hand side expression, which must be a semantic
+lvalue (Section~\ref{sec:semantics:lvalues}). (a) If the left-hand
+side expression is an identifier corresponding to a global variable,
+then its address is the lowest address of the global storage assigned
+to that variable (Section~\ref{sec:code-gen:global-decls}). (b) If the
+left-hand side expression is an identifier coresponding to a function
+parameter or local variable, then its address is the lowest address of
+the function call stack slot assigned to that parameter or variable
+(Section~\ref{sec:code-gen:fn-bodies}).  (c) If the left-hand side
+expression is an indexed expression, then its address is computed by
+evaluating the base expression, evaluating the offset expression,
+adding them, and adjusting the size to 2 if necessary
+(Section~\ref{sec:code-gen:size-adjustment}). (d) If the left-hand
+side expression is a register expression, then its address is the
+lowest address of the function call stack slot assigned to that
+register (Section~\ref{sec:code-gen:fn-bodies}).  (3) Pop the result
+of step (1) off the stack and copy the bytes into memory starting at
+the address computed in step (2), using size adjustment if necessary
+(Section~\ref{sec:code-gen:size-adjustment}). (4) Push the
+size-adjusted value on the stack as the result.
+
+Notice that step (2)(c) properly handles sign extension of addresses.
+For example, the one-byte signed value $-151$, when used as an
+address, is sign extended to \$FF69.
+
+Notice also that for implementation efficiency reasons the right-hand
+side of the set expression is evaluated first.  In particular, the
+expression \kwd{SET X[0,1]=INCR X} is evaluated by \emph{first}
+incrementing \kwd{X} and \emph{then} computing the destination
+address, so the effect is to store the original value of \kwd{X} plus
+1 at the location given by the orignal value of \kwd{X} plus 1.
 
 \bfhead{Binary operation expressions.} TODO
 
