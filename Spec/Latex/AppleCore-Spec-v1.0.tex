@@ -862,8 +862,8 @@ generates code to do the following for each program expression.
 \label{sec:code-gen:boolean}
 
 The AppleCore language has no special Boolean type; as in C, ordinary
-integers function as Boolean values.  However, AppleCore differs from
-C in what values it treats as ``true'' and ``false.''  In AppleCore,
+integers serve as Boolean values.  However, AppleCore differs from C
+in what values it treats as ``true'' and ``false.''  In AppleCore,
 only the lowest-order bit is relevant in testing the Boolean value of
 an integer: integers whose low bit is 1 (i.e., odd integers) all count
 as ``true,'' while integers whose low bit is 0 (i.e., even integers)
