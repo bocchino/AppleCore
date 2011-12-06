@@ -527,7 +527,8 @@ The compiler matches definitions with uses in the following way:
   the same identifier, then report an error.
 %
 \end{enumerate}
-
+%
+Definitions need not precede their uses in the source file.
 
 \subsection{Sizes and Signedness}
 
@@ -673,9 +674,9 @@ the source file as follows:
 \item Issue some code (or an assembler directive to include the code)
   that sets up the program stack.
 %
-\item Issue a \kwd{JMP} instruction to the first function with a body
-  that apepars in the file.  There must be at least one such function,
-  and it is a compile-time error if not.
+\item Issue a \kwd{JMP} instruction to (or fall in to) the first
+  function with a body that appears in the file.  There must be at
+  least one such function, and it is a compile-time error if not.
 %
 \item Translate all global declarations in the source file as
   described in Section~\ref{sec:code-gen:global-decls}, in the
@@ -710,8 +711,10 @@ defined), then an assembler error will result.
 \subsection{Global Declarations}
 \label{sec:code-gen:global-decls}
 
-Global declarations are translated as follows, in the order in which
-they appear in the source file.
+Global declarations are translated as stated below.  To the extent
+that translation produces actual bytes of machine code, data, or
+reserved storage, the bytes must be laid out in the order in which the
+translated constructs are encountered in the source file.
 
 \bfhead{Constant declarations.} The compiler (1) evaluates the
 expression of the constant declaration to a numeric constant according
@@ -745,12 +748,12 @@ semicolon, then the compiler evaluates the expression to a numeric
 constant according to the rules stated in
 Section~\ref{sec:code-gen:expressions} and issues assembly code to
 fill in the storage set aside for the variable with the bytes of the
-numeric constant, in little-endian order.
+numeric constant, in little-endian order, using size adjustment (if
+necessary) as stated in Secton~\ref{sec:code-gen:size-adjustment}.
 
-\bfhead{Function declarations.} (1) A function declaration is
-\emph{external} if it has no body.  An external function declaration
-does not correspond to any generated code; its signature is used only
-for checking call expressions that invoke the function.  (2) A
+\bfhead{Function declarations.} (1) A function declaration with no
+body does not correspond to any generated code; its signature is used
+only for checking call expressions that invoke the function.  (2) A
 function declaration with a body causes code to be generated as stated
 in Section~\ref{sec:code-gen:fn-bodies}.
 
@@ -763,26 +766,142 @@ include declaration in the source file causes an error.
 \subsection{Function Bodies}
 \label{sec:code-gen:fn-bodies}
 
-TODO
+The AppleCore language definition assumes a standard C-style call
+stack, such that a new frame appears at the top of the stack for each
+function call, and the frame is popped at the end of the call.  For
+each function declaration that has a body, the compiler does the
+following:
+%
+\begin{itemize}
+%
+\item Generate code to reserve space on the call stack for the
+  function parameters and local variables.
+%
+\item For each local variable declaration that includes an initializer
+  expression, generate code to evaluate the expression according to
+  the rules in Section~\ref{sec:code-gen:expressions} and assign the
+  resulting value into the stack slot for the variable, using size
+  adjustment (if necessary) as stated in
+  Section~\ref{sec:code-gen:size-adjustment}.
+%
+\item For each statement of the function body, generate code as stated
+  in Section~\ref{sec:code-gen:statements}.  The statements of a
+  function body are executed in sequence, in the order in which they
+  appear in the program text.
+%
+\item If the function body does not end in a return statement,
+  generate code to pop the frame off the stack and restore the parent
+  frame.
+%
+\end{itemize}
+
 
 \subsection{Statements}
 \label{sec:code-gen:statements}
 
-TODO
+The compiler generates code to do the following for each program
+statement.
+
+\bfhead{If statements.} Evaluate the conditional expression
+(Section~\ref{sec:code-gen:expressions}) and mask off all but the
+lowest bit to get the corresponding Boolean value
+(Section~\ref{sec:code-gen:boolean}).  If the result is 1 (true), then
+execute the true part.  If the result is 0 (false), either do nothing
+(if there is no optional \kwd{ELSE} clause) or execute the statement
+in the \kwd{ELSE} clause (if one is provided).
+
+\bfhead{While statements.} Evaluate the conditional expression
+(Section~\ref{sec:code-gen:expressions}) and mask off all but the
+lowest bit to get the corresponding Boolean value
+(Section~\ref{sec:code-gen:boolean}).  If the result is 1 (true), then
+execute the body of the loop and repeat the whole process.  If the
+result is 0 (false), then do nothing.
+
+\bfhead{Return statements.} (1) If the statement contains an
+expression, then evaluate the expression
+(Section~\ref{sec:code-gen:expressions}).  (2) Pop the current frame
+off the call stack and restore the parent frame.  (3) If the statement
+contains an expression, then push the result of evaluating the
+expression on the stack so it can be accessed by the caller
+expression.
+
+\bfhead{Block statements.} Execute each statement of the block in the
+order in which it appears in the program text.
+
+\bfhead{Expression statements.} Execute the expression contained in
+the statement (Section~\ref{sec:code-gen:expressions}).
 
 \subsection{Expressions}
 \label{sec:code-gen:expressions}
 
-TODO
+The compiler generates code to do the following for each program
+expression.
+
+\bfhead{Identifiers.} TODO
+
+\bfhead{Indexed expressions.} TODO
+
+\bfhead{Register expressions.} TODO
+
+\bfhead{Call expressions.} TODO
+
+\bfhead{Set expressions.} TODO
+
+\bfhead{Binary operation expressions.} TODO
+
+\bfhead{Unary operation expressions.} TODO
+
+\bfhead{Numeric constants.} TODO
+
+\bfhead{Parentheses expressions.} TODO
 
 
-\begin{comment}
-If no backslash character appears after the second double-quote, then
-the string is null-terminated:  in addition to storing the characters
-appearing in the double-quotes, it stores a terminating NUL character
-(value \$00).  If a backslash character appears after the second
-double-quote, then the string is unterminated:  only the characters
-appearing between the double-quotes are stored.
-\end{comment}
+\subsection{Boolean Values}
+\label{sec:code-gen:boolean}
+
+The AppleCore language has no special Boolean type; as in C, ordinary
+integers function as Boolean values.  However, AppleCore differs from
+C in what values it treats as ``true'' and ``false.''  In AppleCore,
+only the lowest-order bit is relevant in testing the Boolean value of
+an integer: integers whose low bit is 1 (i.e., odd integers) all count
+as ``true,'' while integers whose low bit is 0 (i.e., even integers)
+all count as ``false.''  This mechanism allows bitwise \kwd{NOT} to
+function as logical \kwd{NOT}, without any need for a separate logical
+negation operator, and that keeps the language simple.  Also, the
+constants 1 and 0 can function as ``true'' and ``false.''  These names
+and values are not built into the language, but one can easily declare
+constants \kwd{TRUE} and \kwd{FALSE} with the values 1 and 0.
+
+\subsection{Size Adjustment}
+\label{sec:code-gen:size-adjustment}
+
+\emph{Size adjustment} applies whenever the result of evaluating an
+expression (the source value) is assigned into a semantic lvalue (the
+target value) and the sizes of the source and target values do not
+match.  The following rules apply to size adjustment:
+%
+\begin{enumerate}
+%
+\item If the source value size is greater than the target value size,
+  then high-order bytes of the source value are \emph{truncated}: only
+  the low-order bytes of the source value are stored, up to the number
+  of bytes required by the target value.
+%
+\item If the source value size is smaller than the target value size,
+  and the source value is unsigned, then the source value is
+  \emph{zero extended}:  the bytes of the source value form the
+  low-order bytes of the target value, and zeros are used to fill the
+  rest of the bytes of the target value.
+%
+\item If the source value size is smaller than the target value size,
+  and the source value is signed, then the source value is \emph{sign
+    extended}: the bytes of the source value form the low-order bytes
+  of the target value, and the rest of the bytes of the target value
+  are filed with either all 0 bits (if the high-order bit of the
+  source value is 0) or all 1 bits (if the high-order bit of the
+  source value is 1).
+%
+\end{enumerate}
+
 
 \end{document}
