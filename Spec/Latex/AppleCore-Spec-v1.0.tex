@@ -520,12 +520,11 @@ The compiler matches definitions with uses in the following way:
   two definitions use the same identifier, then  report an error.
 %
 \item At function scope (i.e., inside a function body), for each use
-  find the corresponding definition with the same identifier either in
-  the function scope.  The function scope consists of the global scope
-  together with all function parameters and local variables declared
-  in the function.  If there is no corresponding definition, or if any
-  two definitions in the scope consisting of the function scope use
-  the same identifier, then report an error.
+  find the corresponding definition with the same identifier in the
+  function scope, which consists of the global scope together with all
+  function parameters and local variables declared in the function.
+  If there is no corresponding definition, or if any two definitions
+  in the function scope use the same identifier, then report an error.
 %
 \end{enumerate}
 %
