@@ -532,6 +532,7 @@ The compiler matches definitions with uses in the following way:
 Definitions need not precede their uses in the source file.
 
 \subsection{Sizes and Signedness}
+\label{sec:semantics:size}
 
 \bfhead{Expressions.} Every expression is given a \emph{size} and a
 \emph{signedness}, computed as follows:
@@ -825,11 +826,10 @@ do nothing.
 
 \bfhead{Return statements.} (1) If the statement contains an
 expression, then evaluate the expression
-(Section~\ref{sec:code-gen:expressions}).  (2) Pop the current frame
-off the call stack and restore the parent frame.  (3) If the statement
-contains an expression, then pop the result off the expression stack
-and push it on the call stack so it can be accessed by the caller
-expression on return.
+(Section~\ref{sec:code-gen:expressions}) and ensure that it appears at
+the top of the expression stack
+(Section~\ref{sec:code-gen:program-stack}) on function return.  (2)
+Pop the current frame off the call stack and restore the parent frame.
 
 \bfhead{Block statements.} Execute each statement of the block in the
 order in which it appears in the program text.
@@ -845,61 +845,128 @@ We define the semantics of expressions using an expression stack, as
 specified in Section~\ref{sec:code-gen:program-stack}.  The compiler
 generates code to do the following for each program expression.
 
-\bfhead{Identifiers.} TODO
+\bfhead{Identifiers.} (1) If the identifier is a semantic lvalue
+(Section~\ref{sec:semantics:lvalues}), then compute its address as
+specified in Section~\ref{sec:code-gen:lvalues} and get a number of
+bytes equal to the size of the right-hand side
+(Section~\ref{sec:semantics:size}), starting at that address.  Push
+those bytes on the stack, using size adjustment if necessary
+(Section~\ref{sec:code-gen:size-adjustment}) to generate a result that
+has a number of bytes equal to the left-hand expression size. (2) If
+the identifier corresponds to a numeric constant declaration, then
+push the bytes of the value associated with the declaration
+(Section~\ref{sec:code-gen:global-decls}) on the stack in
+little-endian order.  (3) If the identifier corresponds to a data
+declaration, then push the two-byte address associated with the
+identifer (Section~\ref{sec:code-gen:global-decls}) on the stack in
+little-endian order.
 
-\bfhead{Indexed expressions.} TODO
+\bfhead{Indexed expressions.} (1) Compute the address of the indexed
+expression as stated in Section~\ref{sec:code-gen:lvalues}.  (2) Get a
+number of bytes equal to the size specified in the expression,
+starting at that address, and push them on the stack.
 
-\bfhead{Register expressions.} Evaluation of a register expression
-causes the current value stored in the function call stack slot for
-that register (Section~\ref{sec:code-gen:fn-bodies}) to be pushed on
-the expression stack.
+\bfhead{Register expressions.} Push the one-byte value stored in the
+function call stack slot for that register
+(Section~\ref{sec:code-gen:fn-bodies}) on the expression stack.
 
-\bfhead{Call expressions.} TODO
+\bfhead{Call expressions.} (1) If the called expression is an
+identifier corresponding to a defined function then do the following.
+(a) Evaluate each argument and push it on the stack, adjusting the
+argument sizes (Section~\ref{sec:code-gen:size-adjustment}) as
+necessary to them to the parameter sizes specified in the function
+definition. (b) Save the frame pointer on the stack and adjust the
+frame pointer for the new frame. (c) Do a \kwd{JSR} to the code for
+the function body (Section~\ref{sec:code-gen:fn-bodies}).  (2) If the
+called expression is an identifier corresponding to a constant
+declaration or data declaration, then restore all the saved registers
+(Section~\ref{sec:code-gen:fn-bodies}) to the values saved in their
+slots on the stack, \kwd{JSR} to the value corresponding to the
+declaration (Section~\ref{sec:code-gen:global-decls}), and save all
+the saved registers to their slots.  Restoring and saving the
+registers in this way lets the AppleCore program communicate with
+assembly language routines (such as those in the System Monitor) that
+do their I/O through the 6502 registers.  (4) If the called expression
+is an identifier corresponding to a function parameter or variable,
+then evaluate the expression, pop the result off the stack, and
+\kwd{JSR} to an indirect \kwd{JMP} to the address, restoring and
+saving the registers as in step (3).
 
-\bfhead{Set expressions.} Evaluation of a set expression proceeds as
-follows.  (1) Evaluate the right-hand side expression.  (2) Compute
-the address of left-hand side expression, which must be a semantic
-lvalue (Section~\ref{sec:semantics:lvalues}). (a) If the left-hand
-side expression is an identifier corresponding to a global variable,
-then its address is the lowest address of the global storage assigned
-to that variable (Section~\ref{sec:code-gen:global-decls}). (b) If the
-left-hand side expression is an identifier coresponding to a function
-parameter or local variable, then its address is the lowest address of
-the function call stack slot assigned to that parameter or variable
-(Section~\ref{sec:code-gen:fn-bodies}).  (c) If the left-hand side
-expression is an indexed expression, then its address is computed by
-evaluating the base expression, evaluating the offset expression,
-adding them, and adjusting the size to 2 if necessary
-(Section~\ref{sec:code-gen:size-adjustment}). (d) If the left-hand
-side expression is a register expression, then its address is the
-lowest address of the function call stack slot assigned to that
-register (Section~\ref{sec:code-gen:fn-bodies}).  (3) Pop the result
-of step (1) off the stack and copy the bytes into memory starting at
-the address computed in step (2), using size adjustment if necessary
-(Section~\ref{sec:code-gen:size-adjustment}). (4) Push the
-size-adjusted value on the stack as the result.
+\bfhead{Set expressions.}  (1) Evaluate the right-hand side
+expression, adjusting the size if necessary
+(Section~\ref{sec:code-gen:size-adjustment}) to conform to the size of
+the left-hand side expression.  (2) The left-hand side expression must
+be a semantic lvalue (Section~\ref{sec:semantics:lvalues}). Compute
+its address as specified in Section~\ref{sec:code-gen:lvalues}.  (3)
+Copy the result of step (1) into memory starting at the address
+computed in step (2), leaving it on the stack as the result.
 
-Notice that step (2)(c) properly handles sign extension of addresses.
-For example, the one-byte signed value $-151$, when used as an
-address, is sign extended to \$FF69.
-
-Notice also that for implementation efficiency reasons the right-hand
-side of the set expression is evaluated first.  In particular, the
-expression \kwd{SET X[0,1]=INCR X} is evaluated by \emph{first}
+Notice that the right-hand side of the set expression is evaluated
+first; this is for implementation efficiency reasons.  In particular,
+the expression \kwd{SET X[0,1]=INCR X} is evaluated by \emph{first}
 incrementing \kwd{X} and \emph{then} computing the destination
 address, so the effect is to store the original value of \kwd{X} plus
 1 at the location given by the orignal value of \kwd{X} plus 1.
 
-\bfhead{Binary operation expressions.} TODO
+\bfhead{Binary operation expressions.} \ithead{Shift operations
+  (\kwd{<<} and \kwd{>>}).} Evaluate the left-hand side, evaluate the
+right-hand side, pop the right-hand side, and shift the left-hand side
+value (which is the result on the top of the stack) by a number of
+bytes equal to the right-hand side value.  In the case of a right
+shift, the shift is signed (arithmetic) if the left-hand side
+expression is signed; otherwise it is logical.
 
-\bfhead{Unary operation expressions.} TODO
+\ithead{Arithmetic operations (\kwd{*}, \kwd{/}, \kwd{+}, and
+  \kwd{-}).} ...
 
-\bfhead{Numeric constants.} TODO
+\ithead{Comparison operations (\kwd{=}, \kwd{>}, \kwd{<}, \kwd{>=},
+  and \kwd{<=}).} ...
 
-\bfhead{Parentheses expressions.} Evaluation of a parentheses
-expression is carried out by evaluating the expression inside the
+\ithead{Bitwise operations (\kwd{AND}, \kwd{OR}, and \kwd{XOR}).}  ...
+
+\bfhead{Unary operation expressions.} \ithead{Dereference (\kwd{@}).}
+...
+
+\ithead{Negation (\kwd{-}) and bitwise not (\kwd{NOT}).} ...
+
+\ithead{Increment (\kwd{INCR}) and decrement (\kwd{DECR}).} ...
+
+\bfhead{Numeric constants.} Push the bytes of the value associated
+with the declaration (Section~\ref{sec:code-gen:global-decls}) on the
+stack in little-endian order.
+
+\bfhead{Parentheses expressions.} Evaluate the expression inside the
 paretheses.
 
+\subsection{Computation of Address for Semantic LValues}
+\label{sec:code-gen:lvalues}
+
+Computation of the address of a semantic lvalue \nonterm{expr} works
+as follows:
+%
+\begin{enumerate}
+%
+\item If \nonterm{expr} is an identifier corresponding to a global
+  variable, then its address is the lowest address of the global
+  storage assigned to that variable
+  (Section~\ref{sec:code-gen:global-decls}). 
+%
+\item If \nonterm{expr} is an identifier coresponding to a function
+  parameter or local variable, then its address is the lowest address
+  of the function call stack slot assigned to that parameter or
+  variable (Section~\ref{sec:code-gen:fn-bodies}).  
+%
+\item If \nonterm{expr} is an indexed expression, then its address is
+  computed by evaluating the base expression, evaluating the offset
+  expression, popping and adding the results, and adjusting the size
+  of the result to 2 if necessary
+  (Section~\ref{sec:code-gen:size-adjustment}). 
+%
+\item If \nonterm{expr} is a register expression, then its address is
+  the lowest address of the function call stack slot assigned to that
+  register (Section~\ref{sec:code-gen:fn-bodies}).
+%
+\end{enumerate}
 
 \subsection{Boolean Values}
 \label{sec:code-gen:boolean}
@@ -920,10 +987,9 @@ constants \kwd{TRUE} and \kwd{FALSE} with the values 1 and 0.
 \subsection{Size Adjustment}
 \label{sec:code-gen:size-adjustment}
 
-\emph{Size adjustment} applies whenever the result of evaluating an
-expression (the source value) is assigned into a semantic lvalue (the
-target value) and the sizes of the source and target values do not
-match.  The following rules apply to size adjustment:
+\emph{Size adjustment} applies whenever a result is assigned into or
+out of a semantic lvalue and the sizes of the source and target values
+do not match.  The following rules apply to size adjustment:
 %
 \begin{enumerate}
 %
