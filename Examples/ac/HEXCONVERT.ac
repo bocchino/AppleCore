@@ -37,7 +37,7 @@ FN MAIN() {
     }
     ELSE {
       SET OK = STR_TO_NUM(INBUF,10,@VAL,2);
-      IF (OK = TRUE) {
+      IF (OK) {
         PRINT_CHAR('=');
 	PRINT_CHAR('$');
 	NUM_TO_STR(@VAL,2,16,INBUF,255);
