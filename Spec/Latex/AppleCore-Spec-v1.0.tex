@@ -459,8 +459,8 @@ $$\nonterm{call-expr} ::= \mbox{\nonterm{expr} \kwd{(}
 
 
 \bfhead{Set expressions.} A set expression consists of the keyword
-\kwd{SET}, and lvalue expression, an equals sign, and a
-right-hand-side expression:
+\kwd{SET}, an lvalue expression, an equals sign, and a right-hand-side
+expression:
 %
 $$\nonterm{set-expr} ::= \mbox{\kwd{SET} \nonterm{lvalue-expr} \kwd{=}
   \nonterm{expr}}$$
@@ -718,12 +718,12 @@ of exactly one file translated in top-level mode and zero or more
 files translated in include mode.  The final step in compilation is to
 ask the assembler to assemble the file translated in top-level mode,
 which includes all the other files for assembly.  This assembly also
-causes name resolution for functions and constants defined in one file
-and used in another.  It is the user's responsibility to ensure that
-externally-defined names are both available and uniquely defined; the
-compiler cannot check this.  If a symbol used in one of the assembled
-files is not defined in any of the files (or if any symbol is multiply
-defined), then an assembler error will result.
+causes name resolution for externally defined functions.  It is the
+user's responsibility to ensure that externally-defined names are both
+available and uniquely defined; the compiler cannot check this.  If a
+symbol used in one of the assembled files is not defined in any of the
+files (or if any symbol is multiply defined), then an assembler error
+will result.
 
 \subsection{Global Declarations}
 \label{sec:code-gen:global-decls}
@@ -1007,7 +1007,7 @@ as follows:
   (Section~\ref{sec:code-gen:size-adjustment}). 
 %
 \item If \nonterm{expr} is a register expression, then its address is
-  the lowest address of the function call stack slot assigned to that
+  the address of the function call stack slot assigned to that
   register (Section~\ref{sec:code-gen:fn-bodies}).
 %
 \end{enumerate}
