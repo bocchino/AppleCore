@@ -882,7 +882,8 @@ declaration, then push the two-byte address corresponding to the first
 byte of the function body (Section~\ref{sec:code-gen:fn-bodies}) on
 the stack in little-endian order.  (If the function body is defined in
 a different file, this can be done by using the label associated with
-the function body; that label will be defined in another file.)
+the function body; at assembly time, the label definition will be
+available.)
 
 \bfhead{Indexed expressions.} (1) Compute the address of the indexed
 expression as stated in Section~\ref{sec:code-gen:lvalues}.  (2) Get a
