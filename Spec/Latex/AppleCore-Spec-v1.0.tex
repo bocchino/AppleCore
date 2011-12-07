@@ -581,9 +581,9 @@ Definitions need not precede their uses in the source file.
   result is unsigned.
 %
 \item \ithead{Unary operation expressions.} The size and signedness of
-  a unop expression come from the operand, except that (1) an address
-  operation \kwd{@} is two bytes unsigned, and (2) a negation
-  operation is signed.
+  a unary operation expression come from the operand, except that (1)
+  an address operation \kwd{@} is two bytes unsigned, and (2) a
+  negation operation is signed.
 %
 \item \ithead{Numeric constants.} The size of a constant expression is
   the size of the constant it represents.  A character constant has
@@ -652,9 +652,20 @@ instead of \kwd{SET X = 2;} (assignment).
 
 An expression appearing at global scope (i.e., in a constant or data
 delcaration, or as the initializer of a global variable declaration)
-must evaluate to a compile-time constant according to the rules for
-expression evaluation stated in
-Section~\ref{sec:code-gen:expressions}.
+must be a \emph{global constant expression}.  A global constant
+expression is one of the following:
+%
+\begin{enumerate}
+%
+\item A numeric constant.
+%
+\item A binary operation expression, where both operands are global
+  constant expressions.
+%
+\item A negation (\kwd{-}) or \kwd{NOT} unary operation expression,
+  where the operand is a global constant expression.
+%
+\end{enumerate}
 
 \section{Code Generation}
 \label{sec:code-gen}
@@ -674,7 +685,8 @@ the source file as follows:
 \begin{enumerate}
 %
 \item Issue some code (or an assembler directive to include the code)
-  that sets up the program stack.
+  that sets up the program stack
+  (Section~\ref{sec:code-gen:program-stack}).
 %
 \item Issue a \kwd{JMP} instruction to (or fall in to) the first
   function with a body that appears in the file.  There must be at
@@ -917,19 +929,48 @@ shift, the shift is signed (arithmetic) if the left-hand side
 expression is signed; otherwise it is logical.
 
 \ithead{Arithmetic operations (\kwd{*}, \kwd{/}, \kwd{+}, and
-  \kwd{-}).} ...
+  \kwd{-}).} Evaluate the left and right expressions, adjust their
+size if necessary (Section~\ref{sec:code-gen:size-adjustment}) to make
+their sizes equal to the size of the entire expression, pop the
+results, perform the operation, and push the result.  In the case of
+multiplication and division, the operation is signed if the entire
+expression is signed, otherwise unsigned.  Because AppleCore uses
+two's complement representation for negative numbers
+(Section~\ref{sec:code-gen:integers}), there is no distinction between
+signed and unsigned addition and subtraction.  The division operation
+produces the integer quotient.  All operations are done without regard
+to overflow (i.e., if overflow occurs, they produce the low-order
+bits, up to the size of the expression).
 
 \ithead{Comparison operations (\kwd{=}, \kwd{>}, \kwd{<}, \kwd{>=},
-  and \kwd{<=}).} ...
+  and \kwd{<=}).} Evaluate the left and right expressions, adjust
+their size if necessary (Section~\ref{sec:code-gen:size-adjustment})
+to make their sizes equal to the size of the entire expression, pop
+the results, perform the operation, and push the result.  In the case
+of comparisons other than equality, the operation is signed if the
+entire expression is signed, otherwise unsigned.
 
-\ithead{Bitwise operations (\kwd{AND}, \kwd{OR}, and \kwd{XOR}).}  ...
+\ithead{Bitwise operations (\kwd{AND}, \kwd{OR}, and \kwd{XOR}).}
+Evaluate the left and right expressions, adjust their size if
+necessary (Section~\ref{sec:code-gen:size-adjustment}) to make their
+sizes equal to the size of the entire expression, pop the results,
+perform the operation, and push the result.
 
 \bfhead{Unary operation expressions.} \ithead{Dereference (\kwd{@}).}
-...
+The operand expression must be a semantic lvalue
+(Section~\ref{sec:semantics:lvalues}).  Compute and push its address
+as stated in Section~\ref{sec:code-gen:lvalues}.
 
-\ithead{Negation (\kwd{-}) and bitwise not (\kwd{NOT}).} ...
+\ithead{Arithmetic negation (\kwd{-}) and bitwise not (\kwd{NOT}).}
+Evaluate the operand expression and perform the operation on it.
+Negation is two's complement negation (i.e., \kwd{NOT} plus 1).
 
-\ithead{Increment (\kwd{INCR}) and decrement (\kwd{DECR}).} ...
+\ithead{Increment (\kwd{INCR}) and decrement (\kwd{DECR}).} The
+operand expression must be a semantic
+lvalue. (Section~\ref{sec:semantics:lvalues}).  Compute its address as
+stated in Section~\ref{sec:code-gen:lvalues}.  Add one to the value
+stored at the address, store the result back to the address, and push
+the result on the stack.
 
 \bfhead{Numeric constants.} Push the bytes of the value associated
 with the declaration (Section~\ref{sec:code-gen:global-decls}) on the
@@ -938,7 +979,7 @@ stack in little-endian order.
 \bfhead{Parentheses expressions.} Evaluate the expression inside the
 paretheses.
 
-\subsection{Computation of Address for Semantic LValues}
+\subsection{Address Computation for Semantic LValues}
 \label{sec:code-gen:lvalues}
 
 Computation of the address of a semantic lvalue \nonterm{expr} works
@@ -951,10 +992,10 @@ as follows:
   storage assigned to that variable
   (Section~\ref{sec:code-gen:global-decls}). 
 %
-\item If \nonterm{expr} is an identifier coresponding to a function
+\item If \nonterm{expr} is an identifier corresponding to a function
   parameter or local variable, then its address is the lowest address
   of the function call stack slot assigned to that parameter or
-  variable (Section~\ref{sec:code-gen:fn-bodies}).  
+  variable (Section~\ref{sec:code-gen:fn-bodies}).
 %
 \item If \nonterm{expr} is an indexed expression, then its address is
   computed by evaluating the base expression, evaluating the offset
@@ -983,6 +1024,27 @@ negation operator, and that keeps the language simple.  Also, the
 constants 1 and 0 can function as ``true'' and ``false.''  These names
 and values are not built into the language, but one can easily declare
 constants \kwd{TRUE} and \kwd{FALSE} with the values 1 and 0.
+
+\subsection{Integer Values}
+\label{sec:code-gen:integers}
+
+Integer values are represented in AppleCore in the ordinary way for
+the Apple II:
+%
+\begin{enumerate}
+%
+\item Unsigned single-byte values are represented by treating the 8
+  bits, low to high, as the 8 digits of a binary number.
+%
+\item Multi-byte values are stored in little-endian order.
+%
+\item Signed values are stored in two's complement representation
+  (i.e., by constructing the absolute value of the number, flipping
+  the bits, and adding one).
+%
+\end{enumerate}
+
+
 
 \subsection{Size Adjustment}
 \label{sec:code-gen:size-adjustment}
