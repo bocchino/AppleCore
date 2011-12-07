@@ -658,6 +658,10 @@ expression is one of the following:
 %
 \item A numeric constant.
 %
+\item An identifier corresponding to a numeric constant declaration,
+  data declaration (useful for data tables), or function declaration
+  (useful for jump tables).
+%
 \item A binary operation expression, where both operands are global
   constant expressions.
 %
@@ -873,7 +877,12 @@ push the bytes of the value associated with the declaration
 little-endian order.  (3) If the identifier corresponds to a data
 declaration, then push the two-byte address associated with the
 identifer (Section~\ref{sec:code-gen:global-decls}) on the stack in
-little-endian order.
+little-endian order. (4) If the identifier corresponds to a function
+declaration, then push the two-byte address corresponding to the first
+byte of the function body (Section~\ref{sec:code-gen:fn-bodies}) on
+the stack in little-endian order.  (If the function body is defined in
+a different file, this can be done by using the label associated with
+the function body; that label will be defined in another file.)
 
 \bfhead{Indexed expressions.} (1) Compute the address of the indexed
 expression as stated in Section~\ref{sec:code-gen:lvalues}.  (2) Get a
