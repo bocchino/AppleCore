@@ -756,6 +756,10 @@ public abstract class AssemblyWriter
 	printStream.print(s);
     }
 
+    protected void emit(char ch) {
+	printStream.print(ch);
+    }
+
     protected abstract String addrString(int addr);
     protected abstract void emitInstruction(String s);
     protected abstract void emitAbsoluteInstruction(String mnemonic, int addr);

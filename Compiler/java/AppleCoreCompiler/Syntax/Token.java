@@ -48,6 +48,7 @@ public enum Token {
     COMMA(TokenType.SYMBOL,","),
     IDENT(TokenType.IDENT),
     STRING_CONST(TokenType.CONST),
+    // TODO: Add backslash as a symbol, get rid of UNTERMINATED_STRING_CONSTANT
     UNTERMINATED_STRING_CONST(TokenType.CONST),
     CHAR_CONST(TokenType.CONST),
     DEC_CONST(TokenType.CONST),

@@ -79,10 +79,37 @@ public class SCMacroWriter
 	return label.replace('_','.').toUpperCase();
     }
 
+    private boolean isPrintable(char ch) {
+	return ch >= 32 && ch <= 126;
+    }
+
+    /**
+     * Emit a string constant as
+     * - .AS "XXX" for the printable chars
+     * - .HS XX    for the non-printable chars
+     */
+    private void emitStringConstant(String s) {
+	int pos = 0;
+	while (pos < s.length()) {
+	    if (isPrintable(s.charAt(pos))) {
+		emit("\t.AS \"");
+		while (pos < s.length() &&
+		       isPrintable(s.charAt(pos))) {
+		    emit(s.charAt(pos++));
+		}
+		emit("\"\n");
+	    }
+	    else {
+		emitAbsoluteInstruction(".HS",
+					byteAsHexString(s.charAt(pos++)));
+	    }
+	}
+    }
+
     protected void emitAsData(Constant c) {
 	if (c instanceof StringConstant) {
 	    StringConstant stringConst = (StringConstant) c;
-	    emitAbsoluteInstruction(".AS","\"" + stringConst.value + "\"");
+	    emitStringConstant(stringConst.value);
 	    if (!stringConst.isUnterminated) {
 		emitAbsoluteInstruction(".HS","00");
 	    }

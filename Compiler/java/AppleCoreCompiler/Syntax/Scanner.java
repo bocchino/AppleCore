@@ -221,12 +221,21 @@ public class Scanner {
     {
 	StringBuffer s = new StringBuffer();
 	int ch = 0;
-	int lineNumber = reader.getLineNumber();
-	while ((ch = reader.read()) != '"') {
-	    if (ch == -1)
-		throw new SyntaxError("Unterminated string",
-				      lineNumber);
-	    s.append((char) ch);
+	while ((ch = readAndCheckForEnd()) != '"') {
+	    // Check for escape sequence \$XX
+	    if (ch == '\\') {
+		char ch1 = readAndCheckForEnd();
+		if (ch1 == '$') {
+		    s.append(readEscapeSequence());
+		}
+		else {
+		    s.append((char) ch);
+		    s.append(ch1);
+		}
+	    }
+	    else {
+		s.append((char) ch);
+	    }
 	}
 	if ((ch = reader.read()) == '\\') {
 	    currentToken = Token.UNTERMINATED_STRING_CONST;
@@ -238,6 +247,44 @@ public class Scanner {
 	currentToken.setLineNumber(reader.getLineNumber());
 	currentToken.setStringValue(s.toString());
 	
+    }
+
+    private char readEscapeSequence() 
+	throws IOException, SyntaxError
+    {
+	StringBuffer sb = new StringBuffer();
+	sb.append(readAndCheckForEnd());
+	sb.append(readAndCheckForEnd());
+	String str = sb.toString();
+	try {
+	    int ascii = Integer.valueOf(str,16);
+	    if (ascii > 255) {
+		throw new SyntaxError("Value $" + str + 
+				      " out of range",
+				      reader.getLineNumber());
+	    }
+	    return (char) ascii;
+	}
+	catch(NumberFormatException e) {
+	    throw new SyntaxError("Bad number format $" + str, 
+				  reader.getLineNumber());
+	}
+    }
+
+    private char readAndCheckForEnd() 
+	throws IOException, SyntaxError
+    {
+	int ch = reader.read();
+	checkForEnd(ch);
+	return (char) ch;
+    }
+
+    private void checkForEnd(int ch) 
+	throws SyntaxError
+    {
+	if (ch == -1)
+	    throw new SyntaxError("Unterminated string",
+				  reader.getLineNumber());
     }
 
     public void getCharConstant()
