@@ -643,10 +643,10 @@ operator.
 \subsection{Expression Statements}
 \label{sec:semantics:expr-stmts}
 
-The expression contained in an expression statement have an effect:
-that is, it must be a set, call, \kwd{INCR}, or \kwd{DECR} expression.
-This check traps the error of writing \kwd{X = 2;} (comparison)
-instead of \kwd{SET X = 2;} (assignment).
+The expression contained in an expression statement must have an
+effect: that is, it must be a set, call, \kwd{INCR}, or \kwd{DECR}
+expression.  This check traps the error of writing \kwd{X = 2;}
+(comparison) instead of \kwd{SET X = 2;} (assignment).
 
 \subsection{Expressions Appearing at Global Scope}
 
