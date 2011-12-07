@@ -214,6 +214,22 @@ public abstract class AssemblyWriter
 	emitAsData(node.constant);
     }
 
+    public void visitConstDecl(ConstDecl node) {
+	NumericConstant nc = node.constant;
+	if (nc instanceof IntegerConstant) {
+	    IntegerConstant ic = (IntegerConstant) nc;
+	    if (ic.getSize() <= 2) {
+		emitLabel(node.label);
+		emitAbsoluteInstruction(".EQ", ic.valueAsHexString());
+	    }
+	}
+	if (nc instanceof CharConstant) {
+	    CharConstant cc = (CharConstant) nc;
+	    emitLabel(node.label);
+	    emitAbsoluteInstruction(".EQ",cc.toString());
+	}
+    }
+    
     public void visitVarDecl(VarDecl node) 
 	throws ACCError
     {
