@@ -1080,7 +1080,7 @@ do not match.  The following rules apply to size adjustment:
 \label{sec:code-gen:program-stack}
 
 This specification requires that the implementation provide three
-stacks for use at runtime, collectively referred to as the
+logical stacks for use at runtime, collectively referred to as the
 \emph{program stack}:
 %
 \begin{enumerate}
@@ -1111,17 +1111,17 @@ stacks for use at runtime, collectively referred to as the
 \end{enumerate}
 
 The compiler may provide this stack functionality in any way that is
-feasible.  Typically, the generated code would maintain its own
-two-byte stack pointer, because the native Apple II stack located at
-addresses \$200 through \$2FF is too small to serve as the program
-stack for this language.  However, this specification does not mandate
-any particular stack size; the actual available stack size depends on
-both the compiler implementation and the program memory requirements
-(for example, whether the graphics and/or language card areas are
-available for program heap and stack data).  Also, typically the same
-physical stack would be used for all three logical stacks (and the
-logical stacks have been specified so that this is possible), but this
-is not a requirement.
+feasible.  Typically the same physical stack would be used for all
+three logical stacks (and the logical stacks have been specified so
+that this is possible), but this is not a requirement.  Also,
+typically the generated code would maintain its own two-byte stack
+pointer, because the native Apple II stack located at addresses \$200
+through \$2FF is too small to serve as the program stack for this
+language.  However, this specification does not mandate any particular
+stack size; the actual available stack size depends on both the
+compiler implementation and the program memory requirements (for
+example, whether the graphics and/or language card areas are available
+for program heap and stack data).
 
 
 \end{document}
