@@ -582,8 +582,12 @@ Definitions need not precede their uses in the source file.
 %
 \item \ithead{Unary operation expressions.} The size and signedness of
   a unary operation expression come from the operand, except that (1)
-  an address operation \kwd{@} is two bytes unsigned, and (2) a
-  negation operation is signed.
+  an address operation \kwd{@} is two bytes unsigned; (2) a negation
+  operation is signed; and (3) if negating a constant would cause the
+  value to overflow, then one byte is added to the size.  For example,
+  the size of the expression \kwd{-200} is 2, because the unsigned
+  value 200 can be represented using one byte, but the signed value
+  $-200$ cannot.
 %
 \item \ithead{Numeric constants.} The size of a constant expression is
   the size of the constant it represents.  A character constant has
