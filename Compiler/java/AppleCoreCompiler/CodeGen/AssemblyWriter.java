@@ -212,6 +212,9 @@ public abstract class AssemblyWriter
     {
 	emitLabel(node.label);
 	emitAsData(node.constant);
+	if (node.isTerminatedString) {
+	    emitStringTerminator();
+	}
     }
 
     public void visitConstDecl(ConstDecl node) {
@@ -788,6 +791,7 @@ public abstract class AssemblyWriter
     }
 
     protected abstract void emitAsData(Constant c);
+    protected abstract void emitStringTerminator();
     protected abstract void emitAsData(Constant c, int sizeBound);
     protected abstract void emitBlockStorage(int nbytes);
 

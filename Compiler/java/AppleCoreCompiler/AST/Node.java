@@ -91,6 +91,7 @@ public abstract class Node {
     {
 	public String label;
 	public Constant constant;
+	public boolean isTerminatedString;
 
 	public void accept(Visitor v) throws ACCError {
 	    v.visitDataDecl(this);
@@ -523,21 +524,11 @@ public abstract class Node {
 	extends Constant
     {
 	public String value;
-	/**
-	 * Is this string constructed without a terminating 0?
-	 */
-	public boolean isUnterminated;
 
 	public boolean isZero() { return false; }
 
 	public int getSize() {
-	    if (this.isUnterminated) {
-		// Unterminated string: size is length of string
-		return value.length();
-	    }
-	    // Terminated string: size is length of string, plus 1 for
-	    // terminating 0
-	    return value.length()+1;
+	    return value.length();
 	}
 
 	public void accept(Visitor v) throws ACCError {
@@ -546,8 +537,6 @@ public abstract class Node {
 
 	public String toString() {
 	    StringBuffer sb = new StringBuffer();
-	    if (this.isUnterminated)
-		sb.append("unterminated ");
 	    sb.append("string constant \"");
 	    sb.append(value);
 	    sb.append("\"");

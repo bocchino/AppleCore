@@ -110,9 +110,6 @@ public class SCMacroWriter
 	if (c instanceof StringConstant) {
 	    StringConstant stringConst = (StringConstant) c;
 	    emitStringConstant(stringConst.value);
-	    if (!stringConst.isUnterminated) {
-		emitAbsoluteInstruction(".HS","00");
-	    }
 	}
 	else if (c instanceof IntegerConstant) {
 	    IntegerConstant intConst = (IntegerConstant) c;
@@ -128,6 +125,10 @@ public class SCMacroWriter
 	    emitAbsoluteInstruction(".DA","'"+charConst.value+"'");
 	}
 
+    }
+
+    protected void emitStringTerminator() {
+	emitAbsoluteInstruction(".HS","00");
     }
 
     protected void emitAsData(Constant c, int sizeBound) {

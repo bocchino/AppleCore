@@ -1,4 +1,5 @@
 package AppleCoreCompiler.Syntax;
+
 import java.io.*;
 import java.util.*;
 import java.math.*;
@@ -155,7 +156,7 @@ public class Parser {
 	setLineNumberOf(includeDecl);
 	expectAndConsume(Token.INCLUDE);
 	expect(Token.STRING_CONST);
-	includeDecl.filename = parseStringConstant(false).value;
+	includeDecl.filename = parseStringConstant().value;
 	expectAndConsume(Token.SEMI);
 	return includeDecl;
     }
@@ -189,10 +190,14 @@ public class Parser {
 	dataDecl.label = parsePossibleName();
 	switch (scanner.getCurrentToken()) {
 	case STRING_CONST:
-	    dataDecl.constant = parseStringConstant(false);
-	    break;
-	case UNTERMINATED_STRING_CONST:
-	    dataDecl.constant = parseStringConstant(true);
+	    dataDecl.constant = parseStringConstant();
+	    // Check for unterminated string
+	    if (scanner.getCurrentToken() == Token.BACKSLASH) {
+		scanner.getNextToken();
+	    }
+	    else {
+		dataDecl.isTerminatedString = true;
+	    }
 	    break;
 	default:
 	    dataDecl.constant = parseNumericConstant();
@@ -787,14 +792,13 @@ public class Parser {
     /**
      * Parse a string constant
      */
-    private StringConstant parseStringConstant(boolean isUnterminated)
+    private StringConstant parseStringConstant()
 	throws SyntaxError, IOException
     {
 	StringConstant stringConstant = new StringConstant();
 	setLineNumberOf(stringConstant);
 	Token token = scanner.getCurrentToken();
 	stringConstant.value = token.getStringValue();
-	stringConstant.isUnterminated = isUnterminated;
 	scanner.getNextToken();
 	return stringConstant;
     }

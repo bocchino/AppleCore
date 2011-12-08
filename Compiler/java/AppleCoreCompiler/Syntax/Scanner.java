@@ -237,16 +237,9 @@ public class Scanner {
 		s.append((char) ch);
 	    }
 	}
-	if ((ch = reader.read()) == '\\') {
-	    currentToken = Token.UNTERMINATED_STRING_CONST;
-	}
-	else {
-	    reader.unread(ch);
-	    currentToken = Token.STRING_CONST;
-	}
+	currentToken = Token.STRING_CONST;
 	currentToken.setLineNumber(reader.getLineNumber());
 	currentToken.setStringValue(s.toString());
-	
     }
 
     private char readEscapeSequence() 
