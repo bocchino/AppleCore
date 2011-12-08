@@ -16,5 +16,4 @@ public enum TokenType {
     public String toString() {
 	return stringValue;
     }
-
 }

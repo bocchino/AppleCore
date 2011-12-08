@@ -561,7 +561,7 @@ public abstract class Node {
 	public int getSize() { 
 	    BigInteger unsignedValue = 
 		(value.compareTo(BigInteger.ZERO) >= 0)
-		? value : value.negate();
+		? value : value.negate().shiftLeft(1);
 	    return computeSize(unsignedValue, BigInteger.ONE,
 			       byteVal);
 	}
