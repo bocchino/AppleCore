@@ -651,7 +651,7 @@ expression.  This check traps the error of writing \kwd{X = 2;}
 
 An expression appearing at global scope (i.e., in a constant or data
 declaration, or as the initializer of a global variable declaration)
-must be a \emph{global constant expression}.  A global constant
+must be a \emph{constant-value expression}.  A constant-value
 expression is one of the following:
 %
 \begin{enumerate}
@@ -662,14 +662,14 @@ expression is one of the following:
   data declaration (useful for data tables), or function declaration
   (useful for jump tables).
 %
-\item A binary operation expression, where both operands are global
-  constant expressions.
+\item A binary operation expression, where both operands are
+  constant-value expressions.
 %
 \item A negation (\kwd{-}) or \kwd{NOT} unary operation expression,
-  where the operand is a global constant expression.
+  where the operand is a constant-value expression.
 %
 \item A parentheses expression, where the expression inside the
-  parentheses is a global constant expression.
+  parentheses is a constant-value expression.
 %
 \end{enumerate}
 
