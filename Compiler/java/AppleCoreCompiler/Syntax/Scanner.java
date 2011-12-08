@@ -176,7 +176,7 @@ public class Scanner {
 	StringBuffer s = new StringBuffer();
 	s.append((char) ch);
 
-	currentToken = Token.DEC_CONST;
+	currentToken = Token.INT_CONST;
 	currentToken.setLineNumber(reader.getLineNumber());
 
 	while(Character.isDigit((char) (ch = reader.read())))
@@ -196,8 +196,9 @@ public class Scanner {
 	StringBuffer s = new StringBuffer();
 	String str = null;
 
-	currentToken = Token.HEX_CONST;
+	currentToken = Token.INT_CONST;
 	currentToken.setLineNumber(reader.getLineNumber());
+	currentToken.wasHexInSource = true;
 
 	int ch = 0;
 	while (Character.isLetterOrDigit((char) (ch = reader.read()))) {

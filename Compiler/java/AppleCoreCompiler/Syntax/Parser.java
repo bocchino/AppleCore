@@ -468,8 +468,7 @@ public class Parser {
 	    result = parseParensExpr();
 	    break;
 	case CHAR_CONST:
-	case DEC_CONST:
-	case HEX_CONST:
+	case INT_CONST:
 	    if (!lvalue) result = parseConstantExpression();
 	    break;
 	default:
@@ -846,12 +845,9 @@ public class Parser {
 	Token token = scanner.getCurrentToken();
 	IntegerConstant result = null;
 	switch (token) {
-	case DEC_CONST:
+	case INT_CONST:
 	    result = new IntegerConstant();
-	    break;
-	case HEX_CONST:
-	    result = new IntegerConstant();
-	    result.wasHexInSource = true;
+	    result.wasHexInSource = token.wasHexInSource;
 	    break;
 	}
 	if (result != null) {

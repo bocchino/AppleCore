@@ -1,3 +1,6 @@
+/**
+ * The type of a lexical token.
+ */
 package AppleCoreCompiler.Syntax;
 
 public enum TokenType {

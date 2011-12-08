@@ -47,11 +47,9 @@ public enum Token {
     EQUALS(TokenType.SYMBOL,"="),
     COMMA(TokenType.SYMBOL,","),
     IDENT(TokenType.IDENT),
+    INT_CONST(TokenType.CONST),
     STRING_CONST(TokenType.CONST),
     CHAR_CONST(TokenType.CONST),
-    // TODO: Make one kind of int constant
-    DEC_CONST(TokenType.CONST),
-    HEX_CONST(TokenType.CONST),
     END(TokenType.MARKER,"end of file");
 
     /**
@@ -93,6 +91,11 @@ public enum Token {
      * The numeric value of the token
      */
     public BigInteger numberValue;
+
+    /**
+     * Whether the source representation was hexadecimal
+     */
+    public boolean wasHexInSource;
 
     /**
      * The source line where the token occurred
