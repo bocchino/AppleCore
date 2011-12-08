@@ -66,8 +66,11 @@ registers; however, if that speed is needed, one can easily call into
 assembly language arithmetic routines.  Fourth, it provides easy
 integration with assembly language routines; in particular, you can
 say things like ``load `A' into the accumulator and call \$FDED'' that
-are impossible to say in Applesoft or other high-level languages
-without assembly-language wrapper code.
+are impossible to say in Applesoft or other languages.  For example,
+in Applesoft you could do this with the \kwd{USR} function or a
+\kwd{CALL}, but in either case you'd need to write some glue code in
+assembly language to get the value from the Applesoft program into the
+accumulator before the call.
 
 The main things that AppleCore lacks, and that Applesoft provides, are
 automatic memory management and floating-point computation.  I've left

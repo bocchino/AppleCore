@@ -24,6 +24,7 @@ public abstract class Node {
      * The size of the node, if it has one.
      */
     public int getSize() { return 0; }
+
     /**
      * The signedness of the node.
      */
