@@ -531,11 +531,14 @@ The compiler matches definitions with uses in the following way:
 %
 Definitions need not precede their uses in the source file.
 
-\subsection{Sizes and Signedness}
+\subsection{Size and Signedness}
 \label{sec:semantics:size}
 
-\bfhead{Expressions.} Every expression is given a \emph{size} and a
-\emph{signedness}, computed as follows:
+\subsubsection{Expressions}
+
+\bfhead{Computing size and signedness.} Every expression appearing in
+the source file is given a \emph{size} and a \emph{signedness},
+computed as follows:
 %
 \begin{itemize}
 %
@@ -545,49 +548,54 @@ Definitions need not precede their uses in the source file.
   constant declaration, then the size and signedness are identical to
   the size and signedness of the expression appearing in the
   declaration.  (2) If the definition is a variable declaration or
-  function parameter declaration, then (a) the size is as given in the
-  declaration, and (b) the signedness is signed if \kwd{S} appears
-  after the size, otherwise unsigned.  (3) If the definition is a data
-  declaration or function declaration, then the size is 2 and the
+  function parameter declaration, then the size is as given in the
+  declaration, and the signedness is signed if \kwd{S} appears after
+  the size, otherwise unsigned.  (3) If the definition is a data
+  declaration or function declaration, then the size is 2, and the
   signedness is unsigned.
 %
 \item \ithead{Indexed expressions.} The size of an indexed expression
   is given by the \nonterm{size} component of the expression.  It is
-  always unsigned.  Both the expression being indexed (before the
-  first bracket) and the index expression (immediately after the first
-  bracket) must have size 1 or 2.
+  always unsigned.  
 %
 \item \ithead{Register expressions.} The size of a register expression
   is 1.  It is unsigned.
 %
-\item \ithead{Call expressions.} (1) The called expression (i.e., the
-  expression before the first parenthesis) must be an expression of
-  size 1 or 2.  (2) If the called expression is an identifier
-  corresponding to a function declaration, then the size and
-  signedness are the return size and signedness of the function
-  definition (see below); otherwise the size is 0 and the signedness
-  is unsigned.  (3) Each argument expression must have nonzero size.
+\item \ithead{Call expressions.} If the called expression (i.e., the
+  expression before the first parenthesis) is anything other than an
+  identifier corresponding to a function declaration, then the size is
+  0 and the signedness is unsigned.  Otherwise the size and signedness
+  come from the function declaration corresponding to the identifier:
+  (1) If a \nonterm{size} appears after the keyword \kwd{FN} in the
+  definition, then that is the return size; otherwise the return size
+  is 0.  (2) If \kwd{S} appears after \nonterm{size} then the return
+  signedness is signed, otherwise unsigned.
 %
 \item \ithead{Set expressions.} The size and signedness of a set
-  expression come from the left-hand-side expression.  The right-hand
-  expression must have nonzero size.
+  expression come from the left-hand-side expression.
 %
 \item \ithead{Binary operation expressions.}  For comparison
   operations, the size is 1 byte unsigned.  For shift operations, the
-  size and signedness come from the left operand, and the right
-  operand must be 1 byte unsigned.  For all other operations, the size
-  is the maximum of the sizes of its operands.  If either of the
+  size and signedness come from the left operand.  For all other
+  operations, the size is the maximum of the sizes of its operands
+  unless both operands are constant-value expressions
+  (Section~\ref{sec:semantics:constant-value-expr}).  In that case,
+  the size is the minimum number of bytes required to represent the
+  value produced by evaluating the expression according to the rules
+  in Section~\ref{sec:code-gen:expressions}, assuming that both
+  operands have the maximum allowed size of 255.  If either of the
   operands is signed, then the result is signed.  Otherwise, the
   result is unsigned.
 %
 \item \ithead{Unary operation expressions.} The size and signedness of
   a unary operation expression come from the operand, except that (1)
   an address operation \kwd{@} is two bytes unsigned; (2) a negation
-  operation is signed; and (3) if negating a constant would cause the
-  value to overflow, then one byte is added to the size.  For example,
-  the size of the expression \kwd{-200} is 2, because the unsigned
-  value 200 can be represented using one byte, but the signed value
-  $-200$ cannot.
+  operation is signed; and (3) if the operand is a constant-value
+  expression (Section~\ref{sec:semantics:constant-value-expr}), then
+  the size is the minimum number of bytes required to represent the
+  value produced by evaluating the expression according to the rules
+  in Section~\ref{sec:code-gen:expressions}, assuming that both
+  operands have the maximum allowed size of 255.
 %
 \item \ithead{Numeric constants.} The size of a constant expression is
   the size of the constant it represents.  A character constant has
@@ -600,23 +608,44 @@ Definitions need not precede their uses in the source file.
 %
 \end{itemize}
 
-\bfhead{Function declarations.} (1) The \emph{return size and
-  signedness} of a function declaration are defined as follows.  If a
-\nonterm{size} appears after the keyword \kwd{FN} in the definition,
-then that is the return size; otherwise the return size is 0.  If
-\kwd{S} appears after \nonterm{size} then the return signedness is
-signed, otherwise unsigned. (2) The \emph{frame size} of a function
-declaration that contains a body equals 2 (for the frame pointer) plus
-the sizes of all the function parameters and local variables.  No
-function may have a frame size of greater than 255 bytes.
 
-\bfhead{Return statements.} (1) No return statement may contain an
-expression of zero size.  (2) If a function has nonzero return size,
-and the function has a body, then (a) the body must end with a return
-statement containing an expression, and (b) every return statement
-appearing in the body must contain an expression.  (3) If a function
-has return size 0, then no return statement in the function body may
-contain an expression.
+\bfhead{Size and signedness requirements.} The following requirements
+apply to the size and signedness of expressions:
+%
+\begin{itemize}
+%
+\item \ithead{Indexed expressions.} Both the base expression (before
+  the first bracket) and the index expression (immediately after the
+  first bracket) must have size 1 or 2.
+%
+\item \ithead{Call expressions.} (1) The called expression must be an
+  expression of size 1 or 2.  (2) Each argument expression must have
+  nonzero size.
+%
+\item \ithead{Set expressions.} The right-hand expression must have
+  nonzero size.
+%
+\item \ithead{Binary operation expressions.}  For shift operations,
+  the right-hand expression must be 1 byte unsigned.
+%
+\end{itemize}
+
+\subsubsection{Function Frame Sizes} 
+
+The \emph{frame size} of a function declaration that contains a body
+equals 2 (for the frame pointer) plus the sizes of all the function
+parameters and local variables.  No function may have a frame size of
+greater than 255 bytes.
+
+\subsubsection{Return Statements} 
+
+(1) No return statement may contain an expression of zero size.  (2)
+If a function has nonzero return size, and the function has a body,
+then (a) the body must end with a return statement containing an
+expression, and (b) every return statement appearing in the body must
+contain an expression.  (3) If a function has return size 0, then no
+return statement in the function body may contain an expression.
+
 
 
 \subsection{Number of Function Arguments}
@@ -652,11 +681,10 @@ effect: that is, it must be a set, call, \kwd{INCR}, or \kwd{DECR}
 expression.  This check traps the error of writing \kwd{X = 2;}
 (comparison) instead of \kwd{SET X = 2;} (assignment).
 
-\subsection{Expressions Appearing at Global Scope}
+\subsection{Constant-Value Expressions}
+\label{sec:semantics:constant-value-expr}
 
-An expression appearing at global scope (i.e., in a constant or data
-declaration, or as the initializer of a global variable declaration)
-must be a \emph{constant-value expression}.  A constant-value
+\bfhead{Definition of constant-value expression.} A constant-value
 expression is one of the following:
 %
 \begin{enumerate}
@@ -667,16 +695,24 @@ expression is one of the following:
   data declaration (useful for data tables), or function declaration
   (useful for jump tables).
 %
-\item A binary operation expression, where both operands are
-  constant-value expressions.
+\item A binary operation expression, where each operand is a numeric
+  constant or an identifier corresponding to a numeric constant
+  declaration.
 %
 \item A negation (\kwd{-}) or \kwd{NOT} unary operation expression,
-  where the operand is a constant-value expression.
+  where the operand is a numeric constant or an identifier
+  corresponding to a numeric constant declaration.
 %
 \item A parentheses expression, where the expression inside the
   parentheses is a constant-value expression.
 %
 \end{enumerate}
+
+\bfhead{Requirement of constant-value expressions at global scope.} An
+expression appearing at global scope (i.e., in a constant or data
+declaration, or as the initializer of a global variable declaration)
+must be a constant-value expression.  This is so the compiler can
+precompute the value.
 
 \section{Code Generation}
 \label{sec:code-gen}
