@@ -218,16 +218,16 @@ public abstract class AssemblyWriter
     }
 
     public void visitConstDecl(ConstDecl node) {
-	NumericConstant nc = node.constant;
-	if (nc instanceof IntegerConstant) {
-	    IntegerConstant ic = (IntegerConstant) nc;
+	Constant c = node.constant;
+	if (c instanceof IntegerConstant) {
+	    IntegerConstant ic = (IntegerConstant) c;
 	    if (ic.getSize() <= 2) {
 		emitLabel(node.label);
 		emitAbsoluteInstruction(".EQ", ic.valueAsHexString());
 	    }
 	}
-	if (nc instanceof CharConstant) {
-	    CharConstant cc = (CharConstant) nc;
+	if (c instanceof CharConstant) {
+	    CharConstant cc = (CharConstant) c;
 	    emitLabel(node.label);
 	    emitAbsoluteInstruction(".EQ",cc.toString());
 	}

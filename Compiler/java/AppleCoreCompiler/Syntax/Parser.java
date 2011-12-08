@@ -651,7 +651,7 @@ public class Parser {
     {
 	ConstantExpression constantExp = new ConstantExpression();
 	setLineNumberOf(constantExp);
-	NumericConstant constant = parseNumericConstant();
+	Constant constant = parseNumericConstant();
 	constantExp.value = constant;
 	return constantExp;
     }
@@ -805,7 +805,7 @@ public class Parser {
     /**
      * Numeric-Const ::= Int-Const | Char-Const
      */
-    private NumericConstant parseNumericConstant() 
+    private Constant parseNumericConstant() 
 	throws SyntaxError, IOException
     {
 	IntegerConstant intConstant = parsePossibleIntConstant();

@@ -72,7 +72,8 @@ public abstract class Node {
 	extends Declaration 
     {
 	public String label;
-	public NumericConstant constant;
+	// TODO: This should be a constant-value expression
+	public Constant constant;
 	public int getSize() { return constant.getSize(); }
 	public boolean isSigned() { return false; }
 	public boolean isExternal() { return constant == null; }
@@ -90,6 +91,7 @@ public abstract class Node {
 	extends Declaration 
     {
 	public String label;
+	// TODO: This should be a constant-value expression
 	public Constant constant;
 	public boolean isTerminatedString;
 
@@ -303,6 +305,7 @@ public abstract class Node {
     public static class IndexedExpression
 	extends Expression 
     {
+	// TODO: This should be an expression
 	public Identifier indexed;
 	public Expression index;
 
@@ -318,6 +321,7 @@ public abstract class Node {
     public static class CallExpression
 	extends Expression
     {
+	// TODO: This should be an expression
 	public Identifier name;
 	public final List<Expression> args =
 	    new LinkedList<Expression>();
@@ -495,7 +499,7 @@ public abstract class Node {
     public static class ConstantExpression
 	extends Expression
     {
-	public NumericConstant value;
+	public Constant value;
 
 	public void accept(Visitor v) throws ACCError {
 	    v.visitConstantExpression(this);
@@ -513,11 +517,6 @@ public abstract class Node {
 	extends Node
     {
 	public abstract boolean isZero();
-    }
-
-    public static abstract class NumericConstant 
-	extends Constant 
-    {
     }
 
     public static class StringConstant 
@@ -544,8 +543,8 @@ public abstract class Node {
 	}
     }
 
-    public static class IntegerConstant
-	extends NumericConstant
+    public static class IntegerConstant 
+	extends Constant
     {
 	public static final BigInteger
 	    byteVal = new BigInteger("256");
@@ -609,8 +608,8 @@ public abstract class Node {
 	}
     }
 
-    public static class CharConstant
-	extends NumericConstant
+    public static class CharConstant 
+	extends Constant
     {
 	public char value;
 
