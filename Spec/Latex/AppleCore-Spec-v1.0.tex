@@ -534,11 +534,9 @@ Definitions need not precede their uses in the source file.
 \subsection{Size and Signedness}
 \label{sec:semantics:size}
 
-\subsubsection{Expressions}
-
-\bfhead{Computing size and signedness.} Every expression appearing in
-the source file is given a \emph{size} and a \emph{signedness},
-computed as follows:
+\bfhead{Size and signedness of expressions.} Every expression
+appearing in the source file is given a \emph{size} and a
+\emph{signedness}, computed as follows:
 %
 \begin{itemize}
 %
@@ -609,8 +607,9 @@ computed as follows:
 \end{itemize}
 
 
-\bfhead{Size and signedness requirements.} The following requirements
-apply to the size and signedness of expressions:
+\bfhead{Size and signedness requirements for expressions.} The
+following requirements apply to the size and signedness of
+expressions:
 %
 \begin{itemize}
 %
@@ -630,21 +629,18 @@ apply to the size and signedness of expressions:
 %
 \end{itemize}
 
-\subsubsection{Function Frame Sizes} 
+\bfhead{Function frame sizes.} The \emph{frame size} of a function
+declaration that contains a body equals 2 (for the frame pointer) plus
+the sizes of all the function parameters and local variables.  No
+function may have a frame size of greater than 255 bytes.
 
-The \emph{frame size} of a function declaration that contains a body
-equals 2 (for the frame pointer) plus the sizes of all the function
-parameters and local variables.  No function may have a frame size of
-greater than 255 bytes.
-
-\subsubsection{Return Statements} 
-
-(1) No return statement may contain an expression of zero size.  (2)
-If a function has nonzero return size, and the function has a body,
-then (a) the body must end with a return statement containing an
-expression, and (b) every return statement appearing in the body must
-contain an expression.  (3) If a function has return size 0, then no
-return statement in the function body may contain an expression.
+\bfhead{Return statements.} (1) No return statement may contain an
+expression of zero size.  (2) If a function has nonzero return size,
+and the function has a body, then (a) the body must end with a return
+statement containing an expression, and (b) every return statement
+appearing in the body must contain an expression.  (3) If a function
+has return size 0, then no return statement in the function body may
+contain an expression.
 
 
 
