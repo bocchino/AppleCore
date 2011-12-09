@@ -35,7 +35,6 @@ public abstract class Node {
      */
     public static class SourceFile extends Node {
 	public String name;
-
 	public final List<Declaration> decls = 
 	    new LinkedList<Declaration>();
 
@@ -91,6 +90,33 @@ public abstract class Node {
 
 	public String toString() {
 	    return "data decl " + label;
+	}
+    }
+
+    /**
+     * String constant literals
+     */
+    public static class StringConstant 
+	extends Node
+    {
+	public String value;
+
+	public boolean isZero() { return false; }
+
+	public int getSize() {
+	    return value.length();
+	}
+
+	public void accept(Visitor v) throws ACCError {
+	    v.visitStringConstant(this);
+	}
+
+	public String toString() {
+	    StringBuffer sb = new StringBuffer();
+	    sb.append("string constant \"");
+	    sb.append(value);
+	    sb.append("\"");
+	    return sb.toString();
 	}
     }
 
@@ -487,33 +513,6 @@ public abstract class Node {
 
 	public String toString() {
 	    return "identifier " + name;
-	}
-    }
-
-    /**
-     * String constant literals
-     */
-    public static class StringConstant 
-	extends Node
-    {
-	public String value;
-
-	public boolean isZero() { return false; }
-
-	public int getSize() {
-	    return value.length();
-	}
-
-	public void accept(Visitor v) throws ACCError {
-	    v.visitStringConstant(this);
-	}
-
-	public String toString() {
-	    StringBuffer sb = new StringBuffer();
-	    sb.append("string constant \"");
-	    sb.append(value);
-	    sb.append("\"");
-	    return sb.toString();
 	}
     }
 
