@@ -10,7 +10,7 @@ import AppleCoreCompiler.Errors.*;
 
 public class NodeVisitor implements Visitor {
 
-    public void visitProgram(Program node) throws ACCError { visitNode(node); }
+    public void visitSourceFile(SourceFile node) throws ACCError { visitNode(node); }
     public void visitIncludeDecl(IncludeDecl node) throws ACCError { visitNode(node); }
     public void visitConstDecl(ConstDecl node) throws ACCError { visitNode(node); }
     public void visitDataDecl(DataDecl node) throws ACCError { visitNode(node); }

@@ -37,11 +37,11 @@ public class ASTPrintingPass
 	this.printStream = printStream;
     }
 
-    public void runOn(Program program) 
+    public void runOn(SourceFile sourceFile) 
 	throws ACCError
     {
 	indentPos = 0;
-	scan(program);
+	scan(sourceFile);
     }
 
     public void visitBeforeScan(Node node) 

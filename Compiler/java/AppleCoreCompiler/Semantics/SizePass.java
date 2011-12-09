@@ -26,10 +26,10 @@ public class SizePass
 	}
     }
     
-    public void runOn(Program program) 
+    public void runOn(SourceFile sourceFile) 
 	throws ACCError
     {
-	scan(program);
+	scan(sourceFile);
     }
 
     FunctionDecl currentFunction;

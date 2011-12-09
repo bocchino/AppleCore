@@ -16,14 +16,14 @@ public class Parser {
     /**
      * Construct a new Parser object with the specified input file
      */
-    public Parser(String inputFileName) {
-	this.inputFileName = inputFileName;
+    public Parser(String sourceFileName) {
+	this.sourceFileName = sourceFileName;
     }
 
     /**
      * The input file name
      */
-    private String inputFileName;
+    private String sourceFileName;
 
     /**
      * Scanner to provide the token stream
@@ -45,22 +45,22 @@ public class Parser {
 	    System.err.println("usage: java Parser [filename]");
 	    System.exit(1);
 	}
-	Program program = parser.parse();
+	SourceFile sourceFile = parser.parse();
 	// Print out the AST
     }
 
     /**
-     * Parse an AppleCore source program.
+     * Parse an AppleCore source file.
      */
-    public Program parse() {
-	Program program = null;
+    public SourceFile parse() {
+	SourceFile sourceFile = null;
 	FileReader fr = null;
 	try {
 	    try {
-		fr = new FileReader(inputFileName);
+		fr = new FileReader(sourceFileName);
 		scanner = new Scanner(new BufferedReader(fr));
 		scanner.getNextToken();
-		program = parseProgram();
+		sourceFile = parseSourceFile();
 	    }
 	    finally {
 		if (fr != null) fr.close();
@@ -68,32 +68,33 @@ public class Parser {
 	}
 	catch (SyntaxError e) {
 	    System.err.print("line " + e.getLineNumber() + " of " + 
-			     inputFileName +": ");
+			     sourceFileName +": ");
 	    System.err.println(e.getMessage());
 	}
 	catch (FileNotFoundException e) {
-	    System.err.println("file " + inputFileName + " not found");
+	    System.err.println("file " + sourceFileName + " not found");
 	}
 	catch (IOException e) {
 	    System.err.println("I/O exception");
 	}
-	return program;
+	return sourceFile;
     }
 
     /**
-     * Program ::= Decl*
+     * SourceFile ::= Decl*
      */
-    private Program parseProgram() 
+    private SourceFile parseSourceFile() 
 	throws SyntaxError, IOException
     {
-	Program program = new Program();
-	setLineNumberOf(program);
+	SourceFile sourceFile = new SourceFile();
+	sourceFile.name = sourceFileName;
+	setLineNumberOf(sourceFile);
 	while (scanner.getCurrentToken() != Token.END) {
 	    Declaration decl = parseDecl();
 	    if (decl == null) break;
-	    program.decls.add(decl);
+	    sourceFile.decls.add(decl);
 	}
-	return program;
+	return sourceFile;
     }
 
     public boolean debug = false;

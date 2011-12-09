@@ -16,10 +16,10 @@ public class ExprStmtPass
 
     public boolean debug;
 
-    public void runOn(Program program) 
+    public void runOn(SourceFile sourceFile)
 	throws ACCError
     {
-	scan(program);
+	scan(sourceFile);
     }
 
     public void visitExpressionStatement(ExpressionStatement node) 

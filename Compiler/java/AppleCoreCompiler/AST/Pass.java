@@ -7,6 +7,6 @@ import AppleCoreCompiler.AST.Node.*;
 import AppleCoreCompiler.Errors.*;
 
 public interface Pass {
-    public void runOn(Program program)
+    public void runOn(SourceFile sourceFile)
 	throws ACCError;
 }

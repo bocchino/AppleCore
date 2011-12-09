@@ -16,10 +16,10 @@ public class FunctionCallPass
 
     public boolean debug;
 
-    public void runOn(Program program) 
+    public void runOn(SourceFile sourceFile)
 	throws ACCError
     {
-	scan(program);
+	scan(sourceFile);
     }
 
     public void visitCallExpression(CallExpression node) 

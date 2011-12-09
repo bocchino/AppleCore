@@ -31,18 +31,20 @@ public abstract class Node {
     public boolean isSigned() { return false; }
 
     /**
-     * Programs
+     * Source files
      */
-    public static class Program extends Node {
+    public static class SourceFile extends Node {
+	public String name;
+
 	public final List<Declaration> decls = 
 	    new LinkedList<Declaration>();
 
 	public void accept(Visitor v) throws ACCError {
-	    v.visitProgram(this);
+	    v.visitSourceFile(this);
 	}
 
 	public String toString() {
-	    return "program";
+	    return "source file " + name;
 	}
     }
 
@@ -630,7 +632,7 @@ public abstract class Node {
     public interface Visitor {
 
 	public abstract void
-	    visitProgram(Program node) 
+	    visitSourceFile(SourceFile node) 
 	    throws ACCError;
 	public abstract void
 	    visitIncludeDecl(IncludeDecl node) 

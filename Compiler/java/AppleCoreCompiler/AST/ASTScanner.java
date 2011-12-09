@@ -36,7 +36,7 @@ public class ASTScanner extends NodeVisitor {
      */
     public void visitAfterScan(Node node) throws ACCError {}
 
-    public void visitProgram(Program node) 
+    public void visitSourceFile(SourceFile node) 
 	throws ACCError 
     {
 	visitBeforeScan(node);

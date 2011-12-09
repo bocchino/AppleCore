@@ -15,9 +15,8 @@ public class SCMacroWriter
     extends AssemblyWriter
 {
 
-    public SCMacroWriter(PrintStream printStream,
-			 String inputFileName) {
-	super(printStream, inputFileName);
+    public SCMacroWriter(PrintStream printStream) {
+	super(printStream);
     }
 
     /* Emitter methods */

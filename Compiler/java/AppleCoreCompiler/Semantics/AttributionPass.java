@@ -43,15 +43,15 @@ public class AttributionPass
     /**
      * Attribute the AST
      */
-    public void runOn(Program program) 
+    public void runOn(SourceFile sourceFile) 
 	throws ACCError
     {
 	// Enter the top-level declarations
-	for (Declaration decl : program.decls) {
+	for (Declaration decl : sourceFile.decls) {
 	    insertDecl.insert(decl, globalSymbols);
 	}
-	// Attribute the program
-	scan(program);
+	// Attribute the source file
+	scan(sourceFile);
     }
 
     private InsertDecl insertDecl = new InsertDecl();
