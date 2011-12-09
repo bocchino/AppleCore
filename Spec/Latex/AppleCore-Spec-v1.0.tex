@@ -868,6 +868,53 @@ include declaration into an assembler directive to include the file
 named in the string constant.  In include mode, the presence of an
 include declaration in the source file causes an error.
 
+\subsection{Program Stack}
+\label{sec:code-gen:program-stack}
+
+This specification requires that the implementation provide three
+logical stacks for use at runtime, collectively referred to as the
+\emph{program stack}:
+%
+\begin{enumerate}
+%
+\item A C-style \emph{call stack}, such that a new frame appears at
+  the top of the stack for each function call, and the frame is popped
+  at the end of the call.  This stack is used in generating function
+  call code, as specified in Section~\ref{sec:code-gen:fn-bodies}.
+%
+\item An \emph{expression stack} for use during expression evaluation
+  as specified in Section~\ref{sec:code-gen:expressions}.
+%
+\item An \emph{allocation stack} that supports an \kwd{ALLOCATE}
+  library function that works as follows.  (1) \kwd{ALLOCATE} is only
+  ever called in a function scope, when no temporary expression result
+  is on the expression stack; otherwise the results are undefined.
+  (2) When \kwd{ALLOCATE} is called, it is passed a two-byte size
+  value $s$.  (3) (a) If there is enough space on the stack, then
+  \kwd{ALLOCATE} returns a pointer to $s$ bytes on the stack. (b) If
+  there are not $s$ bytes remaining on the stack, then the results are
+  undefined. (4) The $s$ bytes pointed to by the result of the
+  \kwd{ALLOCATE} call remain valid (i.e., are not modified except by
+  user-written code) during the lifetime of the call stack frame for
+  the function in which the \kwd{ALLOCATE} call occurred.  (5) At the
+  end of the function in which the \kwd{ALLOCATE} call occurred, the
+  memory is deallocated and may be reused as program stack storage.
+%
+\end{enumerate}
+
+The compiler may provide this stack functionality in any way that is
+feasible.  Typically the same physical stack would be used for all
+three logical stacks (and the logical stacks have been specified so
+that this is possible), but this is not a requirement.  Also,
+typically the generated code would maintain its own two-byte stack
+pointer, because the native Apple II stack located at addresses \$200
+through \$2FF is too small to serve as the program stack for this
+language.  However, this specification does not mandate any particular
+stack size; the actual available stack size depends on both the
+compiler implementation and the program memory requirements (for
+example, whether the graphics and/or language card areas are available
+for program heap and stack data).
+
 \subsection{Function Bodies}
 \label{sec:code-gen:fn-bodies}
 
@@ -914,9 +961,9 @@ expression stack, and mask off all but the lowest bit of the result to
 get the corresponding Boolean value
 (Section~\ref{sec:code-gen:boolean}).  If the Boolean value of the
 result is 1 (true), then execute the true part.  If the Boolean value
-of the result is 0 (false), either do nothing (if there is no optional
-\kwd{ELSE} clause) or execute the statement in the \kwd{ELSE} clause
-(if one is provided).
+of the result is 0 (false), then either do nothing (if there is no
+optional \kwd{ELSE} clause) or execute the statement in the \kwd{ELSE}
+clause (if one is provided).
 
 \bfhead{While statements.} Evaluate the conditional expression
 (Section~\ref{sec:code-gen:expressions}), pop the result off the
@@ -1169,53 +1216,6 @@ do not match.  The following rules apply to size adjustment:
   source value is 1).
 %
 \end{enumerate}
-
-\subsection{Program Stack}
-\label{sec:code-gen:program-stack}
-
-This specification requires that the implementation provide three
-logical stacks for use at runtime, collectively referred to as the
-\emph{program stack}:
-%
-\begin{enumerate}
-%
-\item A C-style \emph{call stack}, such that a new frame appears at
-  the top of the stack for each function call, and the frame is popped
-  at the end of the call.  This stack is used in generating function
-  call code, as specified in Section~\ref{sec:code-gen:fn-bodies}.
-%
-\item An \emph{expression stack} for use during expression evaluation
-  as specified in Section~\ref{sec:code-gen:expressions}.
-%
-\item An \emph{allocation stack} that supports an \kwd{ALLOCATE}
-  library function that works as follows.  (1) \kwd{ALLOCATE} is only
-  ever called in a function scope, when no temporary expression result
-  is on the expression stack; otherwise the results are undefined.
-  (2) When \kwd{ALLOCATE} is called, it is passed a two-byte size
-  value $s$.  (3) (a) If there is enough space on the stack, then
-  \kwd{ALLOCATE} returns a pointer to $s$ bytes on the stack. (b) If
-  there are not $s$ bytes remaining on the stack, then the results are
-  undefined. (4) The $s$ bytes pointed to by the result of the
-  \kwd{ALLOCATE} call remain valid (i.e., are not modified except by
-  user-written code) during the lifetime of the call stack frame for
-  the function in which the \kwd{ALLOCATE} call occurred.  (5) At the
-  end of the function in which the \kwd{ALLOCATE} call occurred, the
-  memory is deallocated and may be reused as program stack storage.
-%
-\end{enumerate}
-
-The compiler may provide this stack functionality in any way that is
-feasible.  Typically the same physical stack would be used for all
-three logical stacks (and the logical stacks have been specified so
-that this is possible), but this is not a requirement.  Also,
-typically the generated code would maintain its own two-byte stack
-pointer, because the native Apple II stack located at addresses \$200
-through \$2FF is too small to serve as the program stack for this
-language.  However, this specification does not mandate any particular
-stack size; the actual available stack size depends on both the
-compiler implementation and the program memory requirements (for
-example, whether the graphics and/or language card areas are available
-for program heap and stack data).
 
 
 \end{document}
