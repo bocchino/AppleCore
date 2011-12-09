@@ -255,18 +255,14 @@ public class SizePass
      * it represents.  A constant expression is unsigned unless it
      * represents a negative number, in which case it is signed.
      */
-    public void visitConstantExpression(ConstantExpression node) {
-	node.size = node.value.getSize();
-	if (node.value instanceof IntegerConstant) {
-	    // Integer const expr is signed iff integer was negative
-	    // in source code.
-	    IntegerConstant ic = (IntegerConstant) node.value;
-	    node.isSigned = (ic.value.compareTo(BigInteger.ZERO) < 0);
-	}
-	else {
-	    node.isSigned = false;
-	}
-	printStatus(node);
+    public void visitIntegerConstant(IntegerConstant node) {
+	node.size = node.getSize();
+	node.isSigned = (node.value.compareTo(BigInteger.ZERO) < 0);
+    }
+
+    public void visitCharConstant(CharConstant node) {
+	node.size = 1;
+	node.isSigned = false;
     }
 
     /**

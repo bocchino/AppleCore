@@ -469,7 +469,7 @@ public class Parser {
 	    break;
 	case CHAR_CONST:
 	case INT_CONST:
-	    if (!lvalue) result = parseConstantExpression();
+	    if (!lvalue) result = parseNumericConstant();
 	    break;
 	default:
 	    if (!lvalue) {
@@ -644,19 +644,6 @@ public class Parser {
     }
 
     /**
-     * Constant-Expr ::= Numeric-Const
-     */
-    private ConstantExpression parseConstantExpression() 
-	throws SyntaxError, IOException
-    {
-	ConstantExpression constantExp = new ConstantExpression();
-	setLineNumberOf(constantExp);
-	Constant constant = parseNumericConstant();
-	constantExp.value = constant;
-	return constantExp;
-    }
-
-    /**
      * Binop-Expr ::= Expr Binop Expr
      * Binop      ::= '=' | '>' | '<' | '<=' | '>=' | 
      *                'AND' | 'OR' | 'XOR' | '+' | '-' | 
@@ -805,7 +792,7 @@ public class Parser {
     /**
      * Numeric-Const ::= Int-Const | Char-Const
      */
-    private Constant parseNumericConstant() 
+    private NumericConstant parseNumericConstant() 
 	throws SyntaxError, IOException
     {
 	IntegerConstant intConstant = parsePossibleIntConstant();

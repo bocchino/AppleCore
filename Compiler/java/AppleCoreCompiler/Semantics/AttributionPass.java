@@ -139,10 +139,10 @@ public class AttributionPass
 	    addMapping(node.name, node, localSymbols);
 	} else {
 	    if (node.init != null) {
-		if (!(node.init instanceof ConstantExpression)) {
+		if (!(node.init instanceof NumericConstant)) {
 		    // TODO: Arithmetic expressions involving
 		    // constants should be allowed.
-		    throw new SemanticError("initializer must be constant",
+		    throw new SemanticError("non-constant initializer not implemented",
 					    node);
 		}
 	    }

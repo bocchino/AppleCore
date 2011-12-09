@@ -5,14 +5,14 @@
  * provide the assembler-specific code emitter functions.
  *
  * Code generation uses the Apple II stack (the "machine stack") only
- * for JSR and RTS.  It uses a separately managed stack (the "program
- * stack") with a 16-byte pointer for everything else.  That way,
- * running our programs won't blow out the stack.  We do require that
- * the total size of all local vars (plus 2 bytes for saving the frame
- * pointer) be <= 256 bytes; that lets us use one-byte indexing into
- * local vars from the frame pointer.  However, dynamic frame sizes of
- * > 256 bytes are possible, by allocating memory on the stack above
- * the local variable slots.
+ * for JSR, RTS, and temporary saves via PHA and PHP.  It uses a
+ * separately managed stack (the "program stack") with a 16-byte
+ * pointer for everything else.  That way, running our programs won't
+ * blow out the stack.  We do require that the total size of all local
+ * vars (plus 2 bytes for saving the frame pointer) be <= 256 bytes;
+ * that lets us use one-byte indexing into local vars from the frame
+ * pointer.  However, dynamic frame sizes of > 256 bytes are possible,
+ * by allocating memory on the stack above the local variable slots.
  *
  * Code generation uses the following registers in zero-page memory:
  *
@@ -91,10 +91,21 @@ public abstract class AssemblyWriter
 
     /* Leaf nodes */
 
-    public void visitConstantExpression(ConstantExpression node) 
-	throws ACCError
-    {
-	evaluateNumericConstant(node.value);
+    public void visitIntegerConstant(IntegerConstant node) {
+	emitComment(node);
+	IntegerConstant intConst = (IntegerConstant) node;
+	int size = intConst.getSize();
+	for (int i = 0; i < size; ++i) {
+	    emitImmediateInstruction("LDA",intConst.valueAtIndex(i));
+	    emitAbsoluteInstruction("JSR","ACC.PUSH.A");
+	}
+    }
+
+    public void visitCharConstant(CharConstant node) {
+	emitComment(node);
+	CharConstant charConst = (CharConstant) node;
+	emitImmediateInstruction("LDA","'"+charConst.value+"'",false);
+	emitAbsoluteInstruction("JSR","ACC.PUSH.A");	    
     }
 
     public void visitIdentifier(Identifier node) 
@@ -128,11 +139,7 @@ public abstract class AssemblyWriter
 	else if (def instanceof ConstDecl) {
 	    emitComment(node);
 	    ConstDecl cd = (ConstDecl) def;
-	    if (cd.expr instanceof ConstantExpression) {
-		visitConstantExpression((ConstantExpression) cd.expr);
-	    } else {
-		temporaryAbort();
-	    }
+	    scan(cd.expr);
 	}
 	else if (def instanceof DataDecl) {
 	    emitComment(node);
@@ -217,33 +224,33 @@ public abstract class AssemblyWriter
 	if (node.label != null)
 	    emitLabel(node.label);
 	if (node.stringConstant != null) {
-	    emitAsData(node.stringConstant);
+	    emitStringConstant(node.stringConstant);
 	    if (node.isTerminatedString) {
 		emitStringTerminator();
 	    }
 	}
 	else {
-	    System.out.println("Sorry, can't do this yet!");
-	    System.exit(1);
+	    // Previous passes must ensure cast will succeed.
+	    if (!(node.expr instanceof NumericConstant)) {
+		throw new ACCInternalError("non-constant data for ", node);
+	    }
+	    NumericConstant nc = 
+		(NumericConstant) node.expr;
+	    emitAsData(nc);
 	}
     }
 
     public void visitConstDecl(ConstDecl node) {
 	Expression expr = node.expr;
-	if (!(expr instanceof ConstantExpression)) {
-	    temporaryAbort();
-	}
-	ConstantExpression ce = (ConstantExpression) expr;
-	Constant c = ce.value;
-	if (c instanceof IntegerConstant) {
-	    IntegerConstant ic = (IntegerConstant) c;
+	if (expr instanceof IntegerConstant) {
+	    IntegerConstant ic = (IntegerConstant) expr;
 	    if (ic.getSize() <= 2) {
 		emitLabel(node.label);
 		emitAbsoluteInstruction(".EQ", ic.valueAsHexString());
 	    }
 	}
-	if (c instanceof CharConstant) {
-	    CharConstant cc = (CharConstant) c;
+	else {
+	    CharConstant cc = (CharConstant) expr;
 	    emitLabel(node.label);
 	    emitAbsoluteInstruction(".EQ",cc.toString());
 	}
@@ -273,12 +280,12 @@ public abstract class AssemblyWriter
 		emitBlockStorage(node.size);
 	    }
 	    else {
-		// Attribution pass must ensure cast will succeed.
-		if (!(node.init instanceof ConstantExpression)) {
+		// Previous passes must ensure cast will succeed.
+		if (!(node.init instanceof NumericConstant)) {
 		    throw new ACCInternalError("non-constant initializer expr for ", node);
 		}
-		ConstantExpression constExp = (ConstantExpression) node.init;
-		Constant constant = constExp.value;
+		NumericConstant constant = 
+		    (NumericConstant) node.init;
 		emitAsData(constant, node.size);
 	    }
 	}
@@ -408,65 +415,92 @@ public abstract class AssemblyWriter
     public void visitCallExpression(CallExpression node) 
 	throws ACCError
     {
+	boolean needIndirectCall = true;
 	if (node.fn instanceof Identifier) {
 	    Identifier id = (Identifier) node.fn;
 	    Node def = id.def;
 	    if (def instanceof FunctionDecl) {
-		FunctionDecl functionDecl = (FunctionDecl) def;
-		emitComment("fill slots for new frame");
-		// Save bump size for undo
-		int bumpSize = 2;
-		// Push old FP
-		emitAbsoluteInstruction("JSR","ACC.PUSH.FP");
-		// Fill in the arguments
-		Iterator<VarDecl> I = functionDecl.params.iterator();
-		if (node.args.size() > 0) {
-		    for (Expression arg : node.args) {
-			VarDecl param = I.next();
-			emitComment("bind arg to " + param);
-			// Evaluate the argument
-			needAddress = false;
-			scan(arg);
-			// Adjust sizes to match.
-			adjustSize(param.size,arg.size,arg.isSigned);
-			bumpSize += param.size;
-		    }
-		}
-		emitComment("set FP for new frame");
-		// Bump SP back down to new FP
-		emitImmediateInstruction("LDA",bumpSize);
-		emitAbsoluteInstruction("JSR","ACC.SP.DOWN.A");
-		// Save new FP
-		emitAbsoluteInstruction("JSR","ACC.SET.FP.TO.SP");
-		emitComment("function call");
-		emitAbsoluteInstruction("JSR",labelAsString(id.name));
+		emitCallToFunctionDecl((FunctionDecl) def,
+				       node.args);
+		needIndirectCall = false;
 	    }
 	    else if (def instanceof ConstDecl ||
 		     def instanceof DataDecl) {
-		// Calling a label: restore regs, JSR, and save regs.
-		restoreRegisters();
-		emitComment("function call");
-		emitAbsoluteInstruction("JSR",labelAsString(id.name));
-		saveRegisters();
-	    }
-	    else if (def instanceof VarDecl) {
-		// Calling a variable:  get address, then call.
-		VarDecl varDecl = (VarDecl) def;
-		pushVarAddr(varDecl);
-		restoreRegisters();
-		emitComment("function call");
-		emitAbsoluteInstruction("JSR","ACC.INDIRECT.CALL");
-		saveRegisters();
-	    }
-	    else {
-		throw new ACCInternalError("illegal call to " + def,node);
+		emitCallToConstant(labelAsString(id.name));
+		needIndirectCall = false;
 	    }
 	}
-	else {
-	    // TODO
-	    System.err.println("Sorry, can't do this yet");
-	    System.exit(1);
+	else if (node.fn instanceof NumericConstant) {
+	    NumericConstant nc = (NumericConstant) node.fn;
+	    emitCallToConstant(nc.valueAsHexString());
+	    needIndirectCall = false;
 	}
+	// If all else failed, use indirect call
+	if (needIndirectCall) {
+	    emitIndirectCall(node.fn);
+	}
+    }
+
+    /**
+     * Call to declared function: push args and set up new frame.
+     */
+    private void emitCallToFunctionDecl(FunctionDecl functionDecl,
+					List<Expression> args) 
+	throws ACCError
+    {
+	emitComment("fill slots for new frame");
+	// Save bump size for undo
+	int bumpSize = 2;
+	// Push old FP
+	emitAbsoluteInstruction("JSR","ACC.PUSH.FP");
+	// Fill in the arguments
+	Iterator<VarDecl> I = functionDecl.params.iterator();
+	if (args.size() > 0) {
+	    for (Expression arg : args) {
+		VarDecl param = I.next();
+		emitComment("bind arg to " + param);
+		// Evaluate the argument
+		needAddress = false;
+		scan(arg);
+		// Adjust sizes to match.
+		adjustSize(param.size,arg.size,arg.isSigned);
+		bumpSize += param.size;
+	    }
+	}
+	emitComment("set FP for new frame");
+	// Bump SP back down to new FP
+	emitImmediateInstruction("LDA",bumpSize);
+	emitAbsoluteInstruction("JSR","ACC.SP.DOWN.A");
+	// Save new FP
+	emitAbsoluteInstruction("JSR","ACC.SET.FP.TO.SP");
+	emitComment("function call");
+	emitAbsoluteInstruction("JSR",labelAsString(functionDecl.name));
+    }
+    
+    /**
+     * Calling a constant address: restore regs, JSR, and save regs.
+     */
+    private void emitCallToConstant(String addr) {
+	restoreRegisters();
+	emitComment("function call");
+	emitAbsoluteInstruction("JSR",addr);
+	saveRegisters();
+    }
+
+    /**
+     * Indirect function call: evaluate expression, restore regs, JSR,
+     * and save regs.
+     */
+    private void emitIndirectCall(Expression node) 
+	throws ACCError
+    {
+	needAddress = false;
+	scan(node);
+	adjustSize(2,node.size,false);
+	restoreRegisters();
+	emitComment("function call");
+	emitAbsoluteInstruction("JSR","ACC.INDIRECT.CALL");
+	saveRegisters();
     }
 
     public void visitRegisterExpression(RegisterExpression node) 
@@ -752,25 +786,6 @@ public abstract class AssemblyWriter
 	}
     }
 
-    /**
-     * Evaluate a constant
-     */
-    protected void evaluateNumericConstant(Constant c) {
-	emitComment(c);
-	if (c instanceof IntegerConstant) {
-	    IntegerConstant intConst = (IntegerConstant) c;
-	    int size = intConst.getSize();
-	    for (int i = 0; i < size; ++i) {
-		emitImmediateInstruction("LDA",intConst.valueAtIndex(i));
-		emitAbsoluteInstruction("JSR","ACC.PUSH.A");
-	    }
-	}
-	else if (c instanceof CharConstant) {
-	    CharConstant charConst = (CharConstant) c;
-	    emitImmediateInstruction("LDA","'"+charConst.value+"'",false);
-	    emitAbsoluteInstruction("JSR","ACC.PUSH.A");	    
-	}
-    }
 
     /* Code emitter methods.  Override these to provide the syntax for
      * your favorite assembler. */
@@ -814,16 +829,16 @@ public abstract class AssemblyWriter
 	emit(labelAsString(label));
     }
 
-    protected abstract void emitAsData(Constant c);
+    protected abstract void emitAsData(NumericConstant c);
     protected abstract void emitStringTerminator();
-    protected abstract void emitAsData(Constant c, int sizeBound);
+    /**
+     * Emit data with a size bound, for initializing constant
+     * variables and data.
+     */
+    protected abstract void emitAsData(NumericConstant c, int sizeBound);
     protected abstract void emitBlockStorage(int nbytes);
+    protected abstract void emitStringConstant(StringConstant sc);
 
     protected abstract String labelAsString(String label);
-
-    private void temporaryAbort() {
-	System.err.println("Sorry, can't handle non-constant expression yet!");
-	System.exit(1);
-    }
 
 }

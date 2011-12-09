@@ -167,13 +167,6 @@ public class ASTScanner extends NodeVisitor {
 	scan(node.expr);
 	visitAfterScan(node);
     }
-    public void visitConstantExpression(ConstantExpression node) 
-	throws ACCError 
-    {
-	visitBeforeScan(node);
-	scan(node.value);
-	visitAfterScan(node);
-    }
     public void visitNode(Node node) 
 	throws ACCError
     {

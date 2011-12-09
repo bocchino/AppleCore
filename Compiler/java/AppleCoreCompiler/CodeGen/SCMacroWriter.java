@@ -88,7 +88,8 @@ public class SCMacroWriter
      * - .AS "XXX" for the printable chars
      * - .HS XX    for the non-printable chars
      */
-    private void emitStringConstant(String s) {
+    protected void emitStringConstant(StringConstant sc) {
+	String s = sc.value;
 	int pos = 0;
 	while (pos < s.length()) {
 	    if (isPrintable(s.charAt(pos))) {
@@ -106,12 +107,12 @@ public class SCMacroWriter
 	}
     }
 
-    protected void emitAsData(Constant c) {
-	if (c instanceof StringConstant) {
-	    StringConstant stringConst = (StringConstant) c;
-	    emitStringConstant(stringConst.value);
-	}
-	else if (c instanceof IntegerConstant) {
+    protected void emitStringTerminator() {
+	emitAbsoluteInstruction(".HS","00");
+    }
+
+    protected void emitAsData(NumericConstant c) {
+	if (c instanceof IntegerConstant) {
 	    IntegerConstant intConst = (IntegerConstant) c;
 	    emit("\t.HS ");
 	    int size = intConst.getSize();
@@ -120,18 +121,14 @@ public class SCMacroWriter
 	    }
 	    emit("\n");
 	}
-	else if (c instanceof CharConstant) {
+	else {
 	    CharConstant charConst = (CharConstant) c;
 	    emitAbsoluteInstruction(".DA","'"+charConst.value+"'");
 	}
 
     }
 
-    protected void emitStringTerminator() {
-	emitAbsoluteInstruction(".HS","00");
-    }
-
-    protected void emitAsData(Constant c, int sizeBound) {
+    protected void emitAsData(NumericConstant c, int sizeBound) {
 	if (c instanceof IntegerConstant) {
 	    IntegerConstant intConst = (IntegerConstant) c;
 	    int constSize = intConst.getSize();

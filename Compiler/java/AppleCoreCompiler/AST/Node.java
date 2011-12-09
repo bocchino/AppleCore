@@ -55,20 +55,6 @@ public abstract class Node {
 
     }
 
-    public static class IncludeDecl
-	extends Declaration
-    {
-	public String filename;
-
-	public void accept(Visitor v) throws ACCError {
-	    v.visitIncludeDecl(this);
-	}
-
-	public String toString() {
-	    return "include decl " + filename;
-	}
-    }
-
     public static class ConstDecl 
 	extends Declaration 
     {
@@ -109,14 +95,14 @@ public abstract class Node {
     public static class VarDecl 
 	extends Declaration 
     {
-	public boolean isLocalVariable;
-	public boolean isFunctionParam;
-	public int offset;
-
 	public String name;
 	public int size;
 	public boolean isSigned;
 	public Expression init;
+
+	public boolean isLocalVariable;
+	public boolean isFunctionParam;
+	public int offset;
 
 	public void accept(Visitor v) throws ACCError {
 	    v.visitVarDecl(this);
@@ -144,11 +130,6 @@ public abstract class Node {
 	public int size;
 	public boolean isSigned;
 	public String name;
-	/**
-	 * Size of the initial stack frame for this function.
-	 */
-	public int frameSize;
-
 	public final List<VarDecl> params = 
 	    new LinkedList<VarDecl>();
 	public final List<VarDecl> varDecls =
@@ -165,6 +146,11 @@ public abstract class Node {
 	}
 
 	/**
+	 * Size of the initial stack frame for this function.
+	 */
+	public int frameSize;
+
+	/**
 	 * Does this function have an external definition?
 	 */
 	public boolean isExternal;
@@ -178,23 +164,30 @@ public abstract class Node {
 	}
 
 	public String toString() {
-	    return functionAsString("function decl", size,
-				    isSigned,name);
+	    StringBuffer sb = 
+		new StringBuffer("FN");
+	    if (size > 0) {
+		sb.append(':');
+		sb.append(sizeAsString(size,isSigned));
+	    }
+	    sb.append(" ");
+	    sb.append(name);
+	    return sb.toString();
 	}
     }
 
-    private static String functionAsString(String kind, int size, 
-					   boolean isSigned, String name) {
-	StringBuffer sb = 
-	    new StringBuffer(kind);
-	sb.append(" FN");
-	if (size > 0) {
-	    sb.append(':');
-	    sb.append(sizeAsString(size,isSigned));
+    public static class IncludeDecl
+	extends Declaration
+    {
+	public String filename;
+
+	public void accept(Visitor v) throws ACCError {
+	    v.visitIncludeDecl(this);
 	}
-	sb.append(" ");
-	sb.append(name);
-	return sb.toString();
+
+	public String toString() {
+	    return "include decl " + filename;
+	}
     }
 
     /**
@@ -388,6 +381,10 @@ public abstract class Node {
     public static class BinopExpression
 	extends Expression
     {
+	public Expression left;
+	public Operator operator;
+	public Expression right;
+
 	public enum Operator {
 	    SHL("SHL","<<",1),SHR("SHR",">>",1),
 	    TIMES("MUL","*",2),DIVIDE("DIV","/",2),
@@ -417,9 +414,6 @@ public abstract class Node {
 	    }
 	    return false;
 	}
-	public Expression left;
-	public Operator operator;
-	public Expression right;
 
 	public void accept(Visitor v) throws ACCError {
 	    v.visitBinopExpression(this);
@@ -433,6 +427,9 @@ public abstract class Node {
     public static class UnopExpression
 	extends Expression
     {
+	public Operator operator;
+	public Expression expr;
+
 	public enum Operator {
 	    DEREF("DEREF","@"),NOT("NOT","NOT"),
 	    NEG("NEG","-"),INCR("INCR","INCR"),
@@ -447,8 +444,6 @@ public abstract class Node {
 		return symbol;
 	    }
 	}
-	public Operator operator;
-	public Expression expr;
 
 	public void accept(Visitor v) throws ACCError {
 	    v.visitUnopExpression(this);
@@ -493,31 +488,11 @@ public abstract class Node {
 	}
     }
 
-    public static class ConstantExpression
-	extends Expression
-    {
-	public Constant value;
-
-	public void accept(Visitor v) throws ACCError {
-	    v.visitConstantExpression(this);
-	}
-
-	public String toString() {
-	    return "constant expr";
-	}
-    }
-
     /**
-     * Constant literals
+     * String constant literals
      */
-    public static abstract class Constant 
-	extends Node
-    {
-	public abstract boolean isZero();
-    }
-
     public static class StringConstant 
-	extends Constant
+	extends Node
     {
 	public String value;
 
@@ -540,8 +515,19 @@ public abstract class Node {
 	}
     }
 
+    /**
+     * Numeric constant literals
+     */
+    public static abstract class NumericConstant 
+	extends Expression
+    {
+	public abstract boolean isZero();
+	public abstract String valueAsHexString();
+	public abstract String valueAsDecString();
+    }
+
     public static class IntegerConstant 
-	extends Constant
+	extends NumericConstant
     {
 	public static final BigInteger
 	    byteVal = new BigInteger("256");
@@ -606,7 +592,7 @@ public abstract class Node {
     }
 
     public static class CharConstant 
-	extends Constant
+	extends NumericConstant
     {
 	public char value;
 
@@ -616,6 +602,14 @@ public abstract class Node {
 	
 	public void accept(Visitor v) throws ACCError {
 	    v.visitCharConstant(this);
+	}
+
+	public String valueAsHexString() {
+	    return "$" + String.valueOf((int) value).toUpperCase();
+	}
+
+	public String valueAsDecString() {
+	    return String.valueOf((int) value);
 	}
 
 	public String toString() {
@@ -635,29 +629,71 @@ public abstract class Node {
      */
     public interface Visitor {
 
-	public abstract void visitProgram(Program node) throws ACCError;
-	public abstract void visitIncludeDecl(IncludeDecl node) throws ACCError;
-	public abstract void visitConstDecl(ConstDecl node) throws ACCError;
-	public abstract void visitDataDecl(DataDecl node) throws ACCError;
-	public abstract void visitVarDecl(VarDecl node) throws ACCError;
-	public abstract void visitFunctionDecl(FunctionDecl node) throws ACCError;
-	public abstract void visitIfStatement(IfStatement node) throws ACCError;
-	public abstract void visitWhileStatement(WhileStatement node) throws ACCError;
-	public abstract void visitExpressionStatement(ExpressionStatement node) throws ACCError;
-	public abstract void visitReturnStatement(ReturnStatement node) throws ACCError;
-	public abstract void visitBlockStatement(BlockStatement node) throws ACCError;
-	public abstract void visitIndexedExpression(IndexedExpression node) throws ACCError;
-	public abstract void visitCallExpression(CallExpression node) throws ACCError;
-	public abstract void visitRegisterExpression(RegisterExpression node) throws ACCError;
-	public abstract void visitSetExpression(SetExpression node) throws ACCError;
-	public abstract void visitBinopExpression(BinopExpression node) throws ACCError;
-	public abstract void visitUnopExpression(UnopExpression node) throws ACCError;
-	public abstract void visitParensExpression(ParensExpression node) throws ACCError;
-	public abstract void visitConstantExpression(ConstantExpression node) throws ACCError;
-	public abstract void visitIdentifier(Identifier node) throws ACCError;
-	public abstract void visitCharConstant(CharConstant node) throws ACCError;
-	public abstract void visitStringConstant(StringConstant node) throws ACCError;
-	public abstract void visitIntegerConstant(IntegerConstant node) throws ACCError;
-
+	public abstract void
+	    visitProgram(Program node) 
+	    throws ACCError;
+	public abstract void
+	    visitIncludeDecl(IncludeDecl node) 
+	    throws ACCError;
+	public abstract void
+	    visitConstDecl(ConstDecl node) 
+	    throws ACCError;
+	public abstract void
+	    visitDataDecl(DataDecl node) 
+	    throws ACCError;
+	public abstract void
+	    visitVarDecl(VarDecl node) 
+	    throws ACCError;
+	public abstract void
+	    visitFunctionDecl(FunctionDecl node) 
+	    throws ACCError;
+	public abstract void
+	    visitIfStatement(IfStatement node) 
+	    throws ACCError;
+	public abstract void
+	    visitWhileStatement(WhileStatement node) 
+	    throws ACCError;
+	public abstract void
+	    visitExpressionStatement(ExpressionStatement node) 
+	    throws ACCError;
+	public abstract void 
+	    visitReturnStatement(ReturnStatement node) 
+	    throws ACCError;
+	public abstract void 
+	    visitBlockStatement(BlockStatement node) 
+	    throws ACCError;
+	public abstract void 
+	    visitIndexedExpression(IndexedExpression node)
+	    throws ACCError;
+	public abstract 
+	    void visitCallExpression(CallExpression node) 
+	    throws ACCError;
+	public abstract void 
+	    visitRegisterExpression(RegisterExpression node) 
+	    throws ACCError;
+	public abstract void 
+	    visitSetExpression(SetExpression node) 
+	    throws ACCError;
+	public abstract void 
+	    visitBinopExpression(BinopExpression node) 
+	    throws ACCError;
+	public abstract void 
+	    visitUnopExpression(UnopExpression node) 
+	    throws ACCError;
+	public abstract void 
+	    visitParensExpression(ParensExpression node) 
+	    throws ACCError;
+	public abstract void 
+	    visitIdentifier(Identifier node) 
+	    throws ACCError;
+	public abstract void
+	    visitStringConstant(StringConstant node) 
+	    throws ACCError;
+	public abstract void
+	    visitIntegerConstant(IntegerConstant node)
+	    throws ACCError;
+	public abstract void 
+	    visitCharConstant(CharConstant node) 
+	    throws ACCError;
     }
 }
