@@ -579,7 +579,7 @@ appearing in the source file is given a \emph{size} and a
   operations, the size is 1 byte unsigned.  For shift operations, the
   size and signedness come from the left operand.  For all other
   operations, the size is the maximum of the sizes of its operands
-  unless both operands are constant-value expressions
+  unless the expression is a constant-value expression
   (Section~\ref{sec:semantics:constant-value-expr}).  In that case,
   the size is the minimum number of bytes required to represent the
   value produced by evaluating the expression according to the rules
@@ -591,7 +591,7 @@ appearing in the source file is given a \emph{size} and a
 \item \ithead{Unary operation expressions.} The size and signedness of
   a unary operation expression come from the operand, except that (1)
   an address operation \kwd{@} is two bytes unsigned; (2) a negation
-  operation is signed; and (3) if the operand is a constant-value
+  operation is signed; and (3) if the expression is a constant-value
   expression (Section~\ref{sec:semantics:constant-value-expr}), then
   the size is the minimum number of bytes required to represent the
   value produced by evaluating the expression according to the rules
@@ -680,38 +680,53 @@ effect: that is, it must be a set, call, \kwd{INCR}, or \kwd{DECR}
 expression.  This check traps the error of writing \kwd{X = 2;}
 (comparison) instead of \kwd{SET X = 2;} (assignment).
 
+\subsection{Expressions Appearing at Global Scope}
+\label{sec:semantic:global-expr}
+
+An expression appearing at global scope (i.e., in a constant or data
+declaration, or as the initializer of a global variable declaration)
+must be one of the following:
+%
+\begin{enumerate}
+%
+\item A constant-value expression
+  (Section~\ref{sec:semantics:constant-value-expr}).
+%
+\item An identifier corresponding to a data declaration (useful for
+  data tables).
+%
+\item An identifier corresponding to a function declaration (useful
+  for jump tables).
+%
+\end{enumerate}
+%
+This is so that the compiler can precompute the value before
+generating any code (in the case of a constant-value expression) or
+generate an assembler label (in the other two cases).  In case 3, the
+actual address associated with the assembler label may not be known
+until final assembly (Section~\ref{sec:code-gen:source-files}).
+
 \subsection{Constant-Value Expressions}
 \label{sec:semantics:constant-value-expr}
 
-\bfhead{Definition of constant-value expression.} A constant-value
-expression is one of the following:
+A constant-value expression is one of the following:
 %
 \begin{enumerate}
 %
 \item A numeric constant.
 %
-\item An identifier corresponding to a numeric constant declaration,
-  data declaration (useful for data tables), or function declaration
-  (useful for jump tables).
+\item An identifier corresponding to a numeric constant declaration.
 %
-\item A binary operation expression, where each operand is a numeric
-  constant or an identifier corresponding to a numeric constant
-  declaration.
+\item A binary operation expression, where each operand is a
+  constant-value expression.
 %
 \item A negation (\kwd{-}) or \kwd{NOT} unary operation expression,
-  where the operand is a numeric constant or an identifier
-  corresponding to a numeric constant declaration.
+  where the operand is a constant-value expression.
 %
 \item A parentheses expression, where the expression inside the
   parentheses is a constant-value expression.
 %
 \end{enumerate}
-
-\bfhead{Requirement of constant-value expressions at global scope.} An
-expression appearing at global scope (i.e., in a constant or data
-declaration, or as the initializer of a global variable declaration)
-must be a constant-value expression.  This is so the compiler can
-precompute the value.
 
 \section{Code Generation}
 \label{sec:code-gen}
