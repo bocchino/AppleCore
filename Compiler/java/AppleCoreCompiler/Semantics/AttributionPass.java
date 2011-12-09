@@ -46,6 +46,9 @@ public class AttributionPass
     public void runOn(SourceFile sourceFile) 
 	throws ACCError
     {
+	// TODO: This is too liberal.  We want to make sure that defs
+	// preced uses at global scope, to avoid circular defs.
+	//
 	// Enter the top-level declarations
 	for (Declaration decl : sourceFile.decls) {
 	    insertDecl.insert(decl, globalSymbols);
@@ -101,17 +104,8 @@ public class AttributionPass
 	Node priorEntry = map.put(name, node);
 	// Check for symbol redefinition
 	if (priorEntry != null && priorEntry != node) {
-	    if (priorEntry.lineNumber > 0) {
-		// If the node has line number > 0, then there is an
-		// illegal redefinition.
-		throw new SemanticError(name + " already defined at line " +
-					priorEntry.lineNumber, node);
-	    }
-	    else {
-		// If the node has line number 0, then the user is
-		// redefining a built-in symbol.  Allow, but warn.
-		warner.warn("redefinition of built-in symbol " + name, node);
-	    }
+	    throw new SemanticError(name + " already defined at line " +
+				    priorEntry.lineNumber, node);
 	}
     }
 

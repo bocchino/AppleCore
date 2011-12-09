@@ -531,21 +531,11 @@ The compiler matches definitions with uses in the following way:
   in the function scope use the same identifier, then report an error.
 %
 \end{enumerate}
-%
-A use appearing at global scope must come after the corresponding
-definition in the source file.  This rule precludes circular
-definitions.  For example,
-
-\begin{verbatim}
-CONST A B;
-CONST B A;
-\end{verbatim}
-
-\noindent
-is not allowed, since the identifier \kwd{B} is not defined at the
-point where it is first used.  A use appearing inside a function body
-may come before or after the corresponding definition in the source
-file.
+% 
+Subject to the restriction stated in
+Section~\ref{sec:semantic:global-expr} for uses of constant
+definitions appearing in expressions at global scope, definitions need
+not precede their corresponding uses in the source file.
 
 \subsection{Size and Signedness}
 \label{sec:semantics:size}
@@ -696,9 +686,9 @@ expression.  This check traps the error of writing \kwd{X = 2;}
 \subsection{Expressions Appearing at Global Scope}
 \label{sec:semantic:global-expr}
 
-An expression appearing at global scope (i.e., in a constant or data
-declaration, or as the initializer of a global variable declaration)
-must be one of the following:
+(1) An expression appearing at global scope (i.e., in a constant or
+data declaration, or as the initializer of a global variable
+declaration) must be one of the following:
 %
 \begin{enumerate}
 %
@@ -712,12 +702,38 @@ must be one of the following:
   for jump tables).
 %
 \end{enumerate}
+
+(2) For each expression \nonterm{expr} appearing at global scope, for
+each identifier corresponding to a constant declaration that appears
+in \nonterm{expr}, the corresponding constant declaration must (a)
+precede \nonterm{expr} in the source file or (b) contain no
+identifiers corresponding to constant declarations in its expression.
+
+These rules are designed so that the compiler can precompute the value
+of all expressions appearing at global scope before generating any
+code (in the case of a constant-value expression) or generate an
+assembler label (in the other two cases).  In case 3, the actual
+address associated with the assembler label may not be known until
+final assembly (Section~\ref{sec:code-gen:source-files}).  The second
+rule also precludes circular definitions.  For example,
 %
-This is so that the compiler can precompute the value before
-generating any code (in the case of a constant-value expression) or
-generate an assembler label (in the other two cases).  In case 3, the
-actual address associated with the assembler label may not be known
-until final assembly (Section~\ref{sec:code-gen:source-files}).
+\begin{verbatim}
+CONST A B;
+CONST B A;
+\end{verbatim}
+%
+is not allowed, since the first use of the identifier \kwd{B} precedes
+its definition, and the expression in the definition contains an
+identifier (\kwd{A}) corresponding to a constant declaration.  On the
+other hand,
+%
+\begin{verbatim}
+CONST A B;
+CONST B C;
+DATA  C "FOO";
+\end{verbatim}
+%
+is allowed.
 
 
 \subsection{Constant-Value Expressions}
