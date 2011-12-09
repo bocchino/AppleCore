@@ -59,15 +59,14 @@ supports separate compilation. The entire core language needs only a
 few kilobytes of support routines; additional routines can be linked
 in as needed.  Third, AppleCore strikes a balance between power and
 efficiency.  Notably, it supports integer arithmetic on fixed-size
-variables of up to 255 bytes, so it essentially gives
-arbitrary-precision arithmetic.  This power does come at a cost in
-terms of speed for single-byte arithmetic that could be done in
-registers; however, if that speed is needed, one can easily call into
-assembly language arithmetic routines.  Fourth, it provides easy
-integration with assembly language routines; in particular, you can
-say things like ``load `A' into the accumulator and call \$FDED'' that
-are impossible to say in Applesoft or other languages.  For example,
-in Applesoft you could do this with the \kwd{USR} function or a
+variables of up to 255 bytes.  This power does come at a cost in terms
+of speed for single-byte arithmetic that could be done in registers;
+however, if that speed is needed, one can easily call into assembly
+language arithmetic routines.  Fourth, it provides easy integration
+with assembly language routines; in particular, you can say things
+like ``load `A' into the accumulator and call \$FDED'' that are
+impossible to say in Applesoft or other languages.  For example, in
+Applesoft you could do this with the \kwd{USR} function or a
 \kwd{CALL}, but in either case you'd need to write some glue code in
 assembly language to get the value from the Applesoft program into the
 accumulator before the call.
