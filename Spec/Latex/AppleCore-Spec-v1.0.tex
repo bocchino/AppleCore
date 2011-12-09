@@ -706,6 +706,19 @@ generate an assembler label (in the other two cases).  In case 3, the
 actual address associated with the assembler label may not be known
 until final assembly (Section~\ref{sec:code-gen:source-files}).
 
+Any identifier appearing in an expression at global scope must be
+defined previously in the source file.  This rule precludes circular
+definitions.  For example,
+
+\begin{verbatim}
+CONST A B;
+CONST B A;
+\end{verbatim}
+
+\noindent
+is not allowed, since the identifier \kwd{B} is not defined at the
+point where it is first used.
+
 \subsection{Constant-Value Expressions}
 \label{sec:semantics:constant-value-expr}
 
