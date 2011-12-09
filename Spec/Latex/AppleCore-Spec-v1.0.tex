@@ -531,10 +531,10 @@ The compiler matches definitions with uses in the following way:
 %
 \end{enumerate}
 % 
-Subject to the restriction stated in
-Section~\ref{sec:semantic:global-expr} for uses of constant
-definitions appearing in expressions at global scope, definitions need
-not precede their corresponding uses in the source file.
+Uses of a function declaration may come before or after the function
+declaration in the source file.  For all other declarations, all uses
+of the declaration must come after the declaration in the source
+file.
 
 \subsection{Size and Signedness}
 \label{sec:semantics:size}
@@ -702,38 +702,13 @@ declaration) must be one of the following:
 %
 \end{enumerate}
 
-(2) For each expression \nonterm{expr} appearing at global scope, for
-each identifier corresponding to a constant declaration that appears
-in \nonterm{expr}, the corresponding constant declaration must (a)
-precede \nonterm{expr} in the source file or (b) contain no
-identifiers corresponding to constant declarations in its expression.
-
-These rules are designed so that the compiler can precompute the value
-of all expressions appearing at global scope before generating any
-code (in the case of a constant-value expression) or generate an
-assembler label (in the other two cases).  In case 3, the actual
-address associated with the assembler label may not be known until
-final assembly (Section~\ref{sec:code-gen:source-files}).  The second
-rule also precludes circular definitions.  For example,
-%
-\begin{verbatim}
-CONST A B;
-CONST B A;
-\end{verbatim}
-%
-is not allowed, since the first use of the identifier \kwd{B} precedes
-its definition, and the expression in the definition contains an
-identifier (\kwd{A}) corresponding to a constant declaration.  On the
-other hand,
-%
-\begin{verbatim}
-CONST A B;
-CONST B C;
-DATA  C "FOO";
-\end{verbatim}
-%
-is allowed.
-
+These rules are designed so that the compiler can do a single pass
+over all the expressions \nonterm{expr} appearing at global scope, in
+the order in which they appear in the source file, and either (1)
+compute the constant value of \nonterm{expr} (in case 1) or generate
+an assembler label for \nonterm{expr} (in cases 2 and 3). In case 3,
+the actual address associated with the assembler label may not be
+known until final assembly (Section~\ref{sec:code-gen:source-files}).
 
 \subsection{Constant-Value Expressions}
 \label{sec:semantics:constant-value-expr}
