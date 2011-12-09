@@ -46,9 +46,6 @@ public class AttributionPass
     public void runOn(SourceFile sourceFile) 
 	throws ACCError
     {
-	// TODO: This is too liberal.  We want to make sure that defs
-	// preced uses at global scope, to avoid circular defs.
-	//
 	// Enter the top-level declarations
 	for (Declaration decl : sourceFile.decls) {
 	    insertDecl.insert(decl, globalSymbols);
@@ -134,8 +131,7 @@ public class AttributionPass
 	} else {
 	    if (node.init != null) {
 		if (!(node.init instanceof NumericConstant)) {
-		    // TODO: Arithmetic expressions involving
-		    // constants should be allowed.
+		    // TODO: Expressions should be allowed as stated in spec.
 		    throw new SemanticError("non-constant initializer not implemented",
 					    node);
 		}
