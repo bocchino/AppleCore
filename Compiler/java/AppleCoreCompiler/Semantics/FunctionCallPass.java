@@ -26,7 +26,6 @@ public class FunctionCallPass
 	throws ACCError
     {
 	super.visitCallExpression(node);
-	Node def = node.name.def;
 	if (!argsMatch(node)) {
 	    throw new SemanticError("wrong number of function args",
 				    node);
@@ -49,8 +48,11 @@ public class FunctionCallPass
 	    throws ACCError
 	{
 	    site = node;
-	    Node def = node.name.def;
-	    if (def != null) def.accept(this);
+	    if (node.fn instanceof Identifier) {
+		Identifier id = (Identifier) node.fn;
+		Node def = id.def;
+		if (def != null) def.accept(this);
+	    }
 	    return result;
 	}
 	

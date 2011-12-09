@@ -73,11 +73,9 @@ public abstract class Node {
 	extends Declaration 
     {
 	public String label;
-	// TODO: This should be a constant-value expression
-	public Constant constant;
-	public int getSize() { return constant.getSize(); }
+	public Expression expr;
+	public int getSize() { return expr.getSize(); }
 	public boolean isSigned() { return false; }
-	public boolean isExternal() { return constant == null; }
 
 	public void accept(Visitor v) throws ACCError {
 	    v.visitConstDecl(this);
@@ -92,8 +90,8 @@ public abstract class Node {
 	extends Declaration 
     {
 	public String label;
-	// TODO: This should be a constant-value expression
-	public Constant constant;
+	public Expression expr;
+	public StringConstant stringConstant;
 	public boolean isTerminatedString;
 
 	public void accept(Visitor v) throws ACCError {
@@ -306,8 +304,7 @@ public abstract class Node {
     public static class IndexedExpression
 	extends Expression 
     {
-	// TODO: This should be an expression
-	public Identifier indexed;
+	public Expression indexed;
 	public Expression index;
 
 	public void accept(Visitor v) throws ACCError {
@@ -322,8 +319,7 @@ public abstract class Node {
     public static class CallExpression
 	extends Expression
     {
-	// TODO: This should be an expression
-	public Identifier name;
+	public Expression fn;
 	public final List<Expression> args =
 	    new LinkedList<Expression>();
 

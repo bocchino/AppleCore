@@ -94,7 +94,7 @@ public abstract class AssemblyWriter
     public void visitConstantExpression(ConstantExpression node) 
 	throws ACCError
     {
-	evaluateConstant(node.value);
+	evaluateNumericConstant(node.value);
     }
 
     public void visitIdentifier(Identifier node) 
@@ -128,7 +128,11 @@ public abstract class AssemblyWriter
 	else if (def instanceof ConstDecl) {
 	    emitComment(node);
 	    ConstDecl cd = (ConstDecl) def;
-	    evaluateConstant(cd.constant);
+	    if (cd.expr instanceof ConstantExpression) {
+		visitConstantExpression((ConstantExpression) cd.expr);
+	    } else {
+		temporaryAbort();
+	    }
 	}
 	else if (def instanceof DataDecl) {
 	    emitComment(node);
@@ -210,15 +214,27 @@ public abstract class AssemblyWriter
     public void visitDataDecl(DataDecl node) 
 	throws ACCError
     {
-	emitLabel(node.label);
-	emitAsData(node.constant);
-	if (node.isTerminatedString) {
-	    emitStringTerminator();
+	if (node.label != null)
+	    emitLabel(node.label);
+	if (node.stringConstant != null) {
+	    emitAsData(node.stringConstant);
+	    if (node.isTerminatedString) {
+		emitStringTerminator();
+	    }
+	}
+	else {
+	    System.out.println("Sorry, can't do this yet!");
+	    System.exit(1);
 	}
     }
 
     public void visitConstDecl(ConstDecl node) {
-	Constant c = node.constant;
+	Expression expr = node.expr;
+	if (!(expr instanceof ConstantExpression)) {
+	    temporaryAbort();
+	}
+	ConstantExpression ce = (ConstantExpression) expr;
+	Constant c = ce.value;
 	if (c instanceof IntegerConstant) {
 	    IntegerConstant ic = (IntegerConstant) c;
 	    if (ic.getSize() <= 2) {
@@ -392,56 +408,64 @@ public abstract class AssemblyWriter
     public void visitCallExpression(CallExpression node) 
 	throws ACCError
     {
-	Node def = node.name.def;
-	if (def instanceof FunctionDecl) {
-	    FunctionDecl functionDecl = (FunctionDecl) def;
-	    emitComment("fill slots for new frame");
-	    // Save bump size for undo
-	    int bumpSize = 2;
-	    // Push old FP
-	    emitAbsoluteInstruction("JSR","ACC.PUSH.FP");
-	    // Fill in the arguments
-	    Iterator<VarDecl> I = functionDecl.params.iterator();
-	    if (node.args.size() > 0) {
-		for (Expression arg : node.args) {
-		    VarDecl param = I.next();
-		    emitComment("bind arg to " + param);
-		    // Evaluate the argument
-		    needAddress = false;
-		    scan(arg);
-		    // Adjust sizes to match.
-		    adjustSize(param.size,arg.size,arg.isSigned);
-		    bumpSize += param.size;
+	if (node.fn instanceof Identifier) {
+	    Identifier id = (Identifier) node.fn;
+	    Node def = id.def;
+	    if (def instanceof FunctionDecl) {
+		FunctionDecl functionDecl = (FunctionDecl) def;
+		emitComment("fill slots for new frame");
+		// Save bump size for undo
+		int bumpSize = 2;
+		// Push old FP
+		emitAbsoluteInstruction("JSR","ACC.PUSH.FP");
+		// Fill in the arguments
+		Iterator<VarDecl> I = functionDecl.params.iterator();
+		if (node.args.size() > 0) {
+		    for (Expression arg : node.args) {
+			VarDecl param = I.next();
+			emitComment("bind arg to " + param);
+			// Evaluate the argument
+			needAddress = false;
+			scan(arg);
+			// Adjust sizes to match.
+			adjustSize(param.size,arg.size,arg.isSigned);
+			bumpSize += param.size;
+		    }
 		}
+		emitComment("set FP for new frame");
+		// Bump SP back down to new FP
+		emitImmediateInstruction("LDA",bumpSize);
+		emitAbsoluteInstruction("JSR","ACC.SP.DOWN.A");
+		// Save new FP
+		emitAbsoluteInstruction("JSR","ACC.SET.FP.TO.SP");
+		emitComment("function call");
+		emitAbsoluteInstruction("JSR",labelAsString(id.name));
 	    }
-	    emitComment("set FP for new frame");
-	    // Bump SP back down to new FP
-	    emitImmediateInstruction("LDA",bumpSize);
-	    emitAbsoluteInstruction("JSR","ACC.SP.DOWN.A");
-	    // Save new FP
-	    emitAbsoluteInstruction("JSR","ACC.SET.FP.TO.SP");
-	    emitComment("function call");
-	    emitAbsoluteInstruction("JSR",labelAsString(node.name.name));
-	}
-	else if (def instanceof ConstDecl ||
-		 def instanceof DataDecl) {
-	    // Calling a label: restore regs, JSR, and save regs.
-	    restoreRegisters();
-	    emitComment("function call");
-	    emitAbsoluteInstruction("JSR",labelAsString(node.name.name));
-	    saveRegisters();
-	}
-	else if (def instanceof VarDecl) {
-	    // Calling a variable:  get address, then call.
-	    VarDecl varDecl = (VarDecl) def;
-	    pushVarAddr(varDecl);
-	    restoreRegisters();
-	    emitComment("function call");
-	    emitAbsoluteInstruction("JSR","ACC.INDIRECT.CALL");
-	    saveRegisters();
+	    else if (def instanceof ConstDecl ||
+		     def instanceof DataDecl) {
+		// Calling a label: restore regs, JSR, and save regs.
+		restoreRegisters();
+		emitComment("function call");
+		emitAbsoluteInstruction("JSR",labelAsString(id.name));
+		saveRegisters();
+	    }
+	    else if (def instanceof VarDecl) {
+		// Calling a variable:  get address, then call.
+		VarDecl varDecl = (VarDecl) def;
+		pushVarAddr(varDecl);
+		restoreRegisters();
+		emitComment("function call");
+		emitAbsoluteInstruction("JSR","ACC.INDIRECT.CALL");
+		saveRegisters();
+	    }
+	    else {
+		throw new ACCInternalError("illegal call to " + def,node);
+	    }
 	}
 	else {
-	    throw new ACCInternalError("illegal call to " + def,node);
+	    // TODO
+	    System.err.println("Sorry, can't do this yet");
+	    System.exit(1);
 	}
     }
 
@@ -731,7 +755,7 @@ public abstract class AssemblyWriter
     /**
      * Evaluate a constant
      */
-    protected void evaluateConstant(Constant c) {
+    protected void evaluateNumericConstant(Constant c) {
 	emitComment(c);
 	if (c instanceof IntegerConstant) {
 	    IntegerConstant intConst = (IntegerConstant) c;
@@ -796,5 +820,10 @@ public abstract class AssemblyWriter
     protected abstract void emitBlockStorage(int nbytes);
 
     protected abstract String labelAsString(String label);
+
+    private void temporaryAbort() {
+	System.err.println("Sorry, can't handle non-constant expression yet!");
+	System.exit(1);
+    }
 
 }

@@ -116,14 +116,19 @@ public class SizePass
 	throws ACCError
     {
 	super.visitCallExpression(node);
-	Node def = node.name.def;
-	if (def instanceof FunctionDecl) {
-	    node.size = def.getSize();
-	    node.isSigned = def.isSigned();
+	boolean hasDecl = false;
+	if (node.fn instanceof Identifier) {
+	    Identifier id = (Identifier) node.fn;
+	    Node def = id.def;
+	    if (def instanceof FunctionDecl) {
+		hasDecl = true;
+		node.size = def.getSize();
+		node.isSigned = def.isSigned();
+	    }
 	}
-	else {
+	if (!hasDecl) {
 	    // We're calling a label with no prototype info
-	    requirePointer(def);
+	    requirePointer(node.fn);
 	    node.size = 0;
 	    node.isSigned = false;
 	}

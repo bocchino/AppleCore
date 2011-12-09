@@ -172,7 +172,7 @@ public class Parser {
 	expectAndConsume(Token.CONST);
 	constDecl.label = parseName();
 	if (scanner.getCurrentToken() != Token.SEMI) {
-	    constDecl.constant = parseNumericConstant();
+	    constDecl.expr = parseExpression();
 	}
 	expectAndConsume(Token.SEMI);
 	return constDecl;
@@ -190,7 +190,7 @@ public class Parser {
 	dataDecl.label = parsePossibleName();
 	switch (scanner.getCurrentToken()) {
 	case STRING_CONST:
-	    dataDecl.constant = parseStringConstant();
+	    dataDecl.stringConstant = parseStringConstant();
 	    // Check for unterminated string
 	    if (scanner.getCurrentToken() == Token.BACKSLASH) {
 		scanner.getNextToken();
@@ -200,7 +200,7 @@ public class Parser {
 	    }
 	    break;
 	default:
-	    dataDecl.constant = parseNumericConstant();
+	    dataDecl.expr = parseExpression();
 	    break;
 	}
 	expectAndConsume(Token.SEMI);
@@ -544,7 +544,7 @@ public class Parser {
     {
 	CallExpression callExp = new CallExpression();
 	callExp.lineNumber = name.lineNumber;
-	callExp.name = name;
+	callExp.fn = name;
 	expectAndConsume(Token.LPAREN);
 	if (scanner.getCurrentToken() == Token.RPAREN) {
 	    printStatus();

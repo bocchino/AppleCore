@@ -55,7 +55,7 @@ public class ASTScanner extends NodeVisitor {
 	throws ACCError 
     {
 	visitBeforeScan(node);
-	scan(node.constant);
+	scan(node.expr);
 	visitAfterScan(node);
     }
 
@@ -63,7 +63,8 @@ public class ASTScanner extends NodeVisitor {
 	throws ACCError 
     {
 	visitBeforeScan(node);
-	scan(node.constant);
+	scan(node.expr);
+	scan(node.stringConstant);
 	visitAfterScan(node);
     }
     public void visitVarDecl(VarDecl node) 
@@ -132,7 +133,7 @@ public class ASTScanner extends NodeVisitor {
 	throws ACCError 
     {
 	visitBeforeScan(node);
-	scan(node.name);
+	scan(node.fn);
 	scan(node.args);
 	visitAfterScan(node);
     }

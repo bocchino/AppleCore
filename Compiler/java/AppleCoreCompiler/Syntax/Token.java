@@ -64,6 +64,9 @@ public enum Token {
     public static final List<Token> symbols =
 	new LinkedList<Token>();
 
+    /**
+     * Initialize keyword and symbol lists.
+     */
     static {
 	for (Token token : values()) {
 	    switch (token.type) {
@@ -151,6 +154,9 @@ public enum Token {
 	return numberValue;
     }
 
+    /**
+     * What to print when a token is expected but not found.
+     */
     public String expectedString() {
 	switch (type) {
 	case IDENT:
