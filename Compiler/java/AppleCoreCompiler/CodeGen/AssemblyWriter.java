@@ -493,7 +493,7 @@ public abstract class AssemblyWriter
     {
 	needAddress = false;
 	scan(node);
-	adjustSize(2,node.size,false);
+	adjustSize(2,node.size,node.isSigned);
 	restoreRegisters();
 	emitComment("function call");
 	emitAbsoluteInstruction("JSR","ACC.INDIRECT.CALL");
