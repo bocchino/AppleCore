@@ -531,10 +531,8 @@ The compiler matches definitions with uses in the following way:
 %
 \end{enumerate}
 % 
-Uses of a function declaration may come before or after the function
-declaration in the source file.  For all other declarations, all uses
-of the declaration must come after the declaration in the source
-file.
+Constant declarations must precede their uses in the source file.
+Otherwise, declarations need not precede their uses.
 
 \subsection{Size and Signedness}
 \label{sec:semantics:size}
