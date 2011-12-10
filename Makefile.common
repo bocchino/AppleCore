@@ -1,7 +1,7 @@
 ACC     = ${APPLECORE}/Compiler/bin/acc
 ASM2SCM = ${APPLECORE}/Scripts/asm2scm
 SRCS    = ${wildcard ac/*.ac}
-MAKE_ALL= perl ${APPLECORE}/Scripts/make-all.pl
+MAKE_ALL ?= perl ${APPLECORE}/Scripts/make-all.pl
 
 all-scm : scm all-linked.asm
 	${MAKE_ALL} linked.asm scm
