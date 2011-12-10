@@ -35,6 +35,8 @@ public abstract class Node {
      */
     public static class SourceFile extends Node {
 	public String name;
+	public boolean includeMode;
+	public int origin;
 	public final List<Declaration> decls = 
 	    new LinkedList<Declaration>();
 

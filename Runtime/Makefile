@@ -1,4 +1,3 @@
-ACC     = ../Compiler/bin/acc
 ASM2SCM = ../Scripts/asm2scm
 SRCS    = ${wildcard asm/*.asm}
 MAKE_ALL= perl ../Scripts/make-all.pl

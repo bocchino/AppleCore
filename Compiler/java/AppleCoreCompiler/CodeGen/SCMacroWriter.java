@@ -164,4 +164,21 @@ public class SCMacroWriter
 	    byteString : "0"+byteString;
     }
 
+    protected void emitPreamble(boolean includeMode, int origin) {
+	emit(":NEW\n");
+	emitAbsoluteInstruction(".LIST","OFF");
+	if (origin >= 0) {
+	    emitAbsoluteInstruction(".OR", origin);
+	}
+    }
+
+    protected void emitEpilogue() {
+	emitAbsoluteInstruction(".IN","ACC.GENERAL");
+	emitAbsoluteInstruction(".IN","ACC.UNOP");
+	emitAbsoluteInstruction(".IN","ACC.SHIFT");
+	emitAbsoluteInstruction(".IN","ACC.INT");
+	emitAbsoluteInstruction(".IN","ACC.COMPARE");
+	emitAbsoluteInstruction(".IN","ACC.BITWISE");
+	emitAbsoluteInstruction(".IN","ACC.STACK");
+    }
 }

@@ -11,49 +11,99 @@ import AppleCoreCompiler.Warnings.*;
 
 public class Main {
 
-    public static void main(String args[]) {
-	Parser parser = null;
-	String inputFileName = null;
+    /**
+     * Name of the source file to parse
+     */
+    private static String sourceFileName = null;
+
+    /**
+     * Whether to translate the source file in include mode
+     */
+    private static boolean includeMode = false;
+
+    /**
+     * Origin of translated assembly file
+     */
+    private static int origin = -1;
+
+    /**
+     * Process command-line arguments
+     */
+    private static void processArgs(String args[]) 
+    {
 	try {
-	    inputFileName = args[0];
-	    System.err.println("Compiling " + inputFileName);
-	    parser = new Parser(inputFileName);
+	    for (int i = 0; i < args.length; ++i) {
+		processArg(args[i]);
+	    }
 	}
-	catch (ArrayIndexOutOfBoundsException e) {
-	    System.err.println("usage: acc [filename]");
+	catch (OptionError e) {
+	    System.err.println(e.getMessage());
 	    System.exit(1);
 	}
-	System.err.println("...parsing");
+	catch (Exception e) {
+	    System.err.println("usage: acc [options] [filename]");
+	    System.exit(1);
+	}
+    }
+
+    private static void processArg(String arg) 
+	throws OptionError
+    {
+	if (arg.charAt(0) != '-') {
+	    if (sourceFileName == null) {
+		sourceFileName = arg;
+	    }
+	    else {
+		throw new OptionError("only one source file allowed");
+	    }
+	}
+	else if (arg.equals("-include")) {
+	    includeMode = true;
+	}
+	else if (arg.substring(0,7).equals("-origin=")) {
+	    if (arg.charAt(8)=='$') {
+		origin = Integer.parseInt(arg.substring(9),16);
+	    }
+	    else {
+		origin = Integer.parseInt(arg.substring(8));
+	    }
+	    if (origin < 0) origin = -origin;
+	    if (origin > 65535) {
+		throw new OptionError("address " + origin + " out of range");
+	    }
+	}
+	else {
+	    throw new OptionError("bad option " + arg);
+	}
+    }
+
+    public static void main(String args[]) {
+	processArgs(args);
+	Parser parser = new Parser(sourceFileName);
 	SourceFile sourceFile = parser.parse();
-	Warner warner = new Warner(System.err,inputFileName);
+	sourceFile.includeMode = includeMode;
+	sourceFile.origin = origin;
+	Warner warner = new Warner(System.err,sourceFileName);
 	if (sourceFile != null) {
 	    try {
-		System.err.println("...attributing tree");
 		AttributionPass attributionPass = 
 		    new AttributionPass(warner);
 		attributionPass.runOn(sourceFile);
-		System.err.println("...computing expression sizes");
 		SizePass sizePass = new SizePass();
 		sizePass.runOn(sourceFile);
-		System.err.println("...checking lvalues");
 		LValuePass lvaluePass = new LValuePass();
 		lvaluePass.runOn(sourceFile);
-		System.err.println("...checking expression statements");
 		ExprStmtPass exprStmtPass = new ExprStmtPass();
 		exprStmtPass.runOn(sourceFile);
-		System.err.println("...checking function calls");
 		FunctionCallPass functionCallPass = new FunctionCallPass();
 		functionCallPass.runOn(sourceFile);
-		System.err.println("...generating assembly code");
 		SCMacroWriter scMacroWriter = 
 		    new SCMacroWriter(System.out);
 		scMacroWriter.runOn(sourceFile);
-		//System.err.println("...printing out the AST");
-		//new ASTPrintingPass(System.out).runOn(sourceFile);
 	    }
 	    catch (ACCError e) {
 		System.err.print("line " + e.getLineNumber() + " of " + 
-				 inputFileName + ": ");
+				 sourceFileName + ": ");
 		System.err.println(e.getMessage());
 
 	    }

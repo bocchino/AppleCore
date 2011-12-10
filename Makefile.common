@@ -1,41 +1,22 @@
-ACC     = ${APPLECORE}/Compiler/bin/acc
-ASM2SCM = ${APPLECORE}/Scripts/asm2scm
-SRCS    = ${wildcard ac/*.ac}
+ACC      ?= ${APPLECORE}/Compiler/bin/acc
+ASM2SCM   = ${APPLECORE}/Scripts/asm2scm
+SRCS      = ${wildcard ac/*.ac}
 MAKE_ALL ?= perl ${APPLECORE}/Scripts/make-all.pl
 
-all-scm : scm all-linked.asm
-	${MAKE_ALL} linked.asm scm
-
-all-linked.asm : linked.asm all-asm
-	${MAKE_ALL} asm linked.asm
+all-scm : scm all-asm
+	${MAKE_ALL} asm scm
 
 all-asm : asm ${SRCS}
 	${MAKE_ALL} ac asm
 
-file-scm : linked.asm/${FILE}.linked.asm
+file-scm : asm/${FILE}.asm
 	make scm/${FILE}.scm
-
-file-linked.asm : asm/${FILE}.asm
-	make linked.asm/${FILE}.linked.asm
 
 file-asm : ac/${FILE}.ac
 	make asm/${FILE}.asm
 
-scm/${FILE}.scm : linked.asm/${FILE}.linked.asm scm 
+scm/${FILE}.scm : asm/${FILE}.asm scm 
 	${ASM2SCM} < $< > $@
-
-linked.asm/${FILE}.linked.asm : asm/${FILE}.asm linked.asm 
-	echo ":NEW" > $@
-	echo "\t.LIST OFF" >> $@
-	echo "\t.IN ACC.PROLOGUE" >> $@
-	cat $< >> $@
-	echo "\t.IN ACC.GENERAL" >> $@
-	echo "\t.IN ACC.UNOP" >> $@
-	echo "\t.IN ACC.SHIFT" >> $@
-	echo "\t.IN ACC.INT" >> $@
-	echo "\t.IN ACC.COMPARE" >> $@
-	echo "\t.IN ACC.BITWISE" >> $@
-	echo "\t.IN ACC.STACK" >> $@
 
 asm/${FILE}.asm : ac/${FILE}.ac asm
 	${ACC} $< > $@
@@ -43,11 +24,8 @@ asm/${FILE}.asm : ac/${FILE}.ac asm
 scm : 
 	mkdir $@
 
-linked.asm : 
-	mkdir $@
-
 asm :
 	mkdir $@
 
 clean ::
-	rm -Rf asm linked.asm scm
+	rm -Rf asm scm
