@@ -46,9 +46,12 @@ public class AttributionPass
     public void runOn(SourceFile sourceFile) 
 	throws ACCError
     {
-	// Enter the top-level declarations
+	// Enter all the top-level declarations except constant decls,
+	// which may not be forward declared.
 	for (Declaration decl : sourceFile.decls) {
-	    insertDecl.insert(decl, globalSymbols);
+	    if (!(decl instanceof ConstDecl)) {
+		insertDecl.insert(decl, globalSymbols);
+	    }
 	}
 	// Attribute the source file
 	scan(sourceFile);
@@ -58,7 +61,6 @@ public class AttributionPass
     private class InsertDecl extends NodeVisitor {
 
 	Map<String,Node> map;
-	Node conflictingEntry;
 	void insert(Declaration decl, 
 		    Map<String,Node> map) 
 	    throws ACCError
@@ -104,6 +106,16 @@ public class AttributionPass
 	    throw new SemanticError(name + " already defined at line " +
 				    priorEntry.lineNumber, node);
 	}
+    }
+
+    public void visitConstDecl(ConstDecl node)
+	throws ACCError
+    {
+	printStatus("Attributing const decl ", node);
+	// Insert the decl in the constant namespace now
+	insertDecl.insert(node, globalSymbols);
+	// Attribute the expression
+	super.visitConstDecl(node);	
     }
 
     public void visitFunctionDecl(FunctionDecl node) 
