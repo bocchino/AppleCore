@@ -322,6 +322,11 @@ public abstract class Node {
 	 * Whether the value represented by this expression is signed.
 	 */
 	public boolean isSigned;
+
+	/**
+	 * Whether this is a constant-value expression
+	 */
+	public boolean isConstValExpr() { return false; }
     }
 
     public static class IndexedExpression
@@ -449,6 +454,11 @@ public abstract class Node {
 	    v.visitBinopExpression(this);
 	}
 
+	public boolean isConstValExpr() {
+	    return left.isConstValExpr() &&
+		right.isConstValExpr();
+	}
+
 	public String toString() {
 	    return "binop expr " + operator;
 	}
@@ -479,6 +489,14 @@ public abstract class Node {
 	    v.visitUnopExpression(this);
 	}
 
+	public boolean isConstValExpr() {
+	    switch (operator) {
+	    case NEG: case NOT:
+		return expr.isConstValExpr();
+	    }
+	    return false;
+	}
+
 	public String toString() {
 	    return "unop expr " + operator;
 	}
@@ -491,6 +509,10 @@ public abstract class Node {
 
 	public void accept(Visitor v) throws ACCError {
 	    v.visitParensExpression(this);
+	}
+
+	public boolean isConstValExpr() {
+	    return expr.isConstValExpr();
 	}
 
 	public String toString() {
@@ -513,6 +535,10 @@ public abstract class Node {
 	    v.visitIdentifier(this);
 	}
 
+	public boolean isConstValExpr() {
+	    return (def instanceof ConstDecl);
+	}
+
 	public String toString() {
 	    return "identifier " + name;
 	}
@@ -527,6 +553,7 @@ public abstract class Node {
 	public abstract boolean isZero();
 	public abstract String valueAsHexString();
 	public abstract String valueAsDecString();
+	public boolean isConstValExpr() { return true; }
     }
 
     public static class IntegerConstant 

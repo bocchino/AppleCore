@@ -142,9 +142,8 @@ public class AttributionPass
 	    addMapping(node.name, node, localSymbols);
 	} else {
 	    if (node.init != null) {
-		if (!(node.init instanceof NumericConstant)) {
-		    // TODO: Expressions should be allowed as stated in spec.
-		    throw new SemanticError("non-constant initializer not implemented",
+		if (!node.init.isConstValExpr()) {
+		    throw new SemanticError("constant value expression required",
 					    node);
 		}
 	    }
