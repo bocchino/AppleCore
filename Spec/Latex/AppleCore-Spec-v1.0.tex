@@ -534,12 +534,41 @@ The compiler matches definitions with uses in the following way:
 Constant declarations must precede their uses in the source file.
 Otherwise, declarations need not precede their uses.
 
+\subsection{Constant-Value Expressions}
+\label{sec:semantics:constant-value-expr}
+
+A constant-value expression is one of the following:
+%
+\begin{enumerate}
+%
+\item A numeric constant.
+%
+\item An identifier corresponding to a constant declaration.
+%
+\item A binary operation expression, where each operand is a
+  constant-value expression.
+%
+\item A negation (\kwd{-}) or \kwd{NOT} unary operation expression,
+  where the operand is a constant-value expression.
+%
+\item A parentheses expression, where the expression inside the
+  parentheses is a constant-value expression.
+%
+\end{enumerate}
+
 \subsection{Size and Signedness}
 \label{sec:semantics:size}
 
 \bfhead{Size and signedness of expressions.} Every expression
 appearing in the source file is given a \emph{size} and a
-\emph{signedness}, computed as follows:
+\emph{signedness}.  A constant-value expression
+(Section~\ref{sec:semantics:constant-value-expr}) is signed, and its
+size is the minimum number of bytes required to represent the value
+produced by evaluating the expression as specified in
+Section~\ref{sec:code-gen:expressions}, assuming that both operands
+have the maximum allowed size of 255.  For an expression other than a
+constant-value expression, size and signedness are computed as
+follows:
 %
 \begin{itemize}
 %
@@ -578,31 +607,14 @@ appearing in the source file is given a \emph{size} and a
 \item \ithead{Binary operation expressions.}  For comparison
   operations, the size is 1 byte unsigned.  For shift operations, the
   size and signedness come from the left operand.  For all other
-  operations, the size is the maximum of the sizes of its operands
-  unless the expression is a constant-value expression
-  (Section~\ref{sec:semantics:constant-value-expr}).  In that case,
-  the size is the minimum number of bytes required to represent the
-  value produced by evaluating the expression according to the rules
-  in Section~\ref{sec:code-gen:expressions}, assuming that both
-  operands have the maximum allowed size of 255.  If either of the
-  operands is signed, then the result is signed.  Otherwise, the
-  result is unsigned.
+  operations, the size is the maximum of the sizes of its operands.
+  If either of the operands is signed, then the result is signed.
+  Otherwise, the result is unsigned.
 %
 \item \ithead{Unary operation expressions.} The size and signedness of
   a unary operation expression come from the operand, except that (1)
-  an address operation \kwd{@} is two bytes unsigned; (2) a negation
-  operation is signed; and (3) if the expression is a constant-value
-  expression (Section~\ref{sec:semantics:constant-value-expr}), then
-  the size is the minimum number of bytes required to represent the
-  value produced by evaluating the expression according to the rules
-  in Section~\ref{sec:code-gen:expressions}, assuming that both
-  operands have the maximum allowed size of 255.
-%
-\item \ithead{Numeric constants.} The size of a constant expression is
-  the size of the constant it represents.  A character constant has
-  size 1, and an integer constant has size equal to the smallest
-  number of bytes required to represent the value.  Numeric constant
-  expressions are unsigned.
+  an address operation \kwd{@} is two bytes unsigned; and (2) a
+  negation operation is signed.
 %
 \item \ithead{Parentheses expressions.} The size and signedness of a
   parentheses expression come from the enclosed expression.
@@ -707,28 +719,6 @@ compute the constant value of \nonterm{expr} (in case 1) or generate
 an assembler label for \nonterm{expr} (in cases 2 and 3). In case 3,
 the actual address associated with the assembler label may not be
 known until final assembly (Section~\ref{sec:code-gen:source-files}).
-
-\subsection{Constant-Value Expressions}
-\label{sec:semantics:constant-value-expr}
-
-A constant-value expression is one of the following:
-%
-\begin{enumerate}
-%
-\item A numeric constant.
-%
-\item An identifier corresponding to a constant declaration.
-%
-\item A binary operation expression, where each operand is a
-  constant-value expression.
-%
-\item A negation (\kwd{-}) or \kwd{NOT} unary operation expression,
-  where the operand is a constant-value expression.
-%
-\item A parentheses expression, where the expression inside the
-  parentheses is a constant-value expression.
-%
-\end{enumerate}
 
 \section{Code Generation}
 \label{sec:code-gen}
