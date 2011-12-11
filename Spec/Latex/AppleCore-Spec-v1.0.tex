@@ -847,18 +847,18 @@ logical stacks for use at runtime, collectively referred to as the
 %
 \item An \emph{allocation stack} that supports an \kwd{ALLOCATE}
   library function that works as follows.  (1) \kwd{ALLOCATE} is only
-  ever called in a function scope, when no temporary expression result
-  is on the expression stack; otherwise the results are undefined.
-  (2) When \kwd{ALLOCATE} is called, it is passed a two-byte size
-  value $s$.  (3) (a) If there is enough space on the stack, then
-  \kwd{ALLOCATE} returns a pointer to $s$ bytes on the stack. (b) If
-  there are not $s$ bytes remaining on the stack, then the results are
-  undefined. (4) The $s$ bytes pointed to by the result of the
-  \kwd{ALLOCATE} call remain valid (i.e., are not modified except by
-  user-written code) during the lifetime of the call stack frame for
-  the function in which the \kwd{ALLOCATE} call occurred.  (5) At the
-  end of the function in which the \kwd{ALLOCATE} call occurred, the
-  memory is deallocated and may be reused as program stack storage.
+  ever called when no temporary expression result is on the expression
+  stack; otherwise the results are undefined.  (2) When \kwd{ALLOCATE}
+  is called, it is passed a two-byte size value $s$.  (3) (a) If there
+  is enough space on the stack, then \kwd{ALLOCATE} returns a pointer
+  to $s$ bytes on the stack. (b) If there are not $s$ bytes remaining
+  on the stack, then the results are undefined. (4) The $s$ bytes
+  pointed to by the result of the \kwd{ALLOCATE} call remain valid
+  (i.e., are not modified except by user-written code) during the
+  lifetime of the call stack frame for the function in which the
+  \kwd{ALLOCATE} call occurred.  (5) At the end of the function in
+  which the \kwd{ALLOCATE} call occurred, the memory is deallocated
+  and may be reused as program stack storage.
 %
 \end{enumerate}
 
