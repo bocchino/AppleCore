@@ -4,6 +4,7 @@ import java.util.*;
 import AppleCoreCompiler.Syntax.*;
 import AppleCoreCompiler.AST.*;
 import AppleCoreCompiler.AST.Node.*;
+import AppleCoreCompiler.Transforms.*;
 import AppleCoreCompiler.Semantics.*;
 import AppleCoreCompiler.Errors.*;
 import AppleCoreCompiler.CodeGen.*;
@@ -89,6 +90,13 @@ public class Main {
 		AttributionPass attributionPass = 
 		    new AttributionPass(warner);
 		attributionPass.runOn(sourceFile);
+		ConstantEvaluationPass cePass = 
+		    new ConstantEvaluationPass();
+		cePass.runOn(sourceFile);
+		/*
+		ASTPrintingPass app = new ASTPrintingPass(System.err);
+		app.runOn(sourceFile);
+		*/
 		SizePass sizePass = new SizePass();
 		sizePass.runOn(sourceFile);
 		LValuePass lvaluePass = new LValuePass();

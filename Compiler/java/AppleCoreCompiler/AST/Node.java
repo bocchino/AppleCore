@@ -37,7 +37,7 @@ public abstract class Node {
 	public String name;
 	public boolean includeMode;
 	public int origin;
-	public final List<Declaration> decls = 
+	public List<Declaration> decls = 
 	    new LinkedList<Declaration>();
 
 	public void accept(Visitor v) throws ACCError {
@@ -348,7 +348,7 @@ public abstract class Node {
 	extends Expression
     {
 	public Expression fn;
-	public final List<Expression> args =
+	public List<Expression> args =
 	    new LinkedList<Expression>();
 
 	public void accept(Visitor v) throws ACCError {
@@ -553,6 +553,7 @@ public abstract class Node {
 	public abstract boolean isZero();
 	public abstract String valueAsHexString();
 	public abstract String valueAsDecString();
+	public abstract BigInteger valueAsBigInteger();
 	public boolean isConstValExpr() { return true; }
     }
 
@@ -578,6 +579,10 @@ public abstract class Node {
 			       byteVal);
 	}
 
+	public BigInteger valueAsBigInteger() {
+	    return value;
+	}
+	
 	/**
 	 * The one-byte value corresponding to byte idx of this
 	 * constant, with low order byte as byte 0.
@@ -614,10 +619,7 @@ public abstract class Node {
 	}
 
 	public String toString() {
-	    if (wasHexInSource) {
-		return "int constant " + valueAsHexString();
-	    }
-	    return "int constant " + valueAsDecString();
+	    return "int constant " + valueAsHexString();
 	}
     }
 
@@ -632,6 +634,10 @@ public abstract class Node {
 	
 	public void accept(Visitor v) throws ACCError {
 	    v.visitCharConstant(this);
+	}
+
+	public BigInteger valueAsBigInteger() {
+	    return BigInteger.valueOf(value);
 	}
 
 	public String valueAsHexString() {

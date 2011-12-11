@@ -1,5 +1,5 @@
 /**
- * A top-down scan of the tree.
+ * Scan the tree top-down and transform expressions.
  */
 package AppleCoreCompiler.AST;
 
@@ -7,56 +7,45 @@ import AppleCoreCompiler.AST.Node.*;
 import AppleCoreCompiler.Errors.*;
 import java.util.*;
 
-public class ASTScanner extends NodeVisitor {
+public class ExpressionTransformer 
+    extends ASTScanner 
+{
 
-    public void scan(Node node) 
-	throws ACCError 
+    /**
+     * Variable to return the result of visiting an expression
+     */
+    protected Expression result;
+
+    /**
+     * Transform an expression
+     */
+    protected Expression transform(Expression expr) 
+	throws ACCError
     {
-	if (node != null) node.accept(this);
+	if (expr == null) return null;
+	scan(expr);
+	return result;
     }
 
-    public void scan(List<? extends Node> nodes) 
-	throws ACCError 
+    /**
+     * Transform a list of expressions
+     */
+    protected List<Expression> transform(List<Expression> exprs) 
+	throws ACCError
     {
-	if (nodes != null) {
-	    for (Node node : nodes) {
-		scan(node);
-	    }
+	List<Expression> newExprs = 
+	    new LinkedList<Expression>();
+	for (Expression expr : exprs) {
+	    newExprs.add(transform(expr));
 	}
-    }
-
-    /**
-     * Override this method when you want to do something to every
-     * node before visiting the children.
-     */
-    public void visitBeforeScan(Node node) throws ACCError {}
-
-    /**
-     * Override this method when you want to do something to every
-     * node after visiting the children.
-     */
-    public void visitAfterScan(Node node) throws ACCError {}
-
-    public void visitSourceFile(SourceFile node) 
-	throws ACCError 
-    {
-	visitBeforeScan(node);
-	scan(node.decls);
-	visitAfterScan(node);
-    }
-
-    public void visitIncludeDecl(IncludeDecl node) 
-	throws ACCError 
-    {
-	visitBeforeScan(node);
-	visitAfterScan(node);
+	return newExprs;
     }
 
     public void visitConstDecl(ConstDecl node) 
 	throws ACCError 
     {
 	visitBeforeScan(node);
-	scan(node.expr);
+	node.expr = transform(node.expr);
 	visitAfterScan(node);
     }
 
@@ -64,7 +53,7 @@ public class ASTScanner extends NodeVisitor {
 	throws ACCError 
     {
 	visitBeforeScan(node);
-	scan(node.expr);
+	node.expr = transform(node.expr);
 	scan(node.stringConstant);
 	visitAfterScan(node);
     }
@@ -72,23 +61,14 @@ public class ASTScanner extends NodeVisitor {
 	throws ACCError 
     {
 	visitBeforeScan(node);
-	scan(node.init);
-	visitAfterScan(node);
-    }
-    public void visitFunctionDecl(FunctionDecl node) 
-	throws ACCError
-    {
-	visitBeforeScan(node);
-	scan(node.params);
-	scan(node.varDecls);
-	scan(node.statements);
+	node.init = transform(node.init);
 	visitAfterScan(node);
     }
     public void visitIfStatement(IfStatement node) 
 	throws ACCError 
     {
 	visitBeforeScan(node);
-	scan(node.test);
+	node.test = transform(node.test);
 	scan(node.thenPart);
 	scan(node.elsePart);
 	visitAfterScan(node);
@@ -97,7 +77,7 @@ public class ASTScanner extends NodeVisitor {
 	throws ACCError 
     {
 	visitBeforeScan(node);
-	scan(node.test);
+	node.test = transform(node.test);
 	scan(node.body);
 	visitAfterScan(node);
     }
@@ -105,73 +85,98 @@ public class ASTScanner extends NodeVisitor {
 	throws ACCError 
     {
 	visitBeforeScan(node);
-	scan(node.expr);
+	node.expr = transform(node.expr);
 	visitAfterScan(node);
     }
     public void visitReturnStatement(ReturnStatement node) 
 	throws ACCError 
     {
 	visitBeforeScan(node);
-	scan(node.expr);
-	visitAfterScan(node);
-    }
-    public void visitBlockStatement(BlockStatement node) 
-	throws ACCError 
-    {
-	visitBeforeScan(node);
-	scan(node.statements);
+	node.expr = transform(node.expr);
 	visitAfterScan(node);
     }
     public void visitIndexedExpression(IndexedExpression node) 
 	throws ACCError 
     {
 	visitBeforeScan(node);
-	scan(node.indexed);
-	scan(node.index);
+	node.indexed = transform(node.indexed);
+	node.index   = transform(node.index);
 	visitAfterScan(node);
+	result = node;
     }
     public void visitCallExpression(CallExpression node) 
 	throws ACCError 
     {
 	visitBeforeScan(node);
-	scan(node.fn);
-	scan(node.args);
+	node.fn = transform(node.fn);
+	node.args = transform(node.args);
 	visitAfterScan(node);
+	result = node;
     }
     public void visitSetExpression(SetExpression node) 
 	throws ACCError 
     {
 	visitBeforeScan(node);
-	scan(node.lhs);
-	scan(node.rhs);
+	node.lhs = transform(node.lhs);
+	node.rhs = transform(node.rhs);
+	if (node.rhs == null) {
+	    throw new ACCInternalError("null RHS", node);
+	}
 	visitAfterScan(node);
+	result = node;
     }
     public void visitBinopExpression(BinopExpression node)
 	throws ACCError 
     {
 	visitBeforeScan(node);
-	scan(node.left);
-	scan(node.right);
+	node.left = transform(node.left);
+	node.right = transform(node.right);
 	visitAfterScan(node);
+	result = node;
     }
     public void visitUnopExpression(UnopExpression node) 
 	throws ACCError 
     {
 	visitBeforeScan(node);
-	scan(node.expr);
+	node.expr = transform(node.expr);
 	visitAfterScan(node);
+	result = node;
     }
     public void visitParensExpression(ParensExpression node) 
 	throws ACCError 
     {
 	visitBeforeScan(node);
-	scan(node.expr);
+	node.expr = transform(node.expr);
 	visitAfterScan(node);
+	result = node;
     }
     public void visitNode(Node node) 
 	throws ACCError
     {
-	visitBeforeScan(node);
-	visitAfterScan(node);
+	super.visitNode(node);
+	if (node instanceof Expression) {
+	    result = (Expression) node;
+	}
     }
+    /*
+    public void visitIdentifier(Identifier node) 
+	throws ACCError
+    {
+	super.visitIdentifier(node);
+	result = node;	
+    }
+    public void visitIntegerConstant(IntegerConstant node) 
+	throws ACCError
+    {
+	super.visitIntegerConstant(node);
+	result = node;
+    }
+    public void visitCharConstant(CharConstant node) 
+	throws ACCError
+    {
+	super.visitCharConstant(node);
+	result = node;
+    }
+    */
+
 }

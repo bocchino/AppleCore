@@ -1,0 +1,20 @@
+# -------------------------------------
+# TEST EVALUATION OF CONST EXPRS
+# -------------------------------------
+
+CONST MON_CROUT  $FD8E;
+CONST C		 $F+1;
+
+DATA STR  "SHOULD BE 10: ";
+
+FN PRINT_STRING(STR_PTR:2);
+FN PRINT_NUM(N_PTR:2,SIZE:1);
+
+FN MAIN() {
+   VAR V:1=C;
+   PRINT_STRING(STR);   
+   PRINT_NUM(@V,1);
+   MON_CROUT();
+}
+
+INCLUDE "IO";

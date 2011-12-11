@@ -155,9 +155,6 @@ public class SizePass
 	super.visitSetExpression(node);
 	node.size = node.lhs.size;
 	node.isSigned = node.lhs.isSigned;
-	if (node.rhs.size == 0) {
-	    throw new SemanticError("size zero in assignment",node);
-	}
 	printStatus(node);
     }
 
