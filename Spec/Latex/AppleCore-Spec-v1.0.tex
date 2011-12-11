@@ -503,11 +503,48 @@ violates one of these rules) generates a compile-time error and causes
 compilation to halt.  Only semantically valid files go on to code
 generation as described in Section~\ref{sec:code-gen}.
 
+\subsection{Representation of Values}
+\label{sec:semantics:values}
+
+The AppleCore language supports two types of values: integer values
+and Boolean values.
+
+\bfhead{Integer values.} Integer values are represented in AppleCore
+in the ordinary way for the Apple II:
+%
+\begin{enumerate}
+%
+\item Unsigned single-byte values are represented by treating the 8
+  bits, low to high, as the 8 digits of a binary number.
+%
+\item Multi-byte values are stored in little-endian order.
+%
+\item Signed values are stored in two's complement representation
+  (i.e., by constructing the absolute value of the number, flipping
+  the bits, and adding one).
+%
+\end{enumerate}
+
+\bfhead{Boolean values.} The AppleCore language has no special Boolean
+type; as in C, ordinary integers serve as Boolean values.  However,
+AppleCore differs from C in what values it treats as ``true'' and
+``false.''  In AppleCore, only the lowest-order bit is relevant in
+testing the Boolean value of an integer: integers whose low bit is 1
+(i.e., odd integers) all count as ``true,'' while integers whose low
+bit is 0 (i.e., even integers) all count as ``false.''  This mechanism
+allows bitwise \kwd{NOT} to function as logical \kwd{NOT}, without any
+need for a separate logical negation operator, and that keeps the
+language simple.  Also, the constants 1 and 0 can function as ``true''
+and ``false.''  These names and values are not built into the
+language, but one can easily declare constants \kwd{TRUE} and
+\kwd{FALSE} with the values 1 and 0.
+
 \subsection{Attribution}
 \label{sec:semantics:attr}
 
-During attribution, the compiler associates each identifier appearing
-in the source file with its corresponding definition.  For purposes of
+The first semantic check performed by the compiler is to match each
+identifier appearing in the source file with its corresponding
+definition; this step is called \emph{attribution}.  For purposes of
 these rules, a \emph{definition} is a constant declaration, data
 declaration, variable declaration, function parameter declaration, or
 function declaration.  A \emph{use} is any identifier appearing in the
@@ -718,6 +755,9 @@ effect: that is, it must be a set, call, \kwd{INCR}, or \kwd{DECR}
 expression.  This check traps the error of writing \kwd{X = 2;}
 (comparison) instead of \kwd{SET X = 2;} (assignment).
 
+
+
+
 \section{Code Generation}
 \label{sec:code-gen}
 
@@ -919,7 +959,7 @@ statement.
 (Section~\ref{sec:code-gen:expressions}), pop the result off the
 expression stack, and mask off all but the lowest bit of the result to
 get the corresponding Boolean value
-(Section~\ref{sec:code-gen:boolean}).  If the Boolean value of the
+(Section~\ref{sec:semantics:values}).  If the Boolean value of the
 result is 1 (true), then execute the true part.  If the Boolean value
 of the result is 0 (false), then either do nothing (if there is no
 optional \kwd{ELSE} clause) or execute the statement in the \kwd{ELSE}
@@ -929,7 +969,7 @@ clause (if one is provided).
 (Section~\ref{sec:code-gen:expressions}), pop the result off the
 expression stack, and mask off all but the lowest bit of the result to
 get the corresponding Boolean value
-(Section~\ref{sec:code-gen:boolean}).  If the Boolean value of the
+(Section~\ref{sec:semantics:values}).  If the Boolean value of the
 result is 1 (true), then execute the body of the loop and repeat the
 whole process.  If the Boolean value of the result is 0 (false), then
 do nothing.
@@ -1037,7 +1077,7 @@ results, perform the operation, and push the result.  In the case of
 multiplication and division, the operation is signed if the entire
 expression is signed, otherwise unsigned.  Because AppleCore uses
 two's complement representation for negative numbers
-(Section~\ref{sec:code-gen:integers}), there is no distinction between
+(Section~\ref{sec:semantics:values}), there is no distinction between
 signed and unsigned addition and subtraction.  The division operation
 produces the integer quotient.  All operations are done without regard
 to overflow (i.e., if overflow occurs, they produce the low-order
@@ -1047,9 +1087,10 @@ bits, up to the size of the expression).
   and \kwd{<=}).} Evaluate the left and right expressions, adjust
 their size if necessary (Section~\ref{sec:code-gen:size-adjustment})
 to make their sizes equal to the size of the entire expression, pop
-the results, perform the operation, and push the result.  In the case
-of comparisons other than equality, the operation is signed if the
-entire expression is signed, otherwise unsigned.
+the results, perform the operation, and push the result.  The result
+is a single-byte value such that 1 represents true and 0 represents
+false.  In the case of comparisons other than equality, the operation
+is signed if the entire expression is signed, otherwise unsigned.
 
 \ithead{Bitwise operations (\kwd{AND}, \kwd{OR}, and \kwd{XOR}).}
 Evaluate the left and right expressions, adjust their size if
@@ -1109,42 +1150,6 @@ as follows:
   register (Section~\ref{sec:code-gen:fn-bodies}).
 %
 \end{enumerate}
-
-\subsection{Boolean Values}
-\label{sec:code-gen:boolean}
-
-The AppleCore language has no special Boolean type; as in C, ordinary
-integers serve as Boolean values.  However, AppleCore differs from C
-in what values it treats as ``true'' and ``false.''  In AppleCore,
-only the lowest-order bit is relevant in testing the Boolean value of
-an integer: integers whose low bit is 1 (i.e., odd integers) all count
-as ``true,'' while integers whose low bit is 0 (i.e., even integers)
-all count as ``false.''  This mechanism allows bitwise \kwd{NOT} to
-function as logical \kwd{NOT}, without any need for a separate logical
-negation operator, and that keeps the language simple.  Also, the
-constants 1 and 0 can function as ``true'' and ``false.''  These names
-and values are not built into the language, but one can easily declare
-constants \kwd{TRUE} and \kwd{FALSE} with the values 1 and 0.
-
-\subsection{Integer Values}
-\label{sec:code-gen:integers}
-
-Integer values are represented in AppleCore in the ordinary way for
-the Apple II:
-%
-\begin{enumerate}
-%
-\item Unsigned single-byte values are represented by treating the 8
-  bits, low to high, as the 8 digits of a binary number.
-%
-\item Multi-byte values are stored in little-endian order.
-%
-\item Signed values are stored in two's complement representation
-  (i.e., by constructing the absolute value of the number, flipping
-  the bits, and adding one).
-%
-\end{enumerate}
-
 
 
 \subsection{Size Adjustment}
