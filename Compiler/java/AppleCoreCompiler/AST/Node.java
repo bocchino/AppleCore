@@ -554,6 +554,7 @@ public abstract class Node {
 	public abstract String valueAsHexString();
 	public abstract String valueAsDecString();
 	public abstract BigInteger valueAsBigInteger();
+	public abstract BigInteger unsignedValue();
 	public boolean isConstValExpr() { return true; }
     }
 
@@ -582,6 +583,11 @@ public abstract class Node {
 	public BigInteger valueAsBigInteger() {
 	    return value;
 	}
+
+	public BigInteger unsignedValue() {
+	    return (value.compareTo(BigInteger.ZERO) >= 0)
+		? value : BigInteger.valueOf(2).pow(getSize()*8).add(value);
+	}
 	
 	/**
 	 * The one-byte value corresponding to byte idx of this
@@ -593,11 +599,12 @@ public abstract class Node {
 	}
 
 	public String valueAsHexString() {
-	    return "$" + value.toString(16).toUpperCase();
+	    return "$" + 
+		unsignedValue().toString(16).toUpperCase();
 	}
 
 	public String valueAsDecString() {
-	    return value.toString();
+	    return unsignedValue().toString();
 	}
 
 	/**
@@ -638,6 +645,10 @@ public abstract class Node {
 
 	public BigInteger valueAsBigInteger() {
 	    return BigInteger.valueOf(value);
+	}
+
+	public BigInteger unsignedValue() {
+	    return valueAsBigInteger();
 	}
 
 	public String valueAsHexString() {
