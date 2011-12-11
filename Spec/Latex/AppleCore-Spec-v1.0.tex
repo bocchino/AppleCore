@@ -556,33 +556,59 @@ A constant-value expression is one of the following:
 %
 \end{enumerate}
 
+\subsection{Expressions Appearing at Global Scope}
+\label{sec:semantic:global-expr}
+
+An expression appearing at global scope (i.e., in a constant or data
+declaration, or as the initializer of a global variable declaration)
+must be one of the following:
+%
+\begin{enumerate}
+%
+\item A constant-value expression
+  (Section~\ref{sec:semantics:constant-value-expr}).
+%
+\item An identifier corresponding to a data declaration (useful for
+  data tables).
+%
+\item An identifier corresponding to a function declaration (useful
+  for jump tables).
+%
+\end{enumerate}
+
+These rules are designed so that the compiler can do a single pass
+over all the expressions \nonterm{expr} appearing at global scope, in
+the order in which they appear in the source file, and either compute
+the value of \nonterm{expr} (in case 1) or generate an assembler label
+for \nonterm{expr} (in cases 2 and 3). In case 3, the actual address
+associated with the assembler label may not be known until final
+assembly (Section~\ref{sec:code-gen:source-files}).
+
 \subsection{Size and Signedness}
 \label{sec:semantics:size}
 
 \bfhead{Size and signedness of expressions.} Every expression
 appearing in the source file is given a \emph{size} and a
-\emph{signedness}.  A constant-value expression
-(Section~\ref{sec:semantics:constant-value-expr}) is signed, and its
-size is the minimum number of bytes required to represent the value
-produced by evaluating the expression as specified in
+\emph{signedness}.  The size and signedness of a constant-value
+expression (Section~\ref{sec:semantics:constant-value-expr}) come from
+the value produced by evaluating the expression as specified in
 Section~\ref{sec:code-gen:expressions}, assuming that both operands
-have the maximum allowed size of 255.  For an expression other than a
-constant-value expression, size and signedness are computed as
-follows:
+have the maximum allowed size of 255.  The size is the minimum number
+of bytes required to represent the value.  The expression is signed if
+the value is less than zero, otherwise unsigned.
+
+For an expression that is not a constant-value expression, size and
+signedness are computed as follows:
 %
 \begin{itemize}
 %
 \item \ithead{Identifiers.} The size and signedness of an identifier
-  expression come from its definition
-  (Section~\ref{sec:semantics:attr}).  (1) If the definition is a
-  constant declaration, then the size and signedness are identical to
-  the size and signedness of the expression appearing in the
-  declaration.  (2) If the definition is a variable declaration or
-  function parameter declaration, then the size is as given in the
-  declaration, and the signedness is signed if \kwd{S} appears after
-  the size, otherwise unsigned.  (3) If the definition is a data
-  declaration or function declaration, then the size is 2, and the
-  signedness is unsigned.
+  come from its definition (Section~\ref{sec:semantics:attr}).  (1) If
+  the definition is a variable declaration or function parameter
+  declaration, then the size is as given in the declaration, and the
+  signedness is signed if \kwd{S} appears after the size, otherwise
+  unsigned.  (2) If the definition is a data declaration or function
+  declaration, then the size is 2, and the signedness is unsigned.
 %
 \item \ithead{Indexed expressions.} The size of an indexed expression
   is given by the \nonterm{size} component of the expression.  It is
@@ -598,7 +624,7 @@ follows:
   come from the function declaration corresponding to the identifier:
   (1) If a \nonterm{size} appears after the keyword \kwd{FN} in the
   definition, then that is the return size; otherwise the return size
-  is 0.  (2) If \kwd{S} appears after \nonterm{size} then the return
+  is 0.  (2) If \kwd{S} appears after \nonterm{size} then the
   signedness is signed, otherwise unsigned.
 %
 \item \ithead{Set expressions.} The size and signedness of a set
@@ -623,8 +649,8 @@ follows:
 
 
 \bfhead{Size and signedness requirements for expressions.} The
-following requirements apply to the size and signedness of
-expressions:
+following requirements apply to the size and signedness of all
+   expressions, whether or not they are constant-value expressions:
 %
 \begin{itemize}
 %
@@ -691,34 +717,6 @@ The expression contained in an expression statement must have an
 effect: that is, it must be a set, call, \kwd{INCR}, or \kwd{DECR}
 expression.  This check traps the error of writing \kwd{X = 2;}
 (comparison) instead of \kwd{SET X = 2;} (assignment).
-
-\subsection{Expressions Appearing at Global Scope}
-\label{sec:semantic:global-expr}
-
-(1) An expression appearing at global scope (i.e., in a constant or
-data declaration, or as the initializer of a global variable
-declaration) must be one of the following:
-%
-\begin{enumerate}
-%
-\item A constant-value expression
-  (Section~\ref{sec:semantics:constant-value-expr}).
-%
-\item An identifier corresponding to a data declaration (useful for
-  data tables).
-%
-\item An identifier corresponding to a function declaration (useful
-  for jump tables).
-%
-\end{enumerate}
-
-These rules are designed so that the compiler can do a single pass
-over all the expressions \nonterm{expr} appearing at global scope, in
-the order in which they appear in the source file, and either (1)
-compute the constant value of \nonterm{expr} (in case 1) or generate
-an assembler label for \nonterm{expr} (in cases 2 and 3). In case 3,
-the actual address associated with the assembler label may not be
-known until final assembly (Section~\ref{sec:code-gen:source-files}).
 
 \section{Code Generation}
 \label{sec:code-gen}
