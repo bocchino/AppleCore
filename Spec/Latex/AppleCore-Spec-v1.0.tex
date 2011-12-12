@@ -426,13 +426,11 @@ $$\nonterm{expr} ::= \mbox{\nonterm{lvalue-expr} $|$
   \nonterm{parens-expr}}$$
 
 \bfhead{Lvalue expressions.}  An lvalue expression is an expression
-that may appear on the left-hand side of a set expression at parse
-time.  It is an identifier, an indexed expression, a register
-expression, or a parentheses expression.
+that may appear on the left-hand side of a set expression.  It is an
+identifier, an indexed expression, or a register expression.
 %
 $$\nonterm{lvalue-expr} ::= \mbox{\nonterm{identifier} $|$
-  \nonterm{indexed-expr} $|$ \nonterm{register-expr} $|$
-  \nonterm{parens-expr}}$$
+  \nonterm{indexed-expr} $|$ \nonterm{register-expr}}$$
 
 \bfhead{Numeric constants.}  A numeric constant is an integer or
 character constant:
@@ -757,9 +755,8 @@ match the number of parameters given in the declaration.
 
 \bfhead{Definition of semantic lvalue.}  A \emph{semantic lvalue} is
 an expression that (1) is an lvalue expression
-(Section~\ref{sec:syntax:expressions}) other than a parentheses
-expression and (2) if it is an identifier, then it corresponds to a
-variable or function parameter declaration.
+(Section~\ref{sec:syntax:expressions}) and (2) if it is an identifier,
+then it corresponds to a variable or function parameter declaration.
 
 \bfhead{Requirement of semantic lvalues.}  (1) A semantic lvalue is
 required in the following places: (a) on the left-hand side of a set
