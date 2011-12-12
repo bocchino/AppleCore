@@ -100,8 +100,8 @@ public class Parser {
     public boolean debug = false;
     private void printStatus(String s) {
 	if (debug) {
-	    System.out.print("Line " + scanner.getCurrentToken().lineNumber);
-	    System.out.println(": " + s);
+	    System.err.print("Line " + scanner.getCurrentToken().lineNumber);
+	    System.err.println(": " + s);
 	}
     }
 
@@ -424,9 +424,18 @@ public class Parser {
     }
 
     /**
-     * Expr ::= LValue-Expr | Call-Expr | Set-Expr | 
+     * LValueExpr ::= Ident | Indexed-Expr | Register-Expr |
+     *                Parens-Expr
+     */
+    private Expression parseLValueExpression() 
+	throws SyntaxError, IOException
+    {
+	return parseExpression(true);
+    }
+
+    /**
+     * Expr ::= LValueExpr | Call-Expr | Set-Expr | 
      *          Binop-Expr | Unop-Expr | Numeric-Const | 
-     *          Parens-Expr 
      */
     private Expression parseExpression() 
 	throws SyntaxError, IOException
@@ -434,22 +443,6 @@ public class Parser {
 	return parseExpression(false);
     }
 
-    /**
-     * LValue-Expr ::= Ident | Indexed-Expr | Register-Expr
-     */
-    private Expression parseLValueExpression()
-	throws SyntaxError, IOException
-    {
-	return parseExpression(true);
-    }
-
-    /**
-     * Parse an expression.
-     *
-     * @param lvalue   If set to true, only an lvalue expression
-     *                 will be parsed.  A non-lvalue expression
-     *                 causes an error.
-     */
     private Expression parseExpression(boolean lvalue) 
 	throws SyntaxError, IOException
     {
@@ -457,20 +450,22 @@ public class Parser {
 	Expression result = null;
 	switch (token) {
 	case IDENT:
-	    result = parseIdentPrefixExpr(lvalue);
+	    result = parseIdentifier();
 	    break;
 	case CARET:
 	    result = parseRegisterExpr();
 	    break;
 	case SET:
-	    if (!lvalue) result = parseSetExpr();
+	    if (!lvalue) 
+		result = parseSetExpr();
 	    break;
 	case LPAREN:
 	    result = parseParensExpr();
 	    break;
 	case CHAR_CONST:
 	case INT_CONST:
-	    if (!lvalue) result = parseNumericConstant();
+	    if (!lvalue) 
+		result = parseNumericConstant();
 	    break;
 	default:
 	    if (!lvalue) {
@@ -482,47 +477,42 @@ public class Parser {
 	    }
 	    break;
 	}
-	if (result != null && !lvalue) {
+	if (result == null) {
+	    String msg = lvalue ? "lvalue expression" : 
+		"expression";
+	    throw SyntaxError.expected(msg, token);
+	}
+	if (!lvalue) {
+	    // Check for binary operator
 	    Node.BinopExpression.Operator op =
 		getBinaryOperatorFor(scanner.getCurrentToken());
 	    if (op != null) {
 		scanner.getNextToken();
-		result = parseBinopExpression(result, op);
+		return parseBinopExpression(result, op);
 	    }
 	}
-	if (result == null) {
-	    String msg = lvalue ? "lvalue expression" : "expression";
-	    throw SyntaxError.expected(msg, token);
-	}
-	return result;
-    }
-
-    /**
-     * Parse a non-binop expression starting with an identifier, i.e.,
-     * Ident, Inexed-Expr, or Call-Expr.
-     *
-     * @param lvalue   Return null if lvalue is true and a
-     *                 call expression is found.
-     */
-    private Expression parseIdentPrefixExpr(boolean lvalue) 
-	throws SyntaxError, IOException
-    {
-	Identifier ident = parseIdentifier();
-	Token token = scanner.getCurrentToken();
-	switch (token) {
-	case LBRACKET:
-	    return parseIndexedExpression(ident);
-	case LPAREN:
-	    return lvalue ? null : parseCallExpression(ident);
-	default:
-	    return ident;
+	while (true) {
+	    // Check for call exprs and/or indexed exprs
+	    if (scanner.getCurrentToken() == Token.LPAREN) {
+		if (!lvalue) {
+		    result = parseCallExpression(result);
+		}
+		else {
+		    throw SyntaxError.expected("lvalue expression",
+					       token);
+		}
+	    }
+	    else if (scanner.getCurrentToken() == Token.LBRACKET) {
+		result = parseIndexedExpression(result);
+	    }
+	    else return result;
 	}
     }
 
     /**
-     * IndexedExpr ::= Ident '[' Expr,Size ']'
+     * IndexedExpr ::= Expr '[' Expr,Size ']'
      */
-    private IndexedExpression parseIndexedExpression(Identifier indexed) 
+    private IndexedExpression parseIndexedExpression(Expression indexed) 
 	throws SyntaxError, IOException
     {
 	IndexedExpression indexedExp = new IndexedExpression();
@@ -537,15 +527,15 @@ public class Parser {
     }
 
     /**
-     * Call-Expr ::= Ident '(' Args ')'
+     * Call-Expr ::= Expr '(' Args ')'
      * Args      ::= [Expr [',' Expr]*]
      */
-    private CallExpression parseCallExpression(Identifier name) 
+    private CallExpression parseCallExpression(Expression fn)
 	throws SyntaxError, IOException
     {
 	CallExpression callExp = new CallExpression();
-	callExp.lineNumber = name.lineNumber;
-	callExp.fn = name;
+	callExp.lineNumber = fn.lineNumber;
+	callExp.fn = fn;
 	expectAndConsume(Token.LPAREN);
 	if (scanner.getCurrentToken() == Token.RPAREN) {
 	    printStatus();
@@ -661,7 +651,7 @@ public class Parser {
 	Expression right = parseExpression();
 	if (right instanceof BinopExpression) {
 	    BinopExpression binop = (BinopExpression) right;
-	    if (op.precedence < binop.operator.precedence) {
+	    if (op.precedence <= binop.operator.precedence) {
 		// Switch precedence
 		result.right = binop.left;
 		binop.left = result;

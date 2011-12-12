@@ -64,8 +64,6 @@ public class SCMacroWriter
 
     protected void emitComment(String comment) {
 	emit("* ");
-	for (int i = 0; i < commentIndent; ++i)
-	    emit(" ");
 	emit(comment.toUpperCase() + "\n");
     }
 

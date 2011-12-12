@@ -418,7 +418,7 @@ $$\nonterm{expr-stmt} ::= \mbox{\nonterm{expr} \kwd{;}}$$
 
 An expression is an lvalue expression, a call expression, a set
 expression, a binary operation expression, a unary operation
-expression, a numeric constant, or a parentheses expression:
+expression, or a numeric constant.
 %
 $$\nonterm{expr} ::= \mbox{\nonterm{lvalue-expr} $|$
   \nonterm{call-expr} $|$ \nonterm{set-expr} $|$ \nonterm{binop-expr}
@@ -426,11 +426,13 @@ $$\nonterm{expr} ::= \mbox{\nonterm{lvalue-expr} $|$
   \nonterm{parens-expr}}$$
 
 \bfhead{Lvalue expressions.}  An lvalue expression is an expression
-that may appear on the left-hand side of a set expression.  It is an
-identifier, an indexed expression, or a register expression:
+that may appear on the left-hand side of a set expression at parse
+time.  It is an identifier, an indexed expression, a register
+expression, or a parentheses expression.
 %
 $$\nonterm{lvalue-expr} ::= \mbox{\nonterm{identifier} $|$
-  \nonterm{indexed-expr} $|$ \nonterm{register-expr}}$$
+  \nonterm{indexed-expr} $|$ \nonterm{register-expr} $|$
+  \nonterm{parens-expr}}$$
 
 \bfhead{Numeric constants.}  A numeric constant is an integer or
 character constant:
@@ -480,6 +482,27 @@ $$\nonterm{binop} ::= \mbox{\kwd{>} $|$ \kwd{<} $|$ \kwd{<=} $|$
   \kwd{-} $|$ \kwd{*} $|$ \kwd{/} $|$ \kwd{<<} $|$ \kwd{>>} $|$
   \kwd{=}}$$
 %
+Parsing of binary operation expressions is disambiguated using the
+following precedence rules:
+%
+\begin{enumerate}
+%
+\item In any sequence \nonterm{expr-1} \nonterm{binop-1}
+  \nonterm{expr-2} \nonterm{binop-2} \nonterm{expr-3}, the implied
+  parentheses go around the first operation unless the second
+  operation has a strictly higher precedence.  There are five levels
+  of precedence, from highest to lowest: (1) \kwd{<<} and \kwd{>>};
+  (2) \kwd{*} and \kwd{\bs}; (3) \kwd{+} and \kwd{-}; (4) \kwd{=},
+  \kwd{>}, \kwd{<}, \kwd{<=}, and \kwd{>=}; and (5) \kwd{AND},
+  \kwd{OR}, and \kwd{XOR}.
+%
+\item Binary operators bind more weakly than any other expression
+  combinators.  For example, \kwd{A+B()} is parsed as \kwd{A+(B())}
+  and not \kwd{(A+B)()}; and \kwd{-5+3} is parsed as \kwd{(-5)+3} and
+  not \kwd{-(5+3)}.
+%
+\end{enumerate}
+
 \bfhead{Unary operation expressions.} A unary operation expression
 consists of a unary operator followed by an expression:
 %

@@ -9,10 +9,11 @@
  * separately managed stack (the "program stack") with a 16-byte
  * pointer for everything else.  That way, running our programs won't
  * blow out the stack.  We do require that the total size of all local
- * vars (plus 2 bytes for saving the frame pointer) be <= 256 bytes;
+ * vars (plus 2 bytes for saving the frame pointer) be < 256 bytes;
  * that lets us use one-byte indexing into local vars from the frame
- * pointer.  However, dynamic frame sizes of > 256 bytes are possible,
- * by allocating memory on the stack above the local variable slots.
+ * pointer.  However, dynamic frame sizes of >= 256 bytes are
+ * possible, by allocating memory on the stack above the local
+ * variable slots.
  *
  * Code generation uses the following registers in zero-page memory:
  *
@@ -57,13 +58,6 @@ public abstract class AssemblyWriter
     /* State variables for tree traversal */
 
     /**
-     * Comment indent
-     */
-    protected int commentIndent = 0;
-    protected void indentComment() { commentIndent++; }
-    protected void unindentComment() { commentIndent--; }
-
-    /**
      * The function being processed
      */
     protected FunctionDecl currentFunction;
@@ -101,7 +95,7 @@ public abstract class AssemblyWriter
     public void visitCharConstant(CharConstant node) {
 	emitComment(node);
 	CharConstant charConst = (CharConstant) node;
-	emitImmediateInstruction("LDA","'"+charConst.value+"'",false);
+	emitImmediateInstruction("LDA",charConst.value);
 	emitAbsoluteInstruction("JSR","ACC.PUSH.A");	    
     }
 
@@ -244,22 +238,6 @@ public abstract class AssemblyWriter
 	}
     }
 
-    public void visitConstDecl(ConstDecl node) {
-	Expression expr = node.expr;
-	if (expr instanceof IntegerConstant) {
-	    IntegerConstant ic = (IntegerConstant) expr;
-	    if (ic.getSize() <= 2) {
-		emitLabel(node.label);
-		emitAbsoluteInstruction(".EQ", ic.valueAsHexString());
-	    }
-	}
-	else {
-	    CharConstant cc = (CharConstant) expr;
-	    emitLabel(node.label);
-	    emitAbsoluteInstruction(".EQ",cc.toString());
-	}
-    }
-    
     public void visitVarDecl(VarDecl node) 
 	throws ACCError
     {
@@ -398,16 +376,18 @@ public abstract class AssemblyWriter
 	scan(node.indexed);
 	// Pad to 2 bytes if necessary
 	adjustSize(2,node.indexed.size,false);
-	// Evaluate index expr.
-	needAddress = false;
-	scan(node.index);
-	// Pad to 2 bytes if necessary
-	adjustSize(2,node.index.size,node.index.isSigned);
-	// Pull LHS address and RHS index, add them, and put
-	// result on the stack.
-	emitComment("index");
-	emitImmediateInstruction("LDA",2);
-	emitAbsoluteInstruction("JSR","ACC.BINOP.ADD");
+	if (!node.index.isZero()) {
+	    // Evaluate index expr.
+	    needAddress = false;
+	    scan(node.index);
+	    // Pad to 2 bytes if necessary
+	    adjustSize(2,node.index.size,node.index.isSigned);
+	    // Pull LHS address and RHS index, add them, and put
+	    // result on the stack.
+	    emitComment("index");
+	    emitImmediateInstruction("LDA",2);
+	    emitAbsoluteInstruction("JSR","ACC.BINOP.ADD");
+	}
 	// If parent wanted a value, compute it now.
 	if (!parentNeedsAddress) {
 	    emitComment("value at index");

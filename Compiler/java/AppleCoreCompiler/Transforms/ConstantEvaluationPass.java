@@ -35,6 +35,28 @@ public class ConstantEvaluationPass
 	}
     }
 
+    public void visitIndexedExpression(IndexedExpression node) 
+	throws ACCError
+    {
+	super.visitIndexedExpression(node);
+	if (node.indexed instanceof NumericConstant &&
+	    node.index instanceof NumericConstant) {
+	    // Index and indexed both constants: do the addition now.
+	    BinopExpression newIndexed = new BinopExpression();
+	    newIndexed.left = node.indexed;
+	    newIndexed.operator = 
+		BinopExpression.Operator.PLUS;
+	    newIndexed.right = node.index;
+	    newIndexed.lineNumber = node.indexed.lineNumber;
+	    IntegerConstant newIndex = new IntegerConstant();
+	    newIndex.lineNumber = node.index.lineNumber;
+	    newIndex.setValue(BigInteger.ZERO);
+	    node.indexed = transform(newIndexed);
+	    node.index = newIndex;
+	    result = node;
+	}
+    }
+
     public void visitBinopExpression(BinopExpression node) 
 	throws ACCError
     {
