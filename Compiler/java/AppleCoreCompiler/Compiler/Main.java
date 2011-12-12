@@ -82,11 +82,11 @@ public class Main {
 	processArgs(args);
 	Parser parser = new Parser(sourceFileName);
 	SourceFile sourceFile = parser.parse();
-	sourceFile.includeMode = includeMode;
-	sourceFile.origin = origin;
-	Warner warner = new Warner(System.err,sourceFileName);
 	if (sourceFile != null) {
 	    try {
+		Warner warner = new Warner(System.err,sourceFileName);
+		sourceFile.includeMode = includeMode;
+		sourceFile.origin = origin;
 		AttributionPass attributionPass = 
 		    new AttributionPass(warner);
 		attributionPass.runOn(sourceFile);

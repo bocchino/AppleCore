@@ -193,11 +193,7 @@ public class SizePass
 	case SHL: case SHR:
 	    node.size = node.left.size;
 	    node.isSigned = node.left.isSigned;
-	    if (node.right.isSigned ||
-		node.right.size != 1) {
-		throw new SemanticError("shift amount must be 1 byte unsigned",
-					node);
-	    }
+	    checkShift(node);
 	    break;
 	default:
 	    node.size = Math.max(node.left.size,node.right.size);
@@ -206,6 +202,20 @@ public class SizePass
 	    break;
 	}
 	printStatus(node);
+    }
+
+    /**
+     * Check that the right-hand operator of a shift operation is one
+     * byte unsigned.
+     */
+    public static void checkShift(BinopExpression node)
+	throws ACCError
+    {
+	if (node.right.isSigned ||
+	    node.right.size != 1) {
+	    throw new SemanticError("shift amount must be 1 byte unsigned",
+				    node);
+	}
     }
     
     /**
@@ -245,16 +255,6 @@ public class SizePass
 	super.visitParensExpression(node);
 	node.size = node.expr.size;
 	node.isSigned = node.expr.isSigned;
-    }
-
-    /**
-     * The size of a constant expression is the size of the constant
-     * it represents.  A constant expression is unsigned unless it
-     * represents a negative number, in which case it is signed.
-     */
-    public void visitIntegerConstant(IntegerConstant node) {
-	node.size = node.getSize();
-	node.isSigned = (node.value.compareTo(BigInteger.ZERO) < 0);
     }
 
     public void visitCharConstant(CharConstant node) {

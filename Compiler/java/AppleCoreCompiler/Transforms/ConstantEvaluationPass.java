@@ -6,6 +6,7 @@ package AppleCoreCompiler.Transforms;
 import AppleCoreCompiler.AST.*;
 import AppleCoreCompiler.AST.Node.*;
 import AppleCoreCompiler.Errors.*;
+import AppleCoreCompiler.Semantics.*;
 
 import java.math.BigInteger;
 import java.util.*;
@@ -48,57 +49,53 @@ public class ConstantEvaluationPass
 	    ic.lineNumber = node.lineNumber;
 	    switch (node.operator) {
 	    case SHL:
-		ic.value = 
-		    leftValue.shiftLeft(rightValue.intValue());
+		SizePass.checkShift(node);
+		ic.setValue(leftValue.shiftLeft(rightValue.intValue()));
 		break;
 	    case SHR:
-		ic.value =
-		    leftValue.shiftRight(rightValue.intValue());
+		SizePass.checkShift(node);
+		ic.setValue(leftValue.shiftRight(rightValue.intValue()));
 		break;
 	    case TIMES:
-		ic.value =
-		    leftValue.multiply(rightValue);
+		ic.setValue(leftValue.multiply(rightValue));
 		break;
 	    case DIVIDE:
-		ic.value = 
-		    leftValue.divide(rightValue);
+		ic.setValue(leftValue.divide(rightValue));
 		break;
 	    case PLUS:
-		ic.value = 
-		    leftValue.add(rightValue);
+		ic.setValue(leftValue.add(rightValue));
 		break;
 	    case MINUS:
-		ic.value = 
-		    leftValue.subtract(rightValue);
+		ic.setValue(leftValue.subtract(rightValue));
 		break;
 	    case EQUALS:
-		ic.value = (leftValue.equals(rightValue)) ?
-		    BigInteger.ONE : BigInteger.ZERO;
+		ic.setValue((leftValue.equals(rightValue)) ?
+			    BigInteger.ONE : BigInteger.ZERO);
 		break;
 	    case GT:
-		ic.value = (leftValue.compareTo(rightValue) > 0)
-		    ? BigInteger.ONE : BigInteger.ZERO;
+		ic.setValue((leftValue.compareTo(rightValue) > 0)
+			    ? BigInteger.ONE : BigInteger.ZERO);
 		break;
 	    case LT:
-		ic.value = (leftValue.compareTo(rightValue) < 0)
-		    ? BigInteger.ONE : BigInteger.ZERO;
+		ic.setValue((leftValue.compareTo(rightValue) < 0)
+			    ? BigInteger.ONE : BigInteger.ZERO);
 		break;
 	    case GEQ:
-		ic.value = (leftValue.compareTo(rightValue) >= 0)
-		    ? BigInteger.ONE : BigInteger.ZERO;
+		ic.setValue((leftValue.compareTo(rightValue) >= 0)
+			    ? BigInteger.ONE : BigInteger.ZERO);
 		break;
 	    case LEQ:
-		ic.value = (leftValue.compareTo(rightValue) <= 0)
-		    ? BigInteger.ONE : BigInteger.ZERO;
+		ic.setValue((leftValue.compareTo(rightValue) <= 0)
+			    ? BigInteger.ONE : BigInteger.ZERO);
 		break;
 	    case AND:
-		ic.value = leftValue.and(rightValue);
+		ic.setValue(leftValue.and(rightValue));
 		break;
 	    case OR:
-		ic.value = leftValue.or(rightValue);
+		ic.setValue(leftValue.or(rightValue));
 		break;
 	    case XOR:
-		ic.value = leftValue.xor(rightValue);
+		ic.setValue(leftValue.xor(rightValue));
 		break;
 	    }
 	    result = ic;
@@ -116,11 +113,11 @@ public class ConstantEvaluationPass
 	    ic.lineNumber = node.lineNumber;
 	    switch (node.operator) {
 	    case NEG:
-		ic.value = exprVal.negate(); 
+		ic.setValue(exprVal.negate()); 
 		result = ic;
 		break;
 	    case NOT:
-		ic.value = exprVal.not();
+		ic.setValue(exprVal.not());
 		result = ic;
 		break;
 	    }

@@ -695,12 +695,12 @@ public class Parser {
 	throws SyntaxError, IOException
     {
 	IntegerConstant intConstant = parseIntConstant();
-	if (intConstant.value.compareTo(BigInteger.ZERO) < 0 ||
-	    intConstant.value.compareTo(MAX_SIZE) > 0) {
+	if (intConstant.valueAsBigInteger().compareTo(BigInteger.ZERO) < 0 ||
+	    intConstant.valueAsBigInteger().compareTo(MAX_SIZE) > 0) {
 	    throw new SyntaxError(intConstant + " out of range",
 				  scanner.getLineNumber());
 	}
-	return intConstant.value.intValue();
+	return intConstant.valueAsBigInteger().intValue();
     }
 
     /**
@@ -841,7 +841,7 @@ public class Parser {
 	if (result != null) {
 	    printStatus();
 	    setLineNumberOf(result);
-	    result.value = token.getNumberValue();
+	    result.setValue(token.getNumberValue());
 	    scanner.getNextToken();
 	}
 	return result;

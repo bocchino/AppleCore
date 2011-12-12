@@ -103,8 +103,6 @@ public abstract class Node {
     {
 	public String value;
 
-	public boolean isZero() { return false; }
-
 	public int getSize() {
 	    return value.length();
 	}
@@ -317,6 +315,7 @@ public abstract class Node {
 
 	public int getSize() { return size; }
 	public boolean isSigned() { return this.isSigned; }
+	public boolean isZero() { return false; }
 
 	/**
 	 * Whether the value represented by this expression is signed.
@@ -550,7 +549,6 @@ public abstract class Node {
     public static abstract class NumericConstant 
 	extends Expression
     {
-	public abstract boolean isZero();
 	public abstract String valueAsHexString();
 	public abstract String valueAsDecString();
 	public abstract BigInteger valueAsBigInteger();
@@ -564,9 +562,22 @@ public abstract class Node {
 	public static final BigInteger
 	    byteVal = new BigInteger("256");
 	
-	public BigInteger value;
+	private BigInteger value;
 	public boolean wasHexInSource;
 	public boolean isZero() { return value.equals(BigInteger.ZERO); }
+
+	/**
+	 * Set the value of this integer constant.  Setting the value
+	 * also sets the size and signedness.  The size is the minimum
+	 * number of bytes required to represent the value.  The
+	 * signedness is signed if the value is negative, otherwise
+	 * unsigned.
+	 */
+	public void setValue(BigInteger value) {
+	    this.value = value;
+	    this.size = getSize();
+	    this.isSigned = (value.compareTo(BigInteger.ZERO) < 0);
+	}
 
 	/**
 	 * Compute the smallest number of bytes required to hold this
