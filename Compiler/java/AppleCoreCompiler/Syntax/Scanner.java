@@ -267,10 +267,8 @@ public class Scanner {
 	String str = sb.toString();
 	try {
 	    int ascii = Integer.valueOf(str,16);
-	    if (ascii > 255) {
-		throw new SyntaxError("Value $" + str + 
-				      " out of range",
-				      reader.getLineNumber());
+	    if (ascii < 0) {
+		throw new NumberFormatException();
 	    }
 	    return (char) ascii;
 	}
