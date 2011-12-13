@@ -96,7 +96,7 @@ public enum Token {
     public BigInteger numberValue;
 
     public static final BigInteger MAX_INT =
-	BigInteger.valueOf(2).pow(256).subtract(BigInteger.ONE);
+	BigInteger.valueOf(2).pow(256*8).subtract(BigInteger.ONE);
 
     /**
      * Whether the source representation was hexadecimal
