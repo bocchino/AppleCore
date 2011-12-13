@@ -1,31 +1,19 @@
 ACC      ?= ${APPLECORE}/Compiler/bin/acc
 ASM2SCM   = ${APPLECORE}/Scripts/asm2scm
-SRCS     = ${wildcard ac/*.ac}
+SRCS      = ${wildcard asm/*.asm}
 MAKE_ALL ?= perl ${APPLECORE}/Scripts/make-all.pl
 
-all-scm : scm all-asm
+all-scm : scm ${SRCS}
 	${MAKE_ALL} asm scm
-
-all-asm : asm ${SRCS}
-	${MAKE_ALL} ac asm
 
 file-scm : asm/${FILE}.asm
 	make scm/${FILE}.scm
 
-file-asm : ac/${FILE}.ac
-	make asm/${FILE}.asm
-
 scm/${FILE}.scm : asm/${FILE}.asm scm 
 	${ASM2SCM} < $< > $@
-
-asm/${FILE}.asm : ac/${FILE}.ac asm
-	${ACC} $< > $@
 
 scm : 
 	mkdir $@
 
-asm :
-	mkdir $@
-
 clean ::
-	rm -Rf asm scm
+	rm -Rf scm
