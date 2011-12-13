@@ -179,6 +179,10 @@ public abstract class AssemblyWriter
 	}
     }
 
+    public void visitConstDecl(ConstDecl node) {
+	// Do nothing
+    }
+
     public void visitFunctionDecl(FunctionDecl node) 
 	throws ACCError
     {

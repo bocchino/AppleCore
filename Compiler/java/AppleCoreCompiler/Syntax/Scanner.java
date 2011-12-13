@@ -172,7 +172,9 @@ public class Scanner {
      * Read a decimal number and get a token representing the integer
      * value.
      */
-    void getDecimalConstant(int ch) throws IOException {
+    void getDecimalConstant(int ch) 
+	throws IOException, SyntaxError
+    {
 	StringBuffer s = new StringBuffer();
 	s.append((char) ch);
 
@@ -184,6 +186,7 @@ public class Scanner {
 	reader.unread(ch);
 
 	BigInteger numberValue = new BigInteger(s.toString());
+	checkRange(numberValue);
 	currentToken.setNumberValue(numberValue);
 	currentToken.setStringValue(s.toString());
     }
@@ -192,7 +195,9 @@ public class Scanner {
      * Read a hexadecimal number and get a token representing the
      * integer value.
      */
-    void getHexConstant() throws IOException, SyntaxError {
+    void getHexConstant() 
+	throws IOException, SyntaxError 
+    {
 	StringBuffer s = new StringBuffer();
 	String str = null;
 
@@ -208,11 +213,21 @@ public class Scanner {
 	
 	try {
 	    BigInteger numberValue = new BigInteger(s.toString(),16);
+	    checkRange(numberValue);
 	    currentToken.setStringValue("$"+s.toString());
 	    currentToken.setNumberValue(numberValue);
 	}
 	catch(NumberFormatException e) {
 	    throw new SyntaxError("Bad number format $" + str, 
+				  currentToken.getLineNumber());
+	}
+    }
+
+    private void checkRange(BigInteger val) 
+	throws SyntaxError
+    {
+	if (val.compareTo(Token.MAX_INT) > 0) {
+	    throw new SyntaxError("integer value out of range",
 				  currentToken.getLineNumber());
 	}
     }

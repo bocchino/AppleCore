@@ -5,6 +5,7 @@ package AppleCoreCompiler.AST;
 
 import java.util.*;
 import java.math.*;
+import AppleCoreCompiler.Syntax.*;
 import AppleCoreCompiler.Errors.*;
 
 public abstract class Node {
@@ -574,7 +575,9 @@ public abstract class Node {
 	 * unsigned.
 	 */
 	public void setValue(BigInteger value) {
-	    this.value = value;
+	    // Value must be representable by 255 bytes; if not, strip
+	    // off the high-order bytes.
+	    this.value = value.and(Token.MAX_INT);
 	    this.size = getSize();
 	    this.isSigned = (value.compareTo(BigInteger.ZERO) < 0);
 	}
