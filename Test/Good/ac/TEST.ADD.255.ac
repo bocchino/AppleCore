@@ -1,0 +1,30 @@
+# -------------------------------------
+# TEST 255-BYTE ADDITION
+# -------------------------------------
+
+CONST MON_CROUT  $FD8E;
+
+DATA STR  "SHOULD BE 02: ";
+
+VAR A:255;
+VAR B:255;
+VAR C:255;
+
+FN PRINT_STRING(STR_PTR:2);
+FN PRINT_NUM(N_PTR:2,SIZE:1);
+
+FN MAIN() {
+   SET A=RET_1();
+   SET B=RET_1();
+   SET C=A+B;
+   PRINT_STRING(STR);
+   PRINT_NUM(@C,1);
+   MON_CROUT();
+}
+
+FN:1 RET_1() {
+   RETURN 1;
+}
+
+
+INCLUDE "IO";
