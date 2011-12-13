@@ -1,2 +1,2 @@
-include ../Makefile.asm.common
+include ${APPLECORE}/Makefile.asm.common
 
