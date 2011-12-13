@@ -1,3 +1,3 @@
 ACC     = ${APPLECORE}/Compiler/bin/acc -include
 
-include ../Makefile.common
+include ../Makefile.ac.common

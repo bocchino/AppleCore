@@ -1,3 +1,6 @@
+#
+# Makefile for translating AppleCore source files.
+#
 ACC      ?= ${APPLECORE}/Compiler/bin/acc
 ASM2SCM   = ${APPLECORE}/Scripts/asm2scm
 SRCS     = ${wildcard ac/*.ac}

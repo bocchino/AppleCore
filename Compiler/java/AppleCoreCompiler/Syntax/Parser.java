@@ -482,27 +482,22 @@ public class Parser {
 		"expression";
 	    throw SyntaxError.expected(msg, token);
 	}
-	if (!lvalue) {
-	    // Check for binary operator
+	while (true) {
+	    // Check for binary op
 	    Node.BinopExpression.Operator op =
 		getBinaryOperatorFor(scanner.getCurrentToken());
-	    if (op != null) {
+	    if (op != null && !lvalue) {
 		scanner.getNextToken();
 		return parseBinopExpression(result, op);
 	    }
-	}
-	while (true) {
-	    // Check for call exprs and/or indexed exprs
-	    if (scanner.getCurrentToken() == Token.LPAREN) {
-		if (!lvalue) {
-		    result = parseCallExpression(result);
-		}
-		else {
-		    throw SyntaxError.expected("lvalue expression",
-					       token);
-		}
+	    // Check for call expr
+	    else if (scanner.getCurrentToken() 
+		     == Token.LPAREN && !lvalue) {
+		result = parseCallExpression(result);
 	    }
-	    else if (scanner.getCurrentToken() == Token.LBRACKET) {
+	    // Check for indexed expr
+	    else if (scanner.getCurrentToken() 
+		     == Token.LBRACKET) {
 		result = parseIndexedExpression(result);
 	    }
 	    else return result;
