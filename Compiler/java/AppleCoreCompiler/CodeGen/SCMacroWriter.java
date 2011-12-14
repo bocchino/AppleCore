@@ -162,11 +162,12 @@ public class SCMacroWriter
 	    byteString : "0"+byteString;
     }
 
-    protected void emitPreamble(boolean includeMode, int origin) {
+    protected void emitPreamble(SourceFile node) {
 	emit(":NEW\n");
 	emitAbsoluteInstruction(".LIST","OFF");
-	if (origin >= 0) {
-	    emitAbsoluteInstruction(".OR", origin);
+	emitAbsoluteInstruction(".TF",node.targetFile);
+	if (node.origin >= 0) {
+	    emitAbsoluteInstruction(".OR", node.origin);
 	}
     }
 

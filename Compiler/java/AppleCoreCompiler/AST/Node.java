@@ -36,6 +36,7 @@ public abstract class Node {
      */
     public static class SourceFile extends Node {
 	public String name;
+	public String targetFile;
 	public boolean includeMode;
 	public int origin;
 	public List<Declaration> decls = 

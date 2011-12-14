@@ -18,6 +18,11 @@ public class Main {
     private static String sourceFileName = null;
 
     /**
+     * Name of the target file
+     */
+    private static String targetFileName = null;
+    
+    /**
      * Whether to translate the source file in include mode
      */
     private static boolean includeMode = false;
@@ -61,6 +66,9 @@ public class Main {
 	else if (arg.equals("-include")) {
 	    includeMode = true;
 	}
+	else if (arg.substring(0,4).equals("-tf=")) {
+	    targetFileName = arg.substring(4);
+	}
 	else if (arg.substring(0,7).equals("-origin=")) {
 	    if (arg.charAt(8)=='$') {
 		origin = Integer.parseInt(arg.substring(9),16);
@@ -87,6 +95,9 @@ public class Main {
 		Warner warner = new Warner(System.err,sourceFileName);
 		sourceFile.includeMode = includeMode;
 		sourceFile.origin = origin;
+		sourceFile.targetFile = (targetFileName == null) ?
+		    defaultTargetFile(sourceFile.name) :
+		    targetFileName;
 		AttributionPass attributionPass = 
 		    new AttributionPass(warner);
 		attributionPass.runOn(sourceFile);
@@ -116,6 +127,17 @@ public class Main {
 
 	    }
 	} else { System.exit(1); }
+    }
+
+    private static String defaultTargetFile(String sourceFile) {
+	String[] pathNames = sourceFile.split("/");
+	String targetFile = pathNames[pathNames.length-1];
+	targetFile = targetFile.replace('_','.').toUpperCase();
+	if (targetFile.length() > 3 &&
+	    targetFile.substring(targetFile.length()-3).equals(".AC")) {
+	    targetFile = targetFile.substring(0,targetFile.length()-3);
+	}
+	return targetFile;
     }
 
 }

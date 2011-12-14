@@ -3,6 +3,7 @@ package AppleCoreCompiler.Syntax;
 import java.io.*;
 import java.util.*;
 import java.math.*;
+import AppleCoreCompiler.AST.*;
 import AppleCoreCompiler.AST.Node;
 import AppleCoreCompiler.AST.Node.*;
 import AppleCoreCompiler.Errors.*;
@@ -34,7 +35,9 @@ public class Parser {
      * Main method for testing the parser
      */
 
-    public static void main(String args[]) {
+    public static void main(String args[]) 
+	throws ACCError
+    {
 	Parser parser = null;
 	try {
 	    parser = new Parser(args[0]);
@@ -46,7 +49,11 @@ public class Parser {
 	    System.exit(1);
 	}
 	SourceFile sourceFile = parser.parse();
-	// Print out the AST
+	if (sourceFile != null) {
+	    // Print out the AST
+	    ASTPrintingPass app = new ASTPrintingPass(System.out);
+	    app.runOn(sourceFile);
+	}
     }
 
     /**
