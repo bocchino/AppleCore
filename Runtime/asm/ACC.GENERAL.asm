@@ -122,22 +122,16 @@ ACC.SP.DOWN.SIZE
 * -------------------------------
 * SET SP-=2
 * SET IP=SP[0,2]
-* SET Y=1
-* PRESERVES X,SIZE
+* CLOBBERS X,Y
+* PRESERVES SIZE
 * -------------------------------
 ACC.POP.IP
-	LDA ACC.SIZE
-	PHA
-        LDA #2
-        JSR ACC.SP.DOWN.A
-        LDY #0
-        LDA (ACC.SP),Y
-        STA ACC.IP
-        INY
-        LDA (ACC.SP),Y
-        STA ACC.IP+1
-	PLA
-	STA ACC.SIZE
+	LDX ACC.SIZE
+	JSR ACC.POP.A
+	STA ACC.IP+1
+	JSR ACC.POP.A
+	STA ACC.IP
+	STX ACC.SIZE
         RTS
 * -------------------------------
 * SET SP-=2
@@ -355,7 +349,7 @@ ALLOCATE
 	JSR ACC.FN.RETURN
 * PUSH SIZE ZEROS ON STACK
 	LDX #0
-	JSR PUSH.X.SIZE.TIMES
+	JSR ACC.PUSH.X.SIZE.TIMES
 * PUSH IP
 	LDA ACC.IP
 	JSR ACC.PUSH.A
