@@ -12,7 +12,7 @@ ACC.BINOP.ADD
 	JSR ACC.ADD
         JMP ACC.SET.SP.TO.IP
 * -------------------------------
-* FN ADD(A:2,B:2,C:2,SZ:1)
+* FN ADD(A:2,B:2,C:2,S:1)
 * SET SIZE=FP[8,1]
 * SET FP[6,2][0,SIZE]=
 *   	FP[2,2][0,SIZE]+
@@ -41,16 +41,15 @@ ACC.ADD
 * -------------------------------
 * BINARY OP -
 * SET A=SIZE
-* SET SP-=2*SIZE
-* SET SP[0,SIZE]-=SP[A,SIZE]
-* SET SP+=SIZE
+* SET SP-=SIZE
+* SET SP[-SIZE,SIZE]-=SP[0,SIZE]
 * -------------------------------
 ACC.BINOP.SUB
         JSR ACC.INIT.BINOP
 	JSR ACC.SUB
         JMP ACC.SET.SP.TO.IP
 * -------------------------------
-* FN SUB(A:2,B:2,C:2,SZ:1)
+* FN SUB(A:2,B:2,C:2,S:1)
 * SET SIZE=FP[6,1]
 * SET FP[4,2][0,SIZE]=
 *   	FP[0,2][0,SIZE]-
@@ -79,10 +78,9 @@ ACC.SUB
 * -------------------------------
 * BINARY OP *
 * SET SIZE=A
-* SET SP[-2*SIZE,SIZE]
-*	*=SP[-SIZE,SIZE]
-* MULT IS SIGNED IF X=/=0
 * SET SP-=SIZE
+* SET SP[-SIZE,SIZE]*=SP[0,SIZE]
+* MULT IS SIGNED IF X=/=0
 * CLOBBERS IDX.1,IDX.2,IP
 * -------------------------------
 ACC.BINOP.MUL
@@ -119,7 +117,7 @@ ACC.MUL.UNSIGNED
 	BNE .2
 	DEC ACC.IDX.1
 	BNE .1
-* SET SP AND MOVE RESULT INTO PLACE
+* SET SP, MOVE RESULT INTO PLACE
 	JSR ACC.SP.UP.SIZE
 	JSR ACC.SET.IP.TO.SP
 	JSR ACC.SP.DOWN.SIZE
@@ -178,7 +176,7 @@ ACC.MUL.INNER
 	JSR ACC.SHL.INNER
 	JMP ACC.SP.UP.SIZE
 * -------------------------------
-* FN MUL(A:2,B:2,C:2,SZ:1)
+* FN MUL(A:2,B:2,C:2,S:1)
 * SET SIZE=FP[6,1]
 * SET FP[4,2][0,SIZE]=
 *   	FP[0,2][0,SIZE]*
@@ -192,10 +190,11 @@ MUL
 	JMP ASSIGN.C.AND.EXIT
 * -------------------------------
 * SET SIZE=A
-* DIVIDE SP[-2*SIZE,SIZE]
-* 	BY SP[-SIZE,SIZE]
-* QUOTIENT IN SP[-2*SIZE,SIZE]
-* REMAINDER IN SP[-SIZE,SIZE]
+* SET SP-=SIZE
+* DIVIDE SP[-SIZE,SIZE]
+*	BY SP[0,SIZE]
+* QUOTIENT IN SP[-SIZE,SIZE]
+* REMAINDER IN SP[SIZE,SIZE]
 * DIV IS SIGNED IF X=/=0
 * CLOBBERS IDX.1,IDX.2,IP,GR
 * -------------------------------
@@ -296,14 +295,12 @@ ACC.DIV.INNER
 	STA (ACC.SP),Y
 	RTS
 * -------------------------------
-* BINARY OP /
+* FN DIV(A:2,B:2,Q:2,R:2,S:1)
 * SET SIZE=FP[8,1]
-* SET FP[4,2][0,SIZE]=
-*   	FP[0,2][0,SIZE]*
-*	FP[2,2][0,SIZE]
-* SET FP[6,2][0,SIZE]=
-*	FP[0,2][0,SIZE]%
-*	FP[2,2][0,SIZE]
+* DIVIDE FP[0,2][0,SIZE]
+* 	BY FP[2,2][0,SIZE]
+* QUOTIENT IN FP[4,2][0,SIZE]
+* REMAINDER IN FP[6,2][0,SIZE]
 * -------------------------------
 DIV
 	LDA #11
