@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 #
 # Convert a Unix asm file to a format suitable for import into the S-C
-# Macro assembler
+# Macro assembler via DOS EXEC
 #
 while(<>) {
     # Get rid of NL at end

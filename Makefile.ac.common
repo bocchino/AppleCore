@@ -2,33 +2,33 @@
 # Makefile for translating AppleCore source files.
 #
 ACC      ?= ${APPLECORE}/Compiler/bin/acc
-ASM2SCM   = ${APPLECORE}/Scripts/asm2scm
+ASM2EXEC = ${APPLECORE}/Scripts/asm2exec
 SRCS     = ${wildcard ac/*.ac}
 MAKE_ALL ?= perl ${APPLECORE}/Scripts/make-all.pl
 
-all-scm : scm all-asm
-	${MAKE_ALL} asm scm
+all-exec : exec all-asm
+	${MAKE_ALL} asm exec
 
 all-asm : asm ${SRCS}
 	${MAKE_ALL} ac asm
 
-file-scm : asm/${FILE}.asm
-	make scm/${FILE}.scm
+file-exec : asm/${FILE}.asm
+	make exec/${FILE}.exec
 
 file-asm : ac/${FILE}.ac
 	make asm/${FILE}.asm
 
-scm/${FILE}.scm : asm/${FILE}.asm scm 
-	${ASM2SCM} < $< > $@
+exec/${FILE}.exec : asm/${FILE}.asm exec 
+	${ASM2EXEC} < $< > $@
 
 asm/${FILE}.asm : ac/${FILE}.ac asm
 	${ACC} $< > $@
 
-scm : 
+exec : 
 	mkdir $@
 
 asm :
 	mkdir $@
 
 clean ::
-	rm -Rf asm scm
+	rm -Rf asm exec

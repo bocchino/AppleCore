@@ -2,21 +2,21 @@
 # Makefile for translating asm handwritten asm files.
 #
 ACC      ?= ${APPLECORE}/Compiler/bin/acc
-ASM2SCM   = ${APPLECORE}/Scripts/asm2scm
+ASM2EXEC  = ${APPLECORE}/Scripts/asm2exec
 SRCS      = ${wildcard asm/*.asm}
 MAKE_ALL ?= perl ${APPLECORE}/Scripts/make-all.pl
 
-all-scm : scm ${SRCS}
-	${MAKE_ALL} asm scm
+all-exec : exec ${SRCS}
+	${MAKE_ALL} asm exec
 
-file-scm : asm/${FILE}.asm
-	make scm/${FILE}.scm
+file-exec : asm/${FILE}.asm
+	make exec/${FILE}.exec
 
-scm/${FILE}.scm : asm/${FILE}.asm scm 
-	${ASM2SCM} < $< > $@
+exec/${FILE}.exec : asm/${FILE}.asm exec 
+	${ASM2EXEC} < $< > $@
 
-scm : 
+exec : 
 	mkdir $@
 
 clean ::
-	rm -Rf scm
+	rm -Rf exec
