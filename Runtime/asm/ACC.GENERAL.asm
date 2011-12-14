@@ -319,7 +319,7 @@ ACC.EVAL.A.B.1
 	JSR ACC.SET.IP.TO.VAR
 	JMP ACC.EVAL.1
 * -------------------------------
-* ASSIGN C AND RETURn
+* ASSIGN C AND RETURN
 * -------------------------------
 ACC.ASSIGN.C.AND.RET
 	LDY #6

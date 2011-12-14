@@ -351,8 +351,7 @@ public abstract class AssemblyWriter
 	    emitImmediateInstruction("LDA",currentFunction.size);
 	    emitAbsoluteInstruction("JSR","ACC.SP.DOWN.A");
 	    emitAbsoluteInstruction("JSR","ACC.SET.IP.TO.SP");
-	    emitAbsoluteInstruction("JSR","ACC.SET.SP.TO.FP");
-	    emitAbsoluteInstruction("JSR","ACC.RESTORE.CALLER.FP");
+	    emitAbsoluteInstruction("JSR","ACC.FN.RETURN");
 	    emitAbsoluteInstruction("JMP","ACC.EVAL.1");
 	}
 	else {
