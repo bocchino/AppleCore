@@ -2,15 +2,27 @@
 * THE APPLECORE COMPILER, V1.0
 * INTEGER ARITHMETIC OPERATIONS
 * -------------------------------
+* BINARY OP +
 * SET SIZE=A
-* SET SP-=2*SIZE
-* SET SP[0,SIZE]+=SP[SIZE,SIZE]
-* SET SP+=SIZE
+* SET SP-=SIZE
+* SET SP[-SIZE,SIZE]+=SP[0,SIZE]
 * -------------------------------
 ACC.BINOP.ADD
 	JSR ACC.INIT.BINOP
 	JSR ACC.ADD
         JMP ACC.SET.SP.TO.IP
+* -------------------------------
+* FN ADD(A:2,B:2,C:2,SZ:1)
+* SET SIZE=FP[8,1]
+* SET FP[6,2][0,SIZE]=
+*   	FP[2,2][0,SIZE]+
+*	FP[4,2][0,SIZE]
+* -------------------------------
+ADD
+	JSR EVAL.A.B
+	LDA ACC.SIZE
+	JSR ACC.BINOP.ADD
+	JMP ASSIGN.C.AND.EXIT
 * -------------------------------
 * SET SP[0,SIZE]+=IP[0,SIZE]
 * CLOBBERS X,Y
@@ -27,6 +39,7 @@ ACC.ADD
         BNE .1
 	RTS
 * -------------------------------
+* BINARY OP -
 * SET A=SIZE
 * SET SP-=2*SIZE
 * SET SP[0,SIZE]-=SP[A,SIZE]
@@ -36,6 +49,18 @@ ACC.BINOP.SUB
         JSR ACC.INIT.BINOP
 	JSR ACC.SUB
         JMP ACC.SET.SP.TO.IP
+* -------------------------------
+* FN SUB(A:2,B:2,C:2,SZ:1)
+* SET SIZE=FP[6,1]
+* SET FP[4,2][0,SIZE]=
+*   	FP[0,2][0,SIZE]-
+*	FP[2,2][0,SIZE]
+* -------------------------------
+SUB
+	JSR EVAL.A.B
+	LDA ACC.SIZE
+	JSR ACC.BINOP.SUB
+	JMP ASSIGN.C.AND.EXIT
 * -------------------------------
 * SET SP[0,SIZE]-=IP[0,SIZE]
 * CLOBBERS X,Y
@@ -52,6 +77,7 @@ ACC.SUB
         BNE .1
         RTS
 * -------------------------------
+* BINARY OP *
 * SET SIZE=A
 * SET SP[-2*SIZE,SIZE]
 *	*=SP[-SIZE,SIZE]
@@ -151,6 +177,19 @@ ACC.MUL.INNER
 .1	JSR ACC.SP.DOWN.SIZE
 	JSR ACC.SHL.INNER
 	JMP ACC.SP.UP.SIZE
+* -------------------------------
+* FN MUL(A:2,B:2,C:2,SZ:1)
+* SET SIZE=FP[6,1]
+* SET FP[4,2][0,SIZE]=
+*   	FP[0,2][0,SIZE]*
+*	FP[2,2][0,SIZE]
+* -------------------------------
+MUL
+	JSR EVAL.A.B
+	LDA ACC.SIZE
+	LDX #0
+	JSR ACC.BINOP.MUL
+	JMP ASSIGN.C.AND.EXIT
 * -------------------------------
 * SET SIZE=A
 * DIVIDE SP[-2*SIZE,SIZE]
@@ -256,4 +295,71 @@ ACC.DIV.INNER
 	ORA #1
 	STA (ACC.SP),Y
 	RTS
-
+* -------------------------------
+* BINARY OP /
+* SET SIZE=FP[8,1]
+* SET FP[4,2][0,SIZE]=
+*   	FP[0,2][0,SIZE]*
+*	FP[2,2][0,SIZE]
+* SET FP[6,2][0,SIZE]=
+*	FP[0,2][0,SIZE]%
+*	FP[2,2][0,SIZE]
+* -------------------------------
+DIV
+	LDA #11
+	JSR EVAL.A.B.1
+	LDA ACC.SIZE
+	JSR ACC.DIV.UNSIGNED
+* ASSIGN QUOT
+	LDY #6
+	JSR SET.IP.TO.VAR
+	JSR ACC.ASSIGN
+* ASSIGN REM AND EXIT
+	JSR ACC.SP.UP.SIZE
+	JSR ACC.SP.UP.SIZE
+	LDY #8
+	JMP ASSIGN.AND.EXIT
+* -------------------------------
+* EVALUATE A AND B ON STACK
+* -------------------------------
+EVAL.A.B
+* BUMP STACK TO TOP OF FRAME
+	LDA #9
+EVAL.A.B.1
+	JSR ACC.SP.UP.A
+* SET SIZE
+	LDY #8
+	LDA (ACC.FP),Y
+	STA ACC.SIZE
+* EVAL A
+	LDY #2
+	JSR SET.IP.TO.VAR
+	JSR ACC.EVAL.1
+* EVAL B AND RETURN
+	LDY #4
+	JSR SET.IP.TO.VAR
+	JMP ACC.EVAL.1
+* -------------------------------
+* ASSIGN C AND EXIT
+* -------------------------------
+ASSIGN.C.AND.EXIT
+	LDY #6
+ASSIGN.AND.EXIT
+	JSR SET.IP.TO.VAR
+	JSR ACC.ASSIGN
+* -------------------------------
+* RESTORE OLD FRAME AND RETURN
+* -------------------------------
+EXIT	
+	JSR ACC.SET.SP.TO.FP
+	JMP ACC.RESTORE.CALLER.FP
+* -------------------------------
+* SET IP=ACC.FP[Y,2]
+* -------------------------------
+SET.IP.TO.VAR
+	LDA (ACC.FP),Y
+	STA ACC.IP
+	INY
+	LDA (ACC.FP),Y
+	STA ACC.IP+1
+	RTS
