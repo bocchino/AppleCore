@@ -19,10 +19,10 @@ ACC.BINOP.ADD
 *	FP[4,2][0,SIZE]
 * -------------------------------
 ADD
-	JSR EVAL.A.B
+	JSR ACC.EVAL.A.B
 	LDA ACC.SIZE
 	JSR ACC.BINOP.ADD
-	JMP ASSIGN.C.AND.EXIT
+	JMP ACC.ASSIGN.C.AND.RET
 * -------------------------------
 * SET SP[0,SIZE]+=IP[0,SIZE]
 * CLOBBERS X,Y
@@ -56,10 +56,10 @@ ACC.BINOP.SUB
 *	FP[2,2][0,SIZE]
 * -------------------------------
 SUB
-	JSR EVAL.A.B
+	JSR ACC.EVAL.A.B
 	LDA ACC.SIZE
 	JSR ACC.BINOP.SUB
-	JMP ASSIGN.C.AND.EXIT
+	JMP ACC.ASSIGN.C.AND.RET
 * -------------------------------
 * SET SP[0,SIZE]-=IP[0,SIZE]
 * CLOBBERS X,Y
@@ -183,11 +183,11 @@ ACC.MUL.INNER
 *	FP[2,2][0,SIZE]
 * -------------------------------
 MUL
-	JSR EVAL.A.B
+	JSR ACC.EVAL.A.B
 	LDA ACC.SIZE
 	LDX #0
 	JSR ACC.BINOP.MUL
-	JMP ASSIGN.C.AND.EXIT
+	JMP ACC.ASSIGN.C.AND.RET
 * -------------------------------
 * SET SIZE=A
 * SET SP-=SIZE
@@ -304,59 +304,15 @@ ACC.DIV.INNER
 * -------------------------------
 DIV
 	LDA #11
-	JSR EVAL.A.B.1
+	JSR ACC.EVAL.A.B.1
 	LDA ACC.SIZE
 	JSR ACC.DIV.UNSIGNED
 * ASSIGN QUOT
 	LDY #6
-	JSR SET.IP.TO.VAR
+	JSR ACC.SET.IP.TO.VAR
 	JSR ACC.ASSIGN
-* ASSIGN REM AND EXIT
+* ASSIGN REM AND RETURN
 	JSR ACC.SP.UP.SIZE
 	JSR ACC.SP.UP.SIZE
 	LDY #8
-	JMP ASSIGN.AND.EXIT
-* -------------------------------
-* EVALUATE A AND B ON STACK
-* -------------------------------
-EVAL.A.B
-* BUMP STACK TO TOP OF FRAME
-	LDA #9
-EVAL.A.B.1
-	JSR ACC.SP.UP.A
-* SET SIZE
-	LDY #8
-	LDA (ACC.FP),Y
-	STA ACC.SIZE
-* EVAL A
-	LDY #2
-	JSR SET.IP.TO.VAR
-	JSR ACC.EVAL.1
-* EVAL B AND RETURN
-	LDY #4
-	JSR SET.IP.TO.VAR
-	JMP ACC.EVAL.1
-* -------------------------------
-* ASSIGN C AND EXIT
-* -------------------------------
-ASSIGN.C.AND.EXIT
-	LDY #6
-ASSIGN.AND.EXIT
-	JSR SET.IP.TO.VAR
-	JSR ACC.ASSIGN
-* -------------------------------
-* RESTORE OLD FRAME AND RETURN
-* -------------------------------
-EXIT	
-	JSR ACC.SET.SP.TO.FP
-	JMP ACC.RESTORE.CALLER.FP
-* -------------------------------
-* SET IP=ACC.FP[Y,2]
-* -------------------------------
-SET.IP.TO.VAR
-	LDA (ACC.FP),Y
-	STA ACC.IP
-	INY
-	LDA (ACC.FP),Y
-	STA ACC.IP+1
-	RTS
+	JMP ACC.ASSIGN.AND.RET

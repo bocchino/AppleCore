@@ -104,4 +104,12 @@ ACC.CMP.U.1
         BNE ACC.CMP.U
 * CHECKED ALL BYTES
 	RTS
-
+* -------------------------------
+* FN:1S CMP(A:2,B:2,S:1)
+* COMPARE A[0,2][0,S] WITH
+* 	B[0,2][0,S]
+* RESULT IS -1=LT,0=EQ,1=GT
+* -------------------------------
+CMP
+* TODO
+	RTS

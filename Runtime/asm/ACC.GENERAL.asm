@@ -298,3 +298,47 @@ ACC.GET.MSB
 	DEY
 	LDA (ACC.SP),Y
 	RTS
+* -------------------------------
+* EVALUATE A AND B ON STACK
+* -------------------------------
+ACC.EVAL.A.B
+* BUMP STACK TO TOP OF FRAME
+	LDA #9
+ACC.EVAL.A.B.1
+	JSR ACC.SP.UP.A
+* SET SIZE
+	LDY #8
+	LDA (ACC.FP),Y
+	STA ACC.SIZE
+* EVAL A
+	LDY #2
+	JSR ACC.SET.IP.TO.VAR
+	JSR ACC.EVAL.1
+* EVAL B AND RETURN
+	LDY #4
+	JSR ACC.SET.IP.TO.VAR
+	JMP ACC.EVAL.1
+* -------------------------------
+* ASSIGN C AND RETURn
+* -------------------------------
+ACC.ASSIGN.C.AND.RET
+	LDY #6
+ACC.ASSIGN.AND.RET
+	JSR ACC.SET.IP.TO.VAR
+	JSR ACC.ASSIGN
+* -------------------------------
+* RESTORE OLD FRAME AND RETURN
+* -------------------------------
+ACC.FN.RETURN
+	JSR ACC.SET.SP.TO.FP
+	JMP ACC.RESTORE.CALLER.FP
+* -------------------------------
+* SET IP=ACC.FP[Y,2]
+* -------------------------------
+ACC.SET.IP.TO.VAR
+	LDA (ACC.FP),Y
+	STA ACC.IP
+	INY
+	LDA (ACC.FP),Y
+	STA ACC.IP+1
+	RTS

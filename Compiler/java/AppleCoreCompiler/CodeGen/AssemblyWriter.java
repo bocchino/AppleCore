@@ -209,8 +209,7 @@ public abstract class AssemblyWriter
 
 	    if (!node.endsInReturnStatement()) {
 		emitComment("restore old frame and return");
-		emitAbsoluteInstruction("JSR","ACC.SET.SP.TO.FP");
-		emitAbsoluteInstruction("JMP","ACC.RESTORE.CALLER.FP");
+		emitAbsoluteInstruction("JMP","ACC.FN.RETURN");
 	    }
 	}
     }
@@ -358,8 +357,7 @@ public abstract class AssemblyWriter
 	}
 	else {
 	    emitComment("restore old frame and return");
-	    emitAbsoluteInstruction("JSR","ACC.SET.SP.TO.FP");
-	    emitAbsoluteInstruction("JMP","ACC.RESTORE.CALLER.FP");
+	    emitAbsoluteInstruction("JMP","ACC.FN.RETURN");
 	}
     }
 

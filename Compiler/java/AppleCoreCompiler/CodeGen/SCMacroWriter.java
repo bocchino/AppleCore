@@ -165,9 +165,11 @@ public class SCMacroWriter
     protected void emitPreamble(SourceFile node) {
 	emit(":NEW\n");
 	emitAbsoluteInstruction(".LIST","OFF");
-	emitAbsoluteInstruction(".TF",node.targetFile);
 	if (node.origin >= 0) {
 	    emitAbsoluteInstruction(".OR", node.origin);
+	}
+	if (!node.includeMode) {
+	    emitAbsoluteInstruction(".TF",node.targetFile);
 	}
     }
 
