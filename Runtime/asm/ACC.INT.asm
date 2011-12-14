@@ -19,7 +19,8 @@ ACC.BINOP.ADD
 *	FP[4,2][0,SIZE]
 * -------------------------------
 ADD
-	JSR ACC.EVAL.A.B
+	LDA #9
+	JSR ACC.EVAL.A.AND.B
 	LDA ACC.SIZE
 	JSR ACC.BINOP.ADD
 	JMP ACC.ASSIGN.C.AND.RET
@@ -56,7 +57,8 @@ ACC.BINOP.SUB
 *	FP[2,2][0,SIZE]
 * -------------------------------
 SUB
-	JSR ACC.EVAL.A.B
+	LDA #9
+	JSR ACC.EVAL.A.AND.B
 	LDA ACC.SIZE
 	JSR ACC.BINOP.SUB
 	JMP ACC.ASSIGN.C.AND.RET
@@ -183,7 +185,8 @@ ACC.MUL.INNER
 *	FP[2,2][0,SIZE]
 * -------------------------------
 MUL
-	JSR ACC.EVAL.A.B
+	LDA #9
+	JSR ACC.EVAL.A.AND.B
 	LDA ACC.SIZE
 	LDX #0
 	JSR ACC.BINOP.MUL
@@ -304,7 +307,7 @@ ACC.DIV.INNER
 * -------------------------------
 DIV
 	LDA #11
-	JSR ACC.EVAL.A.B.1
+	JSR ACC.EVAL.A.AND.B
 	LDA ACC.SIZE
 	JSR ACC.DIV.UNSIGNED
 * ASSIGN QUOT
