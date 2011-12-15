@@ -214,10 +214,7 @@ public abstract class AssemblyWriter
 	}
     }
 
-    public void visitIncludeDecl(IncludeDecl node) {
-	emitSeparatorComment();
-	emitAbsoluteInstruction(".IN",node.filename);
-    }
+    public abstract void visitIncludeDecl(IncludeDecl node);
 
     public void visitDataDecl(DataDecl node) 
 	throws ACCError

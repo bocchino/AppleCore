@@ -137,6 +137,7 @@ public class Main {
 	    targetFile.substring(targetFile.length()-3).equals(".AC")) {
 	    targetFile = targetFile.substring(0,targetFile.length()-3);
 	}
+	targetFile = targetFile + ".OBJ";
 	return targetFile;
     }
 

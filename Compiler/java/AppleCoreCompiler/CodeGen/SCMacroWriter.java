@@ -19,6 +19,11 @@ public class SCMacroWriter
 	super(printStream);
     }
 
+    public void visitIncludeDecl(IncludeDecl node) {
+	emitSeparatorComment();
+	emitAbsoluteInstruction(".IN",node.filename);
+    }
+
     /* Emitter methods */
 
     protected String addrString(int addr) {
