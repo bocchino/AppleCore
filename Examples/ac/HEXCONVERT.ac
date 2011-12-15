@@ -6,7 +6,11 @@ CONST CR        $0D;   # CARRIAGE RETURN
 CONST TRUE      1;
 CONST FALSE     0;
 
-DATA ERR_STR "ERROR";
+DATA GREETING "HEXCONVERT\$0D"\;
+DATA          "COPYRIGHT (C) 2011\$0D"\;
+DATA	      "ROBERT L. BOCCHINO JR.\$0D"\;
+DATA	      "ENTER BLANK LINE TO END\$0D";
+DATA ERROR    "ERROR";
 
 FN:1 GET_LINE();
 FN   PRINT_CHAR(CHAR:1);
@@ -21,13 +25,15 @@ FN MAIN() {
   VAR OK:1;
   VAR LEN:1;
 
+  PRINT_STRING(GREETING);
+
   WHILE (TRUE) {
-    SET OK = FALSE;
-    SET LEN = GET_LINE();
-    IF (LEN = 0) RETURN;
-    IF (INBUF[0,1] = '$') {
+    SET OK=FALSE;
+    SET LEN=GET_LINE();
+    IF (LEN=0) RETURN;
+    IF (INBUF[0,1]='$') {
       IF (LEN > 1) {
-        SET OK = STR_TO_NUM(INBUF+1,16,@VAL,2);
+        SET OK=STR_TO_NUM(INBUF+1,16,@VAL,2);
         IF (OK) {
           PRINT_CHAR('=');
           NUM_TO_STR(@VAL,2,10,INBUF,255);
@@ -36,7 +42,7 @@ FN MAIN() {
       }
     }
     ELSE {
-      SET OK = STR_TO_NUM(INBUF,10,@VAL,2);
+      SET OK=STR_TO_NUM(INBUF,10,@VAL,2);
       IF (OK) {
         PRINT_CHAR('=');
 	PRINT_CHAR('$');
@@ -44,9 +50,9 @@ FN MAIN() {
 	PRINT_STRING(INBUF);
       }
     }
-    IF (NOT OK) PRINT_STRING(ERR_STR);
+    IF (NOT OK) PRINT_STRING(ERROR);
     PRINT_CHAR(CR);
   }
 }
 
-
+INCLUDE "IO";

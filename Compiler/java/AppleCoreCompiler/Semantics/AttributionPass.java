@@ -101,8 +101,10 @@ public class AttributionPass
 	public void visitDataDecl(DataDecl node) 
 	    throws SemanticError
 	{
-	    printStatus("Adding symbol for ", node);
-	    addMapping(node.label,node,map);
+	    if (node.label != null) {
+		printStatus("Adding symbol for ", node);
+		addMapping(node.label,node,map);
+	    }
 	}
 	public void visitVarDecl(VarDecl node) 
 	    throws SemanticError
