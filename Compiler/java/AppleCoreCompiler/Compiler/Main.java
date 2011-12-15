@@ -47,7 +47,7 @@ public class Main {
 	    System.exit(1);
 	}
 	catch (Exception e) {
-	    System.err.println("usage: acc [options] [filename]");
+	    System.err.println("usage: acc [options] filename");
 	    System.exit(1);
 	}
     }

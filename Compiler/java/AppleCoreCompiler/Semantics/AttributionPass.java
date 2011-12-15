@@ -6,6 +6,7 @@ package AppleCoreCompiler.Semantics;
 
 import AppleCoreCompiler.AST.*;
 import AppleCoreCompiler.AST.Node.*;
+import AppleCoreCompiler.Syntax.*;
 import AppleCoreCompiler.Errors.*;
 import AppleCoreCompiler.Warnings.*;
 
@@ -46,6 +47,8 @@ public class AttributionPass
     public void runOn(SourceFile sourceFile) 
 	throws ACCError
     {
+	// Enter the built-in functions
+	enterBuiltInFunctions();
 	// Enter all the top-level declarations except constant decls,
 	// which may not be forward declared.
 	for (Declaration decl : sourceFile.decls) {
@@ -55,6 +58,27 @@ public class AttributionPass
 	}
 	// Attribute the source file
 	scan(sourceFile);
+    }
+
+    private void enterBuiltInFunctions() 
+	throws ACCError
+    {
+	try {
+	    String appleCore = System.getenv("APPLECORE");
+	    if (appleCore == null) {
+		throw new SemanticError("environment variable APPLECORE not set");
+	    }
+	    String builtInFns = appleCore + 
+		"/Compiler/java/AppleCoreCompiler/Semantics/BUILT.IN.FNS.ac";
+	    Parser parser = new Parser(builtInFns);
+	    SourceFile sourceFile = parser.parse();
+	    for (Declaration decl : sourceFile.decls) {
+		insertDecl.insert(decl, globalSymbols);
+	    }
+	}
+	catch (NullPointerException e) {
+	    throw new SemanticError("could not read built-in function decls");
+	}
     }
 
     private InsertDecl insertDecl = new InsertDecl();

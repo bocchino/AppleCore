@@ -1,0 +1,15 @@
+# --------------------------------------
+# THE APPLECORE COMPILER, V1.0
+# BUILT-IN FUNCTION DECLARATIONS
+# --------------------------------------
+
+FN    ADD(A_PTR:2,B_PTR:2,
+       C_PTR:2,SIZE:1);
+FN    SUB(A_PTR:2,B_PTR:2,
+       C_PTR:2,SIZE:1);
+FN    MUL(A_PTR:2,B_PTR:2,
+       C_PTR:2,SIZE:1);
+FN    DIV(A_PTR:2,B_PTR:2,Q_PTR:2,
+        R_PTR:2,SIZE:1);
+FN:1S CMP(A_PTR:2,B_PTR:2,SIZE:1);
+FN:2  ALLOCATE(SIZE:1);
