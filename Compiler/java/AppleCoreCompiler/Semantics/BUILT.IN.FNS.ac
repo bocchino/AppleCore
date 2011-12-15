@@ -3,13 +3,9 @@
 # BUILT-IN FUNCTION DECLARATIONS
 # --------------------------------------
 
-FN    ADD(A_PTR:2,B_PTR:2,
-       C_PTR:2,SIZE:1);
-FN    SUB(A_PTR:2,B_PTR:2,
-       C_PTR:2,SIZE:1);
-FN    MUL(A_PTR:2,B_PTR:2,
-       C_PTR:2,SIZE:1);
-FN    DIV(A_PTR:2,B_PTR:2,Q_PTR:2,
-        R_PTR:2,SIZE:1);
-FN:1S CMP(A_PTR:2,B_PTR:2,SIZE:1);
+FN    ADD(A:2,B:2,SUM:2,SIZE:1);
+FN    SUB(A:2,B:2,DIFF:2,SIZE:1);
+FN    MUL(A:2,B:2,PROD:2,SIZE:1);
+FN    DIV(A:2,B:2,QUOT:2,REM:2,SIZE:1);
+FN:1S CMP(A:2,B:2,SIZE:1);
 FN:2  ALLOCATE(SIZE:1);
