@@ -1,0 +1,45 @@
+# -------------------------------------
+# TEST 4-BYTE COMPARISON VIA FN
+# -------------------------------------
+
+CONST MON_CROUT  $FD8E;
+
+DATA STR_A  "SHOULD BE 0000000B: ";
+DATA STR_B  "SHOULD BE 00000004: ";
+DATA STR_GT "SHOULD BE 01: ";
+DATA STR_EQ "SHOULD BE 00: ";
+DATA STR_LT "SHOULD BE FF: ";
+
+FN PRINT_STRING(STR:2);
+FN PRINT_HEX(N:2,SIZE:1);
+
+FN MAIN() {
+   VAR A:4 = 11;
+   VAR B:4 = 4;
+   VAR C:1;
+   # PRINT A
+   PRINT_STRING(STR_A);   
+   PRINT_HEX(@A,4);
+   MON_CROUT();
+   # PRINT B
+   PRINT_STRING(STR_B);
+   PRINT_HEX(@B,4);
+   MON_CROUT();
+   # COMPARE A TO B
+   SET C=CMP(@A,@B,1);
+   PRINT_STRING(STR_GT);   
+   PRINT_HEX(@C,1);
+   MON_CROUT();
+   # COMPARE A TO A
+   SET C=CMP(@A,@A,1);
+   PRINT_STRING(STR_EQ);   
+   PRINT_HEX(@C,1);
+   MON_CROUT();
+   # COMPARE B TO A
+   SET C=CMP(@B,@A,1);
+   PRINT_STRING(STR_LT);   
+   PRINT_HEX(@C,1);
+   MON_CROUT();
+}
+
+INCLUDE "IO";
