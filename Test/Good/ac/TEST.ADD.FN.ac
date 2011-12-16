@@ -1,0 +1,34 @@
+# -------------------------------------
+# TEST 4-BYTE ADDITION VIA ADD FUNCTION
+# -------------------------------------
+
+CONST MON_CROUT  $FD8E;
+
+DATA STR_A  "SHOULD BE 0000FFFF: ";
+DATA STR_B  "SHOULD BE 000F0001: ";
+DATA STR_C  "SHOULD BE 00100000: ";
+
+FN PRINT_STRING(STR:2);
+FN PRINT_HEX(N:2,SIZE:1);
+
+FN MAIN() {
+   VAR A:4 = $FFFF;
+   VAR B:4 = $F0001;
+   VAR C:4;
+   # PRINT A
+   PRINT_STRING(STR_A);   
+   PRINT_HEX(@A,4);
+   MON_CROUT();
+   # PRINT B
+   PRINT_STRING(STR_B);
+   PRINT_HEX(@B,4);
+   MON_CROUT();
+   # SET C=A+B
+   ADD(@A,@B,@C,4);   
+   # PRINT C
+   PRINT_STRING(STR_C);   
+   PRINT_HEX(@C,4);
+   MON_CROUT();
+}
+
+INCLUDE "IO";
