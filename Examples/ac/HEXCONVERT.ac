@@ -1,11 +1,12 @@
 # -----------------------------------
 # HEX-DECIMAL CONVERSION
 # -----------------------------------
-CONST INBUF     $200;  # MONITOR INPUT BUFFER
-CONST CR        $0D;   # CARRIAGE RETURN
+# MONITOR INPUT BUFFER
+CONST INBUF     $200;
 CONST TRUE      1;
 CONST FALSE     0;
 CONST MON_CROUT $FD8E;
+# SIZE OF DATA IN BYTES
 CONST SIZE      16;
 
 DATA GREETING "HEXCONVERT\$0D"\;
@@ -52,7 +53,7 @@ FN MAIN() {
       }
     }
     IF (NOT OK) PRINT_STRING(ERROR);
-    PRINT_CHAR(CR);
+    MON_CROUT();
   }
 }
 
