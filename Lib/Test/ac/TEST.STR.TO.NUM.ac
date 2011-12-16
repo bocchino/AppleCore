@@ -1,0 +1,22 @@
+# --------------------------------------
+# TEST STR_TO_NUM
+# --------------------------------------
+
+CONST MON_CROUT  $FD8E;
+
+DATA NUM_STR "4096";
+DATA STR_HEX "SHOULD BE 1000: ";
+
+FN:1 STR_TO_NUM(STR:2,RADIX:1,N:2,SIZE:1);
+FN PRINT_HEX(N:2,SIZE:1);
+FN PRINT_STRING(STR_PTR:2);
+
+FN MAIN() {
+   VAR N:2;
+   STR_TO_NUM(NUM_STR,10,@N,2);
+   PRINT_STRING(STR_HEX);
+   PRINT_HEX(@N,2);
+   MON_CROUT();
+}
+
+INCLUDE "IO";
