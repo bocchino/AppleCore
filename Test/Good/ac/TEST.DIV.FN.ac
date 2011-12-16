@@ -1,0 +1,40 @@
+# -------------------------------------
+# TEST 4-BYTE DIVISION VIA FN
+# -------------------------------------
+
+CONST MON_CROUT  $FD8E;
+
+DATA STR_A     "SHOULD BE 0010FFF0: ";
+DATA STR_B     "SHOULD BE 00000011: ";
+DATA STR_QUOT  "SHOULD BE 0000FFFF: ";
+DATA STR_REM   "SHOULD BE 00000001: ";
+
+FN PRINT_STRING(STR:2);
+FN PRINT_HEX(N:2,SIZE:1);
+
+FN MAIN() {
+   VAR A:4 = $10FFF0;
+   VAR B:4 = $11;
+   VAR QUOT:4;
+   VAR REM:4;
+   # PRINT A
+   PRINT_STRING(STR_A);   
+   PRINT_HEX(@A,4);
+   MON_CROUT();
+   # PRINT B
+   PRINT_STRING(STR_B);
+   PRINT_HEX(@B,4);
+   MON_CROUT();
+   # SET (QUOT,REM)=A/B
+   DIV(@A,@B,@QUOT,@REM,4);
+   # PRINT QUOT
+   PRINT_STRING(STR_QUOT);   
+   PRINT_HEX(@QUOT,4);
+   MON_CROUT();
+   # PRINT REM
+   PRINT_STRING(STR_REM);   
+   PRINT_HEX(@REM,4);
+   MON_CROUT();
+}
+
+INCLUDE "IO";
