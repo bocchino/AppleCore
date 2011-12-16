@@ -58,6 +58,11 @@ public abstract class AssemblyWriter
     /* State variables for tree traversal */
 
     /**
+     * Whether to print verbose comments
+     */
+    public boolean printVerboseComments = false;
+
+    /**
      * The function being processed
      */
     protected FunctionDecl currentFunction;
@@ -83,7 +88,7 @@ public abstract class AssemblyWriter
     /* Leaf nodes */
 
     public void visitIntegerConstant(IntegerConstant node) {
-	emitComment(node);
+	emitVerboseComment(node);
 	IntegerConstant intConst = (IntegerConstant) node;
 	int size = intConst.getSize();
 	for (int i = 0; i < size; ++i) {
@@ -93,7 +98,7 @@ public abstract class AssemblyWriter
     }
 
     public void visitCharConstant(CharConstant node) {
-	emitComment(node);
+	emitVerboseComment(node);
 	CharConstant charConst = (CharConstant) node;
 	emitImmediateInstruction("LDA",charConst.value);
 	emitAbsoluteInstruction("JSR","ACC.PUSH.A");	    
@@ -111,7 +116,7 @@ public abstract class AssemblyWriter
 	    }
 	    else {
 		if (varDecl.isLocalVariable && varDecl.size == 1) {
-		    emitComment("value of " + node);
+		    emitVerboseComment("value of " + node);
 		    // Fast case:  reading a local variable
 		    emitImmediateInstruction("LDY",varDecl.getOffset());
 		    emitIndirectYInstruction("LDA","ACC.FP");
@@ -121,19 +126,19 @@ public abstract class AssemblyWriter
 		    // Push variable's address on stack
 		    pushVarAddr(varDecl);
 		    // Use the address to get the value.
-		    emitComment("value at address");
+		    emitVerboseComment("value at address");
 		    emitImmediateInstruction("LDA",node.size);
 		    emitAbsoluteInstruction("JSR","ACC.EVAL");
 		}
 	    }
 	}
 	else if (def instanceof ConstDecl) {
-	    emitComment(node);
+	    emitVerboseComment(node);
 	    ConstDecl cd = (ConstDecl) def;
 	    scan(cd.expr);
 	}
 	else if (def instanceof DataDecl) {
-	    emitComment(node);
+	    emitVerboseComment(node);
 	    DataDecl dataDecl = (DataDecl) def;
 	    emitImmediateInstruction("LDA",labelAsString(dataDecl.label),false);
 	    emitAbsoluteInstruction("JSR","ACC.PUSH.A");
@@ -194,13 +199,14 @@ public abstract class AssemblyWriter
 	    printStatus("entering " + node);
 	    
 	    currentFunction = node;
+	    branchLabelCount=1;
 
 	    computeStackSlotsFor(node);
 	    
 	    emitLabel(node.name);
 	    emitLine();
 	    
-	    emitComment("bump stack to top of frame");
+	    emitVerboseComment("bump stack to top of frame");
 	    emitImmediateInstruction("LDA",node.frameSize);
 	    emitAbsoluteInstruction("JSR","ACC.SP.UP.A");
 	    
@@ -208,7 +214,7 @@ public abstract class AssemblyWriter
 	    scan(node.statements);
 
 	    if (!node.endsInReturnStatement()) {
-		emitComment("restore old frame and return");
+		emitVerboseComment("restore old frame and return");
 		emitAbsoluteInstruction("JMP","ACC.FN.RETURN");
 	    }
 	}
@@ -250,7 +256,7 @@ public abstract class AssemblyWriter
 		// Adjust the size
 		adjustSize(node.size,node.init.size,node.init.isSigned);
 		// Do the assignment.
-		emitComment("initialize " + node);
+		emitVerboseComment("initialize " + node);
 		emitImmediateInstruction("LDA",node.getOffset());
 		emitAbsoluteInstruction("JSR","ACC.PUSH.SLOT");
 		assign(node.size);
@@ -280,7 +286,7 @@ public abstract class AssemblyWriter
 	needAddress = false;
 	scan(node.test);
 	// Do the branch
-	emitComment("if condition test");
+	emitVerboseComment("if condition test");
 	String label = getLabel();
 	emitImmediateInstruction("LDA",node.test.size);
 	emitAbsoluteInstruction("JSR","ACC.BOOLEAN");
@@ -312,10 +318,10 @@ public abstract class AssemblyWriter
 	// Evaluate the test condition
 	String label = getLabel();
 	needAddress = false;
-	emitLabel(mangle("test" + label));
+	emitLabel(mangle(".test" + label));
 	emit("\n");
 	scan(node.test);
-	emitComment("while loop test");
+	emitVerboseComment("while loop test");
 	// Do the branch
 	emitImmediateInstruction("LDA",node.test.size);
 	emitAbsoluteInstruction("JSR","ACC.BOOLEAN");
@@ -325,7 +331,7 @@ public abstract class AssemblyWriter
 	emitLabel(currentFunction.name+".true" + label);
 	emit("\n");
 	scan(node.body);
-	emitAbsoluteInstruction("JMP",labelAsString(mangle("TEST"+label)));
+	emitAbsoluteInstruction("JMP",labelAsString(mangle(".TEST"+label)));
 	// False part
 	emitLabel(currentFunction.name+".false" + label);
 	emit("\n");
@@ -348,7 +354,7 @@ public abstract class AssemblyWriter
 	    adjustSize(currentFunction.size,node.expr.size,
 		       node.expr.isSigned);
 	    // Assign result and restore frame
-	    emitComment("assign result, restore frame, and exit");
+	    emitVerboseComment("assign result, restore frame, and exit");
 	    emitImmediateInstruction("LDA",currentFunction.size);
 	    emitAbsoluteInstruction("JSR","ACC.SP.DOWN.A");
 	    emitAbsoluteInstruction("JSR","ACC.SET.IP.TO.SP");
@@ -356,7 +362,7 @@ public abstract class AssemblyWriter
 	    emitAbsoluteInstruction("JMP","ACC.EVAL.1");
 	}
 	else {
-	    emitComment("restore old frame and return");
+	    emitVerboseComment("restore old frame and return");
 	    emitAbsoluteInstruction("JMP","ACC.FN.RETURN");
 	}
     }
@@ -386,13 +392,13 @@ public abstract class AssemblyWriter
 	    adjustSize(2,node.index.size,node.index.isSigned);
 	    // Pull LHS address and RHS index, add them, and put
 	    // result on the stack.
-	    emitComment("index");
+	    emitVerboseComment("index");
 	    emitImmediateInstruction("LDA",2);
 	    emitAbsoluteInstruction("JSR","ACC.BINOP.ADD");
 	}
 	// If parent wanted a value, compute it now.
 	if (!parentNeedsAddress) {
-	    emitComment("value at index");
+	    emitVerboseComment("value at index");
 	    emitImmediateInstruction("LDA",node.size);
 	    emitAbsoluteInstruction("JSR","ACC.EVAL");
 	}
@@ -434,7 +440,7 @@ public abstract class AssemblyWriter
 					List<Expression> args) 
 	throws ACCError
     {
-	emitComment("fill slots for new frame");
+	emitVerboseComment("fill slots for new frame");
 	// Save bump size for undo
 	int bumpSize = 2;
 	// Push old FP
@@ -444,7 +450,7 @@ public abstract class AssemblyWriter
 	if (args.size() > 0) {
 	    for (Expression arg : args) {
 		VarDecl param = I.next();
-		emitComment("bind arg to " + param);
+		emitVerboseComment("bind arg to " + param);
 		// Evaluate the argument
 		needAddress = false;
 		scan(arg);
@@ -453,13 +459,13 @@ public abstract class AssemblyWriter
 		bumpSize += param.size;
 	    }
 	}
-	emitComment("set FP for new frame");
+	emitVerboseComment("set FP for new frame");
 	// Bump SP back down to new FP
 	emitImmediateInstruction("LDA",bumpSize);
 	emitAbsoluteInstruction("JSR","ACC.SP.DOWN.A");
 	// Save new FP
 	emitAbsoluteInstruction("JSR","ACC.SET.FP.TO.SP");
-	emitComment("function call");
+	emitVerboseComment("function call");
 	emitAbsoluteInstruction("JSR",labelAsString(functionDecl.name));
     }
     
@@ -468,7 +474,7 @@ public abstract class AssemblyWriter
      */
     private void emitCallToConstant(String addr) {
 	restoreRegisters();
-	emitComment("function call");
+	emitVerboseComment("function call");
 	emitAbsoluteInstruction("JSR",addr);
 	saveRegisters();
     }
@@ -484,7 +490,7 @@ public abstract class AssemblyWriter
 	scan(node);
 	adjustSize(2,node.size,node.isSigned);
 	restoreRegisters();
-	emitComment("function call");
+	emitVerboseComment("function call");
 	emitAbsoluteInstruction("JSR","ACC.INDIRECT.CALL");
 	saveRegisters();
     }
@@ -493,11 +499,11 @@ public abstract class AssemblyWriter
 	throws ACCError
     {
 	if (needAddress) {
-	    emitComment("address of slot for " + node.register);
+	    emitVerboseComment("address of slot for " + node.register);
 	    emitImmediateInstruction("LDA",node.register.getOffset());
 	    emitAbsoluteInstruction("JSR","ACC.PUSH.SLOT");
 	} else {
-	    emitComment("value in slot for " + node.register);
+	    emitVerboseComment("value in slot for " + node.register);
 	    emitImmediateInstruction("LDY",node.register.getOffset());
 	    emitIndirectYInstruction("LDA","ACC.FP");
 	    emitAbsoluteInstruction("JSR","ACC.PUSH.A");
@@ -533,15 +539,15 @@ public abstract class AssemblyWriter
 	if (node.operator.compareTo(BinopExpression.Operator.SHR) > 0) {
 	    adjustSize(size,node.right.size,node.right.isSigned);
 	}
-	emitComment(node);
+	emitVerboseComment(node);
 	if (node.hasSignedness()) {
 	    // Load signedness
 	    if (node.left.isSigned || node.right.isSigned) {
-		emitComment("signed");
+		emitVerboseComment("signed");
 		emitImmediateInstruction("LDX",1);
 	    }
 	    else {
-		emitComment("unsigned");
+		emitVerboseComment("unsigned");
 		emitImmediateInstruction("LDX",0);
 	    }
 	}
@@ -558,7 +564,7 @@ public abstract class AssemblyWriter
 	switch(node.operator) {
 	case DEREF:
 	    // Evaluate expr as address.
-	    emitComment(node);
+	    emitVerboseComment(node);
 	    needAddress = true;
 	    scan(node.expr);
 	    break;
@@ -567,7 +573,7 @@ public abstract class AssemblyWriter
 	    // Evaluate expr as value.
 	    needAddress = false;
 	    scan(node.expr);
-	    emitComment(node);
+	    emitVerboseComment(node);
 	    // Do the operation.
 	    emitImmediateInstruction("LDA",node.expr.size);
 	    emitAbsoluteInstruction("JSR","ACC.UNOP."+node.operator.name);
@@ -577,7 +583,7 @@ public abstract class AssemblyWriter
 	    // Evaluate expr as address.
 	    needAddress = true;
 	    scan(node.expr);
-	    emitComment(node);
+	    emitVerboseComment(node);
 	    // Do the operation.
 	    emitImmediateInstruction("LDA",node.expr.size);
 	    emitAbsoluteInstruction("JSR","ACC.UNOP."+node.operator.name);
@@ -677,7 +683,7 @@ public abstract class AssemblyWriter
      * Push a size on the stack
      */
     protected void pushSize(int size) {
-	emitComment("push expr size");
+	emitVerboseComment("push expr size");
 	emitImmediateInstruction("LDA",size);
 	emitAbsoluteInstruction("JSR","ACC.PUSH.A");
     }
@@ -694,11 +700,11 @@ public abstract class AssemblyWriter
 	}
 	if (targetSize > stackSize) {
 	    if (signed) {
-		emitComment("sign extend");
+		emitVerboseComment("sign extend");
 		emitImmediateInstruction("LDX",1);
 	    }
 	    else {
-		emitComment("zero extend");
+		emitVerboseComment("zero extend");
 		emitImmediateInstruction("LDX",0);
 	    }
 	    emitImmediateInstruction("LDA",targetSize-stackSize);
@@ -716,7 +722,7 @@ public abstract class AssemblyWriter
      */
     protected void assign(int targetSize) {
 	// Pull IP from stack, then copy from stack to (IP).
-	emitComment("assign");
+	emitVerboseComment("assign");
 	//adjustSize(targetSize, stackSize, signed);
 	emitImmediateInstruction("LDA",targetSize);
 	emitAbsoluteInstruction("JSR","ACC.ASSIGN");
@@ -726,7 +732,7 @@ public abstract class AssemblyWriter
      * Emit code to push the address of a variable on the stack.
      */
     protected void pushVarAddr(VarDecl node) {
-	emitComment("address of " + node);
+	emitVerboseComment("address of " + node);
 	if (node.isLocalVariable) {
 	    emitImmediateInstruction("LDA",node.getOffset());
 	    emitAbsoluteInstruction("JSR","ACC.PUSH.SLOT");
@@ -745,7 +751,7 @@ public abstract class AssemblyWriter
      */
     protected void restoreRegisters() {
 	if (currentFunction.savedRegs.size() > 0) {
-	    emitComment("restore registers");
+	    emitVerboseComment("restore registers");
 	    for (RegisterExpression.Register reg : 
 		     currentFunction.savedRegs) {
 		emitImmediateInstruction("LDY",reg.getOffset());
@@ -761,7 +767,7 @@ public abstract class AssemblyWriter
      */
     protected void saveRegisters() {
 	if (currentFunction.savedRegs.size() > 0) {
-	    emitComment("save registers");
+	    emitVerboseComment("save registers");
 	    emitAbsoluteInstruction("JSR","$FF4A");
 	    for (RegisterExpression.Register reg :
 		     currentFunction.savedRegs) {
@@ -805,6 +811,9 @@ public abstract class AssemblyWriter
 						   int addr, String reg);
     protected abstract void emitAbsoluteXInstruction(String mnemonic, String addr);
     protected abstract void emitComment(String comment);
+    protected void emitVerboseComment(Object o) {
+	if (printVerboseComments) emitComment(o);
+    }
     protected void emitComment(Object o) { emitComment(o.toString()); }
     protected abstract void emitSeparatorComment();
     protected void emitTODO(Object obj) {

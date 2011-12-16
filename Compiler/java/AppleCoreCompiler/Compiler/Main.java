@@ -28,6 +28,11 @@ public class Main {
     private static boolean includeMode = false;
 
     /**
+     * Whether to print verbose comments in generated code
+     */
+    private static boolean printVerboseComments = false;
+
+    /**
      * Origin of translated assembly file
      */
     private static int origin = -1;
@@ -62,6 +67,9 @@ public class Main {
 	    else {
 		throw new OptionError("only one source file allowed");
 	    }
+	}
+	else if (arg.equals("-verbose")) {
+	    printVerboseComments=true;
 	}
 	else if (arg.equals("-include")) {
 	    includeMode = true;
@@ -118,6 +126,8 @@ public class Main {
 		functionCallPass.runOn(sourceFile);
 		SCMacroWriter scMacroWriter = 
 		    new SCMacroWriter(System.out);
+		scMacroWriter.printVerboseComments =
+		    printVerboseComments;
 		scMacroWriter.runOn(sourceFile);
 	    }
 	    catch (ACCError e) {
