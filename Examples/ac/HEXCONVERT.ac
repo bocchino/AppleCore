@@ -6,6 +6,7 @@ CONST CR        $0D;   # CARRIAGE RETURN
 CONST TRUE      1;
 CONST FALSE     0;
 CONST MON_CROUT $FD8E;
+CONST SIZE      16;
 
 DATA GREETING "HEXCONVERT\$0D"\;
 DATA          "COPYRIGHT (C) 2011\$0D"\;
@@ -21,7 +22,7 @@ FN   PRINT_STRING(STR:2);
 FN PRINT_HEX(N_PTR:2,SIZE:1);
 
 FN MAIN() {
-  VAR VAL:2;
+  VAR VAL:2=ALLOCATE(SIZE);
   VAR OK:1;
   VAR LEN:1;
 
@@ -33,20 +34,20 @@ FN MAIN() {
     IF (LEN=0) RETURN;
     IF ((INBUF[0,1] AND $7F)='$') {
       IF (LEN > 1) {
-        SET OK=STR_TO_NUM(INBUF+1,16,@VAL,2);
+        SET OK=STR_TO_NUM(INBUF+1,16,VAL,SIZE);
         IF (OK) {
           PRINT_CHAR('=');
-          NUM_TO_STR(@VAL,2,10,INBUF);
+          NUM_TO_STR(VAL,SIZE,10,INBUF);
 	  PRINT_STRING(INBUF);
         }
       }
     }
     ELSE {
-      SET OK=STR_TO_NUM(INBUF,10,@VAL,2);
+      SET OK=STR_TO_NUM(INBUF,10,VAL,SIZE);
       IF (OK) {
         PRINT_CHAR('=');
 	PRINT_CHAR('$');
-	NUM_TO_STR(@VAL,2,16,INBUF);
+	NUM_TO_STR(VAL,SIZE,16,INBUF);
 	PRINT_STRING(INBUF);
       }
     }
