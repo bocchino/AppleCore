@@ -1,0 +1,28 @@
+# --------------------------------------
+# TEST NUM_TO_STR
+# --------------------------------------
+
+CONST MON_CROUT  $FD8E;
+CONST INBUF      $200;
+
+DATA STR_HEX "SHOULD BE FF: ";
+DATA STR_DEC "SHOULD BE 255: ";
+
+FN PRINT_STRING(STR:2);
+FN NUM_TO_STR(N:2,SIZE:1,RADIX:1,STR:2);
+FN PRINT_HEX(N:2,SIZE:1);
+
+FN MAIN() {
+   VAR N:1=$FF;
+
+   PRINT_STRING(STR_HEX);
+   PRINT_HEX(@N,1);
+   NUM_TO_STR(@N,1,10,INBUF);
+   MON_CROUT();
+
+   PRINT_STRING(STR_DEC);
+   PRINT_STRING(INBUF);
+   MON_CROUT();
+}
+
+INCLUDE "IO";
