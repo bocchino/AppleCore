@@ -65,8 +65,8 @@ ACC.RESTORE.CALLER.FP
 ACC.PUSH.FP
         LDA #0
 * -------------------------------
+* SET SP[0,2]=FP+A
 * SET SIZE=2
-* SET SP[0,2]=FP+SIZE
 * SET SP+=2
 * SET Y=1
 * PRESERVES X
@@ -170,6 +170,7 @@ ACC.EVAL.1
 ACC.ASSIGN
         STA ACC.SIZE
         JSR ACC.POP.IP
+ACC.ASSIGN.1
         JSR ACC.SP.DOWN.SIZE
 	LDY ACC.SIZE
 .1      DEY
@@ -317,7 +318,7 @@ ACC.ASSIGN.C.AND.RET
 	LDY #6
 ACC.ASSIGN.AND.RET
 	JSR ACC.SET.IP.TO.VAR
-	JSR ACC.ASSIGN
+	JSR ACC.ASSIGN.1
 * -------------------------------
 * RESTORE OLD FRAME AND RETURN
 * -------------------------------
