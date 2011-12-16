@@ -9,9 +9,9 @@
  * separately managed stack (the "program stack") with a 16-byte
  * pointer for everything else.  That way, running our programs won't
  * blow out the stack.  We do require that the total size of all local
- * vars (plus 2 bytes for saving the frame pointer) be < 256 bytes;
+ * vars (plus 2 bytes for saving the frame pointer) be <= 256 bytes;
  * that lets us use one-byte indexing into local vars from the frame
- * pointer.  However, dynamic frame sizes of >= 256 bytes are
+ * pointer.  However, dynamic frame sizes of > 256 bytes are
  * possible, by allocating memory on the stack above the local
  * variable slots.
  *
