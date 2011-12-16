@@ -298,9 +298,10 @@ ACC.GET.MSB
 * -------------------------------
 ACC.EVAL.A.AND.B
 * BUMP STACK TO TOP OF FRAME
+	TAY
 	JSR ACC.SP.UP.A
 * SET SIZE
-	LDY #8
+	DEY
 	LDA (ACC.FP),Y
 	STA ACC.SIZE
 * EVAL A
