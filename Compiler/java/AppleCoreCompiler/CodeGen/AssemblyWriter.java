@@ -284,16 +284,16 @@ public abstract class AssemblyWriter
 	String label = getLabel();
 	emitImmediateInstruction("LDA",node.test.size);
 	emitAbsoluteInstruction("JSR","ACC.BOOLEAN");
-	emitAbsoluteInstruction("BNE",labelAsString("true" + label));
-	emitAbsoluteInstruction("JMP",labelAsString("false" + label));
+	emitAbsoluteInstruction("BNE",labelAsString(currentFunction.name+".true" + label));
+	emitAbsoluteInstruction("JMP",labelAsString(currentFunction.name+".false" + label));
 	// True part
-	emitLabel("true" + label);
+	emitLabel(currentFunction.name+".true" + label);
 	emit("\n");
 	scan(node.thenPart);
 	if (node.elsePart != null)
 	    emitAbsoluteInstruction("JMP",labelAsString("endif" + label));
 	// False part
-	emitLabel("false" + label);
+	emitLabel(currentFunction.name+".false" + label);
 	emit("\n");
 	if (node.elsePart != null) {
 	    scan(node.elsePart);
@@ -302,28 +302,32 @@ public abstract class AssemblyWriter
 	}
     }
 
+    private String mangle(String s) {
+	return currentFunction.name+s;
+    }
+
     public void visitWhileStatement(WhileStatement node) 
 	throws ACCError
     {
 	// Evaluate the test condition
 	String label = getLabel();
 	needAddress = false;
-	emitLabel("test" + label);
+	emitLabel(mangle("test" + label));
 	emit("\n");
 	scan(node.test);
 	emitComment("while loop test");
 	// Do the branch
 	emitImmediateInstruction("LDA",node.test.size);
 	emitAbsoluteInstruction("JSR","ACC.BOOLEAN");
-	emitAbsoluteInstruction("BNE",labelAsString("true" + label));
-	emitAbsoluteInstruction("JMP",labelAsString("false" + label));
+	emitAbsoluteInstruction("BNE",labelAsString(currentFunction.name+".true" + label));
+	emitAbsoluteInstruction("JMP",labelAsString(currentFunction.name+".false" + label));
 	// True part
-	emitLabel("true" + label);
+	emitLabel(currentFunction.name+".true" + label);
 	emit("\n");
 	scan(node.body);
-	emitAbsoluteInstruction("JMP",labelAsString("TEST"+label));
+	emitAbsoluteInstruction("JMP",labelAsString(mangle("TEST"+label)));
 	// False part
-	emitLabel("false" + label);
+	emitLabel(currentFunction.name+".false" + label);
 	emit("\n");
     }
     
