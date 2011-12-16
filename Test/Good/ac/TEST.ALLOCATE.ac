@@ -1,0 +1,36 @@
+# -------------------------------------
+# TEST ALLOCATE
+# -------------------------------------
+
+CONST MON_CROUT  $FD8E;
+
+DATA STR_A  "SHOULD BE 00000001: ";
+DATA STR_B  "SHOULD BE 00000002: ";
+DATA STR_C  "SHOULD BE 00000003: ";
+
+FN PRINT_STRING(STR:2);
+FN PRINT_HEX(N:2,SIZE:1);
+
+FN MAIN() {
+   VAR A:2=ALLOCATE(4);
+   VAR B:2=ALLOCATE(4);
+   VAR C:2=ALLOCATE(4);
+   
+   SET A[0,1]=1;
+   SET B[0,1]=2;
+   SET C[0,1]=3;
+
+   PRINT_STRING(STR_A);
+   PRINT_HEX(A,4);
+   MON_CROUT();
+
+   PRINT_STRING(STR_B);
+   PRINT_HEX(B,4);
+   MON_CROUT();
+
+   PRINT_STRING(STR_C);   
+   PRINT_HEX(C,4);
+   MON_CROUT();
+}
+
+INCLUDE "IO";
