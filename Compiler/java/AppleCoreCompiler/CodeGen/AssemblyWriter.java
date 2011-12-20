@@ -73,6 +73,11 @@ public abstract class AssemblyWriter
     protected int branchLabelCount = 1;
 
     /**
+     * Counter for constants
+     */
+    protected int constCount = 1;
+
+    /**
      * Whether a variable seen is being evaluated for its address or
      * its value.
      */
@@ -83,6 +88,17 @@ public abstract class AssemblyWriter
      */
     public boolean debug = false;
 
+    protected final Map<IntegerConstant,String> constMap =
+	new HashMap<IntegerConstant,String>();
+    
+    protected String getLabelFor(IntegerConstant ic) {
+	String s = constMap.get(ic);
+	if (s != null) return s;
+	s = mangle("CONST."+constCount++);
+	constMap.put(ic,s);
+	return s;
+    }
+
     /* Visitor methods */
 
     /* Leaf nodes */
@@ -91,9 +107,20 @@ public abstract class AssemblyWriter
 	emitVerboseComment(node);
 	IntegerConstant intConst = (IntegerConstant) node;
 	int size = intConst.getSize();
-	for (int i = 0; i < size; ++i) {
-	    emitImmediateInstruction("LDA",intConst.valueAtIndex(i));
+	if (size < 5) {
+	    for (int i = 0; i < size; ++i) {
+		emitImmediateInstruction("LDA",intConst.valueAtIndex(i));
+		emitAbsoluteInstruction("JSR","ACC.PUSH.A");
+	    }
+	}
+	else {
+	    String label = getLabelFor(intConst);
+	    emitImmediateInstruction("LDA",label,false);
 	    emitAbsoluteInstruction("JSR","ACC.PUSH.A");
+	    emitImmediateInstruction("LDA",label,true);
+	    emitAbsoluteInstruction("JSR","ACC.PUSH.A");
+	    emitImmediateInstruction("LDA",size);
+	    emitAbsoluteInstruction("JSR","ACC.EVAL");
 	}
     }
 
@@ -176,6 +203,16 @@ public abstract class AssemblyWriter
 	emitComment("START OF FILE " + node.name);
 	emitSeparatorComment();
 	super.visitSourceFile(node);
+	if (constMap.size() > 0) {
+	    emitSeparatorComment();
+	    emitComment("LARGE CONSTANTS");
+	    emitSeparatorComment();
+	    for (Map.Entry<IntegerConstant,String> entry :
+		     constMap.entrySet()) {
+		emitLabel(entry.getValue());
+		emitAsData(entry.getKey());
+	    }
+	}
 	emitSeparatorComment();
 	emitComment("END OF FILE " + node.name);
 	emitSeparatorComment();
@@ -290,16 +327,16 @@ public abstract class AssemblyWriter
 	String label = getLabel();
 	emitImmediateInstruction("LDA",node.test.size);
 	emitAbsoluteInstruction("JSR","ACC.BOOLEAN");
-	emitAbsoluteInstruction("BNE",labelAsString(currentFunction.name+".true" + label));
-	emitAbsoluteInstruction("JMP",labelAsString(currentFunction.name+".false" + label));
+	emitAbsoluteInstruction("BNE",labelAsString(mangle("true"+label)));
+	emitAbsoluteInstruction("JMP",labelAsString(mangle("false"+label)));
 	// True part
-	emitLabel(currentFunction.name+".true" + label);
+	emitLabel(mangle("true"+label));
 	emit("\n");
 	scan(node.thenPart);
 	if (node.elsePart != null)
 	    emitAbsoluteInstruction("JMP",labelAsString("endif" + label));
 	// False part
-	emitLabel(currentFunction.name+".false" + label);
+	emitLabel(mangle("false"+label));
 	emit("\n");
 	if (node.elsePart != null) {
 	    scan(node.elsePart);
@@ -309,7 +346,7 @@ public abstract class AssemblyWriter
     }
 
     private String mangle(String s) {
-	return currentFunction.name+s;
+	return currentFunction.name+"."+s;
     }
 
     public void visitWhileStatement(WhileStatement node) 
@@ -318,22 +355,22 @@ public abstract class AssemblyWriter
 	// Evaluate the test condition
 	String label = getLabel();
 	needAddress = false;
-	emitLabel(mangle(".test" + label));
+	emitLabel(mangle("test" + label));
 	emit("\n");
 	scan(node.test);
 	emitVerboseComment("while loop test");
 	// Do the branch
 	emitImmediateInstruction("LDA",node.test.size);
 	emitAbsoluteInstruction("JSR","ACC.BOOLEAN");
-	emitAbsoluteInstruction("BNE",labelAsString(currentFunction.name+".true" + label));
-	emitAbsoluteInstruction("JMP",labelAsString(currentFunction.name+".false" + label));
+	emitAbsoluteInstruction("BNE",labelAsString(mangle("true" + label)));
+	emitAbsoluteInstruction("JMP",labelAsString(mangle("false" + label)));
 	// True part
-	emitLabel(currentFunction.name+".true" + label);
+	emitLabel(mangle("true" + label));
 	emit("\n");
 	scan(node.body);
-	emitAbsoluteInstruction("JMP",labelAsString(mangle(".TEST"+label)));
+	emitAbsoluteInstruction("JMP",labelAsString(mangle("TEST"+label)));
 	// False part
-	emitLabel(currentFunction.name+".false" + label);
+	emitLabel(mangle("false" + label));
 	emit("\n");
     }
     

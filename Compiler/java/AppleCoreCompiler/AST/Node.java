@@ -643,6 +643,16 @@ public abstract class Node {
 	public String toString() {
 	    return "int constant " + valueAsHexString();
 	}
+
+	public int hashCode() {
+	    return value.hashCode();
+	}
+
+	public boolean equals(Object o) {
+	    if (!(o instanceof IntegerConstant)) return false;
+	    IntegerConstant ic = (IntegerConstant) o;
+	    return ic.value.equals(this.value);
+	}
     }
 
     public static class CharConstant 
