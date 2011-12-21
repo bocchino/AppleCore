@@ -196,7 +196,18 @@ public abstract class AssemblyWriter
 		}
 	    }
 	    if (firstFunction != null) {
-		emitAbsoluteInstruction("JMP",labelAsString(firstFunction.name));
+		emitAbsoluteInstruction("LDA","$AAB6");
+		emitInstruction("PHA");
+		emitImmediateInstruction("LDY",0);
+		emitAbsoluteInstruction("STY","$AAB6");
+		emitInstruction("DEY");
+		emitAbsoluteInstruction("STY","$D9");
+		emitAbsoluteInstruction("JSR",labelAsString(firstFunction.name));
+		emitInstruction("PLA");
+		emitAbsoluteInstruction("STA","$AAB6");
+		emitImmediateInstruction("LDY",0);
+		emitAbsoluteInstruction("STY","$D9");
+		emitAbsoluteInstruction("JMP","$3D3");
 	    }
 	    emitSeparatorComment();
 	}
