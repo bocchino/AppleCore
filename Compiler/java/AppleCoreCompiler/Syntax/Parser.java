@@ -471,8 +471,7 @@ public class Parser {
 	    break;
 	case CHAR_CONST:
 	case INT_CONST:
-	    if (!lvalue) 
-		result = parseNumericConstant();
+	    result = parseNumericConstant();
 	    break;
 	default:
 	    if (!lvalue) {

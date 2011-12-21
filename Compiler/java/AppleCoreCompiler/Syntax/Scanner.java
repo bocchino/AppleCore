@@ -140,27 +140,21 @@ public class Scanner {
 	StringBuffer s = new StringBuffer();
 	s.append((char) ch);
 
-	while(Character.isLetter((char) (ch = reader.read())))
-	    s.append((char) ch);
-
-	reader.unread(ch);
-
-	String str = s.toString();
-	for (Token token : Token.keywords) {
-	    if (str.equals(token.getStringValue())) {
-		currentToken = token;
-		currentToken.setLineNumber(reader.getLineNumber());
-		return;
-	    }
-	}
-
 	do {
 	    ch = reader.read();
 	    if (!Character.isLetterOrDigit((char)ch) &&
 		ch != '_') {
 		reader.unread(ch);
+		String str = s.toString();
+		for (Token token : Token.keywords) {
+		    if (str.equals(token.getStringValue())) {
+			currentToken = token;
+			currentToken.setLineNumber(reader.getLineNumber());
+			return;
+		    }
+		}
 		currentToken = Token.IDENT;
-		currentToken.setStringValue(s.toString());
+		currentToken.setStringValue(str);
 		currentToken.setLineNumber(reader.getLineNumber());
 		return;
 	    }
