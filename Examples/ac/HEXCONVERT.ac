@@ -7,13 +7,18 @@ CONST TRUE      1;
 CONST FALSE     0;
 # MONITOR CR OUT ROUTINE
 CONST MON_CROUT $FD8E;
+
 # SIZE OF DATA IN BYTES
-CONST SIZE      16;
+VAR SIZE:1=2;
 
 DATA GREETING "HEXCONVERT\$0D"\;
 DATA          "COPYRIGHT (C) 2011\$0D"\;
 DATA	      "ROBERT L. BOCCHINO JR.\$0D"\;
-DATA	      "ENTER BLANK LINE TO END\$0D";
+DATA	      "TYPE H FOR HELP\$0D";
+DATA HELP     "$([0-9]|[A-F]) - HEX TO DEC\$0D"\;
+DATA          "[0-9]+         - DEC TO HEX\$0D"\;
+DATA          "S[0-9]+        - SET SIZE IN BYTES\$0D"\;
+DATA          "BLANK LINE     - END\$0D";
 DATA ERROR    "ERROR";
 
 FN:1 GET_LINE();
@@ -23,38 +28,77 @@ FN:1 STR_TO_NUM(STR:2,RADIX:1,N:2,SIZE:1);
 FN   PRINT_STRING(STR:2);
 
 FN MAIN() {
-  VAR VAL:2=ALLOCATE(SIZE);
   VAR OK:1;
   VAR LEN:1;
 
   PRINT_STRING(GREETING);
 
   WHILE (TRUE) {
-    SET OK=FALSE;
     SET LEN=GET_LINE();
     IF (LEN=0) RETURN;
-    IF ((INBUF[0,1] AND $7F)='$') {
-      IF (LEN > 1) {
-        SET OK=STR_TO_NUM(INBUF+1,16,VAL,SIZE);
-        IF (OK) {
-          PRINT_CHAR('=');
-          NUM_TO_STR(VAL,SIZE,10,INBUF);
-	  PRINT_STRING(INBUF);
-        }
+    SET OK=FALSE;
+    IF ((INBUF[0,1] AND $7F)='H') {
+      IF (LEN=1) {
+        PRINT_STRING(HELP);
+        SET OK=TRUE;
+      }
+    }
+    ELSE IF ((INBUF[0,1] AND $7F)='S') {
+      IF (LEN>1) {
+        SET OK=SET_SIZE();
+      }
+    }
+    ELSE IF ((INBUF[0,1] AND $7F)='$') {
+      IF (LEN>1) {
+        SET OK=HEX_TO_DEC();
       }
     }
     ELSE {
-      SET OK=STR_TO_NUM(INBUF,10,VAL,SIZE);
-      IF (OK) {
-        PRINT_CHAR('=');
-	PRINT_CHAR('$');
-	NUM_TO_STR(VAL,SIZE,16,INBUF);
-	PRINT_STRING(INBUF);
-      }
+      SET OK=DEC_TO_HEX();
     }
-    IF (NOT OK) PRINT_STRING(ERROR);
+    IF (NOT OK) {
+      PRINT_STRING(ERROR);
+      MON_CROUT();
+    }
+  }
+}
+
+FN:1 SET_SIZE() {
+  VAR OK:1;
+  VAR NEW_SIZE:1;
+  SET OK=STR_TO_NUM(INBUF+1,10,@NEW_SIZE,1);
+  IF (OK AND (NEW_SIZE>0)) {
+    SET SIZE=NEW_SIZE;
+    RETURN TRUE;
+  }
+  RETURN FALSE;
+}
+
+FN:1 HEX_TO_DEC() {
+  VAR OK:1;
+  VAR VAL:2=ALLOCATE(SIZE);
+  SET OK=STR_TO_NUM(INBUF+1,16,VAL,SIZE);
+  IF (OK) {
+    PRINT_CHAR('=');
+    NUM_TO_STR(VAL,SIZE,10,INBUF);
+    PRINT_STRING(INBUF);
     MON_CROUT();
   }
+  RETURN OK;
+}
+
+FN:1 DEC_TO_HEX() {
+  VAR OK:1;
+  VAR VAL:2=ALLOCATE(SIZE);
+  SET OK=STR_TO_NUM(INBUF,10,VAL,SIZE);
+  IF (OK) {
+    PRINT_CHAR('=');
+    PRINT_CHAR('$');
+    NUM_TO_STR(VAL,SIZE,16,INBUF);
+    PRINT_STRING(INBUF);
+    MON_CROUT();
+  }
+  RETURN OK;
 }
 
 INCLUDE "IO";
