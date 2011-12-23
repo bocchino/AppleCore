@@ -3,5 +3,23 @@
 # --------------------------------------
 
 CONST INBUF       $200;
+CONST MON_COUT   $FDED;
+CONST MON_CROUT	 $FD8E;
 
 FN:1 GET_LINE();
+FN PRINT_STRING(STR:2);
+FN PRINT_HEX(N:2,SIZE:1);
+
+DATA LEN_STR "LEN=";
+
+FN MAIN()
+{
+  VAR LEN:1=GET_LINE();
+  PRINT_STRING(INBUF);
+  MON_CROUT();
+  PRINT_STRING(LEN_STR);
+  PRINT_HEX(@LEN,1);
+  MON_CROUT();
+}
+
+INCLUDE "IO";

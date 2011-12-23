@@ -17,9 +17,10 @@ public class AttributionPass
     implements Pass
 {
 
-    private final Warner warner;
-    public AttributionPass(Warner warner) {
-	this.warner = warner;
+    private final List<String> declFiles;
+
+    public AttributionPass(List<String> declFiles) {
+	this.declFiles = declFiles;
     }
 
     private boolean debug = false;
@@ -42,6 +43,11 @@ public class AttributionPass
     Map<String,Node> localSymbols = new HashMap<String,Node>();
 
     /**
+     * Map to store the source file name of a node
+     */
+    Map<Node,String> sourceFileMap = new HashMap<Node,String>();
+
+    /**
      * Attribute the AST
      */
     public void runOn(SourceFile sourceFile) 
@@ -49,8 +55,10 @@ public class AttributionPass
     {
 	// Enter the built-in functions
 	enterBuiltInFunctions();
-	// Enter all the top-level declarations except constant decls,
-	// which may not be forward declared.
+	// Enter decls from files specified on command line
+	enterImportedDecls();
+	// Enter all the top-level declarations from the source file
+	// except constant decls, which may not be forward declared.
 	for (Declaration decl : sourceFile.decls) {
 	    if (!(decl instanceof ConstDecl)) {
 		insertDecl.insert(decl, globalSymbols);
@@ -63,21 +71,33 @@ public class AttributionPass
     private void enterBuiltInFunctions() 
 	throws ACCError
     {
-	try {
-	    String appleCore = System.getenv("APPLECORE");
-	    if (appleCore == null) {
-		throw new SemanticError("environment variable APPLECORE not set");
-	    }
-	    String builtInFns = appleCore + 
-		"/Compiler/java/AppleCoreCompiler/Semantics/BUILT.IN.FNS.ac";
-	    Parser parser = new Parser(builtInFns);
-	    SourceFile sourceFile = parser.parse();
+	String appleCore = System.getenv("APPLECORE");
+	if (appleCore == null) {
+	    throw new SemanticError("environment variable APPLECORE not set");
+	}
+	String builtInFns = appleCore + 
+	    "/Compiler/java/AppleCoreCompiler/Semantics/BUILT.IN.FNS.ac";
+	enterDeclsFrom(builtInFns);
+    }
+
+    private void enterImportedDecls() 
+	throws ACCError
+    {
+	for (String declFile : declFiles) {
+	    enterDeclsFrom(declFile);
+	}
+    }
+
+    private void enterDeclsFrom(String declFile) 
+	throws ACCError
+    {
+	Parser parser = new Parser(declFile);
+	SourceFile sourceFile = parser.parse();
+	if (sourceFile != null) {
 	    for (Declaration decl : sourceFile.decls) {
 		insertDecl.insert(decl, globalSymbols);
+		sourceFileMap.put(decl,sourceFile.name);
 	    }
-	}
-	catch (NullPointerException e) {
-	    throw new SemanticError("could not read built-in function decls");
 	}
     }
 
@@ -129,8 +149,13 @@ public class AttributionPass
 	Node priorEntry = map.put(name, node);
 	// Check for symbol redefinition
 	if (priorEntry != null && priorEntry != node) {
-	    throw new SemanticError(name + " already defined at line " +
-				    priorEntry.lineNumber, node);
+	    String sourceFileName = sourceFileMap.get(priorEntry);
+	    StringBuffer sb = new StringBuffer(name + " already defined at line " +
+					       priorEntry.lineNumber);
+	    if (sourceFileName != null) {
+		sb.append(" of " + sourceFileName);
+	    }
+	    throw new SemanticError(sb.toString(), node);
 	}
     }
 

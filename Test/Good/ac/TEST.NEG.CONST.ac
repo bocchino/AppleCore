@@ -2,13 +2,9 @@
 # TEST NEGATIVE CONSTANT
 # -------------------------------------
 
-CONST MON_CROUT  $FD8E;
 CONST C		 -1;
 
 DATA STR  "SHOULD BE FF: ";
-
-FN PRINT_STRING(STR:2);
-FN PRINT_HEX(N:2,SIZE:1);
 
 FN MAIN() {
    VAR V:1=C;

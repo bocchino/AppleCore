@@ -1,0 +1,33 @@
+# --------------------------------------
+# THE APPLECORE COMPILER, V1.0
+# MONITOR CONSTANTS
+# --------------------------------------
+# ZERO PAGE STORAGE LOCATIONS
+# --------------------------------------
+# LEFT OF TEXT WINDOW
+CONST MON_WNDLFT		$20;
+# WIDTH OF TEXT WINDOW
+CONST MON_WNDWDTH		$21;
+# TOP OF TEXT WINDOW
+CONST MON_WNDTOP		$22;
+# BOTTOM OF TEXT WINDOW
+CONST MON_WNDBTM		$23;
+# --------------------------------------
+# STACK
+# --------------------------------------
+CONST MON_STACK			$100;
+# --------------------------------------
+# INPUT BUFFER
+# --------------------------------------
+CONST MON_IN			$200;
+# --------------------------------------
+# SUBROUTINE ENTRY POINTS
+# --------------------------------------
+# LINE INPUT
+CONST MON_GETLN1		$FD6F; 
+# OUTPUT A-REG AS ASCII VIA MON_CSW
+CONST MON_COUT	  		$FDED;
+# PRINT A-REG AS HEX DIGITS
+CONST MON_PRBYTE		$FDDA;
+# SEND ASCII CR ($8D) TO COUT
+CONST MON_CROUT			$FD8E;

@@ -2,9 +2,6 @@
 # A SIMPLE TEST PROGRAM
 # --------------------------------------
 
-CONST	MON_COUT	$FDED;
-CONST   MON_CROUT	$FD8E;
-
 #
 # PRINT 'A' TO THE SCREEN
 #

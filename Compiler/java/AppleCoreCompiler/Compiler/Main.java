@@ -38,6 +38,12 @@ public class Main {
     private static int origin = -1;
 
     /**
+     * List of file names from which to extract decls
+     */
+    private static List<String> declFiles = 
+	new LinkedList<String>();
+
+    /**
      * Process command-line arguments
      */
     private static void processArgs(String args[]) 
@@ -66,6 +72,11 @@ public class Main {
 	    }
 	    else {
 		throw new OptionError("only one source file allowed");
+	    }
+	}
+	else if (arg.substring(0,7).equals("-decls=")) {
+	    for (String declFile : arg.substring(7).split(":")) {
+		declFiles.add(declFile);
 	    }
 	}
 	else if (arg.equals("-verbose")) {
@@ -100,14 +111,13 @@ public class Main {
 	SourceFile sourceFile = parser.parse();
 	if (sourceFile != null) {
 	    try {
-		Warner warner = new Warner(System.err,sourceFileName);
 		sourceFile.includeMode = includeMode;
 		sourceFile.origin = origin;
 		sourceFile.targetFile = (targetFileName == null) ?
 		    defaultTargetFile(sourceFile.name) :
 		    targetFileName;
 		AttributionPass attributionPass = 
-		    new AttributionPass(warner);
+		    new AttributionPass(declFiles);
 		attributionPass.runOn(sourceFile);
 		ConstantEvaluationPass cePass = 
 		    new ConstantEvaluationPass();

@@ -2,12 +2,7 @@
 # TEST FUNCTION RETURN VALUE
 # -------------------------------------
 
-CONST MON_CROUT  $FD8E;
-
 DATA STR  "SHOULD BE 0000FFFF: ";
-
-FN PRINT_STRING(STR:2);
-FN PRINT_HEX(N:2,SIZE:1);
 
 FN MAIN() {
    VAR A:4 = $FFFF;

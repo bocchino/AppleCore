@@ -1,16 +1,18 @@
 # -----------------------------------
-# HEX-DECIMAL CONVERSION
+# HEXCONVERT
+# AN INTERACTIVE PROGRAM FOR
+# DECIMAL-HEXADECIMAL CONVERSION
+# WITH VARIABLE PRECISION
 # -----------------------------------
-# MONITOR INPUT BUFFER
-CONST INBUF     $200;
-CONST TRUE      1;
-CONST FALSE     0;
-# MONITOR CR OUT ROUTINE
-CONST MON_CROUT $FD8E;
-
+# COPYRIGHT (C) 2011 
+# ROBERT L. BOCCHINO JR.
+# -----------------------------------
 # SIZE OF DATA IN BYTES
+# -----------------------------------
 VAR SIZE:1=2;
-
+# -----------------------------------
+# STRING OUTPUT
+# -----------------------------------
 DATA GREETING "HEXCONVERT\$0D"\;
 DATA          "COPYRIGHT (C) 2011\$0D"\;
 DATA	      "ROBERT L. BOCCHINO JR.\$0D"\;
@@ -20,35 +22,33 @@ DATA          "[0-9]+         - DEC TO HEX\$0D"\;
 DATA          "S[0-9]+        - SET SIZE IN BYTES\$0D"\;
 DATA          "BLANK LINE     - END\$0D";
 DATA ERROR    "ERROR";
-
-FN:1 GET_LINE();
-FN   PRINT_CHAR(CHAR:1);
-FN   NUM_TO_STR(N:2,SIZE:1,RADIX:1,STR:2);
-FN:1 STR_TO_NUM(STR:2,RADIX:1,N:2,SIZE:1);
-FN   PRINT_STRING(STR:2);
-
+# -----------------------------------
+# MAIN FUNCTION
+# -----------------------------------
 FN MAIN() {
   VAR OK:1;
   VAR LEN:1;
 
+  # PRINT GREETING
   PRINT_STRING(GREETING);
 
+  # LOOP AND PROCESS INPUT TILL DONE
   WHILE (TRUE) {
     SET LEN=GET_LINE();
     IF (LEN=0) RETURN;
     SET OK=FALSE;
-    IF ((INBUF[0,1] AND $7F)='H') {
+    IF ((MON_IN[0,1] AND $7F)='H') {
       IF (LEN=1) {
         PRINT_STRING(HELP);
         SET OK=TRUE;
       }
     }
-    ELSE IF ((INBUF[0,1] AND $7F)='S') {
+    ELSE IF ((MON_IN[0,1] AND $7F)='S') {
       IF (LEN>1) {
         SET OK=SET_SIZE();
       }
     }
-    ELSE IF ((INBUF[0,1] AND $7F)='$') {
+    ELSE IF ((MON_IN[0,1] AND $7F)='$') {
       IF (LEN>1) {
         SET OK=HEX_TO_DEC();
       }
@@ -62,40 +62,46 @@ FN MAIN() {
     }
   }
 }
-
+# -----------------------------------
+# SET THE SIZE
+# -----------------------------------
 FN:1 SET_SIZE() {
   VAR OK:1;
   VAR NEW_SIZE:1;
-  SET OK=STR_TO_NUM(INBUF+1,10,@NEW_SIZE,1);
+  SET OK=STR_TO_NUM(MON_IN+1,10,@NEW_SIZE,1);
   IF (OK AND (NEW_SIZE>0)) {
     SET SIZE=NEW_SIZE;
     RETURN TRUE;
   }
   RETURN FALSE;
 }
-
+# -----------------------------------
+# CONVERT HEX TO DEC
+# -----------------------------------
 FN:1 HEX_TO_DEC() {
   VAR OK:1;
   VAR VAL:2=ALLOCATE(SIZE);
-  SET OK=STR_TO_NUM(INBUF+1,16,VAL,SIZE);
+  SET OK=STR_TO_NUM(MON_IN+1,16,VAL,SIZE);
   IF (OK) {
     PRINT_CHAR('=');
-    NUM_TO_STR(VAL,SIZE,10,INBUF);
-    PRINT_STRING(INBUF);
+    NUM_TO_STR(VAL,SIZE,10,MON_IN);
+    PRINT_STRING(MON_IN);
     MON_CROUT();
   }
   RETURN OK;
 }
-
+# -----------------------------------
+# CONVERT DEC TO HEX
+# -----------------------------------
 FN:1 DEC_TO_HEX() {
   VAR OK:1;
   VAR VAL:2=ALLOCATE(SIZE);
-  SET OK=STR_TO_NUM(INBUF,10,VAL,SIZE);
+  SET OK=STR_TO_NUM(MON_IN,10,VAL,SIZE);
   IF (OK) {
     PRINT_CHAR('=');
     PRINT_CHAR('$');
-    NUM_TO_STR(VAL,SIZE,16,INBUF);
-    PRINT_STRING(INBUF);
+    NUM_TO_STR(VAL,SIZE,16,MON_IN);
+    PRINT_STRING(MON_IN);
     MON_CROUT();
   }
   RETURN OK;

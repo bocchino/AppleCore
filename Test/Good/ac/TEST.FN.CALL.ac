@@ -2,8 +2,6 @@
 # FUNCTION CALL TEST
 # --------------------------------------
 
-CONST	MON_COUT	$FDED;
-CONST   MON_CROUT	$FD8E;
 CONST   ASCII_A		$C1;
 CONST   ASCII_B		$C2;
 

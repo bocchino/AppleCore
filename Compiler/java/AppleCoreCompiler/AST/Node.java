@@ -577,8 +577,14 @@ public abstract class Node {
 	 */
 	public void setValue(BigInteger value) {
 	    // Value must be representable by 255 bytes; if not, strip
-	    // off the high-order bytes.
-	    this.value = value.and(Token.MAX_INT);
+	    // off the high-order bits.
+	    this.value = value;
+	    if (value.compareTo(Token.MAX_INT)>0) {
+		value = value.and(Token.MAX_INT);
+	    }
+	    if (value.compareTo(Token.MAX_INT.negate().shiftRight(1))<=0) {
+		value = Token.MAX_INT.add(BigInteger.ONE).subtract(value.negate().and(Token.MAX_INT));
+	    }
 	    this.size = getSize();
 	    this.isSigned = (value.compareTo(BigInteger.ZERO) < 0);
 	}
