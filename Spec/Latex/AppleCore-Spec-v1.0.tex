@@ -800,9 +800,9 @@ the source file as follows:
   that sets up the program stack
   (Section~\ref{sec:code-gen:program-stack}).
 %
-\item Issue a \kwd{JMP} instruction to (or fall in to) the first
-  function with a body that appears in the file.  There must be at
-  least one such function, and it is a compile-time error if not.
+\item Issue code to transfer control to the first function with a body
+  that appears in the file.  There must be at least one such function,
+  and it is a compile-time error if not.
 %
 \item Translate all global declarations in the source file as
   described in Section~\ref{sec:code-gen:global-decls}, in the
@@ -814,13 +814,13 @@ the source file as follows:
   (for example, the code needed to do arithmetic operations).
 %
 \end{enumerate}
+%
 
 \bfhead{Include mode.} In include mode, the compiler just translates
 the declarations in the source file as described in
-Section~\ref{sec:code-gen:global-decls}.  No include directive or
-\kwd{JMP} instruction to the first function is emitted.  In include
-mode, the source program may not contain any include directives, and
-it is a compile-time error for one to appear.
+Section~\ref{sec:code-gen:global-decls}.  In include mode, the source
+program may not contain any include directives, and it is a
+compile-time error for one to appear.
 
 \bfhead{Final assembly and symbol resolution.} A user program consists
 of exactly one file translated in top-level mode and zero or more
