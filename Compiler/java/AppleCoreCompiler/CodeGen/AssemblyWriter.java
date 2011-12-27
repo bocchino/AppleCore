@@ -213,7 +213,7 @@ public abstract class AssemblyWriter
 		emitImmediateInstruction("LDY",0);
 		emitAbsoluteInstruction("STY","$D9");
 		emitVerboseComment("exit to BASIC");
-		emitAbsoluteInstruction("JMP","$3D0");
+		emitAbsoluteInstruction("JMP","$3D3");
 	    }
 	    emitSeparatorComment();
 	}

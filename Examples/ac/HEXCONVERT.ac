@@ -15,8 +15,8 @@ VAR SIZE:1=2;
 # -----------------------------------
 DATA GREETING "HEXCONVERT\$0D"\;
 DATA          "COPYRIGHT (C) 2011\$0D"\;
-DATA	      "ROBERT L. BOCCHINO JR.\$0D"\;
-DATA	      "TYPE H FOR HELP\$0D";
+DATA          "ROBERT L. BOCCHINO JR.\$0D"\;
+DATA          "TYPE H FOR HELP\$0D";
 DATA HELP     "$([0-9]|[A-F]) - HEX TO DEC\$0D"\;
 DATA          "[0-9]+         - DEC TO HEX\$0D"\;
 DATA          "S[0-9]+        - SET SIZE IN BYTES\$0D"\;
