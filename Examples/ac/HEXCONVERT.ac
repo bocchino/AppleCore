@@ -9,7 +9,10 @@
 # -----------------------------------
 # SIZE OF DATA IN BYTES
 # -----------------------------------
-VAR SIZE:1=2;
+CONST DEFAULT_SIZE    2;
+CONST MAX_SIZE        40;
+
+VAR SIZE:1=DEFAULT_SIZE;
 # -----------------------------------
 # STRING OUTPUT
 # -----------------------------------
@@ -69,7 +72,8 @@ FN:1 SET_SIZE() {
   VAR OK:1;
   VAR NEW_SIZE:1;
   SET OK=STR_TO_NUM(MON_IN+1,10,@NEW_SIZE,1);
-  IF (OK AND (NEW_SIZE>0)) {
+  IF (OK AND (NEW_SIZE>0) AND
+   (NEW_SIZE<=MAX_SIZE)) {
     SET SIZE=NEW_SIZE;
     RETURN TRUE;
   }

@@ -191,15 +191,14 @@ public class AttributionPass
 	if (node.isLocalVariable) {
 	    printStatus("Attributing ",node);
 	    addMapping(node.name, node, localSymbols);
-	} else {
-	    if (node.init != null) {
-		if (!node.init.isConstValExpr()) {
-		    throw new SemanticError("constant value expression required",
-					    node);
-		}
-	    }
 	}
 	super.visitVarDecl(node);
+	if (!node.isLocalVariable && node.init != null) {
+	    if (!node.init.isConstValExpr()) {
+		throw new SemanticError("constant value expression required",
+					node);
+	    }
+	}
     }
 
     private Node findSymbol(String name) {
