@@ -4,17 +4,6 @@
  * To write code for a specific assembler, implement this pass and
  * provide the assembler-specific code emitter functions.
  *
- * Code generation uses the Apple II stack (the "machine stack") only
- * for JSR, RTS, and temporary saves via PHA and PHP.  It uses a
- * separately managed stack (the "program stack") with a 16-byte
- * pointer for everything else.  That way, running our programs won't
- * blow out the stack.  We do require that the total size of all local
- * vars (plus 2 bytes for saving the frame pointer) be <= 256 bytes;
- * that lets us use one-byte indexing into local vars from the frame
- * pointer.  However, dynamic frame sizes of > 256 bytes are
- * possible, by allocating memory on the stack above the local
- * variable slots.
- *
  * Code generation uses the following registers in zero-page memory:
  *
  * - Stack pointer, SP (2 bytes): Points to first free byte after
@@ -259,19 +248,36 @@ public abstract class AssemblyWriter
 	    
 	    emitLabel(node.name);
 	    emitLine();
-	    
+
+	    emitVerboseComment("push return address on program stack");
+	    emitInstruction("PLA");
+	    emitAbsoluteInstruction("JSR","ACC.PUSH.A");
+	    emitInstruction("PLA");
+	    emitAbsoluteInstruction("JSR","ACC.PUSH.A");
+
 	    emitVerboseComment("bump stack to top of frame");
-	    emitImmediateInstruction("LDA",node.frameSize);
+	    emitImmediateInstruction("LDA",node.frameSize-2);
 	    emitAbsoluteInstruction("JSR","ACC.SP.UP.A");
 	    
 	    scan(node.varDecls);
 	    scan(node.statements);
 
 	    if (!node.endsInReturnStatement()) {
+		pullReturnAddress();
 		emitVerboseComment("restore old frame and return");
 		emitAbsoluteInstruction("JMP","ACC.FN.RETURN");
 	    }
 	}
+    }
+
+    private void pullReturnAddress() {
+	emitVerboseComment("pull return address off program stack");
+	emitImmediateInstruction("LDY",1);
+	emitIndirectYInstruction("LDA","ACC.FP");
+	emitInstruction("PHA");
+	emitInstruction("DEY");
+	emitIndirectYInstruction("LDA","ACC.FP");
+	emitInstruction("PHA");
     }
 
     public abstract void visitIncludeDecl(IncludeDecl node);
@@ -401,6 +407,7 @@ public abstract class AssemblyWriter
     public void visitReturnStatement(ReturnStatement node)
 	throws ACCError 
     {
+	pullReturnAddress();
 	if (node.expr != null) {
 	    // Evaluate expression
 	    needAddress = false;
@@ -496,7 +503,10 @@ public abstract class AssemblyWriter
     {
 	emitVerboseComment("fill slots for new frame");
 	// Save bump size for undo
-	int bumpSize = 2;
+	int bumpSize = 4;
+	// Save place for return address
+	emitImmediateInstruction("LDA",2);
+	emitAbsoluteInstruction("JSR","ACC.SP.UP.A");
 	// Push old FP
 	emitAbsoluteInstruction("JSR","ACC.PUSH.FP");
 	// Fill in the arguments
@@ -681,6 +691,9 @@ public abstract class AssemblyWriter
     {
 	printStatus("stack slots:");
 	int offset = 0;
+	printStatus(" return address: " + offset);
+	// Two bytes for return address
+	offset += 2;
 	printStatus(" FP: " + offset);
 	// Two bytes for saved FP
 	offset += 2;
@@ -777,7 +790,6 @@ public abstract class AssemblyWriter
     protected void assign(int targetSize) {
 	// Pull IP from stack, then copy from stack to (IP).
 	emitVerboseComment("assign");
-	//adjustSize(targetSize, stackSize, signed);
 	emitImmediateInstruction("LDA",targetSize);
 	emitAbsoluteInstruction("JSR","ACC.ASSIGN");
     }

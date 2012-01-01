@@ -13,13 +13,13 @@ ACC.BINOP.ADD
         JMP ACC.SET.SP.TO.IP
 * -------------------------------
 * FN ADD(A:2,B:2,C:2,S:1)
-* SET SIZE=FP[8,1]
-* SET FP[6,2][0,SIZE]=
-*   	FP[2,2][0,SIZE]+
-*	FP[4,2][0,SIZE]
+* SET SIZE=FP[10,1]
+* SET FP[8,2][0,SIZE]=
+*   	FP[4,2][0,SIZE]+
+*	FP[6,2][0,SIZE]
 * -------------------------------
 ADD
-	LDA #9
+	LDA #11
 	JSR ACC.EVAL.A.AND.B
 	LDA ACC.SIZE
 	JSR ACC.BINOP.ADD
@@ -51,13 +51,13 @@ ACC.BINOP.SUB
         JMP ACC.SET.SP.TO.IP
 * -------------------------------
 * FN SUB(A:2,B:2,C:2,S:1)
-* SET SIZE=FP[6,1]
-* SET FP[4,2][0,SIZE]=
-*   	FP[0,2][0,SIZE]-
-*	FP[2,2][0,SIZE]
+* SET SIZE=FP[10,1]
+* SET FP[8,2][0,SIZE]=
+*   	FP[6,2][0,SIZE]-
+*	FP[4,2][0,SIZE]
 * -------------------------------
 SUB
-	LDA #9
+	LDA #11
 	JSR ACC.EVAL.A.AND.B
 	LDA ACC.SIZE
 	JSR ACC.BINOP.SUB
@@ -179,13 +179,13 @@ ACC.MUL.INNER
 	JMP ACC.SP.UP.SIZE
 * -------------------------------
 * FN MUL(A:2,B:2,C:2,S:1)
-* SET SIZE=FP[6,1]
-* SET FP[4,2][0,SIZE]=
-*   	FP[0,2][0,SIZE]*
-*	FP[2,2][0,SIZE]
+* SET SIZE=FP[10,1]
+* SET FP[8,2][0,SIZE]=
+*   	FP[4,2][0,SIZE]*
+*	FP[6,2][0,SIZE]
 * -------------------------------
 MUL
-	LDA #9
+	LDA #11
 	JSR ACC.EVAL.A.AND.B
 	LDA ACC.SIZE
 	LDX #0
@@ -299,25 +299,25 @@ ACC.DIV.INNER
 	RTS
 * -------------------------------
 * FN DIV(A:2,B:2,Q:2,R:2,S:1)
-* SET SIZE=FP[8,1]
-* DIVIDE FP[0,2][0,SIZE]
-* 	BY FP[2,2][0,SIZE]
-* QUOTIENT IN FP[4,2][0,SIZE]
-* REMAINDER IN FP[6,2][0,SIZE]
+* SET SIZE=FP[12,1]
+* DIVIDE FP[4,2][0,SIZE]
+* 	BY FP[6,2][0,SIZE]
+* QUOTIENT IN FP[8,2][0,SIZE]
+* REMAINDER IN FP[10,2][0,SIZE]
 * -------------------------------
 DIV
-	LDA #11
+	LDA #13
 	JSR ACC.EVAL.A.AND.B
 	LDA ACC.SIZE
 	LDX #0
 	JSR ACC.BINOP.DIV
 * ASSIGN QUOT
-	LDY #6
+	LDY #8
 	JSR ACC.SET.IP.TO.VAR
 	JSR ACC.ASSIGN.1
 * ASSIGN REM AND RETURN
 	JSR ACC.SP.UP.SIZE
 	JSR ACC.SP.UP.SIZE
 	JSR ACC.SP.UP.SIZE
-	LDY #8
+	LDY #10
 	JMP ACC.ASSIGN.AND.RET

@@ -42,12 +42,12 @@ ACC.SET.SP.TO.IP
         STA ACC.SP+1
         RTS
 * -------------------------------
-* SET FP=FP[0,2]
-* SET Y=1
+* SET FP=FP[2,2]
+* SET Y=3
 * PRESERVES X
 * -------------------------------
 ACC.RESTORE.CALLER.FP
-        LDY #0
+        LDY #2
         LDA (ACC.FP),Y
         PHA
         INY
@@ -305,18 +305,18 @@ ACC.EVAL.A.AND.B
 	LDA (ACC.FP),Y
 	STA ACC.SIZE
 * EVAL A
-	LDY #2
+	LDY #4
 	JSR ACC.SET.IP.TO.VAR
 	JSR ACC.EVAL.1
 * EVAL B AND RETURN
-	LDY #4
+	LDY #6
 	JSR ACC.SET.IP.TO.VAR
 	JMP ACC.EVAL.1
 * -------------------------------
 * ASSIGN C AND RETURN
 * -------------------------------
 ACC.ASSIGN.C.AND.RET
-	LDY #6
+	LDY #8
 ACC.ASSIGN.AND.RET
 	JSR ACC.SET.IP.TO.VAR
 	JSR ACC.ASSIGN.1
@@ -342,7 +342,7 @@ ACC.SET.IP.TO.VAR
 * -------------------------------
 ALLOCATE
 * GET SIZE OFF STACK
-	LDY #2
+	LDY #4
 	LDA (ACC.FP),Y
 	STA ACC.SIZE
 * SAVE SP INTO IP

@@ -112,7 +112,7 @@ ACC.CMP.U.1
 * -------------------------------
 CMP
 * EVALUATE ARGS AND COMPARE
-	LDA #7
+	LDA #9
 	JSR ACC.EVAL.A.AND.B
 	LDA ACC.SIZE
 	LDX #0

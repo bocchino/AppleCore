@@ -10,7 +10,7 @@
 # SIZE OF DATA IN BYTES
 # -----------------------------------
 CONST DEFAULT_SIZE    2;
-CONST MAX_SIZE        40;
+CONST MAX_SIZE        60;
 
 VAR SIZE:1=DEFAULT_SIZE;
 # -----------------------------------
