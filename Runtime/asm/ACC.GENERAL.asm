@@ -90,7 +90,8 @@ ACC.SP.UP.A
 	STA ACC.SIZE
 * -------------------------------
 * SET SP+=SIZE
-* PRESERVES X,Y
+* PRINT ERROR AND ABORT ON
+* STACK OVERFLOW
 * -------------------------------
 ACC.SP.UP.SIZE
 	LDA ACC.SP
@@ -99,7 +100,32 @@ ACC.SP.UP.SIZE
         STA ACC.SP
         BCC .1
         INC ACC.SP+1
-.1      RTS
+.1      JSR ACC.CHECK.SP
+	BCC .2
+	RTS
+.2	LDA #ACC.STACK.OVERFLOW
+	STA ACC.IP
+	LDA /ACC.STACK.OVERFLOW
+	STA ACC.IP+1
+	JSR ACC.PRINT.STRING
+	JMP DOS.COLD.START
+* -------------------------------
+* CHECK IF SP IS WITHIN BOUNDS
+* -------------------------------
+ACC.CHECK.SP
+	LDA ACC.SP.BOUND+1
+	CMP ACC.SP+1
+	BNE .1
+	LDA ACC.SP.BOUND
+	CMP ACC.SP
+.1	RTS
+* -------------------------------
+* ERROR MESSAGE: "STACK OVERFLOW"
+* -------------------------------
+ACC.STACK.OVERFLOW
+	.HS 07
+	.AS "STACK OVERFLOW"
+	.HS 00
 * -------------------------------
 * SET SIZE=A
 * SET SP-=SIZE
@@ -357,4 +383,19 @@ ALLOCATE
 	JSR ACC.PUSH.A
 	LDA ACC.IP+1
 	JMP ACC.PUSH.A
-	
+* -------------------------------
+* PRINT STRING STARTING
+* AT IP[0,1]
+* DESTROYS IP, Y
+* -------------------------------
+ACC.PRINT.STRING
+	LDY #0
+	LDA (ACC.IP),Y
+	BEQ .1
+	ORA #$80
+	JSR $FDED
+	INC ACC.IP
+	BNE ACC.PRINT.STRING
+	INC ACC.IP+1
+	BNE ACC.PRINT.STRING
+.1	RTS

@@ -21,10 +21,10 @@ FN PRINT_CHAR(CHAR:1) {
 # PRINT A STRING
 # --------------------------------------
 FN PRINT_STRING(STR_PTR:2) {
-   WHILE (STR_PTR[0,1] > 0) {
-     PRINT_CHAR(STR_PTR[0,1]);
-     INCR STR_PTR;
-   }
+  WHILE (STR_PTR[0,1] > 0) {
+    PRINT_CHAR(STR_PTR[0,1]);
+    INCR STR_PTR;
+  }
 }
 # --------------------------------------
 # PRINT A NUMBER AS HEX DIGITS
