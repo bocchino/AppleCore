@@ -1,0 +1,105 @@
+# --------------------------------------
+# THE APPLECORE COMPILER, V1.0
+# STRING FUNCTIONS
+# --------------------------------------
+# CONVERT NUMBER TO STRING
+# N     - POINTER TO NUMBER
+# SIZE  - SIZE OF NUMBER
+# RADIX - RADIX
+# STR   - POINTER TO STRING
+# --------------------------------------
+FN NUM_TO_STR(N:2,SIZE:1,RADIX:1,STR:2) {
+  VAR ZERO:2   =ALLOCATE(SIZE);
+  VAR RDX_ADJ:2=ALLOCATE(SIZE);
+  VAR QUOT:2   =ALLOCATE(SIZE);
+  VAR REM:2    =ALLOCATE(SIZE);
+  VAR DIGIT:1;
+  VAR IDX:2=0;
+  SET RDX_ADJ[0,1]=RADIX;
+  WHILE (TRUE) {
+    DIV(N,RDX_ADJ,QUOT,REM,SIZE);
+    SET STR[IDX,1]=DIGIT_TO_CHAR(REM[0,1]);
+    IF (CMP(QUOT,ZERO,SIZE)=0) {
+      SET STR[IDX+1,1]=0;
+      REVERSE_STRING(STR,IDX);
+      RETURN;
+    }
+    ELSE {
+      INCR IDX;
+      SET N=QUOT;
+    }
+  }
+}
+
+# --------------------------------------
+# CONVERT DIGIT TO CHAR
+# --------------------------------------
+FN:1 DIGIT_TO_CHAR(DIGIT:1) {
+  IF (DIGIT < 10) {
+     RETURN DIGIT+'0';
+  }
+  RETURN DIGIT-10+'A';
+}
+
+# --------------------------------------
+# CONVERT STRING TO NUMBER
+# STR   - POINTER TO STRING
+# RADIX - RADIX
+# N     - POINTER TO NUMBER
+# SIZE  - SIZE OF NUMBER
+# --------------------------------------
+FN:1 STR_TO_NUM(STR:2,RADIX:1,N:2,SIZE:1) {
+  VAR I:1=0;
+  VAR DIGIT:2=ALLOCATE(SIZE);
+  VAR RDX_ADJ:2=ALLOCATE(SIZE);
+  VAR PROD:2=ALLOCATE(SIZE);
+  WHILE (I < SIZE) {
+    SET N[I,1]=0;
+    INCR I;
+  }
+  SET RDX_ADJ[0,1]=RADIX;
+  WHILE (STR[0,1]>0) {
+    SET DIGIT[0,1]=
+      CHAR_TO_DIGIT(STR[0,1],RADIX);
+    IF (DIGIT[0,1]=$FF) RETURN 0;
+    MUL(N,RDX_ADJ,PROD,SIZE);
+    ADD(PROD,DIGIT,N,SIZE);
+    INCR STR;
+  }
+  RETURN 1;
+}
+
+# --------------------------------------
+# CONVERT CHAR TO DIGIT AT RADIX
+# --------------------------------------
+FN:1 CHAR_TO_DIGIT(CHAR:1,RADIX:1) {
+  VAR DIGIT:1=$FF;
+  SET CHAR=CHAR AND $7F;
+  IF (CHAR>='0' AND CHAR<='9') {
+    SET DIGIT=CHAR-'0';   
+  }
+  ELSE IF(CHAR>='A') {
+    SET DIGIT=10+CHAR-'A';
+  }
+  IF (DIGIT >= RADIX) 
+    SET DIGIT=$FF;
+  RETURN DIGIT;
+}
+
+# --------------------------------------
+# REVERSE A STRING IN PLACE
+# STR   - POINTER TO STRING
+# RIGHT - LAST INDEX OF STRING
+# --------------------------------------
+FN REVERSE_STRING(STR:2,RIGHT:2) {
+  VAR LEFT:2=0;
+  VAR DIGIT:1;
+  WHILE (LEFT < RIGHT) {
+    SET DIGIT=STR[LEFT,1];
+    SET STR[LEFT,1]=STR[RIGHT,1];
+    SET STR[RIGHT,1]=DIGIT;
+    INCR LEFT;
+    DECR RIGHT;
+  }
+}
+

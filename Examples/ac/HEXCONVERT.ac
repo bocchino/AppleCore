@@ -10,7 +10,7 @@
 # SIZE OF DATA IN BYTES
 # -----------------------------------
 CONST DEFAULT_SIZE    2;
-CONST MAX_SIZE        60;
+CONST MAX_SIZE        100;
 
 VAR SIZE:1=DEFAULT_SIZE;
 # -----------------------------------
@@ -112,3 +112,4 @@ FN:1 DEC_TO_HEX() {
 }
 
 INCLUDE "IO";
+INCLUDE "STRING";
