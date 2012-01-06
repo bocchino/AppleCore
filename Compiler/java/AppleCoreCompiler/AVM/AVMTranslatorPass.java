@@ -110,7 +110,7 @@ public class AVMTranslatorPass
 	    
 	    node.instructions.clear();
 	    emit(new LabelInstruction(node.name));
-	    emit(new NativeInstruction("JMP","AVM.EXECUTE.FN"));
+	    emit(new NativeInstruction("JSR","AVM.EXECUTE.FN"));
 	    emit(new ISPInstruction(node.frameSize));
 
 	    scan(node.varDecls);
