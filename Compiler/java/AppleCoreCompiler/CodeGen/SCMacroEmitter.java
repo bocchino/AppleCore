@@ -11,72 +11,72 @@ import AppleCoreCompiler.AST.Node.RegisterExpression.Register;
 import java.io.*;
 import java.math.*;
 
-public class SCMacroWriter
-    extends AssemblyWriter
+public class SCMacroEmitter
+    extends NativeCodeEmitter
 {
 
-    public SCMacroWriter(PrintStream printStream) {
+    public SCMacroEmitter(PrintStream printStream) {
 	super(printStream);
     }
 
-    public void visitIncludeDecl(IncludeDecl node) {
+    public void emitIncludeDecl(IncludeDecl node) {
 	emitSeparatorComment();
 	emitAbsoluteInstruction(".IN",node.filename);
     }
 
     /* Emitter methods */
 
-    protected String addrString(int addr) {
+    public String addrString(int addr) {
 	return "$" + Integer.toString(addr,16).toUpperCase();
     }
 
-    protected void emitInstruction(String s) {
+    public void emitInstruction(String s) {
 	emit("\t" + s + "\n");
     }
 
-    protected void emitAbsoluteInstruction(String mnemonic, int addr) {
+    public void emitAbsoluteInstruction(String mnemonic, int addr) {
 	emitInstruction(mnemonic + " " + addrString(addr));
     }
 
-    protected void emitAbsoluteInstruction(String mnemonic, String label) {
+    public void emitAbsoluteInstruction(String mnemonic, String label) {
 	emitInstruction(mnemonic + " " + label);
     }
 
-    protected void emitImmediateInstruction(String mnemonic, String imm, boolean high) {
+    public void emitImmediateInstruction(String mnemonic, String imm, boolean high) {
 	String marker = high ? " /" : " #";
 	emitInstruction(mnemonic + marker + imm);
     }
 
-    protected void emitImmediateInstruction(String mnemonic, int imm) {
+    public void emitImmediateInstruction(String mnemonic, int imm) {
 	emitInstruction(mnemonic + " #" + addrString(imm));
     }
 
-    protected void emitIndirectYInstruction(String mnemonic, String addr) {
+    public void emitIndirectYInstruction(String mnemonic, String addr) {
 	emitInstruction(mnemonic + " (" + addr + "),Y");
     }
 
-    protected void emitIndirectXInstruction(String mnemonic, int addr) {
+    public void emitIndirectXInstruction(String mnemonic, int addr) {
 	emitInstruction(mnemonic + " (" + addrString(addr) + ",X)");
     }
 
-    protected void emitAbsoluteXInstruction(String mnemonic, String addr) {
+    public void emitAbsoluteXInstruction(String mnemonic, String addr) {
 	emitInstruction(mnemonic + addr + ",X");
     }
 
-    protected void emitIndexedInstruction(String mnemonic, int addr, String reg) {
+    public void emitIndexedInstruction(String mnemonic, int addr, String reg) {
 	emitInstruction(mnemonic + " " + addrString(addr) + "," + reg);
     }
 
-    protected void emitComment(String comment) {
+    public void emitComment(String comment) {
 	emit("* ");
 	emit(comment.toUpperCase() + "\n");
     }
 
-    protected void emitSeparatorComment() {
+    public void emitSeparatorComment() {
 	emitComment("-------------------------------");
     }
 
-    protected String labelAsString(String label) {
+    public String labelAsString(String label) {
 	// S-C Macro Assembler doesn't like underscores in labels
 	return label.replace('_','.').toUpperCase();
     }
@@ -90,7 +90,7 @@ public class SCMacroWriter
      * - .AS "XXX" for the printable chars
      * - .HS XX    for the non-printable chars
      */
-    protected void emitStringConstant(StringConstant sc) {
+    public void emitStringConstant(StringConstant sc) {
 	String s = sc.value;
 	int pos = 0;
 	while (pos < s.length()) {
@@ -109,11 +109,11 @@ public class SCMacroWriter
 	}
     }
 
-    protected void emitStringTerminator() {
+    public void emitStringTerminator() {
 	emitAbsoluteInstruction(".HS","00");
     }
 
-    protected void emitAsData(NumericConstant c) {
+    public void emitAsData(NumericConstant c) {
 	if (c instanceof IntegerConstant) {
 	    IntegerConstant intConst = (IntegerConstant) c;
 	    emit("\t.HS ");
@@ -130,7 +130,7 @@ public class SCMacroWriter
 
     }
 
-    protected void emitAsData(NumericConstant c, int sizeBound) {
+    public void emitAsData(NumericConstant c, int sizeBound) {
 	if (c instanceof IntegerConstant) {
 	    IntegerConstant intConst = (IntegerConstant) c;
 	    int constSize = intConst.getSize();
@@ -154,7 +154,7 @@ public class SCMacroWriter
 	}
     }
 
-    protected void emitBlockStorage(int nbytes) {
+    public void emitBlockStorage(int nbytes) {
 	emit("\t.BS\t");
 	emit(addrString(nbytes));
 	emit("\n");
@@ -167,7 +167,7 @@ public class SCMacroWriter
 	    byteString : "0"+byteString;
     }
 
-    protected void emitPreamble(SourceFile node) {
+    public void emitPreamble(SourceFile node) {
 	emit(":NEW\n");
 	emitAbsoluteInstruction(".LIST","OFF");
 	if (node.origin >= 0) {
@@ -178,7 +178,7 @@ public class SCMacroWriter
 	}
     }
 
-    protected void emitEpilogue() {
+    public void emitEpilogue() {
 	emitAbsoluteInstruction(".IN","ACC.GENERAL");
 	emitAbsoluteInstruction(".IN","ACC.UNOP");
 	emitAbsoluteInstruction(".IN","ACC.SHIFT");

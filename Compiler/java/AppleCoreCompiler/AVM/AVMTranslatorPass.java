@@ -110,6 +110,7 @@ public class AVMTranslatorPass
 	    
 	    node.instructions.clear();
 	    emit(new LabelInstruction(node.name));
+	    emit(new NativeInstruction("JSR","AVM.EXECUTE"));
 	    emit(new ISPInstruction(node.frameSize));
 
 	    scan(node.varDecls);
@@ -544,7 +545,7 @@ public class AVMTranslatorPass
      * needed size.
      */
     private void adjustSize(int targetSize, int stackSize,
-			      boolean signed) {
+			    boolean signed) {
 	if (targetSize < stackSize) {
 	    emit(new DSPInstruction(stackSize-targetSize));
 	}

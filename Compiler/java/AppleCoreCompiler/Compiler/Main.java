@@ -140,11 +140,11 @@ public class Main {
 		    new AVMTranslatorPass();
 		translatorPass.runOn(sourceFile);
 
-		SCMacroWriter scMacroWriter = 
-		    new SCMacroWriter(System.out);
-		scMacroWriter.printVerboseComments =
+		SourceFileWriter writer =
+		    new SourceFileWriter(new SCMacroEmitter(System.out));
+		writer.printVerboseComments =
 		    printVerboseComments;
-		scMacroWriter.runOn(sourceFile);
+		writer.runOn(sourceFile);
 	    }
 	    catch (ACCError e) {
 		System.err.print("line " + e.getLineNumber() + " of " + 

@@ -656,6 +656,25 @@ public abstract class Instruction {
 	}
     }
 
+    /**
+     * 6502 pseudoinstruction
+     */
+    public static class NativeInstruction 
+	extends Pseudoinstruction
+    {
+	public final String operator;
+	public final String operand;
+	public NativeInstruction(String operator,
+				 String operand) {
+	    this.operator=operator;
+	    this.operand=operand;
+	}
+	public String toString() {
+	    return operator + " " + operand;
+	}
+    }
+
+
     protected static int sizedOpcode(int opcode, int size) {
 	int result = opcode;
 	if (size < 7) {
