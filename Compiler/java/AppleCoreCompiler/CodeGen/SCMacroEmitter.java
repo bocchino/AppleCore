@@ -76,7 +76,7 @@ public class SCMacroEmitter
 	emitComment("-------------------------------");
     }
 
-    public String labelAsString(String label) {
+    public String makeLabel(String label) {
 	// S-C Macro Assembler doesn't like underscores in labels
 	return label.replace('_','.').toUpperCase();
     }

@@ -1,8 +1,5 @@
 /**
- * Generic pass for traversing the AST and writing out 6502 assembly
- * code.  This pass factors out assembler-independent syntax details.
- * To write code for a specific assembler, implement this pass and
- * provide the assembler-specific code emitter functions.
+ * Generic pass for traversing the AST and writing out assembly code.
  *
  * Code generation uses the following registers in zero-page memory:
  *
@@ -157,9 +154,13 @@ public class SourceFileWriter
 	else if (def instanceof DataDecl) {
 	    emitVerboseComment(node);
 	    DataDecl dataDecl = (DataDecl) def;
-	    emitter.emitImmediateInstruction("LDA",emitter.labelAsString(dataDecl.label),false);
+	    emitter.emitImmediateInstruction("LDA",
+					     emitter.makeLabel(dataDecl.label),
+					     false);
 	    emitter.emitAbsoluteInstruction("JSR","ACC.PUSH.A");
-	    emitter.emitImmediateInstruction("LDA",emitter.labelAsString(dataDecl.label),true);
+	    emitter.emitImmediateInstruction("LDA",
+					     emitter.makeLabel(dataDecl.label),
+					     true);
 	    emitter.emitAbsoluteInstruction("JSR","ACC.PUSH.A");
 	}
     }
@@ -196,7 +197,8 @@ public class SourceFileWriter
 		emitter.emitInstruction("DEY");
 		emitter.emitAbsoluteInstruction("STY","$D9");
 		emitVerboseComment("do main function");
-		emitter.emitAbsoluteInstruction("JSR",emitter.labelAsString(firstFunction.name));
+		emitter.emitAbsoluteInstruction("JSR",
+						emitter.makeLabel(firstFunction.name));
 		emitVerboseComment("put DOS back in direct mode");
 		emitter.emitInstruction("PLA");
 		emitter.emitAbsoluteInstruction("STA","$AAB6");
@@ -361,14 +363,14 @@ public class SourceFileWriter
 	String label = getLabel();
 	emitter.emitImmediateInstruction("LDA",node.test.size);
 	emitter.emitAbsoluteInstruction("JSR","ACC.BOOLEAN");
-	emitter.emitAbsoluteInstruction("BNE",emitter.labelAsString(mangle("true"+label)));
-	emitter.emitAbsoluteInstruction("JMP",emitter.labelAsString(mangle("false"+label)));
+	emitter.emitAbsoluteInstruction("BNE",emitter.makeLabel(mangle("true"+label)));
+	emitter.emitAbsoluteInstruction("JMP",emitter.makeLabel(mangle("false"+label)));
 	// True part
 	emitter.emitLabel(mangle("true"+label));
 	emitter.emit("\n");
 	scan(node.thenPart);
 	if (node.elsePart != null)
-	    emitter.emitAbsoluteInstruction("JMP",emitter.labelAsString("endif" + label));
+	    emitter.emitAbsoluteInstruction("JMP",emitter.makeLabel("endif" + label));
 	// False part
 	emitter.emitLabel(mangle("false"+label));
 	emitter.emit("\n");
@@ -396,13 +398,13 @@ public class SourceFileWriter
 	// Do the branch
 	emitter.emitImmediateInstruction("LDA",node.test.size);
 	emitter.emitAbsoluteInstruction("JSR","ACC.BOOLEAN");
-	emitter.emitAbsoluteInstruction("BNE",emitter.labelAsString(mangle("true" + label)));
-	emitter.emitAbsoluteInstruction("JMP",emitter.labelAsString(mangle("false" + label)));
+	emitter.emitAbsoluteInstruction("BNE",emitter.makeLabel(mangle("true" + label)));
+	emitter.emitAbsoluteInstruction("JMP",emitter.makeLabel(mangle("false" + label)));
 	// True part
 	emitter.emitLabel(mangle("true" + label));
 	emitter.emit("\n");
 	scan(node.body);
-	emitter.emitAbsoluteInstruction("JMP",emitter.labelAsString(mangle("TEST"+label)));
+	emitter.emitAbsoluteInstruction("JMP",emitter.makeLabel(mangle("TEST"+label)));
 	// False part
 	emitter.emitLabel(mangle("false" + label));
 	emitter.emit("\n");
@@ -490,7 +492,7 @@ public class SourceFileWriter
 	    }
 	    else if (def instanceof ConstDecl ||
 		     def instanceof DataDecl) {
-		emitCallToConstant(emitter.labelAsString(id.name));
+		emitCallToConstant(emitter.makeLabel(id.name));
 		needIndirectCall = false;
 	    }
 	}
@@ -538,7 +540,7 @@ public class SourceFileWriter
 	}
 	emitVerboseComment("function call");
 	emitter.emitAbsoluteInstruction("JSR",
-					emitter.labelAsString(functionDecl.name));
+					emitter.makeLabel(functionDecl.name));
     }
     
     /**

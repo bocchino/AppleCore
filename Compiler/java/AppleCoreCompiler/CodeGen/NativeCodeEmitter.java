@@ -71,7 +71,7 @@ public abstract class NativeCodeEmitter
     public abstract void emitSeparatorComment();
 
     public void emitLabel(String label) {
-	emit(labelAsString(label));
+	emit(makeLabel(label));
     }
 
     public abstract void emitAsData(NumericConstant c);
@@ -88,7 +88,7 @@ public abstract class NativeCodeEmitter
 
     public abstract void emitStringConstant(StringConstant sc);
 
-    public abstract String labelAsString(String label);
+    public abstract String makeLabel(String label);
 
     public abstract void emitPreamble(SourceFile node);
 
