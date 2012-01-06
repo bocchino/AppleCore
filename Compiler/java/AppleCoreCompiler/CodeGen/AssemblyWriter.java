@@ -249,14 +249,22 @@ public abstract class AssemblyWriter
 	    emitLabel(node.name);
 	    emitLine();
 
-	    emitVerboseComment("push return address on program stack");
+	    emitVerboseComment("push return address");
 	    emitInstruction("PLA");
 	    emitAbsoluteInstruction("JSR","ACC.PUSH.A");
 	    emitInstruction("PLA");
 	    emitAbsoluteInstruction("JSR","ACC.PUSH.A");
 
+	    emitVerboseComment("push old FP");
+	    emitAbsoluteInstruction("JSR","ACC.PUSH.FP");
+	    
+	    emitVerboseComment("save new FP");
+	    emitImmediateInstruction("LDA",4);
+	    emitAbsoluteInstruction("JSR","ACC.SP.DOWN.A");
+	    emitAbsoluteInstruction("JSR","ACC.SET.FP.TO.SP");
+
 	    emitVerboseComment("bump stack to top of frame");
-	    emitImmediateInstruction("LDA",node.frameSize-2);
+	    emitImmediateInstruction("LDA",node.frameSize);
 	    emitAbsoluteInstruction("JSR","ACC.SP.UP.A");
 	    
 	    scan(node.varDecls);
@@ -501,17 +509,15 @@ public abstract class AssemblyWriter
 					List<Expression> args) 
 	throws ACCError
     {
-	emitVerboseComment("fill slots for new frame");
-	// Save bump size for undo
-	int bumpSize = 4;
-	// Save place for return address
-	emitImmediateInstruction("LDA",2);
-	emitAbsoluteInstruction("JSR","ACC.SP.UP.A");
-	// Push old FP
-	emitAbsoluteInstruction("JSR","ACC.PUSH.FP");
-	// Fill in the arguments
+	// Fill in the arguments, if any
 	Iterator<VarDecl> I = functionDecl.params.iterator();
 	if (args.size() > 0) {
+	    emitVerboseComment("fill slots for new frame");
+	    // Save bump size for undo
+	    int bumpSize = 4;
+	    // Save place for return address and FP
+	    emitImmediateInstruction("LDA",4);
+	    emitAbsoluteInstruction("JSR","ACC.SP.UP.A");
 	    for (Expression arg : args) {
 		VarDecl param = I.next();
 		emitVerboseComment("bind arg to " + param);
@@ -522,13 +528,11 @@ public abstract class AssemblyWriter
 		adjustSize(param.size,arg.size,arg.isSigned);
 		bumpSize += param.size;
 	    }
+	    emitVerboseComment("set SP for new frame");
+	    // Bump SP back down to new FP
+	    emitImmediateInstruction("LDA",bumpSize);
+	    emitAbsoluteInstruction("JSR","ACC.SP.DOWN.A");
 	}
-	emitVerboseComment("set FP for new frame");
-	// Bump SP back down to new FP
-	emitImmediateInstruction("LDA",bumpSize);
-	emitAbsoluteInstruction("JSR","ACC.SP.DOWN.A");
-	// Save new FP
-	emitAbsoluteInstruction("JSR","ACC.SET.FP.TO.SP");
 	emitVerboseComment("function call");
 	emitAbsoluteInstruction("JSR",labelAsString(functionDecl.name));
     }

@@ -19,6 +19,7 @@ ACC.BINOP.ADD
 *	FP[6,2][0,SIZE]
 * -------------------------------
 ADD
+	JSR ACC.FN.PROLOGUE
 	LDA #11
 	JSR ACC.EVAL.A.AND.B
 	LDA ACC.SIZE
@@ -57,6 +58,7 @@ ACC.BINOP.SUB
 *	FP[4,2][0,SIZE]
 * -------------------------------
 SUB
+	JSR ACC.FN.PROLOGUE
 	LDA #11
 	JSR ACC.EVAL.A.AND.B
 	LDA ACC.SIZE
@@ -185,6 +187,7 @@ ACC.MUL.INNER
 *	FP[6,2][0,SIZE]
 * -------------------------------
 MUL
+	JSR ACC.FN.PROLOGUE
 	LDA #11
 	JSR ACC.EVAL.A.AND.B
 	LDA ACC.SIZE
@@ -306,6 +309,7 @@ ACC.DIV.INNER
 * REMAINDER IN FP[10,2][0,SIZE]
 * -------------------------------
 DIV
+	JSR ACC.FN.PROLOGUE
 	LDA #13
 	JSR ACC.EVAL.A.AND.B
 	LDA ACC.SIZE

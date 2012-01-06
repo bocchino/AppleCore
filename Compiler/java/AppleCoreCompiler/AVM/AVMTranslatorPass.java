@@ -299,7 +299,7 @@ public class AVMTranslatorPass
 	}
 	// Bump SP back down to new FP
 	emit(new DSPInstruction(bumpSize));
-	emit(new CAFInstruction(functionDecl.name));
+	emit(new CFDInstruction(new Address(functionDecl.name)));
     }
     
     /**
@@ -307,7 +307,7 @@ public class AVMTranslatorPass
      */
     private void emitCallToConstant(String addr) {
 	restoreRegisters();
-	emit(new CNDInstruction(new Address(addr)));
+	emit(new CFDInstruction(new Address(addr)));
 	saveRegisters();
     }
 
@@ -322,7 +322,7 @@ public class AVMTranslatorPass
 	scan(node);
 	adjustSize(2,node.size,node.isSigned);
 	restoreRegisters();
-	emit(new CNIInstruction());
+	emit(new CFIInstruction());
 	saveRegisters();
     }
 
@@ -564,7 +564,7 @@ public class AVMTranslatorPass
 		emit(new VTMInstruction(reg.getOffset(),
 					new Address(reg.saveAddr)));
 	    }
-	    emit(new CNDInstruction(new Address("$FF3F")));
+	    emit(new CFDInstruction(new Address("$FF3F")));
 	}
     }
 
@@ -573,7 +573,7 @@ public class AVMTranslatorPass
      */
     private void saveRegisters() {
 	if (currentFunction.savedRegs.size() > 0) {
-	    emit(new CNDInstruction(new Address("$FF4A")));
+	    emit(new CFDInstruction(new Address("$FF4A")));
 	    for (RegisterExpression.Register reg :
 		     currentFunction.savedRegs) {
 		emit(new MTVInstruction(reg.getOffset(),

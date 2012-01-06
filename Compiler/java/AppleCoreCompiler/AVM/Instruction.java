@@ -11,27 +11,26 @@ public abstract class Instruction {
     public final String mnemonic;
     public final int opcode;
 
-    public static final int NOP  =0xEA;
+    public static final int NOP  = 0xEA;
 
-    public static final int BRK  =0;
-    public static final int BRF  =1;
-    public static final int BRU  =2;
-    public static final int CAF  =3;
-    public static final int CND  =4;
-    public static final int CNI  =5;
+    public static final int BRK  = 0;
+    public static final int BRF  = 1;
+    public static final int BRU  = 2;
+    public static final int CFD  = 4;
+    public static final int CFI  = 5;
 
     public static final int[] unsizedOpcodes = {
-	BRK,BRF,BRU,CAF,CND,CNI
+	BRK,BRF,BRU,CFD,CFI
     };
     public static final String[] unsizedMnemonics = {
-	"BRK","BRF","BRU","CAF","CND","CNI"
+	"BRK","BRF","BRU","CFD","CFI"
     };
 
     public static final int ADD  = 1<<3;
     public static final int AND  = 2<<3;
     public static final int DEC  = 3<<3;
     public static final int DSP  = 4<<3;
-    public static final int INC =  5<<3;
+    public static final int INC  = 5<<3;
     public static final int ISP  = 6<<3;
     public static final int MTS  = 7<<3;
     public static final int MTV  = 8<<3;
@@ -207,33 +206,15 @@ public abstract class Instruction {
     }
     
     /**
-     * Call AppleCore Function
+     * Call Function Direct
      */
-    public static class CAFInstruction
-	extends Instruction
-    {
-	public String name;
-
-	public CAFInstruction(String name) {
-	    super("CAF", CAF);
-	    this.name = name;
-	}
-
-	public String toString() {
-	    return instructionString(name);
-	}
-    }
-
-    /**
-     * Call Native Direct
-     */
-    public static class CNDInstruction
+    public static class CFDInstruction
 	extends Instruction
     {
 	public final Address address;
 
-	public CNDInstruction(Address address) {
-	    super("CND",CND);
+	public CFDInstruction(Address address) {
+	    super("CFD",CFD);
 	    this.address=address;
 	}
 
@@ -243,13 +224,13 @@ public abstract class Instruction {
     }
 
     /**
-     * Call Native Indirect
+     * Call Function Indirect
      */
-    public static class CNIInstruction
+    public static class CFIInstruction
 	extends Instruction
     {
-	public CNIInstruction() {
-	    super("CNI",CNI);
+	public CFIInstruction() {
+	    super("CFI",CFI);
 	}
 
     }
