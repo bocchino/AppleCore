@@ -9,6 +9,7 @@ import AppleCoreCompiler.Semantics.*;
 import AppleCoreCompiler.Errors.*;
 import AppleCoreCompiler.CodeGen.*;
 import AppleCoreCompiler.Warnings.*;
+import AppleCoreCompiler.AVM.*;
 
 public class Main {
 
@@ -134,6 +135,11 @@ public class Main {
 		exprStmtPass.runOn(sourceFile);
 		FunctionCallPass functionCallPass = new FunctionCallPass();
 		functionCallPass.runOn(sourceFile);
+
+		AVMTranslatorPass translatorPass =
+		    new AVMTranslatorPass();
+		translatorPass.runOn(sourceFile);
+
 		SCMacroWriter scMacroWriter = 
 		    new SCMacroWriter(System.out);
 		scMacroWriter.printVerboseComments =

@@ -5,11 +5,12 @@
 
 SRCS=\
 ${wildcard java/AppleCoreCompiler/Compiler/*java} \
+${wildcard java/AppleCoreCompiler/AST/*.java} \
 ${wildcard java/AppleCoreCompiler/Syntax/*.java} \
 ${wildcard java/AppleCoreCompiler/Semantics/*.java} \
 ${wildcard java/AppleCoreCompiler/Transforms/*.java} \
+${wildcard java/AppleCoreCompiler/AVM/*.java} \
 ${wildcard java/AppleCoreCompiler/CodeGen/*java} \
-${wildcard java/AppleCoreCompiler/AST/*.java} \
 ${wildcard java/AppleCoreCompiler/Errors/*java} \
 ${wildcard java/AppleCoreCompiler/Warnings/*java} \
 

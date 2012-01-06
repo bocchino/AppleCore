@@ -7,6 +7,7 @@ import java.util.*;
 import java.math.*;
 import AppleCoreCompiler.Syntax.*;
 import AppleCoreCompiler.Errors.*;
+import AppleCoreCompiler.AVM.*;
 
 public abstract class Node {
 
@@ -168,6 +169,8 @@ public abstract class Node {
 	    new TreeSet<RegisterExpression.Register>();
 	public final List<Statement> statements =
 	    new LinkedList<Statement>();
+	public final List<Instruction> instructions =
+	    new LinkedList<Instruction>();
 
 	public void accept(Visitor v) 
 	    throws ACCError 
