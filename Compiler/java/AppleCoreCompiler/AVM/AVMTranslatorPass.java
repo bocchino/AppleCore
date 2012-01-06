@@ -110,7 +110,7 @@ public class AVMTranslatorPass
 	    
 	    node.instructions.clear();
 	    emit(new LabelInstruction(node.name));
-	    emit(new NativeInstruction("JSR","AVM.EXECUTE"));
+	    emit(new NativeInstruction("JMP","AVM.EXECUTE.FN"));
 	    emit(new ISPInstruction(node.frameSize));
 
 	    scan(node.varDecls);
@@ -141,6 +141,7 @@ public class AVMTranslatorPass
 	throws ACCError
     {
 	// Construct the labels
+	boolean needTest = !node.test.isTrue() && !node.test.isFalse();
 	String label = getLabel();
 	LabelInstruction trueLabel = 
 	    new LabelInstruction(mangle("TRUE"+label));
@@ -149,20 +150,26 @@ public class AVMTranslatorPass
 	LabelInstruction endLabel = 
 	    new LabelInstruction(mangle("ENDIF"+label));
 	// Test and branch
-	needAddress = false;
-	scan(node.test);
-	emit(new BRFInstruction(falseLabel));
+	if (needTest) {
+	    needAddress = false;
+	    scan(node.test);
+	    emit(new BRFInstruction(falseLabel));
+	}
 	// True part
-	emit(trueLabel);
-	scan(node.thenPart);
-	if (node.elsePart != null) {
-	    emit(new BRUInstruction(endLabel));
+	if (!node.test.isFalse()) {
+	    emit(trueLabel);
+	    scan(node.thenPart);
+	    if (node.elsePart != null && !node.test.isTrue()) {
+		emit(new BRUInstruction(endLabel));
+	    }
 	}
 	// False part
-	emit(falseLabel);
-	if (node.elsePart != null) {
-	    scan(node.elsePart);
-	    emit(endLabel);
+	if (!node.test.isTrue()) {
+	    emit(falseLabel);
+	    if (node.elsePart != null) {
+		scan(node.elsePart);
+		emit(endLabel);
+	    }
 	}
     }
 
@@ -179,15 +186,28 @@ public class AVMTranslatorPass
 	    new LabelInstruction(mangle("EXIT"+label));
 	// Test and branch
 	needAddress = false;
-	emit(testLabel);
-	scan(node.test);
-	emit(new BRFInstruction(exitLabel));
-	// Loop body
-	emit(bodyLabel);
-	scan(node.body);
-	emit(new BRUInstruction(testLabel));
-	// Loop exit
-	emit(exitLabel);
+	boolean needTest = !node.test.isTrue() && !node.test.isFalse();
+	boolean needBody = !node.test.isFalse();
+	if (needTest) {
+	    emit(testLabel);
+	    scan(node.test);
+	    emit(new BRFInstruction(exitLabel));
+	}
+	if (needBody) {
+	    // Loop body
+	    emit(bodyLabel);
+	    scan(node.body);
+	    if (needTest) {
+		emit(new BRUInstruction(testLabel));
+	    }
+	    else {
+		emit(new BRUInstruction(bodyLabel));
+	    }
+	}
+	if (needTest) {
+	    // Loop exit
+	    emit(exitLabel);
+	}
     }
     
     public void visitExpressionStatement(ExpressionStatement node) 
@@ -279,15 +299,13 @@ public class AVMTranslatorPass
 					List<Expression> args) 
 	throws ACCError
     {
-	// Save bump size for undo
-	int bumpSize = 4;
-	// Save place for return address
-	emit(new ISPInstruction(2));
-	// Push old FP
-	emit(new PVAInstruction(0));
-	// Fill in the arguments
+	// Fill in the arguments, if any
 	Iterator<VarDecl> I = functionDecl.params.iterator();
 	if (args.size() > 0) {
+	    // Save bump size for undo
+	    int bumpSize = 4;
+	    // Save place for return address and saved FP
+	    emit(new ISPInstruction(4));
 	    for (Expression arg : args) {
 		VarDecl param = I.next();
 		// Evaluate the argument
@@ -297,12 +315,12 @@ public class AVMTranslatorPass
 		adjustSize(param.size,arg.size,arg.isSigned);
 		bumpSize += param.size;
 	    }
+	    // Bump SP back down to new FP
+	    emit(new DSPInstruction(bumpSize));
 	}
-	// Bump SP back down to new FP
-	emit(new DSPInstruction(bumpSize));
 	emit(new CFDInstruction(new Address(functionDecl.name)));
     }
-    
+
     /**
      * Calling a constant address: restore regs, JSR, and save regs.
      */

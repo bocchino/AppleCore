@@ -6,11 +6,17 @@ ASM2EXEC = ${APPLECORE}/Scripts/asm2exec
 SRCS     = ${wildcard ac/*.ac}
 MAKE_ALL ?= perl ${APPLECORE}/Scripts/make-all.pl
 
+all : all-exec all-avm
+    
+
 all-exec : exec all-asm
 	${MAKE_ALL} asm exec
 
 all-asm : asm ${SRCS}
 	${MAKE_ALL} ac asm
+
+all-avm : avm ${SRCS}
+	${MAKE_ALL} ac avm
 
 file-exec : asm/${FILE}.asm
 	make exec/${FILE}.exec
@@ -18,11 +24,17 @@ file-exec : asm/${FILE}.asm
 file-asm : ac/${FILE}.ac
 	make asm/${FILE}.asm
 
+file-avm : ac/${FILE}.ac
+	make avm/${FILE}.avm
+
 exec/${FILE}.exec : asm/${FILE}.asm exec 
 	${ASM2EXEC} < $< > $@
 
 asm/${FILE}.asm : ac/${FILE}.ac asm
 	${ACC} $< > $@
+
+avm/${FILE}.avm : ac/${FILE}.ac avm
+	${ACC} -avm $< > $@
 
 exec : 
 	mkdir $@
@@ -30,5 +42,8 @@ exec :
 asm :
 	mkdir $@
 
+avm :
+	mkdir $@
+
 clean ::
-	rm -Rf asm exec
+	rm -Rf asm avm exec

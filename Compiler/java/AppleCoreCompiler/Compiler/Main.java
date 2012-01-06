@@ -34,6 +34,11 @@ public class Main {
     private static boolean printVerboseComments = false;
 
     /**
+     * Whether to generate AppleCore Virtual Machine code;
+     */
+    private static boolean generateAVMCode = false;
+
+    /**
      * Origin of translated assembly file
      */
     private static int origin = -1;
@@ -74,6 +79,9 @@ public class Main {
 	    else {
 		throw new OptionError("only one source file allowed");
 	    }
+	}
+	else if (arg.equals("-avm")) {
+	    generateAVMCode = true;
 	}
 	else if (arg.substring(0,7).equals("-decls=")) {
 	    for (String declFile : arg.substring(7).split(":")) {
@@ -140,8 +148,12 @@ public class Main {
 		    new AVMTranslatorPass();
 		translatorPass.runOn(sourceFile);
 
+		SourceFileWriter.Mode mode =
+		    generateAVMCode ? SourceFileWriter.Mode.AVM :
+		    SourceFileWriter.Mode.NATIVE;
 		SourceFileWriter writer =
-		    new SourceFileWriter(new SCMacroEmitter(System.out));
+		    new SourceFileWriter(new SCMacroEmitter(System.out),
+					 mode);
 		writer.printVerboseComments =
 		    printVerboseComments;
 		writer.runOn(sourceFile);

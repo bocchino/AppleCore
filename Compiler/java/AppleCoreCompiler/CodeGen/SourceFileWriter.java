@@ -19,6 +19,8 @@ import AppleCoreCompiler.AST.*;
 import AppleCoreCompiler.AST.Node.*;
 import AppleCoreCompiler.Errors.*;
 import AppleCoreCompiler.AST.Node.RegisterExpression.Register;
+import AppleCoreCompiler.AVM.*;
+import AppleCoreCompiler.AVM.Instruction.*;
 
 import java.io.*;
 import java.util.*;
@@ -29,11 +31,18 @@ public class SourceFileWriter
     implements Pass
 {
 
+    public enum Mode {
+	NATIVE,AVM;
+    }
+
     /* Initialization stuff */
     public final NativeCodeEmitter emitter;
+    public final Mode mode;
 
-    public SourceFileWriter(NativeCodeEmitter emitter) {
+    public SourceFileWriter(NativeCodeEmitter emitter,
+			    Mode mode) {
 	this.emitter = emitter;
+	this.mode = mode;
     }
 
     public void runOn(SourceFile sourceFile) 
@@ -211,7 +220,9 @@ public class SourceFileWriter
 	}
 	emitter.emitComment("START OF FILE " + node.name);
 	emitter.emitSeparatorComment();
+	
 	super.visitSourceFile(node);
+
 	if (constMap.size() > 0) {
 	    emitter.emitSeparatorComment();
 	    emitter.emitComment("LARGE CONSTANTS");
@@ -241,43 +252,68 @@ public class SourceFileWriter
 	    emitter.emitSeparatorComment();
 	    emitter.emitComment("function " + node.name);
 	    emitter.emitSeparatorComment();
-
+	    
 	    printStatus("entering " + node);
 	    
-	    currentFunction = node;
-	    branchLabelCount=1;
-
-	    computeStackSlotsFor(node);
-	    
-	    emitter.emitLabel(node.name);
-	    emitter.emitLine();
-
-	    emitVerboseComment("push return address");
-	    emitter.emitInstruction("PLA");
-	    emitter.emitAbsoluteInstruction("JSR","ACC.PUSH.A");
-	    emitter.emitInstruction("PLA");
-	    emitter.emitAbsoluteInstruction("JSR","ACC.PUSH.A");
-
-	    emitVerboseComment("push old FP");
-	    emitter.emitAbsoluteInstruction("JSR","ACC.PUSH.FP");
-	    
-	    emitVerboseComment("save new FP");
-	    emitter.emitImmediateInstruction("LDA",4);
-	    emitter.emitAbsoluteInstruction("JSR","ACC.SP.DOWN.A");
-	    emitter.emitAbsoluteInstruction("JSR","ACC.SET.FP.TO.SP");
-
-	    emitVerboseComment("bump stack to top of frame");
-	    emitter.emitImmediateInstruction("LDA",node.frameSize);
-	    emitter.emitAbsoluteInstruction("JSR","ACC.SP.UP.A");
-	    
-	    scan(node.varDecls);
-	    scan(node.statements);
-
-	    if (!node.endsInReturnStatement()) {
-		pullReturnAddress();
-		emitVerboseComment("restore old frame and return");
-		emitter.emitAbsoluteInstruction("JMP","ACC.FN.RETURN");
+	    if (mode == Mode.NATIVE) {
+		// TODO: Generate native code by scanning the AVM
+		// instructions, instead of scanning the AST again.
+		generateNativeCodeFor(node);
 	    }
+	    else {
+		generateAVMCodeFor(node);
+	    }
+	}
+    }
+
+    private void generateNativeCodeFor(FunctionDecl node) 
+	throws ACCError
+    {
+	currentFunction = node;
+	branchLabelCount=1;
+	
+	computeStackSlotsFor(node);
+	
+	emitter.emitLabel(node.name);
+	emitter.emitLine();
+	
+	emitVerboseComment("push return address");
+	emitter.emitInstruction("PLA");
+	emitter.emitAbsoluteInstruction("JSR","ACC.PUSH.A");
+	emitter.emitInstruction("PLA");
+	emitter.emitAbsoluteInstruction("JSR","ACC.PUSH.A");
+	
+	emitVerboseComment("push old FP");
+	emitter.emitAbsoluteInstruction("JSR","ACC.PUSH.FP");
+	
+	emitVerboseComment("save new FP");
+	emitter.emitImmediateInstruction("LDA",4);
+	emitter.emitAbsoluteInstruction("JSR","ACC.SP.DOWN.A");
+	emitter.emitAbsoluteInstruction("JSR","ACC.SET.FP.TO.SP");
+	
+	emitVerboseComment("bump stack to top of frame");
+	emitter.emitImmediateInstruction("LDA",node.frameSize);
+	emitter.emitAbsoluteInstruction("JSR","ACC.SP.UP.A");
+	
+	scan(node.varDecls);
+	scan(node.statements);
+	
+	if (!node.endsInReturnStatement()) {
+	    pullReturnAddress();
+	    emitVerboseComment("restore old frame and return");
+	    emitter.emitAbsoluteInstruction("JMP","ACC.FN.RETURN");
+	}
+    }
+
+    private void generateAVMCodeFor(FunctionDecl node) 
+	throws ACCError
+    {
+	for (Instruction inst : node.instructions) {
+	    if (!(inst instanceof LabelInstruction) &&
+		!(inst instanceof CommentInstruction)) {
+		emitter.printStream.print("\t");
+	    }
+	    emitter.printStream.println(inst);
 	}
     }
 
@@ -681,7 +717,7 @@ public class SourceFileWriter
      */
     public void emitVerboseComment(Object comment) {
 	if (printVerboseComments) {
-	    emitter.emit(comment.toString());
+	    emitter.emitComment(comment);
 	}
     }
 

@@ -17,7 +17,7 @@ import java.math.*;
 
 public abstract class NativeCodeEmitter
 {
-    protected final PrintStream printStream;
+    public final PrintStream printStream;
     public NativeCodeEmitter(PrintStream printStream) {
 	this.printStream = printStream;
     }

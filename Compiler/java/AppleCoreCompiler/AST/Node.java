@@ -321,6 +321,8 @@ public abstract class Node {
 	public int getSize() { return size; }
 	public boolean isSigned() { return this.isSigned; }
 	public boolean isZero() { return false; }
+	public boolean isTrue() { return false; }
+	public boolean isFalse() { return false; }
 
 	/**
 	 * Whether the value represented by this expression is signed.
@@ -559,6 +561,12 @@ public abstract class Node {
 	public abstract BigInteger valueAsBigInteger();
 	public abstract BigInteger unsignedValue();
 	public boolean isConstValExpr() { return true; }
+	public boolean isTrue() {
+	    return valueAsBigInteger().and(BigInteger.ONE).equals(BigInteger.ONE);
+	}
+	public boolean isFalse() {
+	    return valueAsBigInteger().and(BigInteger.ONE).equals(BigInteger.ZERO);
+	}
     }
 
     public static class IntegerConstant 
