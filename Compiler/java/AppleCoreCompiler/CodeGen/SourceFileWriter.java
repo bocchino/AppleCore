@@ -313,7 +313,7 @@ public class SourceFileWriter
 		!(inst instanceof CommentInstruction)) {
 		emitter.printStream.print("\t");
 	    }
-	    emitter.printStream.println(inst);
+	    emitter.printStream.println(emitter.makeLabel(inst.toString()));
 	}
     }
 

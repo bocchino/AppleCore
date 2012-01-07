@@ -16,8 +16,8 @@ public abstract class Instruction {
     public static final int BRK  = 0;
     public static final int BRF  = 1;
     public static final int BRU  = 2;
-    public static final int CFD  = 4;
-    public static final int CFI  = 5;
+    public static final int CFD  = 3;
+    public static final int CFI  = 4;
 
     public static final int[] unsizedOpcodes = {
 	BRK,BRF,BRU,CFD,CFI

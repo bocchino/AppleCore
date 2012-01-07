@@ -1,0 +1,231 @@
+#!/usr/bin/perl
+
+use strict;
+
+sub get_size_from_arg(@);
+sub emit(@);
+sub assemble_instr(@);
+sub assemble_unsized_instr(@);
+sub emit_instr(@);
+sub emit_opcode(@);
+sub emit_address(@);
+sub emit_inline_comment(@);
+sub emit_line_end();
+sub emit_byte_as_hex(@);
+sub assemble_sized_instr(@);
+sub assemble_signed_instr(@);
+sub assemble_PHC_instr(@);
+
+my %unsized_instrs = (
+  "BRF" => { "opcode" => 1 },
+  "BRU" => { "opcode" => 2 },
+  "CFD" => { "opcode" => 3 },
+  "CFI" => { "opcode" => 4 }
+);
+
+my %sized_instrs = (
+  "ADD" => { "opcode" => 1<<3 },
+  "AND" => { "opcode" => 2<<3 },
+  "DEC" => { "opcode" => 3<<3 },
+  "DSP" => { "opcode" => 4<<3 },
+  "INC" => { "opcode" => 5<<3 },
+  "ISP" => { "opcode" => 6<<3 },
+  "MTS" => { "opcode" => 7<<3 },
+  "MTV" => { "opcode" => 8<<3 },
+  "NEG" => { "opcode" => 9<<3 },
+  "NOT" => { "opcode" => 10<<3 },
+  "ORL" => { "opcode" => 11<<3 },
+  "ORX" => { "opcode" => 12<<3 },
+  "PHC" => { "opcode" => 13<<3 },
+  "PVA" => { "opcode" => 14<<3 },
+  "RAF" => { "opcode" => 15<<3 },
+  "SHL" => { "opcode" => 16<<3 },
+  "STM" => { "opcode" => 17<<3 },
+  "SUB" => { "opcode" => 18<<3 },
+  "TEQ" => { "opcode" => 19<<3 },
+  "VTM" => { "opcode" => 20<<3 }
+);
+
+my %signed_instrs = (
+  "DIV" => { "opcode" => 21<<3 },
+  "EXT" => { "opcode" => 22<<3 },
+  "MUL" => { "opcode" => 23<<3 },
+  "SHR" => { "opcode" => 24<<3 },
+  "TGE" => { "opcode" => 25<<3 },
+  "TGT" => { "opcode" => 26<<3 },
+  "TLE" => { "opcode" => 27<<3 },
+  "TLT" => { "opcode" => 28<<3 }
+);
+  
+my $line_num=1;
+
+while (<>) {
+  my $line = $_;
+  if ($line =~ /^\*/) {
+    # Pass comments through
+    print $line;
+  }
+  elsif ($line =~ /^\s+(\w\w\w)(.*)/) {
+    # Attempt to assemble instruction
+    my $mnemonic=$1;
+    my $arg=$2;
+    if ($arg =~ /^\s*(\S*)/) {
+      $arg=$1;
+    }
+    if (!assemble_instr($mnemonic,$arg)) {
+      print $line;
+    }
+  }
+  else {
+    # Pass everything else through
+    print $line;
+  }
+  ++$line_num;
+}
+
+sub assemble_instr(@) {
+  (my $mnemonic, my $arg)=@_;
+  my $instr=$unsized_instrs{$mnemonic};
+  if ($instr) {
+    assemble_unsized_instr($instr,$mnemonic,$arg);
+    return 1;
+  }
+  if ($mnemonic eq "PHC") {
+    assemble_PHC_instr($instr,$arg);
+    return 1;
+  }
+  $instr=$sized_instrs{$mnemonic};
+  if ($instr) {
+    assemble_sized_instr($instr,$mnemonic,$arg);
+    return 1;
+  }
+  $instr=$signed_instrs{$mnemonic};
+  if ($instr) {
+      assemble_signed_instr($instr,$mnemonic,$arg);
+      return 1;
+  }
+  return 0;
+}
+
+sub assemble_unsized_instr(@) {
+  (my $instr, my $mnemonic, my $arg)=@_;
+  emit_instr(".HS");
+  emit_space();
+  emit_byte_as_hex($instr->{"opcode"});
+  emit_inline_comment($mnemonic);
+  emit_line_end();
+  emit_address($arg);
+}
+
+sub assemble_PHC_instr(@) {
+  (my $instr, my $arg)=@_;
+  if ($arg =~ /^\$(.*)/) {
+    # TODO
+  }
+  else {
+    my $opcode=$instr->{"opcode"} | 2;
+    emit_instr(".HS");
+    emit_space();
+    emit_byte_as_hex($opcode);
+    emit_inline_comment("PHC");
+    emit_line_end();
+    emit_instr(".DA");
+    emit_space();
+    emit($arg);
+    emit_line_end();
+  }
+}
+
+sub assemble_sized_instr(@) {
+  (my $instr, my $mnemonic, my $arg)=@_;
+  my $opcode=$instr->{"opcode"};
+  my $size;
+  my $target;
+  if ($arg =~ /(.*)(?:(?:<-)|(?:->))(.*)/) {
+    # VTM or MTV case
+    $size=get_size_from_arg($1);
+    $target=get_size_from_arg($2);
+  }
+  else {
+    $size=get_size_from_arg($arg);
+  }
+  emit_instr(".HS");
+  emit_space();
+  if ($size < 7) {
+    emit_byte_as_hex($opcode | $size);
+  }
+  else {
+    $opcode |= 7;
+    emit_byte_as_hex($opcode);
+    emit_byte_as_hex($size);
+  }
+  if ($target) {
+    emit_byte_as_hex($target);
+  }
+  emit_inline_comment("$mnemonic $arg");
+  emit_line_end();
+}
+
+sub assemble_signed_instr(@) {
+  (my $instr, my $mnemonic, my $arg)=@_;
+  my $opcode=$instr->{"opcode"};
+  if ($arg =~ /(.*)S$/) {
+      $arg=$1;
+      $opcode |= (1<<2);
+  }
+  my $size=get_size_from_arg($arg);
+  emit_instr(".HS");
+  emit_space();
+  if ($size < 3) {
+    emit_byte_as_hex($opcode | $size);
+  }
+  else {
+    emit_byte_as_hex($opcode | 3);
+    emit_byte_as_hex($size);
+  }
+  emit_inline_comment("$mnemonic $arg");
+  emit_line_end();
+}
+
+sub emit(@) {
+  print shift @_;
+}
+
+sub emit_byte_as_hex(@) {
+  (my $byte) = @_;
+  printf "%02X", $byte;
+}
+
+sub emit_address(@) {
+  (my $addr) = @_;
+  emit_instr(".DA");
+  emit_space();
+  print $addr;
+  emit_line_end;
+}
+
+sub emit_inline_comment(@) {
+  (my $comment) = @_;
+  print "\t$comment";
+}
+
+sub emit_line_end() {
+  print "\n";
+}
+
+sub emit_instr(@) {
+  (my $instr) = @_;
+  print "\t$instr";
+}
+
+sub emit_space() {
+    print " ";
+}
+
+sub get_size_from_arg(@) {
+  (my $arg)=@_;
+  if ($arg =~ /^\$(\S+)/) {
+    return hex $1;
+  }
+  return $arg;
+}

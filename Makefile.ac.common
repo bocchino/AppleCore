@@ -2,39 +2,57 @@
 # Makefile for translating AppleCore source files.
 #
 ACC      ?= ${APPLECORE}/Compiler/bin/acc
+AVM-ASM  ?= ${APPLECORE}/Assembler/bin/avm-asm
 ASM2EXEC = ${APPLECORE}/Scripts/asm2exec
 SRCS     = ${wildcard ac/*.ac}
 MAKE_ALL ?= perl ${APPLECORE}/Scripts/make-all.pl
 
-all : all-exec all-avm
-    
-
-all-exec : exec all-asm
-	${MAKE_ALL} asm exec
+all : all-exec all-avm.exec
 
 all-asm : asm ${SRCS}
 	${MAKE_ALL} ac asm
 
+all-exec : exec all-asm
+	${MAKE_ALL} asm exec
+
 all-avm : avm ${SRCS}
 	${MAKE_ALL} ac avm
 
-file-exec : asm/${FILE}.asm
-	make exec/${FILE}.exec
+all-avm.asm : avm.asm all-avm
+	${MAKE_ALL} avm avm.asm
+
+all-avm.exec : avm.exec all-avm.asm
+	${MAKE_ALL} avm.asm avm.exec
 
 file-asm : ac/${FILE}.ac
 	make asm/${FILE}.asm
 
+file-exec : asm/${FILE}.asm
+	make exec/${FILE}.exec
+
 file-avm : ac/${FILE}.ac
 	make avm/${FILE}.avm
 
-exec/${FILE}.exec : asm/${FILE}.asm exec 
-	${ASM2EXEC} < $< > $@
+file-avm.asm : avm/${FILE}.avm
+	make avm.asm/${FILE}.avm.asm
+
+file-avm.exec : avm.asm/${FILE}.avm.asm
+	make avm.exec/${FILE}.avm.exec
 
 asm/${FILE}.asm : ac/${FILE}.ac asm
 	${ACC} $< > $@
 
+exec/${FILE}.exec : asm/${FILE}.asm exec 
+	${ASM2EXEC} < $< > $@
+
 avm/${FILE}.avm : ac/${FILE}.ac avm
 	${ACC} -avm $< > $@
+
+avm.asm/${FILE}.avm.asm : avm/${FILE}.avm avm.asm
+	${AVM-ASM} $< > $@
+
+avm.exec/${FILE}.avm.exec : avm.asm/${FILE}.avm.asm avm.exec
+	${ASM2EXEC} < $< > $@
 
 exec : 
 	mkdir $@
@@ -43,6 +61,12 @@ asm :
 	mkdir $@
 
 avm :
+	mkdir $@
+
+avm.asm :
+	mkdir $@
+
+avm.exec :
 	mkdir $@
 
 clean ::
