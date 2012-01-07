@@ -53,7 +53,7 @@ public abstract class Instruction {
 	SUB,TEQ,VTM
     };
     public static final String[] sizedMnemonics = {
-	"ADD","AND","DEC","DSP","EXT","INC","ISP",
+	"ADD","AND","DEC","DSP","INC","ISP",
 	"MTS","MTV","NEG","NOT","ORL","ORX","PHC","PVA",
 	"RAF","SHL","STM","SUB","TEQ","VTM"
     };
@@ -86,7 +86,7 @@ public abstract class Instruction {
 
     public static final String decode(int opcode) {
 	opcode = opcode & 0xFF;
-	if (opcode < 6) {
+	if (opcode < 5) {
 	    return unsizedMnemonics[opcode];
 	}
 	else if (opcode == 0xEA) {

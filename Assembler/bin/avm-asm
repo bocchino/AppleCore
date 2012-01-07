@@ -14,7 +14,9 @@ sub emit_line_end();
 sub emit_byte_as_hex(@);
 sub assemble_sized_instr(@);
 sub assemble_signed_instr(@);
-sub assemble_PHC_instr(@);
+sub get_size_of_const(@);
+sub emit_constant(@);
+sub emit_HS(@);
 
 my %unsized_instrs = (
   "BRF" => { "opcode" => 1 },
@@ -86,24 +88,24 @@ while (<>) {
 sub assemble_instr(@) {
   (my $mnemonic, my $arg)=@_;
   my $instr=$unsized_instrs{$mnemonic};
+  # Try for an unsized instruction
   if ($instr) {
     assemble_unsized_instr($instr,$mnemonic,$arg);
     return 1;
   }
-  if ($mnemonic eq "PHC") {
-    assemble_PHC_instr($instr,$arg);
-    return 1;
-  }
+  # Otherwise try for a sized instruction
   $instr=$sized_instrs{$mnemonic};
   if ($instr) {
     assemble_sized_instr($instr,$mnemonic,$arg);
     return 1;
   }
+  # Otherwise try for a signed instruction
   $instr=$signed_instrs{$mnemonic};
   if ($instr) {
-      assemble_signed_instr($instr,$mnemonic,$arg);
-      return 1;
+    assemble_signed_instr($instr,$mnemonic,$arg);
+    return 1;
   }
+  # Otherwise fail
   return 0;
 }
 
@@ -112,28 +114,9 @@ sub assemble_unsized_instr(@) {
   emit_instr(".HS");
   emit_space();
   emit_byte_as_hex($instr->{"opcode"});
-  emit_inline_comment($mnemonic);
+  emit_inline_comment("$mnemonic $arg");
   emit_line_end();
   emit_address($arg);
-}
-
-sub assemble_PHC_instr(@) {
-  (my $instr, my $arg)=@_;
-  if ($arg =~ /^\$(.*)/) {
-    # TODO
-  }
-  else {
-    my $opcode=$instr->{"opcode"} | 2;
-    emit_instr(".HS");
-    emit_space();
-    emit_byte_as_hex($opcode);
-    emit_inline_comment("PHC");
-    emit_line_end();
-    emit_instr(".DA");
-    emit_space();
-    emit($arg);
-    emit_line_end();
-  }
 }
 
 sub assemble_sized_instr(@) {
@@ -141,7 +124,22 @@ sub assemble_sized_instr(@) {
   my $opcode=$instr->{"opcode"};
   my $size;
   my $target;
-  if ($arg =~ /(.*)(?:(?:<-)|(?:->))(.*)/) {
+  my $phc_const;
+
+  # Get size, phc_const, target
+  if ($mnemonic eq "PHC") {
+    # PHC case
+    if ($arg =~ /^\$(.*)/) {
+      # Numeric constant given
+      $phc_const=$1;
+      $size=get_size_of_const($phc_const);     
+    }
+    else {
+      # Label given; size=2
+      $size=2;
+    }
+  }
+  elsif ($arg =~ /(.*)(?:(?:<-)|(?:->))(.*)/) {
     # VTM or MTV case
     $size=get_size_from_arg($1);
     $target=get_size_from_arg($2);
@@ -149,21 +147,70 @@ sub assemble_sized_instr(@) {
   else {
     $size=get_size_from_arg($arg);
   }
-  emit_instr(".HS");
-  emit_space();
+
+  # Emit opcode
   if ($size < 7) {
-    emit_byte_as_hex($opcode | $size);
+    emit_HS($opcode | $size);
   }
   else {
-    $opcode |= 7;
-    emit_byte_as_hex($opcode);
-    emit_byte_as_hex($size);
-  }
-  if ($target) {
-    emit_byte_as_hex($target);
+    emit_HS($opcode | 7);
   }
   emit_inline_comment("$mnemonic $arg");
   emit_line_end();
+
+  # Emit additional size byte
+  if ($size >= 7) {
+    emit_HS($size);
+    emit_line_end();
+  }
+
+  # Emit target
+  if ($target) {
+    emit_HS($target);
+    emit_line_end();
+  }
+
+  # Emit PHC constant
+  if ($mnemonic eq "PHC") {
+    if ($arg =~ /^\$(.*)/) {
+      emit_constant($phc_const);
+    }
+    else {
+      emit_instr(".DA");
+      emit_space();
+      emit($arg);
+      emit_line_end();
+    }
+  }
+}
+
+sub emit_HS(@) {
+  my $arg=shift @_;
+  emit_instr(".HS");
+  emit_space();
+  emit_byte_as_hex($arg);
+}
+
+sub get_size_of_const(@) {
+  my $const=hex shift @_;
+  my $size=0;
+  do {
+    $const = $const>>8;
+    $size++;
+  } while ($const>0);
+  return $size;
+}
+
+my $MAX_CONST_LEN=10;
+
+sub emit_constant(@) {
+  my $const=shift @_;
+  $const=hex $const;
+  do {
+    emit_HS($const & 0xFF);
+    emit_line_end();
+    $const = $const>>8;
+  } while ($const > 0);
 }
 
 sub assemble_signed_instr(@) {
@@ -174,17 +221,22 @@ sub assemble_signed_instr(@) {
       $opcode |= (1<<2);
   }
   my $size=get_size_from_arg($arg);
-  emit_instr(".HS");
-  emit_space();
+
+  # Emit opcode
   if ($size < 3) {
-    emit_byte_as_hex($opcode | $size);
+    emit_HS($opcode | $size);
   }
   else {
-    emit_byte_as_hex($opcode | 3);
-    emit_byte_as_hex($size);
+    emit_HS($opcode | 3);
   }
   emit_inline_comment("$mnemonic $arg");
   emit_line_end();
+
+  # Emit additional size byte
+  if ($size >= 3) {
+    emit_HS($size);
+    emit_line_end();
+  }
 }
 
 sub emit(@) {
@@ -229,3 +281,4 @@ sub get_size_from_arg(@) {
   }
   return $arg;
 }
+
