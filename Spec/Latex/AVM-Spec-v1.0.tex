@@ -1,3 +1,4 @@
+
 \documentclass[10pt]{article}
 
 \input{defs}
@@ -61,6 +62,9 @@ translated to AVM code.  That way, the function works normally when
 called from normal 6502 code.  Also, subroutine calls within AVM
 code work the same way regardless of whether the callee function
 contains AVM or native code.
+The call to the interpreter also stores the callee's frame pointer
+on the stack, as specified in Section 5.4 of the AppleCore
+language specification.
 
 \section{Instruction Set}
 
@@ -109,7 +113,104 @@ opcode.
 
 \subsection{Sized Instructions}
 
-TODO
+Every sized instruction has a one-byte unsigned size argument.
+If the value of the size argument is between 0 and 6 inclusive,
+then the size argument is stored in the low-order 3 bits of the
+opcode; otherwise the low-order 3 bits are all
+ones and the size is stored in the byte immediately following
+the opcode.  Instructions \kwd{MTV}, \kwd{PHC}, and \kwd{VTM}
+each have an additional
+argument which is stored in the byte or bytes immediately
+following the one or two bytes representing the opcode and
+size.
+
+\bfhead{ADD (Add, Opcodes \$08--\$0F):} Pull two \emph{size}-byte
+values off the stack, add the values ignoring overflow, and push the
+result on the stack.
+
+\bfhead{AND (Bitwise And, Opcodes \$10--\$17):} Pull two
+\emph{size}-byte values off the stack, compute the bitwise and of the
+values, and push the result on the stack.
+
+\bfhead{DEC (Decrement Memory, Opcodes \$18--\$1F):} Pull a two-byte
+address off the stack and decrement the \emph{size}- byte value stored
+at that address in memory.  Push the result on the stack.
+
+\bfhead{DSP (Decrease Stack Pointer, Opcodes \$20--\$27):}
+Decrease the AppleCore program stack pointer by \emph{size}.
+
+\bfhead{INC (Increment Memory, Opcodes \$28--2F):} Pull a two-byte
+address off the stack and increment the \emph{size}-byte value stored
+at that address in memory.  Push the result on the stack.
+
+\bfhead{ISP (Increase Stack Pointer, Opcodes \$30--\$37):}
+Decrease the AppleCore program stack pointer by \emph{size}.
+
+\bfhead{MTS (Memory To Stack, Opcodes \$38--\$3F):}
+Pull a two-byte address off the stack. Push the \emph{size}
+bytes in memory starting at that address on the stack.
+
+\bfhead{MTV (Memory To Variable, Opcodes \$40--\$47):}
+Treat the byte following the opcode and size as a zero-page
+address.  Read the value from that address and store it
+at address $\kwd{FP}+\nonterm{size}$, where \kwd{FP} is the
+AppleCore frame pointer.
+
+\bfhead{NEG (Arithmetic Negation, Opcodes \$48--\$4F):} Pull a
+\emph{size}-byte value off the stack, negate the value (i.e., form the
+two's complement), and push the result on the stack.
+
+\bfhead{NOT (Logical Negation, Opcodes \$50--\$57):} Pull a
+\emph{size}-byte value off the stack, logically negate the bits of the
+value, and push the result on the stack.
+
+\bfhead{ORL (Or Logical, Opcodes \$58--\$5F):} Pull two
+\emph{size}-byte values off the stack, form the logical or of the two
+values, and push the result on the stack.
+
+\bfhead{ORX (Or Exclusive, Opcodes \$60--\$67):} Pull two
+\emph{size}-byte values off the stack, form the logical exclusive or
+of the two values, and push the result on the stack.
+
+\bfhead{PHC (Push Constant, Opcodes \$68--\$6F):}
+Interpret the \emph{size} bytes following the opcode and size
+as a \emph{size}-byte constant.  Push that constant on the
+stack.
+
+\bfhead{PVA (Push Variable Address, Opcodes \$70--\$77):}
+Push the two-byte address given by $\kwd{FP}+\nonterm{size}$ on
+the stack.
+
+\bfhead{RAF (Return from AppleCore Function, Opcodes \$78--\$7F):}
+Pull \emph{size} bytes off the stack.  Set the stack pointer to the
+frame pointer.  Restore the caller's frame pointer.  Push the
+\emph{size} bytes on the stack.  Return control to the address on the
+6502 stack.
+
+\bfhead{SHL (Shift Left, Opcodes \$80--\$87):} Pull a single-byte
+unsigned
+shift amount off the stack.  Pull a \emph{size}-byte value off the
+stack, shift it left by the shift amount, and push the result on the
+stack.
+
+\bfhead{STM (Stack To Memory, Opcodes \$87--\$8F):}
+Pull a two-byte address off the stack.  Pull a \emph{size}-byte
+value off the stack and store it in memory starting at the
+address.
+
+\bfhead{SUB (Subtract, Opcodes \$90--\$97):}
+Pull two \emph{size}-byte values off the stack, subtract the
+second one from the first one, and push the result on the stack.
+
+\bfhead{TEQ (Test Equal, Opcodes \$98--\$9F):}
+Pull two \emph{size}-byte values off the stack. Push 1 on the stack
+if they are equal, 0 if they are not equal.
+
+\bfhead{VTM (Variable To Memory, Opcodes \$A0--\$A7):}
+Treat the byte following the opcode and size as a zero-page
+address.  Read the value at address $\kwd{FP}+\nonterm{size}$, 
+where \kwd{FP} is the AppleCore frame pointer, and store
+it at the zero-page address.
 
 \subsection{Signed Instructions}
 
