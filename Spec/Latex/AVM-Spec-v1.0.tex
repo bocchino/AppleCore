@@ -132,16 +132,16 @@ result on the stack.
 \emph{size}-byte values off the stack, compute the bitwise logical and
 of the values, and push the result on the stack.
 
-\bfhead{DCR (Decrement Memory, Opcodes \$18--\$1F):} Pull a two-byte
+\bfhead{DCR (Decrement, Opcodes \$18--\$1F):} Pull a two-byte
 address off the stack and decrement the \emph{size}- byte value stored
 at that address in memory.  Push the result on the stack.
 
 \bfhead{DSP (Decrease Stack Pointer, Opcodes \$20--\$27):}
 Decrease the AppleCore program stack pointer by \emph{size}.
 
-\bfhead{ICR (Increment Memory, Opcodes \$28--2F):} Pull a two-byte
-address off the stack and increment the \emph{size}-byte value stored
-at that address in memory.  Push the result on the stack.
+\bfhead{ICR (Increment, Opcodes \$28--2F):} Pull a two-byte address
+off the stack and increment the \emph{size}-byte value stored at that
+address in memory.  Push the result on the stack.
 
 \bfhead{ISP (Increase Stack Pointer, Opcodes \$30--\$37):}
 Decrease the AppleCore program stack pointer by \emph{size}.
@@ -156,13 +156,13 @@ address.  Read the value from that address and store it
 at address $\kwd{FP}+\nonterm{size}$, where \kwd{FP} is the
 AppleCore frame pointer.
 
-\bfhead{NEG (Arithmetic Negation, Opcodes \$48--\$4F):} Pull a
-\emph{size}-byte value off the stack, negate the value (i.e., form the
-two's complement), and push the result on the stack.
+\bfhead{NEG (Negate, Opcodes \$48--\$4F):} Pull a \emph{size}-byte
+value off the stack, negate the value (i.e., form the two's
+complement), and push the result on the stack.
 
-\bfhead{NOT (Logical Negation, Opcodes \$50--\$57):} Pull a
-\emph{size}-byte value off the stack, logically negate the bits of the
-value, and push the result on the stack.
+\bfhead{NOT (Not, Opcodes \$50--\$57):} Pull a \emph{size}-byte value
+off the stack, logically negate the bits of the value, and push the
+result on the stack.
 
 \bfhead{ORL (Or Logical, Opcodes \$58--\$5F):} Pull two
 \emph{size}-byte values off the stack, form the logical or of the two
@@ -220,9 +220,219 @@ TODO
 
 TODO
 
-\section{Table of Opcodes}
+\newpage
 
-TODO
+\section{Table of Instructions}
 
+\begin{multicols}{2}
+\begin{tabular}{l l l}
+%
+\textbf{Hex Bytes} & \textbf{Assembly} & \textbf{Instruction
+  Name} \\
+%
+\kwd{00} & \kwd{BRK} & Break \\
+%
+\kwd{01} $B_1$ $B_2$ & \kwd{BRF} \kwd{\$}${B_2}{B_1}$ & Branch False \\
+%
+\kwd{02} $B_1$ $B_2$ & \kwd{BRU} \kwd{\$}${B_2}{B_1}$ & Branch
+Unconditional\\
+%
+\kwd{03} $B_1$ $B_2$ & \kwd{CFD} \kwd{\$}${B_2}{B_1}$ & Call Function
+Direct \\
+%
+\kwd{04} $B_1$ $B_2$ & \kwd{CFI} \kwd{\$}${B_2}{B_1}$ & Call Function
+Indirect \\
+%
+\kwd{05} & \kwd{???} & Unused \\
+%
+\kwd{06} & \kwd{???} & Unused \\
+%
+\kwd{07} & \kwd{???} & Unused \\
+%
+\kwd{08} & \kwd{ADD \$0} & Add \\
+%
+\kwd{09} & \kwd{ADD \$1} & Add \\
+%
+\kwd{0A} & \kwd{ADD \$2} & Add \\
+%
+\kwd{0B} & \kwd{ADD \$3} & Add \\
+%
+\kwd{0C} & \kwd{ADD \$4} & Add \\
+%
+\kwd{0D} & \kwd{ADD \$5} & Add \\
+%
+\kwd{0E} & \kwd{ADD \$6} & Add \\
+%
+\kwd{0F} $B$ & \kwd{ADD \$}$B$ & Add \\
+%
+\kwd{10} & \kwd{ANL \$0} & And Logical \\
+%
+\kwd{11} & \kwd{ANL \$1} & And Logical \\
+%
+\kwd{12} & \kwd{ANL \$2} & And Logical \\
+%
+\kwd{13} & \kwd{ANL \$3} & And Logical \\
+%
+\kwd{14} & \kwd{ANL \$4} & And Logical \\
+%
+\kwd{15} & \kwd{ANL \$5} & And Logical \\
+%
+\kwd{16} & \kwd{ANL \$6} & And Logical \\
+%
+\kwd{17} $B$ & \kwd{ANL \$}$B$ & And Logical \\
+%
+\kwd{18} & \kwd{DCR \$0} & Decrement \\
+%
+\kwd{19} & \kwd{DCR \$1} & Decrement \\
+%
+\kwd{1A} & \kwd{DCR \$2} & Decrement \\
+%
+\kwd{1B} & \kwd{DCR \$3} & Decrement \\
+%
+\kwd{1C} & \kwd{DCR \$4} & Decrement \\
+%
+\kwd{1D} & \kwd{DCR \$5} & Decrement \\
+%
+\kwd{1E} & \kwd{DCR \$6} & Decrement \\
+%
+\kwd{1F} $B$ & \kwd{DCR \$}$B$ & Decrement \\
+%
+\kwd{20} & \kwd{DSP \$0} & Decrease SP \\
+%
+\kwd{21} & \kwd{DSP \$1} & Decrease SP \\
+%
+\kwd{22} & \kwd{DSP \$2} & Decrease SP \\
+%
+\kwd{23} & \kwd{DSP \$3} & Decrease SP \\
+%
+\kwd{24} & \kwd{DSP \$4} & Decrease SP \\
+%
+\kwd{25} & \kwd{DSP \$5} & Decrease SP \\
+%
+\kwd{26} & \kwd{DSP \$6} & Decrease SP \\
+%
+\kwd{27} $B$ & \kwd{DSP \$}$B$ & Decrease SP \\
+%
+\kwd{28} & \kwd{ICR \$0} & Increment \\
+%
+\kwd{29} & \kwd{ICR \$1} & Increment \\
+%
+\kwd{2A} & \kwd{ICR \$2} & Increment \\
+%
+\kwd{2B} & \kwd{ICR \$3} & Increment \\
+%
+\kwd{2C} & \kwd{ICR \$4} & Increment \\
+%
+\kwd{2D} & \kwd{ICR \$5} & Increment \\
+%
+\kwd{2E} & \kwd{ICR \$6} & Increment \\
+%
+\kwd{2F} $B$ & \kwd{ICR \$}$B$ & Increment \\
+%
+\end{tabular}
+
+\begin{tabular}{l l l}
+%
+\textbf{Hex Bytes} & \textbf{Assembly Format} & \textbf{Instruction
+  Name} \\
+%
+\kwd{30} & \kwd{ISP \$0} & Increase SP \\
+%
+\kwd{31} & \kwd{ISP \$1} & Increase SP \\
+%
+\kwd{32} & \kwd{ISP \$2} & Increase SP \\
+%
+\kwd{33} & \kwd{ISP \$3} & Increase SP \\
+%
+\kwd{34} & \kwd{ISP \$4} & Increase SP \\
+%
+\kwd{35} & \kwd{ISP \$5} & Increase SP \\
+%
+\kwd{36} & \kwd{ISP \$6} & Increase SP \\
+%
+\kwd{37} $B$ & \kwd{ISP \$}$B$ & Increase SP \\
+%
+\kwd{38} & \kwd{MTS \$0} & Mem To Stack \\
+%
+\kwd{39} & \kwd{MTS \$1} & Mem To Stack \\
+%
+\kwd{3A} & \kwd{MTS \$2} & Mem To Stack \\
+%
+\kwd{3B} & \kwd{MTS \$3} & Mem To Stack \\
+%
+\kwd{3C} & \kwd{MTS \$4} & Mem To Stack \\
+%
+\kwd{3D} & \kwd{MTS \$5} & Mem To Stack \\
+%
+\kwd{3E} & \kwd{MTS \$6} & Mem To Stack \\
+%
+\kwd{3F} $B$ & \kwd{MTS \$}$B$ & Mem To Stack \\
+%
+\kwd{40} $B$ & \kwd{MTV \$0<-$B$} & Mem To Var \\
+%
+\kwd{41} $B$ & \kwd{MTV \$1<-$B$} & Mem To Var \\
+%
+\kwd{42} $B$ & \kwd{MTV \$2<-$B$} & Mem To Var \\
+%
+\kwd{43} $B$ & \kwd{MTV \$3<-$B$} & Mem To Var \\
+%
+\kwd{44} $B$ & \kwd{MTV \$4<-$B$} & Mem To Var \\
+%
+\kwd{45} $B$ & \kwd{MTV \$5<-$B$} & Mem To Var \\
+%
+\kwd{46} $B$ & \kwd{MTV \$6<-$B$} & Mem To Var \\
+%
+\kwd{47} $B_1$ $B_2$ & \kwd{MTV \${$B_1$}<-{$B_2$}} & Mem To Var \\
+%
+\kwd{48} & \kwd{NEG \$0} & Negate \\
+%
+\kwd{49} & \kwd{NEG \$1} & Negate \\
+%
+\kwd{4A} & \kwd{NEG \$2} & Negate \\
+%
+\kwd{4B} & \kwd{NEG \$4} & Negate \\
+%
+\kwd{4C} & \kwd{NEG \$3} & Negate \\
+%
+\kwd{4D} & \kwd{NEG \$5} & Negate \\
+%
+\kwd{4E} & \kwd{NEG \$6} & Negate \\
+%
+\kwd{4F} $B$ & \kwd{NEG \$}$B$ & Negate \\
+%
+\kwd{50} & \kwd{NOT \$0} & Not \\
+%
+\kwd{51} & \kwd{NOT \$1} & Not \\
+%
+\kwd{52} & \kwd{NOT \$2} & Not \\
+%
+\kwd{53} & \kwd{NOT \$4} & Not \\
+%
+\kwd{54} & \kwd{NOT \$3} & Not \\
+%
+\kwd{55} & \kwd{NOT \$5} & Not \\
+%
+\kwd{56} & \kwd{NOT \$6} & Not \\
+%
+\kwd{57} $B$ & \kwd{NOT \$}$B$ & Not \\
+%
+\kwd{58} & \kwd{ORL \$0} & Or Logical \\
+%
+\kwd{59} & \kwd{ORL \$1} & Or Logical \\
+%
+\kwd{5A} & \kwd{ORL \$2} & Or Logical \\
+%
+\kwd{5B} & \kwd{ORL \$3} & Or Logical \\
+%
+\kwd{5C} & \kwd{ORL \$4} & Or Logical \\
+%
+\kwd{5D} & \kwd{ORL \$5} & Or Logical \\
+%
+\kwd{5E} & \kwd{ORL \$6} & Or Logical \\
+%
+\kwd{5F} $B$ & \kwd{ORL \$}$B$ & Or Logical \\
+%
+\end{tabular}
+\end{multicols}
 
 \end{document}
