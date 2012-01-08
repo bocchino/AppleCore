@@ -27,10 +27,10 @@ my %unsized_instrs = (
 
 my %sized_instrs = (
   "ADD" => { "opcode" => 1<<3 },
-  "AND" => { "opcode" => 2<<3 },
-  "DEC" => { "opcode" => 3<<3 },
+  "ANL" => { "opcode" => 2<<3 },
+  "DCR" => { "opcode" => 3<<3 },
   "DSP" => { "opcode" => 4<<3 },
-  "INC" => { "opcode" => 5<<3 },
+  "ICR" => { "opcode" => 5<<3 },
   "ISP" => { "opcode" => 6<<3 },
   "MTS" => { "opcode" => 7<<3 },
   "MTV" => { "opcode" => 8<<3 },

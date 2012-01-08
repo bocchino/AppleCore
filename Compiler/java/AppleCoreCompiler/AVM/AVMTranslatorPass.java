@@ -424,7 +424,7 @@ public class AVMTranslatorPass
 	    emit(new TLEInstruction(size, signed));
 	    break;
 	case AND:
-	    emit(new ANDInstruction(size));
+	    emit(new ANLInstruction(size));
 	    break;
 	case OR:
 	    emit(new ORLInstruction(size));
@@ -456,12 +456,12 @@ public class AVMTranslatorPass
 	case INCR:
 	    needAddress = true;
 	    scan(node.expr);
-	    emit(new INCInstruction(node.expr.size));
+	    emit(new ICRInstruction(node.expr.size));
 	    break;
 	case DECR:
 	    needAddress = true;
 	    scan(node.expr);
-	    emit(new DECInstruction(node.expr.size));
+	    emit(new DCRInstruction(node.expr.size));
 	    break;
 	default:
 	    throw new ACCInternalError("unhandled unary operator",node);

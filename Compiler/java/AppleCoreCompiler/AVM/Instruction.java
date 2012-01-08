@@ -27,10 +27,10 @@ public abstract class Instruction {
     };
 
     public static final int ADD  = 1<<3;
-    public static final int AND  = 2<<3;
-    public static final int DEC  = 3<<3;
+    public static final int ANL  = 2<<3;
+    public static final int DCR  = 3<<3;
     public static final int DSP  = 4<<3;
-    public static final int INC  = 5<<3;
+    public static final int ICR  = 5<<3;
     public static final int ISP  = 6<<3;
     public static final int MTS  = 7<<3;
     public static final int MTV  = 8<<3;
@@ -48,12 +48,12 @@ public abstract class Instruction {
     public static final int VTM  =20<<3;
 
     public static final int[] sizedOpcodes = {
-	ADD,AND,DEC,DSP,INC,ISP,MTS,MTV,NEG,
+	ADD,ANL,DCR,DSP,ICR,ISP,MTS,MTV,NEG,
 	NOT,ORL,ORX,PHC,PVA,RAF,SHL,STM,
 	SUB,TEQ,VTM
     };
     public static final String[] sizedMnemonics = {
-	"ADD","AND","DEC","DSP","INC","ISP",
+	"ADD","ANL","DCR","DSP","ICR","ISP",
 	"MTS","MTV","NEG","NOT","ORL","ORX","PHC","PVA",
 	"RAF","SHL","STM","SUB","TEQ","VTM"
     };
@@ -266,24 +266,24 @@ public abstract class Instruction {
     }
 
     /**
-     * And
+     * And Logical
      */
-    public static class ANDInstruction
+    public static class ANLInstruction
 	extends SizedInstruction
     {
-	public ANDInstruction(int size) {
-	    super("AND",AND,size);
+	public ANLInstruction(int size) {
+	    super("ANL",ANL,size);
 	}
     }
 
     /**
      * Decrement Variable on Stack
      */
-    public static class DECInstruction
+    public static class DCRInstruction
 	extends SizedInstruction
     {
-	public DECInstruction(int size) {
-	    super("DEC",DEC,size);
+	public DCRInstruction(int size) {
+	    super("DCR",DCR,size);
 	}
     }
 
@@ -301,11 +301,11 @@ public abstract class Instruction {
     /**
      * Increment Variable on Stack
      */
-    public static class INCInstruction
+    public static class ICRInstruction
 	extends SizedInstruction
     {
-	public INCInstruction(int size) {
-	    super("INC",INC,size);
+	public ICRInstruction(int size) {
+	    super("ICR",ICR,size);
 	}
     }
 
