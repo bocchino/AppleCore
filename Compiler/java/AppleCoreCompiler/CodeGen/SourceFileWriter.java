@@ -172,6 +172,18 @@ public class SourceFileWriter
 					     true);
 	    emitter.emitAbsoluteInstruction("JSR","ACC.PUSH.A");
 	}
+	else if (def instanceof FunctionDecl) {
+	    emitVerboseComment(node);
+	    FunctionDecl functionDecl = (FunctionDecl) def;
+	    emitter.emitImmediateInstruction("LDA",
+					     emitter.makeLabel(functionDecl.name),
+					     false);
+	    emitter.emitAbsoluteInstruction("JSR","ACC.PUSH.A");
+	    emitter.emitImmediateInstruction("LDA",
+					     emitter.makeLabel(functionDecl.name),
+					     true);
+	    emitter.emitAbsoluteInstruction("JSR","ACC.PUSH.A");
+	}
     }
 
     /* Non-leaf nodes */
@@ -544,7 +556,8 @@ public class SourceFileWriter
     }
 
     /**
-     * Call to declared function: push args and set up new frame.
+     * Call to declared function: push args, restore regs, call, and
+     * save regs.
      */
     private void emitCallToFunctionDecl(FunctionDecl functionDecl,
 					List<Expression> args) 
@@ -574,13 +587,15 @@ public class SourceFileWriter
 	    emitter.emitImmediateInstruction("LDA",bumpSize);
 	    emitter.emitAbsoluteInstruction("JSR","ACC.SP.DOWN.A");
 	}
+	restoreRegisters();
 	emitVerboseComment("function call");
 	emitter.emitAbsoluteInstruction("JSR",
 					emitter.makeLabel(functionDecl.name));
+	saveRegisters();
     }
     
     /**
-     * Calling a constant address: restore regs, JSR, and save regs.
+     * Calling a constant address: restore regs, call, and save regs.
      */
     private void emitCallToConstant(String addr) {
 	restoreRegisters();
@@ -590,8 +605,8 @@ public class SourceFileWriter
     }
 
     /**
-     * Indirect function call: evaluate expression, restore regs, JSR,
-     * and save regs.
+     * Indirect function call: evaluate expression, restore regs,
+     * call, and save regs.
      */
     private void emitIndirectCall(Expression node) 
 	throws ACCError
@@ -599,6 +614,7 @@ public class SourceFileWriter
 	needAddress = false;
 	scan(node);
 	adjustSize(2,node.size,node.isSigned);
+	emitter.emitAbsoluteInstruction("JSR","ACC.POP.IP");
 	restoreRegisters();
 	emitVerboseComment("function call");
 	emitter.emitAbsoluteInstruction("JSR","ACC.INDIRECT.CALL");

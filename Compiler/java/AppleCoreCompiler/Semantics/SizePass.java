@@ -163,8 +163,15 @@ public class SizePass
      * definition.
      */
     public void visitIdentifier(Identifier node) {
-	node.size = node.def.getSize();
-	node.isSigned = node.def.isSigned();
+	if (node.def instanceof FunctionDecl ||
+	    node.def instanceof DataDecl) {
+	    node.size=2;
+	    node.isSigned=false;
+	}
+	else {
+	    node.size = node.def.getSize();
+	    node.isSigned = node.def.isSigned();
+	}
 	printStatus(node);
     }
 

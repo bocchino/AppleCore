@@ -1,0 +1,19 @@
+# --------------------------------------
+# TEST FUNCTION CALL THROUGH VARIABLE
+# --------------------------------------
+
+CONST ASCII_A $C1;
+
+DATA STR "SHOULD BE A: ";
+
+FN MAIN() {
+  VAR MON_COUT_VAR:2=MON_COUT;
+  PRINT_STRING(STR);
+  SET ^A = ASCII_A;
+  MON_COUT_VAR();
+  MON_CROUT();
+}
+
+INCLUDE "IO";
+
+
