@@ -293,7 +293,8 @@ public class AVMTranslatorPass
     }
 
     /**
-     * Call to declared function: push args and set up new frame.
+     * Call to declared function: push args, restore regs, call, and
+     * save regs.
      */
     private void emitCallToFunctionDecl(FunctionDecl functionDecl,
 					List<Expression> args) 
@@ -318,11 +319,13 @@ public class AVMTranslatorPass
 	    // Bump SP back down to new FP
 	    emit(new DSPInstruction(bumpSize));
 	}
+	restoreRegisters();
 	emit(new CFDInstruction(new Address(functionDecl.name)));
+	saveRegisters();
     }
 
     /**
-     * Calling a constant address: restore regs, JSR, and save regs.
+     * Calling a constant address: restore regs, call, and save regs.
      */
     private void emitCallToConstant(String addr) {
 	restoreRegisters();
@@ -331,7 +334,7 @@ public class AVMTranslatorPass
     }
 
     /**
-     * Indirect function call: evaluate expression, restore regs, JSR,
+     * Indirect function call: evaluate expression, restore regs, call,
      * and save regs.
      */
     private void emitIndirectCall(Expression node) 
