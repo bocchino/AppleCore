@@ -41,16 +41,19 @@ code should have no way of knowing whether a called function is
 implemented in 6502 or AVM instructions.  Also, interpreted AVM
 instructions must be able to call native code, because the AppleCore
 specification says that calls to AppleCore functions and regular
-assembly languages functions should be interchangeable.
+assembly language functions are interchangeable.
 
-These requirements met as follows.  As is typical for virtual machine
+These requirements are met as follows.  As is typical for virtual machine
 architectures on the Apple (for example, see Steve Wozniak's Sweet-16
 interpreter), interpretation starts when the 6502 code does a
 \kwd{JSR} to the interpreter.  The interpreter pulls the ``return
-address'' off the stack and uses it to determine where to start
+address'' off the Apple II stack and uses it to determine where to start
 interpreting bytecode: all the bytes following the \kwd{JSR}
 instruction are interpreted as AVM code, up to and including the first
 \kwd{RAF} (Return from AppleCore Function) encountered.
+Executing \kwd{RAF} returns 6502 control to the return
+address that was on the stack when the interpreter was
+invoked.
 
 In code translated from AppleCore source, each function starts with a
 \kwd{JSR} to the interpreter, and all statements in the function are
@@ -113,6 +116,10 @@ TODO
 TODO
 
 \subsection{Unused Opcodes}
+
+TODO
+
+\section{Table of Opcodes}
 
 TODO
 
