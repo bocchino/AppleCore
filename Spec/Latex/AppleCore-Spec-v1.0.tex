@@ -944,6 +944,9 @@ following:
 %
 \begin{itemize}
 %
+\item Generate code to store the callee's frame pointer on the call
+  stack.
+%
 \item Generate code to reserve slots on the call stack for the
   function parameters, local variables, and saved registers.  The
   saved registers are all the registers appearing in register
@@ -961,12 +964,25 @@ following:
   function body are executed in sequence, in the order in which they
   appear in the program text.
 %
-\item If the function body does not end in a return statement,
-  generate code to pop the frame off the stack and restore the parent
-  frame.
+\item If the last statement executed in the function is not a return
+  statement, then generate code to pop the frame off the stack and
+  restore the parent frame.
 %
 \end{itemize}
-
+%
+This calling convention is designed so that from the point of view of
+the caller, a call to an AppleCore function that takes no arguments
+and returns no result is indistinguishable from a \kwd{JSR} to a
+non-AppleCore function (for example, in the System Monitor).  That
+way, non-AppleCore assembly language functions can be called in the
+same way as AppleCore functions.  In particular, if \kwd{V} is a
+variable, then a call expression \kwd{V()} has the same meaning
+regardless of what kind of function address is stored in \kwd{V}
+(which is not generally known at compile time).  Also, a source file
+with a function declaration \kwd{FN FOO();} can be assembled with any
+assembly file containing a function with label \kwd{FOO}, regardless
+of whether the code at label \kwd{FOO} uses the AppleCore conventions
+for managing the stack.
 
 \subsection{Statements}
 \label{sec:code-gen:statements}
@@ -1045,24 +1061,41 @@ starting at that address, and push them on the stack.
 function call stack slot for that register
 (Section~\ref{sec:code-gen:fn-bodies}) on the expression stack.
 
-\bfhead{Call expressions.} (1) If the called expression is an
-identifier corresponding to a defined function, then do the following.
-(a) Evaluate each argument and push it on the stack, adjusting the
-argument sizes (Section~\ref{sec:code-gen:size-adjustment}) as
-necessary to them to the parameter sizes specified in the function
-definition. (b) Save the frame pointer on the stack and adjust the
-frame pointer for the new frame. (c) Do a \kwd{JSR} to the code for
-the function body (Section~\ref{sec:code-gen:fn-bodies}).  (2) If the
-called expression evaluates to a compile-time constant, then restore
+\bfhead{Call expressions.} The procedure depends on the kind of the
+called expression.
+
+\ithead{(1) Declared functions:} If the called expression is an
+identifier corresponding to a function declaration, then do the
+following.  (a) Evaluate each argument and store it to its slot on the
+stack in the new frame, adjusting the argument sizes
+(Section~\ref{sec:code-gen:size-adjustment}) as necessary to them to
+the parameter sizes specified in the function definition. (b) Adjust
+the stack pointer to point to the base of the new frame.  (c) Restore
 all the saved registers (Section~\ref{sec:code-gen:fn-bodies}) to the
-values saved in their slots on the stack, \kwd{JSR} to the constant
-address, and save all the saved registers to their slots.  Restoring
-and saving the registers in this way lets the AppleCore program
-communicate with assembly language routines (such as those in the
-System Monitor) that do their I/O through the 6502 registers.  (3) If
-the called expression does not evaluate to a compile-time constant,
-then proceed as in step 2, but (since the value is unknown) store the
-value and do a \kwd{JSR} to an indirect \kwd{JMP} to the address.
+values saved in their slots on the stack.  (d) Do a \kwd{JSR} to the
+code for the function body (Section~\ref{sec:code-gen:fn-bodies}). (e)
+Save all the saved registers to their slots.
+
+\ithead{(2) Compile-time constants:} If the called expression
+evaluates to a compile-time constant, then (a) restore the registers
+as in (1)(c), (b) \kwd{JSR} to the constant address, and (c) save the
+registers as in (1)(e).
+
+\ithead{(3) Callee address unknown:} Otherwise the callee address is
+not known at compile time.  In this case proceed as in case 2, but in
+step (2)(b) store the value to zero-page memory and do a \kwd{JSR} to
+an indirect \kwd{JMP} to the address.
+
+The rules are designed so that in all cases the last value written
+into the stack slot for each saved register prior to the call is
+guaranteed to be in the corresponding 6502 register just before the
+\kwd{JSR} to the called function.  Thus, except for the \kwd{S}
+register, all saved registers are guaranteed to have their saved
+values at the point where control enters the callee function.  Because
+of the \kwd{JSR}, the \kwd{S} register's value will be increased by 2.
+Similarly, all stack slots corresponding to saved registers (including
+the \kwd{S} register) will contain the values that the corresponding
+registers had on exit from the function.
 
 \bfhead{Set expressions.}  (1) Evaluate the right-hand side
 expression, adjusting the size if necessary
