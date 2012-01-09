@@ -21,16 +21,14 @@ for the AppleCore programming language.  Its purposes are:
 %
 \item To provide a virtual instruction set that closely models the
   stack semantics of the AppleCore language.  The virtual instruction
-  set can be used as a single intermediate representation for
-  AppleCore source programs that is translated to either 6502 code or
-  AVM bytecode.
+  set provides a uniform representation for AppleCore source programs
+  that may be translated to either 6502 code or AVM bytecode.
 %
 \item To provide a bytecode representation that stores AppleCore
-  programs in a very compact way (using about 2.5x fewer bytes than
+  programs in a very compact way (using about 2x--3x fewer bytes than
   native code).  This allows larger programs to be stored in memory.
-  However, runtime interpretation of AppleCore bytecode is slower
-  than running native code; exactly how much slower remains to be
-  seen.
+  However, runtime interpretation of AppleCore bytecode is slower than
+  running native code; exactly how much slower remains to be seen.
 %
 \end{enumerate}
 
@@ -191,10 +189,9 @@ frame pointer.  Restore the caller's frame pointer.  Push the
 6502 stack.
 
 \bfhead{SHL (Shift Left, Opcodes \$80--\$87):} Pull a single-byte
-unsigned
-shift amount off the stack.  Pull a \emph{size}-byte value off the
-stack, shift it left by the shift amount, and push the result on the
-stack.
+unsigned shift amount off the stack.  Pull a \emph{size}-byte value
+off the stack, shift it left by the shift amount, and push the result
+on the stack.
 
 \bfhead{STM (Stack To Memory, Opcodes \$87--\$8F):}
 Pull a two-byte address off the stack.  Pull a \emph{size}-byte
@@ -217,11 +214,60 @@ it at the zero-page address.
 
 \subsection{Signed Instructions}
 
-TODO
+Signed instructions work similarly to sized instructions, except that
+the there is a sign argument and a size argument.  Bit 2 of the opcode
+represents the sign (1 is signed 0, is unsigned).  If the size is
+between 0 and 2 inclusive, then the size is stored in the low-order 2
+bits of the opcode; otherwise the low-order 2 bits are all ones and
+size is stored in the byte immediately following the opcode.
+
+\bfhead{DIV (Divide, Opcodes \$A8--\$AF):} Pull a \emph{size}-byte
+dividend and then a \emph{size}-byte divisor off the stack.  Do signed
+or unsigned division, and push the quotient on the stack.
+
+\bfhead{EXT (Extend, Opcodes \$B0--\$B7):} Sign- or zero-extend the
+value on the the top of the stack by \emph{size} bytes: Push
+\emph{size} \kwd{\$00} or \kwd{\$FF} bytes on the stack; push
+\kwd{\$FF} if and only if the operation is sign extension and the top
+byte on the stack has its high bit set.
+
+\bfhead{MUL (Multiply, Opcodes \$B8--\$BF):} Pull two \emph{size}-byte
+values off the stack, do signed or unsigned multiplication of the
+values, and push the result on the stack.
+
+\bfhead{SHR (Shift Right, Opcodes \$C0--\$C7):} Pull a single-byte
+unsigned shift amount off the stack.  Pull a \emph{size}-byte value
+off the stack, shift it left by the shift amount, and push the result
+on the stack.  The shift is either signed (i.e., shift in the sign
+bit) or unsigned (i.e., shift in zero).
+
+\bfhead{TGE (Test Greater or Equal, Opcodes \$C8--\$CF):} Pull two
+\emph{size}-byte values off the stack. Do a signed or unsigned
+comparison of the values.  Push 1 on the stack if the second value
+pulled is greater than or equal to the first value pulled; push 0
+otherwise.
+
+\bfhead{TGT (Test Greater Than, Opcodes \$D0--\$D7):} Pull two
+\emph{size}-byte values off the stack. Do a signed or unsigned
+comparison of the values.  Push 1 on the stack if the second value
+pulled is greater than the first value pulled; push 0 otherwise.
+
+\bfhead{TLE (Test Less or Equal, Opcodes \$D8--\$DF):} Pull two
+\emph{size}-byte values off the stack. Do a signed or unsigned
+comparison of the values.  Push 1 on the stack if the second value
+pulled is less than or equal to the first value pulled; push 0
+otherwise.
+
+\bfhead{TLT (Test Less Than, Opcodes \$E0--\$E7):} Pull two
+\emph{size}-byte values off the stack. Do a signed or unsigned
+comparison of the values.  Push 1 on the stack if the second value
+pulled is less than the first value pulled; push 0 otherwise.
 
 \subsection{Unused Opcodes}
 
-TODO
+Opcodes \$05--\$07, \$E8--\$E9, and \$EB-\$FF are not used for AVM
+instructions.  The AVM interpreter treats these opcodes as equivalent
+to \$EA (\kwd{NOP}).
 
 \newpage
 
@@ -580,24 +626,211 @@ Constant \\
 %
 \kwd{9F} $S$ & \kwd{TEQ \$}$S$ & Test Equal \\
 %
-\kwd{A0} $A$ & \kwd{VTM \$0->\$}$A$ & Var to Mem \\
+\kwd{A0} $A$ & \kwd{VTM \$0->\$}$A$ & Var To Mem \\
 %
-\kwd{A1} $A$ & \kwd{VTM \$1->\$}$A$ & Var to Mem \\
+\kwd{A1} $A$ & \kwd{VTM \$1->\$}$A$ & Var To Mem \\
 %
-\kwd{A2} $A$ & \kwd{VTM \$2->\$}$A$ & Var to Mem \\
+\kwd{A2} $A$ & \kwd{VTM \$2->\$}$A$ & Var To Mem \\
 %
-\kwd{A3} $A$ & \kwd{VTM \$4->\$}$A$ & Var to Mem \\
+\kwd{A3} $A$ & \kwd{VTM \$4->\$}$A$ & Var To Mem \\
 %
-\kwd{A4} $A$ & \kwd{VTM \$3->\$}$A$ & Var to Mem \\
+\kwd{A4} $A$ & \kwd{VTM \$3->\$}$A$ & Var To Mem \\
 %
-\kwd{A5} $A$ & \kwd{VTM \$5->\$}$A$ & Var to Mem \\
+\kwd{A5} $A$ & \kwd{VTM \$5->\$}$A$ & Var To Mem \\
 %
-\kwd{A6} $A$ & \kwd{VTM \$6->\$}$A$ & Var to Mem \\
+\kwd{A6} $A$ & \kwd{VTM \$6->\$}$A$ & Var To Mem \\
 %
-\kwd{A7} $S$ $A$ & \kwd{VTM \${$S$}->\${$A$}} & Var to Mem \\
+\kwd{A7} $S$ $A$ & \kwd{VTM \${$S$}->\${$A$}} & Var To Mem \\
+%
+\kwd{A8} & \kwd{DIV \$0} & Divide \\
+%
+\kwd{A9} & \kwd{DIV \$1} & Divide \\
+%
+\kwd{AA} & \kwd{DIV \$2} & Divide \\
+%
+\kwd{AB} $S$ & \kwd{DIV \$}$S$ & Divide \\
+%
+\kwd{AC} & \kwd{DIV \$0S} & Divide \\
+%
+\kwd{AD} & \kwd{DIV \$1S} & Divide \\
+%
+\kwd{AE} & \kwd{DIV \$2S} & Divide \\
+%
+\kwd{AF} $S$ & \kwd{DIV \${$S$}S} & Divide \\
+%
+\kwd{B0} & \kwd{EXT \$0} & Extend \\
+%
+\kwd{B1} & \kwd{EXT \$1} & Extend \\
+%
+\kwd{B2} & \kwd{EXT \$2} & Extend \\
+%
+\kwd{B3} $S$ & \kwd{EXT \$}$S$ & Extend \\
+%
+\kwd{B4} & \kwd{EXT \$0S} & Extend \\
+%
+\kwd{B5} & \kwd{EXT \$1S} & Extend \\
+%
+\kwd{B6} & \kwd{EXT \$2S} & Extend \\
+%
+\kwd{B7} $S$ & \kwd{EXT \${$S$}S} & Extend \\
+%
+\kwd{B8} & \kwd{MUL \$0} & Multiply \\
+%
+\kwd{B9} & \kwd{MUL \$1} & Multiply \\
+%
+\kwd{BA} & \kwd{MUL \$2} & Multiply \\
+%
+\kwd{BB} $S$ & \kwd{MUL \$}$S$ & Multiply \\
+%
+\kwd{BC} & \kwd{MUL \$0S} & Multiply \\
+%
+\kwd{BD} & \kwd{MUL \$1S} & Multiply \\
+%
+\kwd{BE} & \kwd{MUL \$2S} & Multiply \\
+%
+\kwd{BF} $S$ & \kwd{MUL \${$S$}S} & Multiply \\
 %
 \end{tabular}
 
+\begin{tabular}{l l l}
+%
+\textbf{Hex Bytes} & \textbf{Assembly} & \textbf{Name} \\
+%
+\kwd{C0} & \kwd{SHR \$0} & Shift Right \\
+%
+\kwd{C1} & \kwd{SHR \$1} & Shift Right \\
+%
+\kwd{C2} & \kwd{SHR \$2} & Shift Right \\
+%
+\kwd{C3} $S$ & \kwd{SHR \$}$S$ & Shift Right \\
+%
+\kwd{C4} & \kwd{SHR \$0S} & Shift Right \\
+%
+\kwd{C5} & \kwd{SHR \$1S} & Shift Right \\
+%
+\kwd{C6} & \kwd{SHR \$2S} & Shift Right \\
+%
+\kwd{C7} $S$ & \kwd{SHR \${$S$}S} & Shift Right \\
+%
+\kwd{C8} & \kwd{TGE \$0} & Test Greater or Equal \\
+%
+\kwd{C9} & \kwd{TGE \$1} & Test Greater or Equal \\
+%
+\kwd{CA} & \kwd{TGE \$2} & Test Greater or Equal \\
+%
+\kwd{CC} $S$ & \kwd{TGE \$}$S$ & Test Greater or Equal \\
+%
+\kwd{CC} & \kwd{TGE \$0S} & Test Greater or Equal \\
+%
+\kwd{CD} & \kwd{TGE \$1S} & Test Greater or Equal \\
+%
+\kwd{CE} & \kwd{TGE \$2S} & Test Greater or Equal \\
+%
+\kwd{CF} $S$ & \kwd{TGE \${$S$}S} & Test Greater or Equal \\
+%
+\kwd{D0} & \kwd{TGT \$0} & Test Greater Than \\
+%
+\kwd{D1} & \kwd{TGT \$1} & Test Greater Than \\
+%
+\kwd{D2} & \kwd{TGT \$2} & Test Greater Than \\
+%
+\kwd{D3} & \kwd{TGT \${$S$}} & Test Greater Than \\
+%
+\kwd{D4} & \kwd{TGT \$0S} & Test Greater Than \\
+%
+\kwd{D5} & \kwd{TGT \$1S} & Test Greater Than \\
+%
+\kwd{D6} & \kwd{TGT \$2S} & Test Greater Than \\
+%
+\kwd{D7} $S$ & \kwd{TGT \${$S$}S} & Test Greater Than \\
+%
+\kwd{D8} & \kwd{TLE \$0} & Test Less or Equal \\
+%
+\kwd{D9} & \kwd{TLE \$1} & Test Less or Equal \\
+%
+\kwd{DA} & \kwd{TLE \$2} & Test Less or Equal \\
+%
+\kwd{DB} $S$ & \kwd{TLE \$}$S$ & Test Less or Equal \\
+%
+\kwd{DC} & \kwd{TLE \$0S} & Test Less or Equal \\
+%
+\kwd{DD} & \kwd{TLE \$1S} & Test Less or Equal \\
+%
+\kwd{DE} & \kwd{TLE \$2S} & Test Less or Equal \\
+%
+\kwd{DF} $S$ & \kwd{TLE \${$S$}S} & Test Less or Equal \\
+%
+\end{tabular}
+
+\begin{tabular}{l l l}
+%
+\textbf{Hex Bytes} & \textbf{Assembly} & \textbf{Name} \\
+%
+\kwd{E0} & \kwd{TLT \$0} & Test Less Than \\
+%
+\kwd{E1} & \kwd{TLT \$1} & Test Less Than \\
+%
+\kwd{E2} & \kwd{TLT \$2} & Test Less Than \\
+%
+\kwd{E3} $S$ & \kwd{TLT \$}$S$ & Test Less Than \\
+%
+\kwd{E4} & \kwd{TLT \$0S} & Test Less Than \\
+%
+\kwd{E5} & \kwd{TLT \$1S} & Test Less Than \\
+%
+\kwd{E6} & \kwd{TLT \$2S} & Test Less Than \\
+%
+\kwd{E7} $S$ & \kwd{TLT \${$S$}S} & Test Less Than \\
+%
+\kwd{E8} & \kwd{???} & Unused \\
+%
+\kwd{E9} & \kwd{???} & Unused \\
+%
+\kwd{EA} & \kwd{NOP} & No Operation \\
+%
+\kwd{EB} & \kwd{???} & Unused \\
+%
+\kwd{EC} & \kwd{???} & Unused \\
+%
+\kwd{ED} & \kwd{???} & Unused \\
+%
+\kwd{EE} & \kwd{???} & Unused \\
+%
+\kwd{EF} & \kwd{???} & Unused \\
+%
+\kwd{F0} & \kwd{???} & Unused \\
+%
+\kwd{F1} & \kwd{???} & Unused \\
+%
+\kwd{F2} & \kwd{???} & Unused \\
+%
+\kwd{F3} & \kwd{???} & Unused \\
+%
+\kwd{F4} & \kwd{???} & Unused \\
+%
+\kwd{F5} & \kwd{???} & Unused \\
+%
+\kwd{F6} & \kwd{???} & Unused \\
+%
+\kwd{F7} & \kwd{???} & Unused \\
+%
+\kwd{F8} & \kwd{???} & Unused \\
+%
+\kwd{F9} & \kwd{???} & Unused \\
+%
+\kwd{FA} & \kwd{???} & Unused \\
+%
+\kwd{FB} & \kwd{???} & Unused \\
+%
+\kwd{FC} & \kwd{???} & Unused \\
+%
+\kwd{FD} & \kwd{???} & Unused \\
+%
+\kwd{FE} & \kwd{???} & Unused \\
+%
+\kwd{FF} & \kwd{???} & Unused \\
+%
+\end{tabular}
 
 
 \end{multicols}
