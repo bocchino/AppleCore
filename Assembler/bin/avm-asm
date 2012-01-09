@@ -149,17 +149,17 @@ sub assemble_sized_instr(@) {
   }
 
   # Emit opcode
-  if ($size < 7) {
+  if ($size > 0 && $size < 8) {
     emit_HS($opcode | $size);
   }
   else {
-    emit_HS($opcode | 7);
+    emit_HS($opcode);
   }
   emit_inline_comment("$mnemonic $arg");
   emit_line_end();
 
   # Emit additional size byte
-  if ($size >= 7) {
+  if ($size == 0 || $size >= 8) {
     emit_HS($size);
     emit_line_end();
   }
@@ -233,7 +233,7 @@ sub assemble_signed_instr(@) {
   emit_line_end();
 
   # Emit additional size byte
-  if ($size >= 3) {
+  if ($size == 0 || $size >= 4) {
     emit_HS($size);
     emit_line_end();
   }
