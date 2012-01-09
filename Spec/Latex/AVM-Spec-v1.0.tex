@@ -68,8 +68,8 @@ language specification.
 
 \section{Instruction Set}
 
-The AVM instruction set has three kinds of instructions: unsized instructions, sized
-instructions, and signed instructions.
+The AVM instruction set has three kinds of instructions: unsized
+instructions, sized instructions, and signed instructions.
 
 \subsection{Unsized Instructions}
 
@@ -113,16 +113,19 @@ opcode.
 
 \subsection{Sized Instructions}
 
-Every sized instruction has a one-byte unsigned size argument.
-If the value of the size argument is between 0 and 6 inclusive,
-then the size argument is stored in the low-order 3 bits of the
-opcode; otherwise the low-order 3 bits are all
-ones and the size is stored in the byte immediately following
-the opcode.  Instructions \kwd{MTV}, \kwd{PHC}, and \kwd{VTM}
-each have an additional
-argument which is stored in the byte or bytes immediately
-following the one or two bytes representing the opcode and
-size.
+Every sized instruction has a one-byte unsigned size argument.  If the
+value of the size argument is between 0 and 6 inclusive, then the size
+argument is stored in the low-order 3 bits of the opcode; otherwise
+the low-order 3 bits are all ones and the size is stored in the byte
+immediately following the opcode.  Instructions \kwd{MTV}, \kwd{PHC},
+and \kwd{VTM} each have an additional argument which is stored in the
+byte or bytes immediately following the one or two bytes representing
+the opcode and size.
+
+Note that in most cases an instruction with size zero is actually a
+no-op (for example, \kwd{ADD} with size zero does nothing).  However,
+in some cases (for example \kwd{PVA}) the size-zero instruction is
+meaningful.
 
 \bfhead{ADD (Add, Opcodes \$08--\$0F):} Pull two \emph{size}-byte
 values off the stack, add the values ignoring overflow, and push the
@@ -232,15 +235,15 @@ TODO
 %
 \kwd{00} & \kwd{BRK} & Break \\
 %
-\kwd{01} $B_1$ $B_2$ & \kwd{BRF} \kwd{\$}${B_2}{B_1}$ & Branch False \\
+\kwd{01} $L$ $H$ & \kwd{BRF} \kwd{\$}${H}{L}$ & Branch False \\
 %
-\kwd{02} $B_1$ $B_2$ & \kwd{BRU} \kwd{\$}${B_2}{B_1}$ & Branch
+\kwd{02} $L$ $H$ & \kwd{BRU} \kwd{\$}${H}{L}$ & Branch
 Unconditional\\
 %
-\kwd{03} $B_1$ $B_2$ & \kwd{CFD} \kwd{\$}${B_2}{B_1}$ & Call Function
+\kwd{03} $L$ $H$ & \kwd{CFD} \kwd{\$}${H}{L}$ & Call Function
 Direct \\
 %
-\kwd{04} $B_1$ $B_2$ & \kwd{CFI} \kwd{\$}${B_2}{B_1}$ & Call Function
+\kwd{04} $L$ $H$ & \kwd{CFI} \kwd{\$}${H}{L}$ & Call Function
 Indirect \\
 %
 \kwd{05} & \kwd{???} & Unused \\
@@ -263,7 +266,7 @@ Indirect \\
 %
 \kwd{0E} & \kwd{ADD \$6} & Add \\
 %
-\kwd{0F} $B$ & \kwd{ADD \$}$B$ & Add \\
+\kwd{0F} $S$ & \kwd{ADD \$}$S$ & Add \\
 %
 \kwd{10} & \kwd{ANL \$0} & And Logical \\
 %
@@ -279,7 +282,7 @@ Indirect \\
 %
 \kwd{16} & \kwd{ANL \$6} & And Logical \\
 %
-\kwd{17} $B$ & \kwd{ANL \$}$B$ & And Logical \\
+\kwd{17} $S$ & \kwd{ANL \$}$S$ & And Logical \\
 %
 \kwd{18} & \kwd{DCR \$0} & Decrement \\
 %
@@ -295,7 +298,7 @@ Indirect \\
 %
 \kwd{1E} & \kwd{DCR \$6} & Decrement \\
 %
-\kwd{1F} $B$ & \kwd{DCR \$}$B$ & Decrement \\
+\kwd{1F} $S$ & \kwd{DCR \$}$S$ & Decrement \\
 %
 \kwd{20} & \kwd{DSP \$0} & Decrease SP \\
 %
@@ -311,7 +314,7 @@ Indirect \\
 %
 \kwd{26} & \kwd{DSP \$6} & Decrease SP \\
 %
-\kwd{27} $B$ & \kwd{DSP \$}$B$ & Decrease SP \\
+\kwd{27} $S$ & \kwd{DSP \$}$S$ & Decrease SP \\
 %
 \kwd{28} & \kwd{ICR \$0} & Increment \\
 %
@@ -327,7 +330,7 @@ Indirect \\
 %
 \kwd{2E} & \kwd{ICR \$6} & Increment \\
 %
-\kwd{2F} $B$ & \kwd{ICR \$}$B$ & Increment \\
+\kwd{2F} $S$ & \kwd{ICR \$}$S$ & Increment \\
 %
 \end{tabular}
 
@@ -350,7 +353,7 @@ Indirect \\
 %
 \kwd{36} & \kwd{ISP \$6} & Increase SP \\
 %
-\kwd{37} $B$ & \kwd{ISP \$}$B$ & Increase SP \\
+\kwd{37} $S$ & \kwd{ISP \$}$S$ & Increase SP \\
 %
 \kwd{38} & \kwd{MTS \$0} & Mem To Stack \\
 %
@@ -366,23 +369,23 @@ Indirect \\
 %
 \kwd{3E} & \kwd{MTS \$6} & Mem To Stack \\
 %
-\kwd{3F} $B$ & \kwd{MTS \$}$B$ & Mem To Stack \\
+\kwd{3F} $S$ & \kwd{MTS \$}$S$ & Mem To Stack \\
 %
-\kwd{40} $B$ & \kwd{MTV \$0<-$B$} & Mem To Var \\
+\kwd{40} $A$ & \kwd{MTV \$0<-\${$A$}} & Mem To Var \\
 %
-\kwd{41} $B$ & \kwd{MTV \$1<-$B$} & Mem To Var \\
+\kwd{41} $A$ & \kwd{MTV \$1<-\${$A$}} & Mem To Var \\
 %
-\kwd{42} $B$ & \kwd{MTV \$2<-$B$} & Mem To Var \\
+\kwd{42} $A$ & \kwd{MTV \$2<-\${$A$}} & Mem To Var \\
 %
-\kwd{43} $B$ & \kwd{MTV \$3<-$B$} & Mem To Var \\
+\kwd{43} $A$ & \kwd{MTV \$3<-\${$A$}} & Mem To Var \\
 %
-\kwd{44} $B$ & \kwd{MTV \$4<-$B$} & Mem To Var \\
+\kwd{44} $A$ & \kwd{MTV \$4<-\${$A$}} & Mem To Var \\
 %
-\kwd{45} $B$ & \kwd{MTV \$5<-$B$} & Mem To Var \\
+\kwd{45} $A$ & \kwd{MTV \$5<-\${$A$}} & Mem To Var \\
 %
-\kwd{46} $B$ & \kwd{MTV \$6<-$B$} & Mem To Var \\
+\kwd{46} $A$ & \kwd{MTV \$6<-\${$A$}} & Mem To Var \\
 %
-\kwd{47} $B_1$ $B_2$ & \kwd{MTV \${$B_1$}<-{$B_2$}} & Mem To Var \\
+\kwd{47} $S$ $A$ & \kwd{MTV \${$S$}<-\${$A$}} & Mem To Var \\
 %
 \kwd{48} & \kwd{NEG \$0} & Negate \\
 %
@@ -398,7 +401,7 @@ Indirect \\
 %
 \kwd{4E} & \kwd{NEG \$6} & Negate \\
 %
-\kwd{4F} $B$ & \kwd{NEG \$}$B$ & Negate \\
+\kwd{4F} $S$ & \kwd{NEG \$}$S$ & Negate \\
 %
 \kwd{50} & \kwd{NOT \$0} & Not \\
 %
@@ -414,7 +417,7 @@ Indirect \\
 %
 \kwd{56} & \kwd{NOT \$6} & Not \\
 %
-\kwd{57} $B$ & \kwd{NOT \$}$B$ & Not \\
+\kwd{57} $S$ & \kwd{NOT \$}$S$ & Not \\
 %
 \kwd{58} & \kwd{ORL \$0} & Or Logical \\
 %
@@ -430,9 +433,173 @@ Indirect \\
 %
 \kwd{5E} & \kwd{ORL \$6} & Or Logical \\
 %
-\kwd{5F} $B$ & \kwd{ORL \$}$B$ & Or Logical \\
+\kwd{5F} $S$ & \kwd{ORL \$}$S$ & Or Logical \\
 %
 \end{tabular}
+
+\begin{tabular}{l l l}
+%
+\textbf{Hex Bytes} & \textbf{Assembly} & \textbf{Name} \\
+%
+\kwd{60} & \kwd{ORX \$0} & Or Exclusive \\
+%
+\kwd{61} & \kwd{ORX \$1} & Or Exclusive \\
+%
+\kwd{62} & \kwd{ORX \$2} & Or Exclusive \\
+%
+\kwd{63} & \kwd{ORX \$4} & Or Exclusive \\
+%
+\kwd{64} & \kwd{ORX \$3} & Or Exclusive \\
+%
+\kwd{65} & \kwd{ORX \$5} & Or Exclusive \\
+%
+\kwd{66} & \kwd{ORX \$6} & Or Exclusive \\
+%
+\kwd{67} $S$ & \kwd{ORX \$}$S$ & Or Exclusive \\
+%
+\kwd{68} & \kwd{PHC} & Push Constant \\
+%
+\kwd{69} $C$ & \kwd{PHC \$}$C$ & Push Constant \\
+%
+\kwd{6A} $C_1$ $C_2$ & \kwd{PHC \$}${C_2}{C_1}$ & Push Constant \\
+%
+\kwd{6C} $C_1$ $C_2$ $C_3$ & \kwd{PHC \$}${C_3}{C_2}{C_1}$ & Push
+Constant \\
+%
+\kwd{6C} $C_1$ $\ldots$ $C_4$ & \kwd{PHC \$}${C_4 \ldots C_1}$ & Push
+Constant \\
+%
+\kwd{6D} $C_1$ $\ldots$ $C_5$ & \kwd{PHC \$}${C_5 \ldots C_1}$ & Push
+Constant \\
+%
+\kwd{6E} $C_1$ $\ldots$ $C_6$ & \kwd{PHC \$}${C_6 \ldots C_1}$ & Push
+Constant \\
+%
+\kwd{6F} $S$ $C_1$ $\ldots$ $C_{S}$ & \kwd{PHC
+  \$}$C_{S} \ldots C_1$ & Push Constant \\
+%
+\kwd{70} & \kwd{PVA \$0} & Push Var Addr \\
+%
+\kwd{71} & \kwd{PVA \$1} & Push Var Addr \\
+%
+\kwd{72} & \kwd{PVA \$2} & Push Var Addr \\
+%
+\kwd{73} & \kwd{PVA \$4} & Push Var Addr \\
+%
+\kwd{74} & \kwd{PVA \$3} & Push Var Addr \\
+%
+\kwd{75} & \kwd{PVA \$5} & Push Var Addr \\
+%
+\kwd{76} & \kwd{PVA \$6} & Push Var Addr \\
+%
+\kwd{77} $S$ & \kwd{PVA \$}$S$ & Push Var Addr \\
+%
+\kwd{78} & \kwd{RAF \$0} & Rtn from AC Fn \\
+%
+\kwd{79} & \kwd{RAF \$1} & Rtn from AC Fun \\
+%
+\kwd{7A} & \kwd{RAF \$2} & Rtn from AC Fun \\
+%
+\kwd{7B} & \kwd{RAF \$3} & Rtn from AC Fun \\
+%
+\kwd{7C} & \kwd{RAF \$4} & Rtn from AC Fun \\
+%
+\kwd{7D} & \kwd{RAF \$5} & Rtn from AC Fun \\
+%
+\kwd{7E} & \kwd{RAF \$6} & Rtn from AC Fun \\
+%
+\kwd{7F} $S$ & \kwd{RAF \$}$S$ & Rtn from AC Fun \\
+%
+\kwd{80} & \kwd{SHL \$0} & Shift Left \\
+%
+\kwd{81} & \kwd{SHL \$1} & Shift Left \\
+%
+\kwd{82} & \kwd{SHL \$2} & Shift Left \\
+%
+\kwd{83} & \kwd{SHL \$4} & Shift Left \\
+%
+\kwd{84} & \kwd{SHL \$3} & Shift Left \\
+%
+\kwd{85} & \kwd{SHL \$5} & Shift Left \\
+%
+\kwd{86} & \kwd{SHL \$6} & Shift Left \\
+%
+\kwd{87} $S$ & \kwd{SHL \$}$S$ & Shift Left \\
+%
+\kwd{88} & \kwd{STM \$0} & Stack To Mem \\
+%
+\kwd{89} & \kwd{STM \$1} & Stack To Mem \\
+%
+\kwd{8A} & \kwd{STM \$2} & Stack To Mem \\
+%
+\kwd{8B} & \kwd{STM \$3} & Stack To Mem \\
+%
+\kwd{8C} & \kwd{STM \$4} & Stack To Mem \\
+%
+\kwd{8D} & \kwd{STM \$5} & Stack To Mem \\
+%
+\kwd{8E} & \kwd{STM \$6} & Stack To Mem \\
+%
+\kwd{8F} $S$ & \kwd{STM \$}$S$ & Stack To Mem \\
+%
+\end{tabular}
+
+\begin{tabular}{l l l}
+%
+\textbf{Hex Bytes} & \textbf{Assembly} & \textbf{Name} \\
+%
+\kwd{90} & \kwd{SUB \$0} & Subtract \\
+%
+\kwd{91} & \kwd{SUB \$1} & Subtract \\
+%
+\kwd{92} & \kwd{SUB \$2} & Subtract \\
+%
+\kwd{93} & \kwd{SUB \$4} & Subtract \\
+%
+\kwd{94} & \kwd{SUB \$3} & Subtract \\
+%
+\kwd{95} & \kwd{SUB \$5} & Subtract \\
+%
+\kwd{96} & \kwd{SUB \$6} & Subtract \\
+%
+\kwd{97} $S$ & \kwd{SUB \$}$S$ & Subtract \\
+%
+\kwd{98} & \kwd{TEQ} & Test Equal \\
+%
+\kwd{99} & \kwd{TEQ \$1} & Test Equal \\
+%
+\kwd{9A} & \kwd{TEQ \$2} & Test Equal \\
+%
+\kwd{9C} & \kwd{TEQ \$3} & Test Equal \\
+%
+\kwd{9C} & \kwd{TEQ \$4} & Test Equal \\
+%
+\kwd{9D} & \kwd{TEQ \$5} & Test Equal \\
+%
+\kwd{9E} & \kwd{TEQ \$6} & Test Equal \\
+%
+\kwd{9F} $S$ & \kwd{TEQ \$}$S$ & Test Equal \\
+%
+\kwd{A0} $A$ & \kwd{VTM \$0->\$}$A$ & Var to Mem \\
+%
+\kwd{A1} $A$ & \kwd{VTM \$1->\$}$A$ & Var to Mem \\
+%
+\kwd{A2} $A$ & \kwd{VTM \$2->\$}$A$ & Var to Mem \\
+%
+\kwd{A3} $A$ & \kwd{VTM \$4->\$}$A$ & Var to Mem \\
+%
+\kwd{A4} $A$ & \kwd{VTM \$3->\$}$A$ & Var to Mem \\
+%
+\kwd{A5} $A$ & \kwd{VTM \$5->\$}$A$ & Var to Mem \\
+%
+\kwd{A6} $A$ & \kwd{VTM \$6->\$}$A$ & Var to Mem \\
+%
+\kwd{A7} $S$ $A$ & \kwd{VTM \${$S$}->\${$A$}} & Var to Mem \\
+%
+\end{tabular}
+
+
+
 \end{multicols}
 
 \end{document}
