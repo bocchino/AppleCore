@@ -70,4 +70,4 @@ avm.exec :
 	mkdir $@
 
 clean ::
-	rm -Rf asm avm exec
+	rm -Rf asm avm exec avm.asm avm.exec

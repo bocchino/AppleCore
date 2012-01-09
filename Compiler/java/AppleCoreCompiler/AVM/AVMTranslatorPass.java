@@ -388,7 +388,7 @@ public class AVMTranslatorPass
 	}
 	// Do the operation
 	boolean signed =
-	    node.left.isSigned || node.right.isSigned();
+	    node.left.isSigned || node.right.isSigned;
 	switch (node.operator) {
 	case SHL:
 	    emit(new SHLInstruction(size));
