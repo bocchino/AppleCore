@@ -223,11 +223,11 @@ sub assemble_signed_instr(@) {
   my $size=get_size_from_arg($arg);
 
   # Emit opcode
-  if ($size < 3) {
+  if ($size > 0 && $size < 4) {
     emit_HS($opcode | $size);
   }
   else {
-    emit_HS($opcode | 3);
+    emit_HS($opcode);
   }
   emit_inline_comment("$mnemonic $arg");
   emit_line_end();

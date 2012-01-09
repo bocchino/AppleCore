@@ -112,9 +112,9 @@ opcode.
 \subsection{Sized Instructions}
 
 Every sized instruction has a one-byte unsigned size argument.  If the
-value of the size argument is between 0 and 6 inclusive, then the size
+value of the size argument is between 1 and 7 inclusive, then the size
 argument is stored in the low-order 3 bits of the opcode; otherwise
-the low-order 3 bits are all ones and the size is stored in the byte
+the low-order 3 bits are all zeros, and the size is stored in the byte
 immediately following the opcode.  Instructions \kwd{MTV}, \kwd{PHC},
 and \kwd{VTM} each have an additional argument which is stored in the
 byte or bytes immediately following the one or two bytes representing
@@ -217,10 +217,10 @@ it at the zero-page address.
 Signed instructions work similarly to sized instructions, except that
 the there is a sign argument and a size argument.  Counting the
 low-order bit as 0, bit 2 of the opcode represents the sign (1 is
-signed 0, is unsigned).  If the size is between 0 and 2 inclusive,
+signed 0, is unsigned).  If the size is between 1 and 3 inclusive,
 then the size is stored in the low-order 2 bits of the opcode;
-otherwise the low-order 2 bits are both ones and size is stored in the
-byte immediately following the opcode.
+otherwise the low-order 2 bits are both zeros, and size is stored in
+the byte immediately following the opcode.
 
 \bfhead{DIV (Divide, Opcodes \$A8--\$AF):} Pull a \emph{size}-byte
 dividend and then a \emph{size}-byte divisor off the stack.  Do signed
@@ -299,7 +299,7 @@ Indirect \\
 %
 \kwd{07} & \kwd{???} & Unused \\
 %
-\kwd{08} & \kwd{ADD \$00} & Add \\
+\kwd{08} $S$ & \kwd{ADD \${$S$}} & Add \\
 %
 \kwd{09} & \kwd{ADD \$01} & Add \\
 %
@@ -313,9 +313,9 @@ Indirect \\
 %
 \kwd{0E} & \kwd{ADD \$06} & Add \\
 %
-\kwd{0F} $S$ & \kwd{ADD \$}$S$ & Add \\
+\kwd{0F} & \kwd{ADD \$07} & Add \\
 %
-\kwd{10} & \kwd{ANL \$00} & And Logical \\
+\kwd{10} $S$ & \kwd{ANL \${$S$}} & And Logical \\
 %
 \kwd{11} & \kwd{ANL \$01} & And Logical \\
 %
@@ -329,9 +329,9 @@ Indirect \\
 %
 \kwd{16} & \kwd{ANL \$06} & And Logical \\
 %
-\kwd{17} $S$ & \kwd{ANL \$}$S$ & And Logical \\
+\kwd{17} & \kwd{ANL \$07} & And Logical \\
 %
-\kwd{18} & \kwd{DCR \$00} & Decrement \\
+\kwd{18} $S$ & \kwd{DCR \${$S$}} & Decrement \\
 %
 \kwd{19} & \kwd{DCR \$01} & Decrement \\
 %
@@ -345,9 +345,9 @@ Indirect \\
 %
 \kwd{1E} & \kwd{DCR \$06} & Decrement \\
 %
-\kwd{1F} $S$ & \kwd{DCR \$}$S$ & Decrement \\
+\kwd{1F} & \kwd{DCR \$07} & Decrement \\
 %
-\kwd{20} & \kwd{DSP \$00} & Decrease SP \\
+\kwd{20} $S$ & \kwd{DSP \${$S$}} & Decrease SP \\
 %
 \kwd{21} & \kwd{DSP \$01} & Decrease SP \\
 %
@@ -361,9 +361,9 @@ Indirect \\
 %
 \kwd{26} & \kwd{DSP \$06} & Decrease SP \\
 %
-\kwd{27} $S$ & \kwd{DSP \$}$S$ & Decrease SP \\
+\kwd{27} & \kwd{DSP \$07} & Decrease SP \\
 %
-\kwd{28} & \kwd{ICR \$00} & Increment \\
+\kwd{28} $S$ & \kwd{ICR \${$S$}} & Increment \\
 %
 \kwd{29} & \kwd{ICR \$01} & Increment \\
 %
@@ -377,7 +377,7 @@ Indirect \\
 %
 \kwd{2E} & \kwd{ICR \$06} & Increment \\
 %
-\kwd{2F} $S$ & \kwd{ICR \$}$S$ & Increment \\
+\kwd{2F} & \kwd{ICR \$07} & Increment \\
 %
 \end{tabular}
 
@@ -386,7 +386,7 @@ Indirect \\
 \textbf{Hex Bytes} & \textbf{Assembly Format} & \textbf{Instruction
   Name} \\
 %
-\kwd{30} & \kwd{ISP \$00} & Increase SP \\
+\kwd{30} $S$ & \kwd{ISP \${$S$}} & Increase SP \\
 %
 \kwd{31} & \kwd{ISP \$01} & Increase SP \\
 %
@@ -400,9 +400,9 @@ Indirect \\
 %
 \kwd{36} & \kwd{ISP \$06} & Increase SP \\
 %
-\kwd{37} $S$ & \kwd{ISP \$}$S$ & Increase SP \\
+\kwd{37} & \kwd{ISP \$07} & Increase SP \\
 %
-\kwd{38} & \kwd{MTS \$00} & Mem To Stack \\
+\kwd{38} $S$ & \kwd{MTS \${$S$}} & Mem To Stack \\
 %
 \kwd{39} & \kwd{MTS \$01} & Mem To Stack \\
 %
@@ -416,9 +416,9 @@ Indirect \\
 %
 \kwd{3E} & \kwd{MTS \$06} & Mem To Stack \\
 %
-\kwd{3F} $S$ & \kwd{MTS \$}$S$ & Mem To Stack \\
+\kwd{3F} & \kwd{MTS \$07} & Mem To Stack \\
 %
-\kwd{40} $A$ & \kwd{MTV \$00<-\${$A$}} & Mem To Var \\
+\kwd{40} $S$ $A$ & \kwd{MTV \${$S$}<-\${$A$}} & Mem To Var \\
 %
 \kwd{41} $A$ & \kwd{MTV \$01<-\${$A$}} & Mem To Var \\
 %
@@ -432,9 +432,9 @@ Indirect \\
 %
 \kwd{46} $A$ & \kwd{MTV \$06<-\${$A$}} & Mem To Var \\
 %
-\kwd{47} $S$ $A$ & \kwd{MTV \${$S$}<-\${$A$}} & Mem To Var \\
+\kwd{47} $A$ & \kwd{MTV \$07<-\${$A$}} & Mem To Var \\
 %
-\kwd{48} & \kwd{NEG \$00} & Negate \\
+\kwd{48} $S$ & \kwd{NEG \${$S$}} & Negate \\
 %
 \kwd{49} & \kwd{NEG \$01} & Negate \\
 %
@@ -448,9 +448,9 @@ Indirect \\
 %
 \kwd{4E} & \kwd{NEG \$06} & Negate \\
 %
-\kwd{4F} $S$ & \kwd{NEG \$}$S$ & Negate \\
+\kwd{4F} & \kwd{NEG \$07} & Negate \\
 %
-\kwd{50} & \kwd{NOT \$00} & Not \\
+\kwd{50} $S$ & \kwd{NOT \${$S$}} & Not \\
 %
 \kwd{51} & \kwd{NOT \$01} & Not \\
 %
@@ -464,9 +464,9 @@ Indirect \\
 %
 \kwd{56} & \kwd{NOT \$06} & Not \\
 %
-\kwd{57} $S$ & \kwd{NOT \$}$S$ & Not \\
+\kwd{57} & \kwd{NOT \$07} & Not \\
 %
-\kwd{58} & \kwd{ORL \$00} & Or Logical \\
+\kwd{58} $S$ & \kwd{ORL \${$S$}} & Or Logical \\
 %
 \kwd{59} & \kwd{ORL \$01} & Or Logical \\
 %
@@ -480,7 +480,7 @@ Indirect \\
 %
 \kwd{5E} & \kwd{ORL \$06} & Or Logical \\
 %
-\kwd{5F} $S$ & \kwd{ORL \$}$S$ & Or Logical \\
+\kwd{5F} & \kwd{ORL \$07} & Or Logical \\
 %
 \end{tabular}
 
@@ -488,7 +488,7 @@ Indirect \\
 %
 \textbf{Hex Bytes} & \textbf{Assembly} & \textbf{Name} \\
 %
-\kwd{60} & \kwd{ORX \$00} & Or Exclusive \\
+\kwd{60} $S$ & \kwd{ORX \${$S$}} & Or Exclusive \\
 %
 \kwd{61} & \kwd{ORX \$01} & Or Exclusive \\
 %
@@ -502,9 +502,10 @@ Indirect \\
 %
 \kwd{66} & \kwd{ORX \$06} & Or Exclusive \\
 %
-\kwd{67} $S$ & \kwd{ORX \$}$S$ & Or Exclusive \\
+\kwd{67} & \kwd{ORX \$07} & Or Exclusive \\
 %
-\kwd{68} & \kwd{PHC} & Push Constant \\
+\kwd{68} $S$ $C_1$ $\ldots$ $C_{S}$ & \kwd{PHC \$}$C_{S} \ldots C_1$
+& Push Constant \\
 %
 \kwd{69} $C$ & \kwd{PHC \$}$C$ & Push Constant \\
 %
@@ -522,10 +523,10 @@ Constant \\
 \kwd{6E} $C_1$ $\ldots$ $C_6$ & \kwd{PHC \$}${C_6 \ldots C_1}$ & Push
 Constant \\
 %
-\kwd{6F} $S$ $C_1$ $\ldots$ $C_{S}$ & \kwd{PHC
-  \$}$C_{S} \ldots C_1$ & Push Constant \\
+\kwd{6F} $C_1$ $\ldots$ $C_7$ & \kwd{PHC
+  \$}$C_7 \ldots C_1$ & Push Constant \\
 %
-\kwd{70} & \kwd{PVA \$00} & Push Var Addr \\
+\kwd{70} $S$ & \kwd{PVA \${$S$}} & Push Var Addr \\
 %
 \kwd{71} & \kwd{PVA \$01} & Push Var Addr \\
 %
@@ -539,9 +540,9 @@ Constant \\
 %
 \kwd{76} & \kwd{PVA \$06} & Push Var Addr \\
 %
-\kwd{77} $S$ & \kwd{PVA \$}$S$ & Push Var Addr \\
+\kwd{77} & \kwd{PVA \$07} & Push Var Addr \\
 %
-\kwd{78} & \kwd{RAF \$00} & Rtn from AC Fn \\
+\kwd{78} $S$ & \kwd{RAF \${$S$}} & Rtn from AC Fn \\
 %
 \kwd{79} & \kwd{RAF \$01} & Rtn from AC Fn \\
 %
@@ -555,9 +556,9 @@ Constant \\
 %
 \kwd{7E} & \kwd{RAF \$06} & Rtn from AC Fn \\
 %
-\kwd{7F} $S$ & \kwd{RAF \$}$S$ & Rtn from AC Fn \\
+\kwd{7F} & \kwd{RAF \$07} & Rtn from AC Fn \\
 %
-\kwd{80} & \kwd{SHL \$00} & Shift Left \\
+\kwd{80} $S$ & \kwd{SHL \${$S$}} & Shift Left \\
 %
 \kwd{81} & \kwd{SHL \$01} & Shift Left \\
 %
@@ -571,9 +572,9 @@ Constant \\
 %
 \kwd{86} & \kwd{SHL \$06} & Shift Left \\
 %
-\kwd{87} $S$ & \kwd{SHL \$}$S$ & Shift Left \\
+\kwd{87} & \kwd{SHL \$07} & Shift Left \\
 %
-\kwd{88} & \kwd{STM \$00} & Stack To Mem \\
+\kwd{88} $S$ & \kwd{STM \${$S$}} & Stack To Mem \\
 %
 \kwd{89} & \kwd{STM \$01} & Stack To Mem \\
 %
@@ -587,7 +588,7 @@ Constant \\
 %
 \kwd{8E} & \kwd{STM \$06} & Stack To Mem \\
 %
-\kwd{8F} $S$ & \kwd{STM \$}$S$ & Stack To Mem \\
+\kwd{8F} & \kwd{STM \$07} & Stack To Mem \\
 %
 \end{tabular}
 
@@ -595,7 +596,7 @@ Constant \\
 %
 \textbf{Hex Bytes} & \textbf{Assembly} & \textbf{Name} \\
 %
-\kwd{90} & \kwd{SUB \$00} & Subtract \\
+\kwd{90} $S$ & \kwd{SUB \${$S$}} & Subtract \\
 %
 \kwd{91} & \kwd{SUB \$01} & Subtract \\
 %
@@ -609,9 +610,9 @@ Constant \\
 %
 \kwd{96} & \kwd{SUB \$06} & Subtract \\
 %
-\kwd{97} $S$ & \kwd{SUB \$}$S$ & Subtract \\
+\kwd{97} & \kwd{SUB \$07} & Subtract \\
 %
-\kwd{98} & \kwd{TEQ} & Test Equal \\
+\kwd{98} $S$ & \kwd{TEQ \${$S$}} & Test Equal \\
 %
 \kwd{99} & \kwd{TEQ \$01} & Test Equal \\
 %
@@ -625,9 +626,9 @@ Constant \\
 %
 \kwd{9E} & \kwd{TEQ \$06} & Test Equal \\
 %
-\kwd{9F} $S$ & \kwd{TEQ \$}$S$ & Test Equal \\
+\kwd{9F} & \kwd{TEQ \$07} & Test Equal \\
 %
-\kwd{A0} $A$ & \kwd{VTM \$00->\$}$A$ & Var To Mem \\
+\kwd{A0} $S$ $A$ & \kwd{VTM \${$S$}->\$}$A$ & Var To Mem \\
 %
 \kwd{A1} $A$ & \kwd{VTM \$01->\$}$A$ & Var To Mem \\
 %
@@ -641,55 +642,55 @@ Constant \\
 %
 \kwd{A6} $A$ & \kwd{VTM \$06->\$}$A$ & Var To Mem \\
 %
-\kwd{A7} $S$ $A$ & \kwd{VTM \${$S$}->\${$A$}} & Var To Mem \\
+\kwd{A7} $A$ & \kwd{VTM \$07->\${$A$}} & Var To Mem \\
 %
-\kwd{A8} & \kwd{DIV \$00} & Divide \\
+\kwd{A8} $S$ & \kwd{DIV \$}$S$ & Divide \\
 %
 \kwd{A9} & \kwd{DIV \$01} & Divide \\
 %
 \kwd{AA} & \kwd{DIV \$02} & Divide \\
 %
-\kwd{AB} $S$ & \kwd{DIV \$}$S$ & Divide \\
+\kwd{AB} & \kwd{DIV \$03} & Divide \\
 %
-\kwd{AC} & \kwd{DIV \$00S} & Divide \\
+\kwd{AC} $S$ & \kwd{DIV \${$S$}S} & Divide \\
 %
 \kwd{AD} & \kwd{DIV \$01S} & Divide \\
 %
 \kwd{AE} & \kwd{DIV \$02S} & Divide \\
 %
-\kwd{AF} $S$ & \kwd{DIV \${$S$}S} & Divide \\
+\kwd{AF} & \kwd{DIV \$03S} & Divide \\
 %
-\kwd{B0} & \kwd{EXT \$00} & Extend \\
+\kwd{B0} $S$ & \kwd{EXT \${$S$}} & Extend \\
 %
 \kwd{B1} & \kwd{EXT \$01} & Extend \\
 %
 \kwd{B2} & \kwd{EXT \$02} & Extend \\
 %
-\kwd{B3} $S$ & \kwd{EXT \$}$S$ & Extend \\
+\kwd{B3} & \kwd{EXT \$03} & Extend \\
 %
-\kwd{B4} & \kwd{EXT \$00S} & Extend \\
+\kwd{B4} $S$ & \kwd{EXT \${$S$}S} & Extend \\
 %
 \kwd{B5} & \kwd{EXT \$01S} & Extend \\
 %
 \kwd{B6} & \kwd{EXT \$02S} & Extend \\
 %
-\kwd{B7} $S$ & \kwd{EXT \${$S$}S} & Extend \\
+\kwd{B7} & \kwd{EXT \$03S} & Extend \\
 %
-\kwd{B8} & \kwd{MUL \$00} & Multiply \\
+\kwd{B8} $S$ & \kwd{MUL \${$S$}} & Multiply \\
 %
 \kwd{B9} & \kwd{MUL \$01} & Multiply \\
 %
 \kwd{BA} & \kwd{MUL \$02} & Multiply \\
 %
-\kwd{BB} $S$ & \kwd{MUL \$}$S$ & Multiply \\
+\kwd{BB} & \kwd{MUL \$03} & Multiply \\
 %
-\kwd{BC} & \kwd{MUL \$00S} & Multiply \\
+\kwd{BC} $S$ & \kwd{MUL \${$S$}S} & Multiply \\
 %
 \kwd{BD} & \kwd{MUL \$01S} & Multiply \\
 %
 \kwd{BE} & \kwd{MUL \$02S} & Multiply \\
 %
-\kwd{BF} $S$ & \kwd{MUL \${$S$}S} & Multiply \\
+\kwd{BF} & \kwd{MUL \$03S} & Multiply \\
 %
 \end{tabular}
 
@@ -697,69 +698,69 @@ Constant \\
 %
 \textbf{Hex Bytes} & \textbf{Assembly} & \textbf{Name} \\
 %
-\kwd{C0} & \kwd{SHR \$00} & Shift Right \\
+\kwd{C0} $S$ & \kwd{SHR \${$S$}} & Shift Right \\
 %
 \kwd{C1} & \kwd{SHR \$01} & Shift Right \\
 %
 \kwd{C2} & \kwd{SHR \$02} & Shift Right \\
 %
-\kwd{C3} $S$ & \kwd{SHR \$}$S$ & Shift Right \\
+\kwd{C3} & \kwd{SHR \$03} & Shift Right \\
 %
-\kwd{C4} & \kwd{SHR \$00S} & Shift Right \\
+\kwd{C4} $S$ & \kwd{SHR \${$S$}S} & Shift Right \\
 %
 \kwd{C5} & \kwd{SHR \$01S} & Shift Right \\
 %
 \kwd{C6} & \kwd{SHR \$02S} & Shift Right \\
 %
-\kwd{C7} $S$ & \kwd{SHR \${$S$}S} & Shift Right \\
+\kwd{C7} & \kwd{SHR \$03S} & Shift Right \\
 %
-\kwd{C8} & \kwd{TGE \$00} & Test Greater or Equal \\
+\kwd{C8} $S$ & \kwd{TGE \${$S$}} & Test Greater or Equal \\
 %
 \kwd{C9} & \kwd{TGE \$01} & Test Greater or Equal \\
 %
 \kwd{CA} & \kwd{TGE \$02} & Test Greater or Equal \\
 %
-\kwd{CC} $S$ & \kwd{TGE \$}$S$ & Test Greater or Equal \\
+\kwd{CC} & \kwd{TGE \$03} & Test Greater or Equal \\
 %
-\kwd{CC} & \kwd{TGE \$00S} & Test Greater or Equal \\
+\kwd{CC} $S$ & \kwd{TGE \${$S$}} & Test Greater or Equal \\
 %
 \kwd{CD} & \kwd{TGE \$01S} & Test Greater or Equal \\
 %
 \kwd{CE} & \kwd{TGE \$02S} & Test Greater or Equal \\
 %
-\kwd{CF} $S$ & \kwd{TGE \${$S$}S} & Test Greater or Equal \\
+\kwd{CF} & \kwd{TGE \$03S} & Test Greater or Equal \\
 %
-\kwd{D0} & \kwd{TGT \$00} & Test Greater Than \\
+\kwd{D0} $S$ & \kwd{TGT \${$S$}} & Test Greater Than \\
 %
 \kwd{D1} & \kwd{TGT \$01} & Test Greater Than \\
 %
 \kwd{D2} & \kwd{TGT \$02} & Test Greater Than \\
 %
-\kwd{D3} & \kwd{TGT \${$S$}} & Test Greater Than \\
+\kwd{D3} & \kwd{TGT \$03} & Test Greater Than \\
 %
-\kwd{D4} & \kwd{TGT \$00S} & Test Greater Than \\
+\kwd{D4} $S$ & \kwd{TGT \${$S$}S} & Test Greater Than \\
 %
 \kwd{D5} & \kwd{TGT \$01S} & Test Greater Than \\
 %
 \kwd{D6} & \kwd{TGT \$02S} & Test Greater Than \\
 %
-\kwd{D7} $S$ & \kwd{TGT \${$S$}S} & Test Greater Than \\
+\kwd{D7} & \kwd{TGT \$03S} & Test Greater Than \\
 %
-\kwd{D8} & \kwd{TLE \$00} & Test Less or Equal \\
+\kwd{D8} $S$ & \kwd{TLE \${$S$}} & Test Less or Equal \\
 %
 \kwd{D9} & \kwd{TLE \$01} & Test Less or Equal \\
 %
 \kwd{DA} & \kwd{TLE \$02} & Test Less or Equal \\
 %
-\kwd{DB} $S$ & \kwd{TLE \$}$S$ & Test Less or Equal \\
+\kwd{DB} & \kwd{TLE \$03} & Test Less or Equal \\
 %
-\kwd{DC} & \kwd{TLE \$00S} & Test Less or Equal \\
+\kwd{DC} $S$ & \kwd{TLE \${$S$}S} & Test Less or Equal \\
 %
 \kwd{DD} & \kwd{TLE \$01S} & Test Less or Equal \\
 %
 \kwd{DE} & \kwd{TLE \$02S} & Test Less or Equal \\
 %
-\kwd{DF} $S$ & \kwd{TLE \${$S$}S} & Test Less or Equal \\
+\kwd{DF} & \kwd{TLE \$03S} & Test Less or Equal \\
 %
 \end{tabular}
 
@@ -767,21 +768,21 @@ Constant \\
 %
 \textbf{Hex Bytes} & \textbf{Assembly} & \textbf{Name} \\
 %
-\kwd{E0} & \kwd{TLT \$00} & Test Less Than \\
+\kwd{E0} $S$ & \kwd{TLT \${$S$}} & Test Less Than \\
 %
 \kwd{E1} & \kwd{TLT \$01} & Test Less Than \\
 %
 \kwd{E2} & \kwd{TLT \$02} & Test Less Than \\
 %
-\kwd{E3} $S$ & \kwd{TLT \$}$S$ & Test Less Than \\
+\kwd{E3} & \kwd{TLT \$03} & Test Less Than \\
 %
-\kwd{E4} & \kwd{TLT \$00S} & Test Less Than \\
+\kwd{E4} $S$ & \kwd{TLT \${$S$}S} & Test Less Than \\
 %
 \kwd{E5} & \kwd{TLT \$01S} & Test Less Than \\
 %
 \kwd{E6} & \kwd{TLT \$02S} & Test Less Than \\
 %
-\kwd{E7} $S$ & \kwd{TLT \${$S$}S} & Test Less Than \\
+\kwd{E7} & \kwd{TLT \$03S} & Test Less Than \\
 %
 \kwd{E8} & \kwd{???} & Unused \\
 %
