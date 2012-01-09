@@ -28,6 +28,16 @@ public class AVMTranslatorPass
 	}
     }
 
+    /* Constants */
+
+    /**
+     * The size of a stack frame with no parameters, local variables,
+     * or saved regs.  We need two bytes each for the saved AppleCore
+     * return address, the saved 6502 return address, and the saved
+     * FP.
+     */
+    public static final int MIN_FRAME_SIZE=6;
+
     /* State variables for tree traversal */
 
     /**
@@ -111,7 +121,12 @@ public class AVMTranslatorPass
 	    node.instructions.clear();
 	    emit(new LabelInstruction(node.name));
 	    emit(new NativeInstruction("JSR","AVM.EXECUTE.FN"));
-	    emit(new ISPInstruction(node.frameSize));
+	    // On exit from AVM.EXECUTE.FN, SP points to
+	    // FP+MIN_FRAME_SIZE
+	    int bumpSize = node.frameSize - MIN_FRAME_SIZE;
+	    if (bumpSize > 0) {
+		emit(new ISPInstruction(bumpSize));
+	    }
 
 	    scan(node.varDecls);
 	    scan(node.statements);
@@ -304,9 +319,9 @@ public class AVMTranslatorPass
 	Iterator<VarDecl> I = functionDecl.params.iterator();
 	if (args.size() > 0) {
 	    // Save bump size for undo
-	    int bumpSize = 4;
-	    // Save place for return address and saved FP
-	    emit(new ISPInstruction(4));
+	    int bumpSize = MIN_FRAME_SIZE;
+	    // Save place for return addresses and saved FP
+	    emit(new ISPInstruction(MIN_FRAME_SIZE));
 	    for (Expression arg : args) {
 		VarDecl param = I.next();
 		// Evaluate the argument
@@ -316,7 +331,7 @@ public class AVMTranslatorPass
 		adjustSize(param.size,arg.size,arg.isSigned);
 		bumpSize += param.size;
 	    }
-	    // Bump SP back down to new FP
+	    // Bump SP back down to new FP for function entry
 	    emit(new DSPInstruction(bumpSize));
 	}
 	restoreRegisters();
@@ -504,14 +519,8 @@ public class AVMTranslatorPass
     private void computeStackSlotsFor(FunctionDecl node) 
 	throws ACCError
     {
+	int offset = MIN_FRAME_SIZE;
 	printStatus("stack slots:");
-	int offset = 0;
-	printStatus(" return address: " + offset);
-	// Two bytes for return address
-	offset += 2;
-	printStatus(" FP: " + offset);
-	// Two bytes for saved FP
-	offset += 2;
 	// Params
 	for (VarDecl varDecl : node.params) {
 	    printStatus(" " + varDecl + ",offset=" + offset);
