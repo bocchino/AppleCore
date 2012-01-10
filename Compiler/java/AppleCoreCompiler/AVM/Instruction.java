@@ -32,18 +32,6 @@ public abstract class Instruction {
     public String toString() { return mnemonic; }
 
     /**
-     * 6502 NOP
-     */
-    public static class NOPInstruction
-	extends Instruction
-    {
-	public NOPInstruction() {
-	    super("BRK");
-	}
-
-    }
-
-    /**
      * 6502 BRK
      */
     public static class BRKInstruction
