@@ -103,12 +103,6 @@ and do a \kwd{JSR} to code that branches to the address given
 by those two bytes.  On return from the \kwd{JSR}, execution
 resumes with the byte following the instruction opcode.
 
-\bfhead{NOP (No Operation, Opcode \$EA):}
-%
-Causes the AVM interpreter to skip the instruction and
-continue execution with the byte following the instruction
-opcode.
-
 \subsection{Sized Instructions}
 
 Every sized instruction has a one-byte unsigned size argument.  If the
@@ -266,9 +260,10 @@ pulled is less than the first value pulled; push 0 otherwise.
 
 \subsection{Unused Opcodes}
 
-Opcodes \$05--\$07, \$E8--\$E9, and \$EB-\$FF are not used for AVM
-instructions.  The AVM interpreter treats these opcodes as equivalent
-to \$00 (\kwd{BRK}).
+Opcodes \$05--\$07 and \$E8--\$FF are not currently used for AVM
+instructions.  They are reserved for possible future use (for example,
+to add floating point instructions).  The AVM interpreter treats these
+opcodes as equivalent to \$00 (\kwd{BRK}).
 
 \newpage
 
@@ -787,7 +782,7 @@ Constant \\
 %
 \kwd{E9} & \kwd{???} & Unused \\
 %
-\kwd{EA} & \kwd{NOP} & No Operation \\
+\kwd{EA} & \kwd{???} & Unused \\
 %
 \kwd{EB} & \kwd{???} & Unused \\
 %

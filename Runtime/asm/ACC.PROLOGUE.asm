@@ -24,6 +24,10 @@ ACC.SP.BOUND .EQ $4A
 BASIC.HIMEM .EQ $4C
 * DOS VECTOR FOR COLD RESTART 
 DOS.COLD.START .EQ $3D3
+* SAVE REGS
+MON.SAVE	.EQ $FF4A
+* RESTORE REGS
+MON.RESTORE	.EQ $FF3F
 * -------------------------------
 * INIT SP, FP, AND SP BOUND
 * -------------------------------
