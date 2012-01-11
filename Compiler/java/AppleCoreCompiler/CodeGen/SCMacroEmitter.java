@@ -185,6 +185,7 @@ public class SCMacroEmitter
 	emitAbsoluteInstruction(".IN","ACC.INT");
 	emitAbsoluteInstruction(".IN","ACC.COMPARE");
 	emitAbsoluteInstruction(".IN","ACC.BITWISE");
+	emitAbsoluteInstruction(".IN","ACC.BUILT.IN");
 	emitAbsoluteInstruction(".IN","AVM");
 	emitAbsoluteInstruction(".IN","ACC.STACK");
     }

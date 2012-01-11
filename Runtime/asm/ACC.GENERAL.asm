@@ -317,33 +317,6 @@ ACC.GET.MSB
 	LDA (ACC.SP),Y
 	RTS
 * -------------------------------
-* EVALUATE A AND B ON STACK
-* -------------------------------
-ACC.EVAL.A.AND.B
-* BUMP STACK TO TOP OF FRAME
-	TAY
-	JSR ACC.SP.UP.A
-* SET SIZE
-	DEY
-	LDA (ACC.FP),Y
-	STA ACC.SIZE
-* EVAL A
-	LDY #4
-	JSR ACC.SET.IP.TO.VAR
-	JSR ACC.EVAL.1
-* EVAL B AND RETURN
-	LDY #6
-	JSR ACC.SET.IP.TO.VAR
-	JMP ACC.EVAL.1
-* -------------------------------
-* ASSIGN C AND RETURN
-* -------------------------------
-ACC.ASSIGN.C.AND.RET
-	LDY #8
-ACC.ASSIGN.AND.RET
-	JSR ACC.SET.IP.TO.VAR
-	JSR ACC.ASSIGN.1
-* -------------------------------
 * RESTORE OLD FRAME AND RETURN
 * -------------------------------
 ACC.FN.RETURN
@@ -359,28 +332,6 @@ ACC.SET.IP.TO.VAR
 	LDA (ACC.FP),Y
 	STA ACC.IP+1
 	RTS
-* -------------------------------
-* FN:2 ALLOCATE(S:1)
-* RETURN PTR TO S ZEROS ON STACK
-* -------------------------------
-ALLOCATE
-	JSR ACC.FN.PROLOGUE
-* GET SIZE OFF STACK
-	LDY #4
-	LDA (ACC.FP),Y
-	STA ACC.SIZE
-* SAVE SP INTO IP
-	JSR ACC.SET.IP.TO.SP
-* RESTORE OLD FRAME
-	JSR ACC.FN.RETURN
-* PUSH SIZE ZEROS ON STACK
-	LDX #0
-	JSR ACC.PUSH.X.SIZE.TIMES
-* PUSH IP
-	LDA ACC.IP
-	JSR ACC.PUSH.A
-	LDA ACC.IP+1
-	JMP ACC.PUSH.A
 * -------------------------------
 * PRINT STRING AT X LO, A HI
 * DESTROYS IP, Y
@@ -398,13 +349,3 @@ ACC.PRINT.STRING
 	INC ACC.IP+1
 	BNE .1
 .2	RTS
-* -------------------------------
-* BUILT-IN FUNCTION PROLOGUE
-* -------------------------------
-ACC.FN.PROLOGUE
-	LDA #2
-	JSR ACC.SP.UP.A
-	JSR ACC.PUSH.FP
-	LDA #4
-	JSR ACC.SP.DOWN.A
-	JMP ACC.SET.FP.TO.SP

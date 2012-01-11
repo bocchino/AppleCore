@@ -12,20 +12,6 @@ ACC.BINOP.ADD
 	JSR ACC.ADD
         JMP ACC.SET.SP.TO.IP
 * -------------------------------
-* FN ADD(A:2,B:2,C:2,S:1)
-* SET SIZE=FP[10,1]
-* SET FP[8,2][0,SIZE]=
-*   	FP[4,2][0,SIZE]+
-*	FP[6,2][0,SIZE]
-* -------------------------------
-ADD
-	JSR ACC.FN.PROLOGUE
-	LDA #11
-	JSR ACC.EVAL.A.AND.B
-	LDA ACC.SIZE
-	JSR ACC.BINOP.ADD
-	JMP ACC.ASSIGN.C.AND.RET
-* -------------------------------
 * SET SP[0,SIZE]+=IP[0,SIZE]
 * CLOBBERS X,Y
 * -------------------------------
@@ -50,20 +36,6 @@ ACC.BINOP.SUB
         JSR ACC.INIT.BINOP
 	JSR ACC.SUB
         JMP ACC.SET.SP.TO.IP
-* -------------------------------
-* FN SUB(A:2,B:2,C:2,S:1)
-* SET SIZE=FP[10,1]
-* SET FP[8,2][0,SIZE]=
-*   	FP[6,2][0,SIZE]-
-*	FP[4,2][0,SIZE]
-* -------------------------------
-SUB
-	JSR ACC.FN.PROLOGUE
-	LDA #11
-	JSR ACC.EVAL.A.AND.B
-	LDA ACC.SIZE
-	JSR ACC.BINOP.SUB
-	JMP ACC.ASSIGN.C.AND.RET
 * -------------------------------
 * SET SP[0,SIZE]-=IP[0,SIZE]
 * CLOBBERS X,Y
@@ -180,21 +152,6 @@ ACC.MUL.INNER
 	JSR ACC.SHL.INNER
 	JMP ACC.SP.UP.SIZE
 * -------------------------------
-* FN MUL(A:2,B:2,C:2,S:1)
-* SET SIZE=FP[10,1]
-* SET FP[8,2][0,SIZE]=
-*   	FP[4,2][0,SIZE]*
-*	FP[6,2][0,SIZE]
-* -------------------------------
-MUL
-	JSR ACC.FN.PROLOGUE
-	LDA #11
-	JSR ACC.EVAL.A.AND.B
-	LDA ACC.SIZE
-	LDX #0
-	JSR ACC.BINOP.MUL
-	JMP ACC.ASSIGN.C.AND.RET
-* -------------------------------
 * SET SIZE=A
 * SET SP-=SIZE
 * DIVIDE SP[-SIZE,SIZE]
@@ -300,28 +257,3 @@ ACC.DIV.INNER
 	ORA #1
 	STA (ACC.SP),Y
 	RTS
-* -------------------------------
-* FN DIV(A:2,B:2,Q:2,R:2,S:1)
-* SET SIZE=FP[12,1]
-* DIVIDE FP[4,2][0,SIZE]
-* 	BY FP[6,2][0,SIZE]
-* QUOTIENT IN FP[8,2][0,SIZE]
-* REMAINDER IN FP[10,2][0,SIZE]
-* -------------------------------
-DIV
-	JSR ACC.FN.PROLOGUE
-	LDA #13
-	JSR ACC.EVAL.A.AND.B
-	LDA ACC.SIZE
-	LDX #0
-	JSR ACC.BINOP.DIV
-* ASSIGN QUOT
-	LDY #8
-	JSR ACC.SET.IP.TO.VAR
-	JSR ACC.ASSIGN.1
-* ASSIGN REM AND RETURN
-	JSR ACC.SP.UP.SIZE
-	JSR ACC.SP.UP.SIZE
-	JSR ACC.SP.UP.SIZE
-	LDY #10
-	JMP ACC.ASSIGN.AND.RET

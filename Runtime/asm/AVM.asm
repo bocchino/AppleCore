@@ -44,7 +44,6 @@ AVM.DO.INSTR
 * -------------------------------
 * SIZED OR SIGNED INSTRUCTION
 * -------------------------------
-AVM.SIZED.SIGNED
 	LSR
 	LSR
 	LSR
@@ -130,8 +129,6 @@ AVM.CFD.1
 	JSR MON.RESTORE
 	JSR ACC.INDIRECT.CALL
 	JMP MON.SAVE
-* -------------------------------
-* AVM CFI INSTRUCTION
 * -------------------------------
 AVM.CFI
 	JSR ACC.POP.A
