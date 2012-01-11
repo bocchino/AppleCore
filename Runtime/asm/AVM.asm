@@ -3,23 +3,23 @@
 * APPLECORE VIRTUAL MACHINE
 * -------------------------------
 * PROGRAM COUNTER
+* -------------------------------
 AVM.PCL	.EQ $3A
 AVM.PCH .EQ $3B
 * -------------------------------
 * EXECUTE AN AVM FUNCTION
 * -------------------------------
 AVM.EXECUTE.FN
-	JSR MON.SAVE
 * SAVE ACC RETURN ADDRESS
-	LDA MON.PCL
+	LDA AVM.PCL
 	JSR ACC.PUSH.A
-	LDA MON.PCH
+	LDA AVM.PCH
 	JSR ACC.PUSH.A
 * STORE PROGRAM COUNTER
 	PLA
-	STA MON.PCL
+	STA AVM.PCL
 	PLA
-	STA MON.PCH
+	STA AVM.PCH
 * SAVE 6502 RETURN ADDRESS
 	PLA
 	JSR ACC.PUSH.A
@@ -28,98 +28,172 @@ AVM.EXECUTE.FN
 * SAVE FP
 	JSR ACC.PUSH.FP
 * SET NEW FP
-	LDA #6
-	JSR ACC.SP.DOWN.A
-	JSR.SET.FP.TO.SP
-	JSR AVM.INC.PC
+	JSR ACC.SET.FP.TO.SP
 * INSTRUCTION LOOP
-.1	JSR AVM.EXECUTE.INSR
+.1	JSR AVM.DO.INSTR
 	JMP .1
 * -------------------------------
-* DO ONE AVM INSTRUCTION
+* DO AN AVM INSTRUCTION
 * -------------------------------
-AVM.EXECUTE.INSTR
-* FETCH NEXT INSTRUCTION
-	LDY #0
-	LDA (AVM.PCL),Y
-	TAX
+AVM.DO.INSTR
+	JSR AVM.FETCH.BYTE
+	STA ACC.IDX.1
+	STA ACC.SIZE
 	AND #$F8
-	BNE .1
-* UNSIZED INSTRUCTION
-	LDA AVM.UNSIZED.TBL,X
-	JMP .2
-* SIZED INSTRUCTION
-.1	LSR
+	BEQ AVM.BRANCH
+* -------------------------------
+* SIZED OR SIGNED INSTRUCTION
+* -------------------------------
+AVM.SIZED.SIGNED
 	LSR
 	LSR
-	TAY
-	LDA AVM.SIZED.TBL,Y
-* GET HANDLER ADDR ON STACK
-.2	CLC
-	ADC #AVM.BRK
-	TAY
-	LDA /AVM.BRK
-	ADC #0
-	PHA
-	TYA
-	PHA
+	LSR
+	CLC
+	ADC #$07
+	STA ACC.IDX.1
+	CMP #$1C
+	LDA ACC.SIZE
+	BCS AVM.SIGNED
+* -------------------------------
+* SIZED
+* -------------------------------
+* GET SIZE
+	AND #7
+	BEQ AVM.FETCH.SIZE
+	BNE AVM.STORE.SIZE
+* -------------------------------
+* SIGNED
+* -------------------------------
+AVM.SIGNED
+* GET SIGN BIT
+	AND #4
+	TAX
+* GET SIZE
+	LDA ACC.SIZE
+	AND #3
+	BNE AVM.STORE.SIZE
+AVM.FETCH.SIZE
+ 	JSR AVM.FETCH.BYTE
+AVM.STORE.SIZE
+	STA ACC.SIZE
+* -------------------------------
 * BRANCH TO HANDLER
+* -------------------------------
+AVM.BRANCH
+	ASL ACC.IDX.1
+	LDY ACC.IDX.1
+	LDA AVM.INSTR.TBL+1,Y
+	PHA
+	LDA AVM.INSTR.TBL,Y
+	PHA
+	LDA ACC.SIZE
 	RTS
 * -------------------------------
-* OFFSETS TO UNSIZED INSTRS
-* -------------------------------
-AVM.UNSIZED.TBL
-	.HS 00
-	.DA #AVM.BRF-AVM.BRK
-	.DA #AVM.BRU-AVM.BRK
-	.DA #AVM.CFD-AVM.BRK
-	.DA #AVM.CFI-AVM.BRK
-	.HS 00
-	.HS 00
-	.HS 00
-	.HS 00
-* -------------------------------
-* AVM BRK INSTRUCTION
+* INSTRUCTION HANDLERS
 * -------------------------------
 AVM.BRK
 	BRK
 * -------------------------------
-* AVM BRF INSTRUCTION
-* -------------------------------
 AVM.BRF	
 	JSR ACC.POP.A
 	AND #1
-	BNE AVM.INC.PC.BY.2
+	BEQ AVM.BRU
 * -------------------------------
-* AVM BRU INSTRUCTION
+* GET L,H INTO X,A
+* -------------------------------
+AVM.GET.L.H
+	JSR AVM.FETCH.BYTE
+	TAX
+* -------------------------------
+* INC PC AND FETCH INTO A
+* -------------------------------
+AVM.FETCH.BYTE
+	JSR AVM.INC.PC
+	LDY #0
+	LDA (AVM.PCL),Y
+	RTS
 * -------------------------------
 AVM.BRU
 	JSR AVM.GET.L.H
 	STA AVM.PCH
 	STX AVM.PCL
-	RTS
-* -------------------------------
-* AVM CFD INSTRUCTION
+	JMP AVM.DEC.PC
 * -------------------------------
 AVM.CFD
 	JSR AVM.GET.L.H
-	PHA
+	STA ACC.IP+1
 	TXA
-	PHA
-	JMP AVM.INC.PC.BY.2
+AVM.CFD.1
+	STA ACC.IP
+	JSR MON.RESTORE
+	JSR ACC.INDIRECT.CALL
+	JMP MON.SAVE
 * -------------------------------
 * AVM CFI INSTRUCTION
 * -------------------------------
 AVM.CFI
 	JSR ACC.POP.A
+	STA ACC.IP+1
+	JSR ACC.POP.A
+	JMP AVM.CFD.1
+* -------------------------------
+AVM.MTV
+ 	PHA
+	JSR AVM.FETCH.BYTE
+	TAX
+	PLA
+	TAY
+	LDA $00,X
+	STA (ACC.FP),Y
+	RTS
+* -------------------------------
+AVM.PHC
+	STA ACC.IDX.1
+	BEQ .2
+.1	JSR AVM.FETCH.BYTE
+	JSR ACC.PUSH.A
+	DEC ACC.IDX.1
+	BNE .1
+.2	RTS
+* -------------------------------
+AVM.RAF
+* SAVE SIZE
+	TAX
+* SAVE PTR TO RETURN VALUE
+	JSR ACC.SP.DOWN.A
+	JSR ACC.SET.IP.TO.SP
+* RESTORE SP
+	JSR ACC.SET.SP.TO.FP
+* RESTORE FP
+	JSR ACC.POP.A
+	STA ACC.FP+1
+	JSR ACC.POP.A
+	STA ACC.FP
+* RESTORE 6502 RETURN ADDRESS
+	JSR ACC.POP.A
 	PHA
 	JSR ACC.POP.A
 	PHA
+* RESTORE PROGRAM COUNTER
+	JSR ACC.POP.A
+	STA AVM.PCH
+	JSR ACC.POP.A
+	STA AVM.PCL
+* EVALUATE RETURN VALUE
+	STX ACC.SIZE
+	BEQ .1
+	JMP ACC.EVAL.1
+.1	RTS
 * -------------------------------
-* INCREMENT AVM PC BY 2
-* -------------------------------
-AVM.INC.PC.BY.2
-	JSR AVM.INC.PC
+AVM.VTM
+ 	PHA
+	JSR AVM.FETCH.BYTE
+	TAX
+	PLA
+	TAY
+	LDA (ACC.FP),Y
+	STA $00,X
+	RTS
 * -------------------------------
 * INCREMENT AVM PC
 * -------------------------------
@@ -129,193 +203,54 @@ AVM.INC.PC
 	INC AVM.PCH
 .1	RTS
 * -------------------------------
-* GET L,H INTO X,A
+* DECREMENT AVM PC
 * -------------------------------
-AVM.GET.L.H
-	LDY #1
-	LDA (AVM.PCL),Y
-	TAX
-	INY
-	LDA (AVM.PCH),Y
+AVM.DEC.PC
+	LDA AVM.PCL
+	BNE .1
+	DEC AVM.PCH
+.1	DEC AVM.PCL
 	RTS
 * -------------------------------
-* OFFSETS TO SIZED INSTRS
+* INSTRUCTION HANDLER ADDRESSES
 * -------------------------------
-AVM.SIZED.TBL
-	.HS 00
-	.HS #AVM.ANL-AVM.ADD
-	.HS #AVM.DCR-AVM.ADD
-	.HS #AVM.DSP-AVM.ADD
-	.HS #AVM.ICR-AVM.ADD
-	.HS #AVM.ISP-AVM.ADD
-	.HS #AVM.MTS-AVM.ADD
-	.HS #AVM.MTV-AVM.ADD
-	.HS #AVM.NEG-AVM.ADD
-	.HS #AVM.NOT-AVM.ADD
-	.HS #AVM.ORL-AVM.ADD
-	.HS #AVM.ORX-AVM.ADD
-	.HS #AVM.PHC-AVM.ADD
-	.HS #AVM.PVA-AVM.ADD
-	.HS #AVM.RAF-AVM.ADD
-	.HS #AVM.SHL-AVM.ADD
-	.HS #AVM.STM-AVM.ADD
-	.HS #AVM.SUB-AVM.ADD
-	.HS #AVM.TEQ-AVM.ADD
-	.HS #AVM.VTM-AVM.ADD
-	.HS #AVM.DIV-AVM.ADD
-	.HS #AVM.EXT-AVM.ADD
-	.HS #AVM.MUL-AVM.ADD
-	.HS #AVM.SHR-AVM.ADD
-	.HS #AVM.TGE-AVM.ADD
-	.HS #AVM.TGT-AVM.ADD
-	.HS #AVM.TLE-AVM.ADD
-	.HS #AVM.TLT-AVM.ADD
-	.HS #AVM.UNUSED-AVM.ADD
-	.HS #AVM.UNUSED-AVM.ADD
-	.HS #AVM.UNUSED-AVM.ADD
-	.HS #AVM.UNUSED-AVM.ADD
-* -------------------------------
-* AVM ADD INSTRUCTION
-* -------------------------------
-AVM.ADD
-	RTS
-* -------------------------------
-* AVM ANL INSTRUCTION
-* -------------------------------
-AVM.ANL
-	RTS
-* -------------------------------
-* AVM DCR INSTRUCTION
-* -------------------------------
-AVM.DCR
-	RTS
-* -------------------------------
-* AVM DSP INSTRUCTION
-* -------------------------------
-AVM.DSP
-	RTS
-* -------------------------------
-* AVM ICR INSTRUCTION
-* -------------------------------
-AVM.ICR
-	RTS
-* -------------------------------
-* AVM ISP INSTRUCTION
-* -------------------------------
-AVM.ISP
-	RTS
-* -------------------------------
-* AVM MTS INSTRUCTION
-* -------------------------------
-AVM.MTS
-	RTS
-* -------------------------------
-* AVM MTV INSTRUCTION
-* -------------------------------
-AVM.MTV
-	RTS
-* -------------------------------
-* AVM NEG INSTRUCTION
-* -------------------------------
-AVM.NEG
-	RTS
-* -------------------------------
-* AVM NOT INSTRUCTION
-* -------------------------------
-AVM.NOT
-	RTS
-* -------------------------------
-* AVM ORL INSTRUCTION
-* -------------------------------
-AVM.ORL
-	RTS
-* -------------------------------
-* AVM ORX INSTRUCTION
-* -------------------------------
-AVM.ORX
-	RTS
-* -------------------------------
-* AVM PHC INSTRUCTION
-* -------------------------------
-AVM.PHC
-	RTS
-* -------------------------------
-* AVM PVA INSTRUCTION
-* -------------------------------
-AVM.PVA
-	RTS
-* -------------------------------
-* AVM RAF INSTRUCTION
-* -------------------------------
-AVM.RAF
-	RTS
-* -------------------------------
-* AVM SHL INSTRUCTION
-* -------------------------------
-AVM.SHL
-	RTS
-* -------------------------------
-* AVM STM INSTRUCTION
-* -------------------------------
-AVM.STM
-	RTS
-* -------------------------------
-* AVM SUB INSTRUCTION
-* -------------------------------
-AVM.SUB
-	RTS
-* -------------------------------
-* AVM TEQ INSTRUCTION
-* -------------------------------
-AVM.TEQ
-	RTS
-* -------------------------------
-* AVM VTM INSTRUCTION
-* -------------------------------
-AVM.VTM
-	RTS
-* -------------------------------
-* AVM DIV INSTRUCTION
-* -------------------------------
-AVM.DIV
-	RTS
-* -------------------------------
-* AVM EXT INSTRUCTION
-* -------------------------------
-AVM.EXT
-	RTS
-* -------------------------------
-* AVM MUL INSTRUCTION
-* -------------------------------
-AVM.MUL
-	RTS
-* -------------------------------
-* AVM SHR INSTRUCTION
-* -------------------------------
-AVM.SHR
-	RTS
-* -------------------------------
-* AVM TGE INSTRUCTION
-* -------------------------------
-AVM.TGE
-	RTS
-* -------------------------------
-* AVM TGT INSTRUCTION
-* -------------------------------
-AVM.TGT
-	RTS
-* -------------------------------
-* AVM TLE INSTRUCTION
-* -------------------------------
-AVM.TLE
-	RTS
-* -------------------------------
-* AVM TLT INSTRUCTION
-* -------------------------------
-AVM.TLT
-	RTS
-* -------------------------------
-* AVM UNUSED INSTRUCTION
-* -------------------------------
-AVM.UNUSED
-	BRK
+AVM.INSTR.TBL
+	.DA AVM.BRK-1	     BRK
+	.DA AVM.BRF-1	     BRF
+	.DA AVM.BRU-1	     BRU
+	.DA AVM.CFD-1	     CFD
+	.DA AVM.CFI-1	     CFI
+	.DA AVM.BRK-1	     ???
+	.DA AVM.BRK-1	     ???
+	.DA AVM.BRK-1	     ???
+	.DA ACC.BINOP.ADD-1  ADD
+	.DA ACC.BINOP.AND-1  ANL
+	.DA ACC.UNOP.DECR-1  DCR
+	.DA ACC.SP.DOWN.A-1  DSP
+	.DA ACC.UNOP.INCR-1  ICR
+	.DA ACC.SP.UP.A-1    ISP
+	.DA ACC.EVAL-1	     MTS
+	.DA AVM.MTV-1	     MTV
+	.DA ACC.UNOP.NEG-1   NEG
+	.DA ACC.UNOP.NOT-1   NOT
+	.DA ACC.BINOP.OR-1   ORL
+	.DA ACC.BINOP.XOR-1  ORX
+	.DA AVM.PHC-1        PHC
+	.DA ACC.PUSH.SLOT-1  PVA
+	.DA AVM.RAF-1	     RAF
+	.DA ACC.BINOP.SHL-1  SHL
+	.DA ACC.ASSIGN-1     STM
+	.DA ACC.BINOP.SUB-1  SUB
+	.DA ACC.BINOP.EQ-1   TEQ
+	.DA AVM.VTM-1        VTM
+	.DA ACC.BINOP.DIV-1  DIV
+	.DA ACC.EXTEND-1     EXT
+	.DA ACC.BINOP.MUL-1  MUL
+	.DA ACC.BINOP.SHR-1  SHR
+	.DA ACC.BINOP.GEQ-1  TGE
+	.DA ACC.BINOP.GT-1   TGT
+	.DA ACC.BINOP.LEQ-1  TLE
+	.DA ACC.BINOP.LT-1   TLT
+	.DA AVM.BRK-1	     ???
+	.DA AVM.BRK-1	     ???
+	.DA AVM.BRK-1	     ???

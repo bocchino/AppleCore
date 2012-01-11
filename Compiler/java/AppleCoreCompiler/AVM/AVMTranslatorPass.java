@@ -31,12 +31,9 @@ public class AVMTranslatorPass
     /* Constants */
 
     /**
-     * The size of a stack frame with no parameters, local variables,
-     * or saved regs.  We need two bytes each for the saved AppleCore
-     * return address, the saved 6502 return address, and the saved
-     * FP.
+     * Size of saved info on stack
      */
-    public static final int MIN_FRAME_SIZE=6;
+    public final int SAVED_INFO_SIZE=6;
 
     /* State variables for tree traversal */
 
@@ -121,11 +118,8 @@ public class AVMTranslatorPass
 	    node.instructions.clear();
 	    emit(new LabelInstruction(node.name));
 	    emit(new NativeInstruction("JSR","AVM.EXECUTE.FN"));
-	    // On exit from AVM.EXECUTE.FN, SP points to
-	    // FP+MIN_FRAME_SIZE
-	    int bumpSize = node.frameSize - MIN_FRAME_SIZE;
-	    if (bumpSize > 0) {
-		emit(new ISPInstruction(bumpSize));
+	    if (node.frameSize > 0) {
+		emit(new ISPInstruction(node.frameSize));
 	    }
 
 	    scan(node.varDecls);
@@ -319,9 +313,9 @@ public class AVMTranslatorPass
 	Iterator<VarDecl> I = functionDecl.params.iterator();
 	if (args.size() > 0) {
 	    // Save bump size for undo
-	    int bumpSize = MIN_FRAME_SIZE;
+	    int bumpSize = SAVED_INFO_SIZE;
 	    // Save place for return addresses and saved FP
-	    emit(new ISPInstruction(MIN_FRAME_SIZE));
+	    emit(new ISPInstruction(SAVED_INFO_SIZE));
 	    for (Expression arg : args) {
 		VarDecl param = I.next();
 		// Evaluate the argument
@@ -519,7 +513,7 @@ public class AVMTranslatorPass
     private void computeStackSlotsFor(FunctionDecl node) 
 	throws ACCError
     {
-	int offset = MIN_FRAME_SIZE;
+	int offset = 0;
 	printStatus("stack slots:");
 	// Params
 	for (VarDecl varDecl : node.params) {
@@ -595,7 +589,6 @@ public class AVMTranslatorPass
 		emit(new VTMInstruction(reg.getOffset(),
 					new Address(reg.saveAddr)));
 	    }
-	    emit(new CFDInstruction(new Address("$FF3F")));
 	}
     }
 
@@ -604,7 +597,6 @@ public class AVMTranslatorPass
      */
     private void saveRegisters() {
 	if (currentFunction.savedRegs.size() > 0) {
-	    emit(new CFDInstruction(new Address("$FF4A")));
 	    for (RegisterExpression.Register reg :
 		     currentFunction.savedRegs) {
 		emit(new MTVInstruction(reg.getOffset(),
