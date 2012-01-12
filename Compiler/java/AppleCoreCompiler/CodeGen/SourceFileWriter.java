@@ -289,6 +289,10 @@ public class SourceFileWriter
 	emitter.emitLabel(node.name);
 	emitter.emitLine();
 	
+	emitVerboseComment("skip slot for AVM ret addr");
+	emitter.emitImmediateInstruction("LDA",2);
+	emitter.emitAbsoluteInstruction("JSR","ACC.SP.UP.A");
+
 	emitVerboseComment("push return address");
 	emitter.emitInstruction("PLA");
 	emitter.emitAbsoluteInstruction("JSR","ACC.PUSH.A");
@@ -298,22 +302,21 @@ public class SourceFileWriter
 	emitVerboseComment("push old FP");
 	emitter.emitAbsoluteInstruction("JSR","ACC.PUSH.FP");
 	
-	emitVerboseComment("save new FP");
-	emitter.emitImmediateInstruction("LDA",4);
-	emitter.emitAbsoluteInstruction("JSR","ACC.SP.DOWN.A");
+	emitVerboseComment("set new FP");
 	emitter.emitAbsoluteInstruction("JSR","ACC.SET.FP.TO.SP");
 	
-	emitVerboseComment("bump stack to top of frame");
-	emitter.emitImmediateInstruction("LDA",node.frameSize);
-	emitter.emitAbsoluteInstruction("JSR","ACC.SP.UP.A");
+	if (node.frameSize > 0) {
+	    emitVerboseComment("bump stack to top of frame");
+	    emitter.emitImmediateInstruction("LDA",node.frameSize);
+	    emitter.emitAbsoluteInstruction("JSR","ACC.SP.UP.A");
+	}
 	
 	scan(node.varDecls);
 	scan(node.statements);
 	
 	if (!node.endsInReturnStatement()) {
-	    pullReturnAddress();
 	    emitVerboseComment("restore old frame and return");
-	    emitter.emitAbsoluteInstruction("JMP","ACC.FN.RETURN");
+	    emitter.emitAbsoluteInstruction("JMP","ACC.FN.RETURN.VOID");
 	}
     }
 
@@ -327,16 +330,6 @@ public class SourceFileWriter
 	    }
 	    emitter.printStream.println(emitter.makeLabel(inst.toString()));
 	}
-    }
-
-    private void pullReturnAddress() {
-	emitVerboseComment("pull return address off program stack");
-	emitter.emitImmediateInstruction("LDY",1);
-	emitter.emitIndirectYInstruction("LDA","ACC.FP");
-	emitter.emitInstruction("PHA");
-	emitter.emitInstruction("DEY");
-	emitter.emitIndirectYInstruction("LDA","ACC.FP");
-	emitter.emitInstruction("PHA");
     }
 
     public void visitIncludeDecl(IncludeDecl node) {
@@ -468,7 +461,6 @@ public class SourceFileWriter
     public void visitReturnStatement(ReturnStatement node)
 	throws ACCError 
     {
-	pullReturnAddress();
 	if (node.expr != null) {
 	    // Evaluate expression
 	    needAddress = false;
@@ -478,14 +470,11 @@ public class SourceFileWriter
 	    // Assign result and restore frame
 	    emitVerboseComment("assign result, restore frame, and exit");
 	    emitter.emitImmediateInstruction("LDA",currentFunction.size);
-	    emitter.emitAbsoluteInstruction("JSR","ACC.SP.DOWN.A");
-	    emitter.emitAbsoluteInstruction("JSR","ACC.SET.IP.TO.SP");
-	    emitter.emitAbsoluteInstruction("JSR","ACC.FN.RETURN");
-	    emitter.emitAbsoluteInstruction("JMP","ACC.EVAL.1");
+	    emitter.emitAbsoluteInstruction("JMP","ACC.FN.RETURN");
 	}
 	else {
 	    emitVerboseComment("restore old frame and return");
-	    emitter.emitAbsoluteInstruction("JMP","ACC.FN.RETURN");
+	    emitter.emitAbsoluteInstruction("JMP","ACC.FN.RETURN.VOID");
 	}
     }
 
@@ -568,9 +557,9 @@ public class SourceFileWriter
 	if (args.size() > 0) {
 	    emitVerboseComment("fill slots for new frame");
 	    // Save bump size for undo
-	    int bumpSize = 4;
-	    // Save place for return address and FP
-	    emitter.emitImmediateInstruction("LDA",4);
+	    int bumpSize = AVMTranslatorPass.SAVED_INFO_SIZE;
+	    // Save place for callee to save info
+	    emitter.emitImmediateInstruction("LDA",bumpSize);
 	    emitter.emitAbsoluteInstruction("JSR","ACC.SP.UP.A");
 	    for (Expression arg : args) {
 		VarDecl param = I.next();
@@ -763,11 +752,6 @@ public class SourceFileWriter
 	printStatus("stack slots:");
 	int offset = 0;
 	printStatus(" return address: " + offset);
-	// Two bytes for return address
-	offset += 2;
-	printStatus(" FP: " + offset);
-	// Two bytes for saved FP
-	offset += 2;
 	// Params
 	for (VarDecl varDecl : node.params) {
 	    printStatus(" " + varDecl + ",offset=" + offset);

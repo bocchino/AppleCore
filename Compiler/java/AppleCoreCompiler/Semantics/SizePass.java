@@ -48,8 +48,7 @@ public class SizePass
 		}
 	    }
 	}
-	// Frame size starts with four bytes for saved return address and FP
-	int frameSize = 4;
+	int frameSize = 0;
 	for (VarDecl param : node.params) {
 	    frameSize += param.size;
 	}

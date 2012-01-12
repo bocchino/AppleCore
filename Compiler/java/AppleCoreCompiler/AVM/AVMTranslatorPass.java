@@ -33,7 +33,7 @@ public class AVMTranslatorPass
     /**
      * Size of saved info on stack
      */
-    public final int SAVED_INFO_SIZE=6;
+    public static final int SAVED_INFO_SIZE=6;
 
     /* State variables for tree traversal */
 
