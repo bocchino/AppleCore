@@ -1,3 +1,4 @@
+:NEW
 * -------------------------------
 * THE APPLECORE COMPILER, V1.0
 * COMPARISON OPERATIONS

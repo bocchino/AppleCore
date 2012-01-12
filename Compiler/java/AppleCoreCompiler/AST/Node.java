@@ -694,7 +694,7 @@ public abstract class Node {
 	}
 
 	public String valueAsHexString() {
-	    return "$" + String.valueOf((int) value).toUpperCase();
+	    return "$" + Integer.toHexString((int) value).toUpperCase();
 	}
 
 	public String valueAsDecString() {

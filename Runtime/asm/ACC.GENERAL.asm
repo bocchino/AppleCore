@@ -1,3 +1,4 @@
+:NEW
 * -------------------------------
 * THE APPLECORE COMPILER, V1.0
 * GENERAL FUNCTIONS
@@ -307,7 +308,7 @@ ACC.INIT.BINOP
         JSR ACC.SP.DOWN.A
         JSR ACC.SET.IP.TO.SP
         JSR ACC.SP.DOWN.SIZE
-        RTS
+        RTS  	FIXME
 * -------------------------------
 * SET A=SP[SIZE-1,1]
 * -------------------------------
