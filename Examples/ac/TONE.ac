@@ -1,7 +1,5 @@
 # -----------------------------------
-# SIMPLE TONE GENERATOR
-# SHOWS SPEED DIFFERENTIAL BETWEEN
-# AVM AND NATIVE CODE
+# A SIMPLE TONE GENERATOR
 # -----------------------------------
 
 CONST CLICK $C030;
