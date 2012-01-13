@@ -1,4 +1,6 @@
-CONST	MON_BELL $FBDD;
+# -------------------------------------
+# TEST GREATER THAN COMPARISON
+# -------------------------------------
 
 FN TEST_GT() {
    IF (1 > -1) {

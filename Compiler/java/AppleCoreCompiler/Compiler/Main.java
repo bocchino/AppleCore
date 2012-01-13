@@ -29,16 +29,6 @@ public class Main {
     private static boolean includeMode = false;
 
     /**
-     * Whether to print verbose comments in generated code
-     */
-    private static boolean printVerboseComments = false;
-
-    /**
-     * Whether to generate AppleCore Virtual Machine code;
-     */
-    private static boolean generateAVMCode = false;
-
-    /**
      * Origin of translated assembly file
      */
     private static int origin = -1;
@@ -80,24 +70,18 @@ public class Main {
 		throw new OptionError("only one source file allowed");
 	    }
 	}
-	else if (arg.equals("-avm")) {
-	    generateAVMCode = true;
-	}
-	else if (arg.substring(0,7).equals("-decls=")) {
+	else if (arg.startsWith("-decls=")) {
 	    for (String declFile : arg.substring(7).split(":")) {
 		declFiles.add(declFile);
 	    }
 	}
-	else if (arg.equals("-verbose")) {
-	    printVerboseComments=true;
-	}
 	else if (arg.equals("-include")) {
 	    includeMode = true;
 	}
-	else if (arg.substring(0,4).equals("-tf=")) {
+	else if (arg.startsWith("-tf=")) {
 	    targetFileName = arg.substring(4);
 	}
-	else if (arg.substring(0,7).equals("-origin=")) {
+	else if (arg.startsWith("-origin=")) {
 	    if (arg.charAt(8)=='$') {
 		origin = Integer.parseInt(arg.substring(9),16);
 	    }
@@ -106,7 +90,8 @@ public class Main {
 	    }
 	    if (origin < 0) origin = -origin;
 	    if (origin > 65535) {
-		throw new OptionError("address " + origin + " out of range");
+		throw new OptionError("address " + origin + 
+				      " out of range");
 	    }
 	}
 	else {
@@ -148,14 +133,8 @@ public class Main {
 		    new AVMTranslatorPass();
 		translatorPass.runOn(sourceFile);
 
-		SourceFileWriter.Mode mode =
-		    generateAVMCode ? SourceFileWriter.Mode.AVM :
-		    SourceFileWriter.Mode.NATIVE;
 		SourceFileWriter writer =
-		    new SourceFileWriter(new SCMacroEmitter(System.out),
-					 mode);
-		writer.printVerboseComments =
-		    printVerboseComments;
+		    new SourceFileWriter(new SCMacroEmitter(System.out));
 		writer.runOn(sourceFile);
 	    }
 	    catch (ACCError e) {
