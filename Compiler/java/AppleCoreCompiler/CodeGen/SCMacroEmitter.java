@@ -184,6 +184,7 @@ public class SCMacroEmitter
 	emitAbsoluteInstruction(".IN","AVM.BINOP");
 	emitAbsoluteInstruction(".IN","ACC.BUILT.IN");
 	emitAbsoluteInstruction(".IN","AVM");
-	emitAbsoluteInstruction(".IN","ACC.STACK");
+	// Start of program stack
+	emitLabel("ACC.STACK");
     }
 }
