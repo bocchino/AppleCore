@@ -87,7 +87,7 @@ ACC.PUSH.SLOT
 * SET SP+=SIZE
 * PRESERVES X,Y
 * -------------------------------
-ACC.SP.UP.A
+AVM.ISP
 	STA ACC.SIZE
 * -------------------------------
 * SET SP+=SIZE
@@ -167,7 +167,7 @@ ACC.POP.IP
 * SET X=SIZE
 * SET Y=0
 * -------------------------------
-ACC.EVAL
+AVM.MTS
         STA ACC.SIZE
         JSR ACC.POP.IP
 * -------------------------------
@@ -175,7 +175,7 @@ ACC.EVAL
 * SET SP+=SIZE
 * CLOBBERS Y
 * -------------------------------
-ACC.EVAL.1
+AVM.MTS.1
 	LDY ACC.SIZE
 .1      DEY
         LDA (ACC.IP),Y
@@ -264,7 +264,7 @@ ACC.PUSH.A
         LDY #0
         STA (ACC.SP),Y
         LDA #1
-        JMP ACC.SP.UP.A
+        JMP AVM.ISP
 * -------------------------------
 * DEC SP
 * SET SIZE=1
@@ -347,7 +347,7 @@ ACC.FN.RETURN
 * EVALUATE RETURN VALUE
 	STX ACC.SIZE
 	BEQ .1
-	JMP ACC.EVAL.1
+	JMP AVM.MTS.1
 .1	RTS
 * -------------------------------
 * SET IP=ACC.FP[Y,2]

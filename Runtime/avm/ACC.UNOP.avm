@@ -44,7 +44,7 @@ ACC.NOT
 * SET SP[0,SIZE]=IP[0,SIZE]
 * SET SP+=SIZE
 * -------------------------------
-ACC.UNOP.INCR
+AVM.ICR
 	STA ACC.SIZE
 	TAX
 	JSR ACC.POP.IP
@@ -56,7 +56,7 @@ ACC.UNOP.INCR
 	INY
 	DEX
 	BNE .1
-	JMP ACC.EVAL.1
+	JMP AVM.MTS.1
 * -------------------------------
 * POP IP
 * SET SIZE=A
@@ -76,6 +76,6 @@ AVM.DCR
 	INY
 	DEX
 	BNE .1
-	JMP ACC.EVAL.1
+	JMP AVM.MTS.1
 
         

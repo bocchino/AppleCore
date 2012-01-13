@@ -98,7 +98,7 @@ ACC.MUL.UNSIGNED
 	JSR ACC.SET.IP.TO.SP
 	JSR ACC.SP.DOWN.SIZE
 	JSR ACC.SP.DOWN.SIZE
-	JMP ACC.EVAL.1
+	JMP AVM.MTS.1
 * -------------------------------
 * SIGNED MULTIPLICATION
 * -------------------------------
