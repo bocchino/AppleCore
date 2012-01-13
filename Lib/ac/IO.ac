@@ -22,12 +22,12 @@ FN PRINT_CHAR(CHAR:1) {
 # --------------------------------------
 # PRINT A STRING
 # --------------------------------------
-FN ACC_PRINT_STRING();
+FN AVM_PRINT_STRING();
 
 FN PRINT_STRING(STR_PTR:2) {
   SET ^X=(@STR_PTR)[0,1];
   SET ^A=(@STR_PTR)[1,1];
-  ACC_PRINT_STRING();
+  AVM_PRINT_STRING();
 }
 
 # --------------------------------------

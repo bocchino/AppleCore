@@ -185,6 +185,6 @@ public class SCMacroEmitter
 	emitAbsoluteInstruction(".IN","AVM.4.UNOP");
 	emitAbsoluteInstruction(".IN","AVM.5.BUILT.IN");
 	// Start of program stack
-	emitLabel("ACC.STACK");
+	emitLabel("AVM.STACK");
     }
 }

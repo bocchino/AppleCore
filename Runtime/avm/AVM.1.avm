@@ -13,9 +13,9 @@ AVM.PCH .EQ $3B
 AVM.EXECUTE.FN
 * SAVE ACC RETURN ADDRESS
 	LDA AVM.PCL
-	JSR ACC.PUSH.A
+	JSR AVM.PUSH.A
 	LDA AVM.PCH
-	JSR ACC.PUSH.A
+	JSR AVM.PUSH.A
 * STORE PROGRAM COUNTER
 	PLA
 	STA AVM.PCL
@@ -23,13 +23,13 @@ AVM.EXECUTE.FN
 	STA AVM.PCH
 * SAVE 6502 RETURN ADDRESS
 	PLA
-	JSR ACC.PUSH.A
+	JSR AVM.PUSH.A
 	PLA
-	JSR ACC.PUSH.A
+	JSR AVM.PUSH.A
 * SAVE FP
-	JSR ACC.PUSH.FP
+	JSR AVM.PUSH.FP
 * SET NEW FP
-	JSR ACC.SET.FP.TO.SP
+	JSR AVM.SET.FP.TO.SP
 * INSTRUCTION LOOP
 .1	JSR AVM.DO.INSTR
 	JMP .1
@@ -38,8 +38,8 @@ AVM.EXECUTE.FN
 * -------------------------------
 AVM.DO.INSTR
 	JSR AVM.FETCH.BYTE
-	STA ACC.IDX.1
-	STA ACC.SIZE
+	STA AVM.IDX.1
+	STA AVM.SIZE
 	AND #$F8
 	BEQ AVM.BRANCH
 * -------------------------------
@@ -50,9 +50,9 @@ AVM.DO.INSTR
 	LSR
 	CLC
 	ADC #$07
-	STA ACC.IDX.1
+	STA AVM.IDX.1
 	CMP #$1C
-	LDA ACC.SIZE
+	LDA AVM.SIZE
 	BCS AVM.SIGNED
 * -------------------------------
 * SIZED
@@ -71,24 +71,24 @@ AVM.SIGNED
 	LSR
 	TAX
 * GET SIZE
-	LDA ACC.SIZE
+	LDA AVM.SIZE
 	AND #3
 	BNE AVM.STORE.SIZE
 AVM.FETCH.SIZE
  	JSR AVM.FETCH.BYTE
 AVM.STORE.SIZE
-	STA ACC.SIZE
+	STA AVM.SIZE
 * -------------------------------
 * BRANCH TO HANDLER
 * -------------------------------
 AVM.BRANCH
-	ASL ACC.IDX.1
-	LDY ACC.IDX.1
+	ASL AVM.IDX.1
+	LDY AVM.IDX.1
 	LDA AVM.INSTR.TBL+1,Y
 	PHA
 	LDA AVM.INSTR.TBL,Y
 	PHA
-	LDA ACC.SIZE
+	LDA AVM.SIZE
 	RTS
 * -------------------------------
 * INSTRUCTION HANDLER ADDRESSES
@@ -140,7 +140,7 @@ AVM.BRK
 	BRK
 * -------------------------------
 AVM.BRF	
-	JSR ACC.POP.A
+	JSR AVM.POP.A
 	AND #1
 	BEQ AVM.BRU
 * -------------------------------
@@ -166,20 +166,20 @@ AVM.BRU
 * -------------------------------
 AVM.CFD
 	JSR AVM.GET.L.H
-	STA ACC.IP+1
+	STA AVM.IP+1
 	TXA
 AVM.CFD.1
-	STA ACC.IP
+	STA AVM.IP
 	JSR MON.RESTORE
 	JSR AVM.CFD.2
 	JMP MON.SAVE
 AVM.CFD.2
-	JMP (ACC.IP)
+	JMP (AVM.IP)
 * -------------------------------
 AVM.CFI
-	JSR ACC.POP.A
-	STA ACC.IP+1
-	JSR ACC.POP.A
+	JSR AVM.POP.A
+	STA AVM.IP+1
+	JSR AVM.POP.A
 	JMP AVM.CFD.1
 * -------------------------------
 * SET SIZE=A
@@ -187,18 +187,18 @@ AVM.CFI
 * PRESERVES X,Y
 * -------------------------------
 AVM.DSP
-        STA ACC.SIZE
+        STA AVM.SIZE
 * -------------------------------
 * SET SP-=SIZE
 * PRESERVES X,Y
 * -------------------------------
-ACC.SP.DOWN.SIZE
-        LDA ACC.SP
+AVM.SP.DOWN.SIZE
+        LDA AVM.SP
         SEC
-        SBC ACC.SIZE
-        STA ACC.SP
+        SBC AVM.SIZE
+        STA AVM.SP
         BCS .1
-        DEC ACC.SP+1
+        DEC AVM.SP+1
 .1      RTS
 * -------------------------------
 * SET Y,SIZE=A
@@ -209,20 +209,20 @@ ACC.SP.DOWN.SIZE
 * CLOBBERS X
 * -------------------------------
 AVM.EXT
-        STA ACC.SIZE
+        STA AVM.SIZE
 	TXA
-	BEQ ACC.PUSH.X.SIZE.TIMES
+	BEQ AVM.PUSH.X.SIZE.TIMES
 * X=1, LOOK AT MSb
 	DEX
-        JSR ACC.SP.DOWN.SIZE
-	LDY ACC.SIZE
+        JSR AVM.SP.DOWN.SIZE
+	LDY AVM.SIZE
 	DEY
-	LDA (ACC.SP),Y
+	LDA (AVM.SP),Y
         AND #$80
         PHA
-        JSR ACC.SP.UP.SIZE
+        JSR AVM.SP.UP.SIZE
 	PLA
-        BEQ ACC.PUSH.X.SIZE.TIMES
+        BEQ AVM.PUSH.X.SIZE.TIMES
 * SET X=$FF
 	DEX
 * -------------------------------
@@ -230,14 +230,14 @@ AVM.EXT
 * SET Y=A
 * PRESERVES X
 * -------------------------------
-ACC.PUSH.X.SIZE.TIMES
-	LDY ACC.SIZE
+AVM.PUSH.X.SIZE.TIMES
+	LDY AVM.SIZE
 .1	DEY
 	TXA
-	STA (ACC.SP),Y
+	STA (AVM.SP),Y
 	TYA
 	BNE .1
-	JMP ACC.SP.UP.SIZE
+	JMP AVM.SP.UP.SIZE
 * -------------------------------
 * INCREMENT AVM PC
 * -------------------------------

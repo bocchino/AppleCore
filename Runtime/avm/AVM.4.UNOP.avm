@@ -22,18 +22,18 @@ AVM.NOT
 	JSR AVM.DSP
 	CLC
 AVM.NOT.1
-	JSR ACC.NOT
-	JMP ACC.SP.UP.SIZE
+	JSR AVM.NOT.2
+	JMP AVM.SP.UP.SIZE
 * -------------------------------
 * FLIP THE BITS
 * -------------------------------
-ACC.NOT
-	LDX ACC.SIZE
+AVM.NOT.2
+	LDX AVM.SIZE
 	LDY #0
-.1	LDA (ACC.SP),Y
+.1	LDA (AVM.SP),Y
 	EOR #$FF
 	ADC #0
-	STA (ACC.SP),Y
+	STA (AVM.SP),Y
 	INY
 	DEX
 	BNE .1
@@ -46,14 +46,14 @@ ACC.NOT
 * SET SP+=SIZE
 * -------------------------------
 AVM.ICR
-	STA ACC.SIZE
+	STA AVM.SIZE
 	TAX
-	JSR ACC.POP.IP
+	JSR AVM.POP.IP
 	LDY #0
 	SEC
-.1	LDA (ACC.IP),Y
+.1	LDA (AVM.IP),Y
 	ADC #0
-	STA (ACC.IP),Y
+	STA (AVM.IP),Y
 	INY
 	DEX
 	BNE .1
@@ -66,14 +66,14 @@ AVM.ICR
 * SET SP+=SIZE
 * -------------------------------
 AVM.DCR
-	STA ACC.SIZE
+	STA AVM.SIZE
 	TAX
-	JSR ACC.POP.IP
+	JSR AVM.POP.IP
 	LDY #0
 	CLC
-.1	LDA (ACC.IP),Y
+.1	LDA (AVM.IP),Y
 	ADC #$FF
-	STA (ACC.IP),Y
+	STA (AVM.IP),Y
 	INY
 	DEX
 	BNE .1

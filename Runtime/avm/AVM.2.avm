@@ -12,21 +12,21 @@
 * SET Y=0
 * -------------------------------
 AVM.MTS
-        STA ACC.SIZE
-        JSR ACC.POP.IP
+        STA AVM.SIZE
+        JSR AVM.POP.IP
 * -------------------------------
 * SET SP[0,SIZE]=IP[0,SIZE]
 * SET SP+=SIZE
 * CLOBBERS Y
 * -------------------------------
 AVM.MTS.1
-	LDY ACC.SIZE
+	LDY AVM.SIZE
 .1      DEY
-        LDA (ACC.IP),Y
-        STA (ACC.SP),Y
+        LDA (AVM.IP),Y
+        STA (AVM.SP),Y
         TYA
         BNE .1
-        JMP ACC.SP.UP.SIZE
+        JMP AVM.SP.UP.SIZE
 * -------------------------------
 AVM.MTV
  	PHA
@@ -35,15 +35,15 @@ AVM.MTV
 	PLA
 	TAY
 	LDA $00,X
-	STA (ACC.FP),Y
+	STA (AVM.FP),Y
 	RTS
 * -------------------------------
 AVM.PHC
-	STA ACC.IDX.1
+	STA AVM.IDX.1
 	BEQ .2
 .1	JSR AVM.FETCH.BYTE
-	JSR ACC.PUSH.A
-	DEC ACC.IDX.1
+	JSR AVM.PUSH.A
+	DEC AVM.IDX.1
 	BNE .1
 .2	RTS
 * -------------------------------
@@ -52,7 +52,7 @@ AVM.PHC
 * SET Y=1
 * PRESERVES X
 * -------------------------------
-ACC.PUSH.FP
+AVM.PUSH.FP
         LDA #0
 * -------------------------------
 * SET SP[0,2]=FP+A
@@ -64,12 +64,12 @@ ACC.PUSH.FP
 AVM.PVA
         LDY #0
         CLC
-        ADC ACC.FP
-        STA (ACC.SP),Y
+        ADC AVM.FP
+        STA (AVM.SP),Y
         INY
-        LDA ACC.FP+1
+        LDA AVM.FP+1
         ADC #0
-        STA (ACC.SP),Y
+        STA (AVM.SP),Y
         LDA #2
 * -------------------------------
 * SET SIZE=A
@@ -77,25 +77,25 @@ AVM.PVA
 * PRESERVES X,Y
 * -------------------------------
 AVM.ISP
-	STA ACC.SIZE
+	STA AVM.SIZE
 * -------------------------------
 * SET SP+=SIZE
 * PRINT ERROR AND ABORT ON
 * STACK OVERFLOW
 * -------------------------------
-ACC.SP.UP.SIZE
-	LDA ACC.SP
+AVM.SP.UP.SIZE
+	LDA AVM.SP
         CLC
-        ADC ACC.SIZE
-        STA ACC.SP
+        ADC AVM.SIZE
+        STA AVM.SP
         BCC .1
-        INC ACC.SP+1
-.1      JSR ACC.CHECK.SP
+        INC AVM.SP+1
+.1      JSR AVM.CHECK.SP
 	BCC .2
 	RTS
-.2	LDX #ACC.STACK.OVERFLOW
-	LDA /ACC.STACK.OVERFLOW
-	JSR ACC.PRINT.STRING
+.2	LDX #AVM.STACK.OVERFLOW
+	LDA /AVM.STACK.OVERFLOW
+	JSR AVM.PRINT.STRING
 	JMP DOS.COLD.START
 * -------------------------------
 AVM.RAF
@@ -103,26 +103,26 @@ AVM.RAF
 	TAX
 * SAVE PTR TO RETURN VALUE
 	JSR AVM.DSP
-	JSR ACC.SET.IP.TO.SP
+	JSR AVM.SET.IP.TO.SP
 * RESTORE SP
-	JSR ACC.SET.SP.TO.FP
+	JSR AVM.SET.SP.TO.FP
 * RESTORE FP
-	JSR ACC.POP.A
-	STA ACC.FP+1
-	JSR ACC.POP.A
-	STA ACC.FP
+	JSR AVM.POP.A
+	STA AVM.FP+1
+	JSR AVM.POP.A
+	STA AVM.FP
 * RESTORE 6502 RETURN ADDRESS
-	JSR ACC.POP.A
+	JSR AVM.POP.A
 	PHA
-	JSR ACC.POP.A
+	JSR AVM.POP.A
 	PHA
 * RESTORE PROGRAM COUNTER
-	JSR ACC.POP.A
+	JSR AVM.POP.A
 	STA AVM.PCH
-	JSR ACC.POP.A
+	JSR AVM.POP.A
 	STA AVM.PCL
 * EVALUATE RETURN VALUE
-	STX ACC.SIZE
+	STX AVM.SIZE
 	BEQ .1
 	JMP AVM.MTS.1
 .1	RTS
@@ -136,14 +136,14 @@ AVM.RAF
 * CLOBBERS Y
 * -------------------------------
 AVM.STM
-        STA ACC.SIZE
-        JSR ACC.POP.IP
+        STA AVM.SIZE
+        JSR AVM.POP.IP
 AVM.STM.1
-        JSR ACC.SP.DOWN.SIZE
-	LDY ACC.SIZE
+        JSR AVM.SP.DOWN.SIZE
+	LDY AVM.SIZE
 .1      DEY
-        LDA (ACC.SP),Y
-        STA (ACC.IP),Y
+        LDA (AVM.SP),Y
+        STA (AVM.IP),Y
         TYA
         BNE .1
         RTS
@@ -154,7 +154,7 @@ AVM.VTM
 	TAX
 	PLA
 	TAY
-	LDA (ACC.FP),Y
+	LDA (AVM.FP),Y
 	STA $00,X
 	RTS
 * -------------------------------
@@ -164,10 +164,10 @@ AVM.VTM
 * SET SIZE=1
 * PRESERVES X
 * -------------------------------
-ACC.PUSH.SP
-	LDA ACC.SP
-        JSR ACC.PUSH.A
-        LDA ACC.SP+1
+AVM.PUSH.SP
+	LDA AVM.SP
+        JSR AVM.PUSH.A
+        LDA AVM.SP+1
 * -------------------------------
 * SET SP[0,1]=A
 * INC SP
@@ -175,9 +175,9 @@ ACC.PUSH.SP
 * SET SIZE=1
 * PRESERVES X
 * -------------------------------
-ACC.PUSH.A
+AVM.PUSH.A
         LDY #0
-        STA (ACC.SP),Y
+        STA (AVM.SP),Y
         LDA #1
         JMP AVM.ISP
 * -------------------------------
@@ -186,83 +186,83 @@ ACC.PUSH.A
 * SET A=SP[0,1]
 * SET Y=0
 * -------------------------------
-ACC.POP.A
+AVM.POP.A
 	LDA #1
 	JSR AVM.DSP
 	LDY #0
-	LDA (ACC.SP),Y
+	LDA (AVM.SP),Y
 	RTS
 * -------------------------------
 * PRINT STRING AT X LO, A HI
 * DESTROYS IP, Y
 * -------------------------------
-ACC.PRINT.STRING
-	STX ACC.IP
-	STA ACC.IP+1
+AVM.PRINT.STRING
+	STX AVM.IP
+	STA AVM.IP+1
 .1	LDY #0
-	LDA (ACC.IP),Y
+	LDA (AVM.IP),Y
 	BEQ .2
 	ORA #$80
 	JSR $FDED
-	INC ACC.IP
+	INC AVM.IP
 	BNE .1
-	INC ACC.IP+1
+	INC AVM.IP+1
 	BNE .1
 .2	RTS
 * -------------------------------
 * SET FP=SP
 * PRESERVES X,Y
 * -------------------------------
-ACC.SET.FP.TO.SP
-        LDA ACC.SP
-        STA ACC.FP
-        LDA ACC.SP+1
-        STA ACC.FP+1
+AVM.SET.FP.TO.SP
+        LDA AVM.SP
+        STA AVM.FP
+        LDA AVM.SP+1
+        STA AVM.FP+1
         RTS
 * -------------------------------
 * SET SP=FP
 * PRESERVES X,Y
 * -------------------------------
-ACC.SET.SP.TO.FP
-        LDA ACC.FP
-        STA ACC.SP
-        LDA ACC.FP+1
-        STA ACC.SP+1
+AVM.SET.SP.TO.FP
+        LDA AVM.FP
+        STA AVM.SP
+        LDA AVM.FP+1
+        STA AVM.SP+1
 	RTS
 * -------------------------------
 * SET IP=SP
 * PRESERVES X,Y
 * -------------------------------
-ACC.SET.IP.TO.SP
-        LDA ACC.SP
-        STA ACC.IP
-        LDA ACC.SP+1
-        STA ACC.IP+1
+AVM.SET.IP.TO.SP
+        LDA AVM.SP
+        STA AVM.IP
+        LDA AVM.SP+1
+        STA AVM.IP+1
         RTS
 * -------------------------------
 * SET SP=IP
 * PRESERVES X,Y
 * -------------------------------
-ACC.SET.SP.TO.IP
-        LDA ACC.IP
-        STA ACC.SP
-        LDA ACC.IP+1
-        STA ACC.SP+1
+AVM.SET.SP.TO.IP
+        LDA AVM.IP
+        STA AVM.SP
+        LDA AVM.IP+1
+        STA AVM.SP+1
         RTS
 * -------------------------------
 * CHECK IF SP IS WITHIN BOUNDS
 * -------------------------------
-ACC.CHECK.SP
-	LDA ACC.SP.BOUND+1
-	CMP ACC.SP+1
+AVM.CHECK.SP
+	LDA AVM.SP.BOUND+1
+	CMP AVM.SP+1
 	BNE .1
-	LDA ACC.SP.BOUND
-	CMP ACC.SP
+	LDA AVM.SP.BOUND
+	CMP AVM.SP
 .1	RTS
 * -------------------------------
 * ERROR MESSAGE: "STACK OVERFLOW"
 * -------------------------------
-ACC.STACK.OVERFLOW
+AVM.STACK.OVERFLOW
 	.HS 07
 	.AS "STACK OVERFLOW"
 	.HS 00
@@ -272,11 +272,11 @@ ACC.STACK.OVERFLOW
 * CLOBBERS X,Y
 * PRESERVES SIZE
 * -------------------------------
-ACC.POP.IP
-	LDX ACC.SIZE
-	JSR ACC.POP.A
-	STA ACC.IP+1
-	JSR ACC.POP.A
-	STA ACC.IP
-	STX ACC.SIZE
+AVM.POP.IP
+	LDX AVM.SIZE
+	JSR AVM.POP.A
+	STA AVM.IP+1
+	JSR AVM.POP.A
+	STA AVM.IP
+	STX AVM.SIZE
         RTS
