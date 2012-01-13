@@ -10,38 +10,38 @@
 * COMPARISON IS SIGNED IF X=/=0
 * PUSH 1=EQ, 0=NEQ
 * -------------------------------
-ACC.BINOP.EQ
+AVM.TEQ
         JSR ACC.CMP
 	BEQ ACC.PUSH.1
 	BNE ACC.PUSH.0
 * -------------------------------
 * ...PUSH 1=GT, 0=LEQ
 * -------------------------------
-ACC.BINOP.GT
+AVM.TGT
         JSR ACC.CMP
         BEQ ACC.PUSH.0
-	BNE ACC.BINOP.GEQ.1
+	BNE AVM.TGE.1
 * -------------------------------
 * ...PUSH 1=GEQ, 0=LT
 * -------------------------------
-ACC.BINOP.GEQ
+AVM.TGE
         JSR ACC.CMP
-ACC.BINOP.GEQ.1
+AVM.TGE.1
 	BCC ACC.PUSH.0
 	BCS ACC.PUSH.1
 * -------------------------------
 * ...PUSH 1=LEQ, 0=GT
 * -------------------------------
-ACC.BINOP.LEQ
+AVM.TLE
         JSR ACC.CMP
 	BEQ ACC.PUSH.1
-	BNE ACC.BINOP.LT.1
+	BNE AVM.TLT.1
 * -------------------------------
 * ...PUSH 1=LT, 0=GEQ
 * -------------------------------
-ACC.BINOP.LT
+AVM.TLT
         JSR ACC.CMP
-ACC.BINOP.LT.1
+AVM.TLT.1
         BCC ACC.PUSH.1
 * -------------------------------
 * SET SIZE=1

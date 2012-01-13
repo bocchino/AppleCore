@@ -72,7 +72,7 @@ ACC.PUSH.FP
 * SET Y=1
 * PRESERVES X
 * -------------------------------
-ACC.PUSH.SLOT
+AVM.PVA
         LDY #0
         CLC
         ADC ACC.FP
@@ -192,10 +192,10 @@ AVM.MTS.1
 * SET X=SIZE
 * CLOBBERS Y
 * -------------------------------
-ACC.ASSIGN
+AVM.STM
         STA ACC.SIZE
         JSR ACC.POP.IP
-ACC.ASSIGN.1
+AVM.STM.1
         JSR ACC.SP.DOWN.SIZE
 	LDY ACC.SIZE
 .1      DEY
@@ -212,7 +212,7 @@ ACC.ASSIGN.1
 * ZERO EXTEND OTHERWISE
 * CLOBBERS X
 * -------------------------------
-ACC.EXTEND
+AVM.EXT
         STA ACC.SIZE
 	TXA
 	BEQ ACC.PUSH.X.SIZE.TIMES

@@ -24,7 +24,7 @@ AVM.ANL
 * SET SP[0,SIZE]=(SP[0,SIZE]
 *	OR SP[SIZE,SIZE])
 * -------------------------------
-ACC.BINOP.OR
+AVM.ORL
 	JSR ACC.INIT.BINOP
 	LDY #0
 .1      LDA (ACC.SP),Y
@@ -40,7 +40,7 @@ ACC.BINOP.OR
 * SET SP[0,SIZE]=(SP[0,SIZE]
 *	XOR SP[SIZE,SIZE])
 * -------------------------------
-ACC.BINOP.XOR
+AVM.ORX
 	JSR ACC.INIT.BINOP
 	LDY #0
 .1      LDA (ACC.SP),Y

@@ -7,20 +7,20 @@
 * SET SIZE=A
 * SET SP[-SIZE,SIZE]*=-1
 * -------------------------------
-ACC.UNOP.NEG
+AVM.NEG
 	JSR AVM.DSP
 	SEC
-	BCS ACC.UNOP.NOT.1
+	BCS AVM.NOT.1
 * -------------------------------
 * BITWISE NEGATION
 * SET SIZE=A
 * SET SP[-SIZE,SIZE]=
 *	NOT [-SIZE,SIZE]
 * -------------------------------
-ACC.UNOP.NOT
+AVM.NOT
 	JSR AVM.DSP
 	CLC
-ACC.UNOP.NOT.1
+AVM.NOT.1
 	JSR ACC.NOT
 	JMP ACC.SP.UP.SIZE
 * -------------------------------
