@@ -125,7 +125,7 @@ public class SCMacroEmitter
 	}
 	else {
 	    CharConstant charConst = (CharConstant) c;
-	    emitAbsoluteInstruction(".DA","'"+charConst.value+"'");
+	    emitAbsoluteInstruction(".DA","#'"+charConst.value+"'");
 	}
 
     }
