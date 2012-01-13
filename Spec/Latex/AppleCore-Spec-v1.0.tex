@@ -369,12 +369,14 @@ $$\nonterm{include-decl} ::= \mbox{\kwd{INCLUDE}
 \subsection{Statements}
 \label{sec:syntax:statements}
 
-A statement is an if statement, a while statement, a return statement,
-a block statement, or an expression statement:
+A statement is an if statement, a while statement, a set statement, a
+call statement, and increment statement, a decrement statement, return
+statement, or a block statement:
 %
 $$\nonterm{stmt} ::= \mbox{\nonterm{if-stmt} $|$ \nonterm{while-stmt}
-  $|$ \nonterm{return-stmt} $|$ \nonterm{block-stmt} $|$
-  \nonterm{expr-stmt}}$$
+  $|$ \nonterm{set-stmt} $|$ \nonterm{call-stmt} $|$
+  \nonterm{incr-stmt} $|$ \nonterm{decr-stmt} $|$
+  \nonterm{return-stmt} $|$ \nonterm{block-stmt} }$$
 %
 \bfhead{If statements.} An if statement consists of the keyword
 \kwd{IF}, a conditional expression enclosed in parentheses, a
@@ -394,6 +396,32 @@ $$\nonterm{while-stmt} ::= \mbox{\kwd{WHILE} \kwd{(} \nonterm{expr}
   \kwd{)} \nonterm{stmt}}$$
 %
 
+\bfhead{Set statements.} A set statement consists of the keyword
+\kwd{SET}, an expression, an equals sign, a right-hand-side
+expression, and a terminating semicolon:
+%
+$$\nonterm{set-stmt} ::= \mbox{\kwd{SET} \nonterm{expr} \kwd{=}
+  \nonterm{expr} \kwd{;}}$$
+%
+
+\bfhead{Call statements.} A call statement consists of a call
+expression followed by a terminating semicolon:
+%
+$$\nonterm{call-stmt} ::= \mbox{\nonterm{call-expr} \kwd{;}}$$
+%
+
+\bfhead{Increment statements.} An increment statement consists of the
+keyword \kwd{INCR}, an expression, and a terminating semicolon:
+%
+$$\nonterm{incr-stmt} ::= \mbox{\kwd{INCR} \nonterm{expr} \kwd{;}}$$
+%
+
+\bfhead{Decrement statements.} n decrement statement consists of the
+keyword \kwd{DECR}, an expression, and a terminating semicolon:
+%
+$$\nonterm{decr-stmt} ::= \mbox{\kwd{DECR} \nonterm{expr} \kwd{;}}$$
+%
+
 \bfhead{Return statements.} A return statement consists of the keyword
 \kwd{RETURN}, an optional expression, and a terminating semicolon:
 %
@@ -406,31 +434,23 @@ statements enclosed in braces:
 %
 $$\nonterm{block-stmt} ::= \mbox{\kwd{\{} \nonterm{stmt}$^*$
   \kwd{\}}}$$
-%
-\bfhead{Expression statements.} An expression statement consists of an
-expression followed by a terminating semicolon:
-%
-$$\nonterm{expr-stmt} ::= \mbox{\nonterm{expr} \kwd{;}}$$
-%
 
 \subsection{Expressions}
 \label{sec:syntax:expressions}
 
-An expression is an lvalue expression, a call expression, a set
-expression, a binary operation expression, a unary operation
-expression, or a numeric constant.
+An expression is an identifier, a numeric constant, a call expression,
+an indexed expression, a register expression, a binary operation
+expression, a unary operation expression, or a parentheses expression.
 %
-$$\nonterm{expr} ::= \mbox{\nonterm{lvalue-expr} $|$
-  \nonterm{call-expr} $|$ \nonterm{set-expr} $|$ \nonterm{binop-expr}
-  $|$ \nonterm{unop-expr} $|$ \nonterm{numeric-const} $|$
-  \nonterm{parens-expr}}$$
-
-\bfhead{Lvalue expressions.}  An lvalue expression is an expression
-that may appear on the left-hand side of a set expression.  It is an
-identifier, an indexed expression, or a register expression.
+$$
 %
-$$\nonterm{lvalue-expr} ::= \mbox{\nonterm{identifier} $|$
-  \nonterm{indexed-expr} $|$ \nonterm{register-expr}}$$
+\nonterm{expr} ::= \mbox{\nonterm{identifier} $|$
+  \nonterm{numeric-const} $|$ \nonterm{call-expr} $|$
+  \nonterm{indexed-expr} $|$ \nonterm{register-expr} $|$
+  \nonterm{binop-expr} $|$ \nonterm{unop-expr} $|$
+  \nonterm{parens-expr}}
+%
+$$
 
 \bfhead{Numeric constants.}  A numeric constant is an integer or
 character constant:
@@ -438,6 +458,14 @@ character constant:
 $$\nonterm{numeric-const} ::= \mbox{\nonterm{integer-const} $|$
   \nonterm{char-const}}$$
 %
+
+\bfhead{Call expressions.} A call expression consists of an expression
+followed by an argument list enclosed in parentheses:
+%
+$$\nonterm{call-expr} ::= \mbox{\nonterm{expr} \kwd{(}
+  \opt{\nonterm{expr} \group{\kwd{,} \nonterm{expr}}$^*$} \kwd{)}}$$
+%
+
 
 \bfhead{Indexed expressions.} An indexed expression consists of a
 base expression, an offset expression, and a size:
@@ -451,22 +479,6 @@ caret character followed by a 6502 register name:
 %
 $$\nonterm{register-expr} ::= \mbox{\kwd{\^} \group{\kwd{A} $|$
     \kwd{X} $|$ \kwd{Y} $|$ \kwd{P} $|$ \kwd{S}}}$$
-%
-
-\bfhead{Call expressions.} A call expression consists of an expression
-followed by an argument list enclosed in parentheses:
-%
-$$\nonterm{call-expr} ::= \mbox{\nonterm{expr} \kwd{(}
-  \opt{\nonterm{expr} \group{\kwd{,} \nonterm{expr}}$^*$} \kwd{)}}$$
-%
-
-
-\bfhead{Set expressions.} A set expression consists of the keyword
-\kwd{SET}, an lvalue expression, an equals sign, and a right-hand-side
-expression:
-%
-$$\nonterm{set-expr} ::= \mbox{\kwd{SET} \nonterm{lvalue-expr} \kwd{=}
-  \nonterm{expr}}$$
 %
 
 \bfhead{Binary operation expressions.} A binary operation expression
@@ -506,8 +518,7 @@ consists of a unary operator followed by an expression:
 %
 $$\nonterm{unop-expr} ::= \mbox{\nonterm{unop} \nonterm{expr}}$$
 %
-$$\nonterm{unop} ::= \mbox{\kwd{@} $|$ \kwd{NOT} $|$ \kwd{-} $|$
-  \kwd{INCR} $|$ \kwd{DECR}}$$
+$$\nonterm{unop} ::= \mbox{\kwd{@} $|$ \kwd{NOT} $|$ \kwd{-}}$$
 %
 \bfhead{Parentheses expressions.} A parentheses expression is an
 expression surrounded by parentheses:
@@ -685,9 +696,6 @@ signedness are computed as follows:
   is 0.  (2) If \kwd{S} appears after \nonterm{size} then the
   signedness is signed, otherwise unsigned.
 %
-\item \ithead{Set expressions.} The size and signedness of a set
-  expression come from the left-hand-side expression.
-%
 \item \ithead{Binary operation expressions.}  For comparison
   operations, the size is 1 byte unsigned.  For shift operations, the
   size and signedness come from the left operand.  For all other
@@ -720,18 +728,13 @@ following requirements apply to the size and signedness of all
   expression of size 1 or 2.  (2) Each argument expression must have
   nonzero size.
 %
-\item \ithead{Set expressions.} The right-hand expression must have
-  nonzero size.
-%
 \item \ithead{Binary operation expressions.}  For shift operations,
   the right-hand expression must be 1 byte unsigned.
 %
 \end{itemize}
 
-\bfhead{Function frame sizes.} The \emph{frame size} of a function
-declaration that contains a body equals 2 (for the frame pointer) plus
-the sizes of all the function parameters and local variables.  No
-function may have a frame size of greater than 255 bytes.
+\bfhead{Set statements.} The right-hand expression of a set statement
+must have nonzero size.
 
 \bfhead{Return statements.} (1) No return statement may contain an
 expression of zero size.  (2) If a function has nonzero return size,
@@ -740,6 +743,11 @@ statement containing an expression, and (b) every return statement
 appearing in the body must contain an expression.  (3) If a function
 has return size 0, then no return statement in the function body may
 contain an expression.
+
+\bfhead{Function frame sizes.} The \emph{frame size} of a function
+declaration that contains a body equals the sum of the sizes of all
+the function parameters and local variables.  No function may have a
+frame size of greater than 255 bytes.
 
 
 
@@ -754,29 +762,18 @@ match the number of parameters given in the declaration.
 \label{sec:semantics:lvalues}
 
 \bfhead{Definition of semantic lvalue.}  A \emph{semantic lvalue} is
-an expression that (1) is an lvalue expression
-(Section~\ref{sec:syntax:expressions}) and (2) if it is an identifier,
-then it corresponds to a variable or function parameter declaration.
+an expression that (1) is an identifier, register expression, or
+indexed expression; and (2) if it is an identifier, then it
+corresponds to a variable or function parameter declaration.
 
 \bfhead{Requirement of semantic lvalues.}  (1) A semantic lvalue is
 required in the following places: (a) on the left-hand side of a set
-expression; and (b) as the operand of an address (\kwd{@}), increment
-(\kwd{INCR}), or decrement (\kwd{DECR}) operator.  If an expression
-that is not a semantic lvalue appears in any of these places, then a
-compile-time error results.  (2) A compile-time error results if a
-register expression appears as the operand of an address (\kwd{@})
-operator.
-
-
-\subsection{Expression Statements}
-\label{sec:semantics:expr-stmts}
-
-The expression contained in an expression statement must have an
-effect: that is, it must be a set, call, \kwd{INCR}, or \kwd{DECR}
-expression.  This check traps the error of writing \kwd{X = 2;}
-(comparison) instead of \kwd{SET X = 2;} (assignment).
-
-
+statement; (b) as the expression of an increment or decrement
+statement; and (c) as the operand of an address (\kwd{@}) unary
+operator.  If an expression that is not a semantic lvalue appears in
+any of these places, then a compile-time error results.  (2) A
+compile-time error results if a register expression appears as the
+operand of an address (\kwd{@}) operator.
 
 
 \section{Code Generation}
@@ -1009,6 +1006,36 @@ result is 1 (true), then execute the body of the loop and repeat the
 whole process.  If the Boolean value of the result is 0 (false), then
 do nothing.
 
+\bfhead{Set statements.}  (1) Evaluate the right-hand side expression,
+adjusting the size if necessary
+(Section~\ref{sec:code-gen:size-adjustment}) to conform to the size of
+the left-hand side expression.  (2) The left-hand side expression must
+be a semantic lvalue (Section~\ref{sec:semantics:lvalues}). Compute
+its address as specified in Section~\ref{sec:code-gen:lvalues}.  (3)
+Copy the result of step (1) into memory starting at the address
+computed in step (2).
+
+Notice that the right-hand side of the set statement is evaluated
+first; this is for implementation efficiency reasons.  In particular,
+the expression \kwd{SET X[0,1]=X+1} is evaluated by \emph{first}
+adding 1 to \kwd{X} and \emph{then} computing the destination address,
+so the effect is to store the original value of \kwd{X} plus 1 at the
+location given by the original value of \kwd{X} plus 1.
+
+\bfhead{Call statements.} Evaluate the expression contained in the
+statement (Section~\ref{sec:code-gen:expressions}).  If it produces a
+result of nonzero size, pop the result off the stack.
+
+\bfhead{Increment statements.} The operand expression must be a
+semantic lvalue. (Section~\ref{sec:semantics:lvalues}).  Compute its
+address as stated in Section~\ref{sec:code-gen:lvalues}.  Add one to
+the value stored at the address and store the result in place.
+
+\bfhead{Decrement statements.} The operand expression must be a
+semantic lvalue. (Section~\ref{sec:semantics:lvalues}).  Compute its
+address as stated in Section~\ref{sec:code-gen:lvalues}.  Subtract one
+from the value stored at the address and store the result in place.
+
 \bfhead{Return statements.} (1) If the statement contains an
 expression, then evaluate the expression
 (Section~\ref{sec:code-gen:expressions}) and ensure that it appears at
@@ -1018,10 +1045,6 @@ Pop the current frame off the call stack and restore the parent frame.
 
 \bfhead{Block statements.} Execute each statement of the block in the
 order in which it appears in the program text.
-
-\bfhead{Expression statements.} Evaluate the expression contained in
-the statement (Section~\ref{sec:code-gen:expressions}) and pop the
-result off the expression stack.
 
 \subsection{Expressions}
 \label{sec:code-gen:expressions}
@@ -1051,6 +1074,10 @@ the stack in little-endian order.  (If the function body is defined in
 a different file, this can be done by using the label associated with
 the function body; at assembly time, the label definition will be
 available.)
+
+\bfhead{Numeric constants.} Push the bytes of the value associated
+with the declaration (Section~\ref{sec:code-gen:global-decls}) on the
+stack in little-endian order.
 
 \bfhead{Indexed expressions.} (1) Compute the address of the indexed
 expression as stated in Section~\ref{sec:code-gen:lvalues}.  (2) Get a
@@ -1093,25 +1120,10 @@ guaranteed to be in the corresponding 6502 register just before the
 register, all saved registers are guaranteed to have their saved
 values at the point where control enters the callee function.  Because
 of the \kwd{JSR}, the \kwd{S} register's value will be increased by 2.
-Similarly, all stack slots corresponding to saved registers (including
-the \kwd{S} register) will contain the values that the corresponding
-registers had on exit from the function.
-
-\bfhead{Set expressions.}  (1) Evaluate the right-hand side
-expression, adjusting the size if necessary
-(Section~\ref{sec:code-gen:size-adjustment}) to conform to the size of
-the left-hand side expression.  (2) The left-hand side expression must
-be a semantic lvalue (Section~\ref{sec:semantics:lvalues}). Compute
-its address as specified in Section~\ref{sec:code-gen:lvalues}.  (3)
-Copy the result of step (1) into memory starting at the address
-computed in step (2), leaving it on the stack as the result.
-
-Notice that the right-hand side of the set expression is evaluated
-first; this is for implementation efficiency reasons.  In particular,
-the expression \kwd{SET X[0,1]=INCR X} is evaluated by \emph{first}
-incrementing \kwd{X} and \emph{then} computing the destination
-address, so the effect is to store the original value of \kwd{X} plus
-1 at the location given by the original value of \kwd{X} plus 1.
+Similarly, all stack slots corresponding to saved registers other than
+the \kwd{S} register will contain the values that the corresponding
+registers had on exit from the function; the \kwd{S} register's value
+will be off by 2.
 
 \bfhead{Binary operation expressions.} \ithead{Shift operations
   (\kwd{<<} and \kwd{>>}).} Evaluate the left-hand side, evaluate the
@@ -1158,17 +1170,6 @@ as stated in Section~\ref{sec:code-gen:lvalues}.
 \ithead{Arithmetic negation (\kwd{-}) and bitwise not (\kwd{NOT}).}
 Evaluate the operand expression and perform the operation on it.
 Negation is two's complement negation (i.e., \kwd{NOT} plus 1).
-
-\ithead{Increment (\kwd{INCR}) and decrement (\kwd{DECR}).} The
-operand expression must be a semantic
-lvalue. (Section~\ref{sec:semantics:lvalues}).  Compute its address as
-stated in Section~\ref{sec:code-gen:lvalues}.  Add one to the value
-stored at the address, store the result back to the address, and push
-the result on the stack.
-
-\bfhead{Numeric constants.} Push the bytes of the value associated
-with the declaration (Section~\ref{sec:code-gen:global-decls}) on the
-stack in little-endian order.
 
 \bfhead{Parentheses expressions.} Evaluate the expression inside the
 parentheses.
