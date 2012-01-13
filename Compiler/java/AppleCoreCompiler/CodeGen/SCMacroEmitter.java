@@ -179,11 +179,11 @@ public class SCMacroEmitter
     }
 
     public void emitEpilogue() {
-	emitAbsoluteInstruction(".IN","ACC.GENERAL");
-	emitAbsoluteInstruction(".IN","ACC.UNOP");
-	emitAbsoluteInstruction(".IN","AVM.BINOP");
-	emitAbsoluteInstruction(".IN","ACC.BUILT.IN");
-	emitAbsoluteInstruction(".IN","AVM");
+	emitAbsoluteInstruction(".IN","AVM.1");
+	emitAbsoluteInstruction(".IN","AVM.2");
+	emitAbsoluteInstruction(".IN","AVM.3.BINOP");
+	emitAbsoluteInstruction(".IN","AVM.4.UNOP");
+	emitAbsoluteInstruction(".IN","AVM.5.BUILT.IN");
 	// Start of program stack
 	emitLabel("ACC.STACK");
     }
