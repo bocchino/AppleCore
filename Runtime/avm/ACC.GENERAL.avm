@@ -289,15 +289,6 @@ ACC.BOOLEAN
         AND #1
         RTS
 * -------------------------------
-* SET SP-=2
-* SET IP=SP[0,2]
-* SET SIZE=2
-* SET Y=1
-* PRESERVES X
-* -------------------------------
-ACC.INDIRECT.CALL
-	JMP (ACC.IP)
-* -------------------------------
 * INITIALIZATION FOR BINARY OPS
 * SET SIZE=A
 * SET IP=SP-SIZE
@@ -317,38 +308,6 @@ ACC.GET.MSB
 	DEY
 	LDA (ACC.SP),Y
 	RTS
-* -------------------------------
-* RESTORE OLD FRAME, ASSIGN
-* RESULT, AND RETURN
-* -------------------------------
-ACC.FN.RETURN.VOID
-	LDA #0
-ACC.FN.RETURN
-* SAVE SIZE
-	TAX
-* SAVE PTR TO RETURN VALUE
-	JSR AVM.DSP
-	JSR ACC.SET.IP.TO.SP
-* RESTORE SP
-	JSR ACC.SET.SP.TO.FP
-* RESTORE FP
-	JSR ACC.POP.A
-	STA ACC.FP+1
-	JSR ACC.POP.A
-	STA ACC.FP
-* GET RETURN ADDR ON 6502 STACK
-	JSR ACC.POP.A
-	PHA
-	JSR ACC.POP.A
-	PHA
-* SKIP SLOT FOR AVM RET ADDR
-	LDA #2
-	JSR AVM.DSP
-* EVALUATE RETURN VALUE
-	STX ACC.SIZE
-	BEQ .1
-	JMP AVM.MTS.1
-.1	RTS
 * -------------------------------
 * SET IP=ACC.FP[Y,2]
 * -------------------------------
