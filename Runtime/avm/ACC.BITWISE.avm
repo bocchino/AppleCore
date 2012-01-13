@@ -8,7 +8,7 @@
 * SET SP[0,SIZE]=(SP[0,SIZE]
 *	AND SP[SIZE,SIZE])
 * -------------------------------
-ACC.BINOP.AND
+AVM.ANL
         JSR ACC.INIT.BINOP
 	LDY #0
 .1      LDA (ACC.SP),Y

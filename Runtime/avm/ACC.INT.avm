@@ -3,20 +3,19 @@
 * THE APPLECORE COMPILER, V1.0
 * INTEGER ARITHMETIC OPERATIONS
 * -------------------------------
-* BINARY OP +
 * SET SIZE=A
 * SET SP-=SIZE
 * SET SP[-SIZE,SIZE]+=SP[0,SIZE]
 * -------------------------------
-ACC.BINOP.ADD
+AVM.ADD
 	JSR ACC.INIT.BINOP
-	JSR ACC.ADD
+	JSR AVM.ADD.1
         JMP ACC.SET.SP.TO.IP
 * -------------------------------
 * SET SP[0,SIZE]+=IP[0,SIZE]
 * CLOBBERS X,Y
 * -------------------------------
-ACC.ADD
+AVM.ADD.1
 	LDX ACC.SIZE
 	LDY #0
         CLC
@@ -146,7 +145,7 @@ ACC.MUL.INNER
 	BCC .1
 * IF IT'S 1, ADD LHS TO RESULT
 	JSR ACC.SP.UP.SIZE
-	JSR ACC.ADD
+	JSR AVM.ADD.1
 	JSR ACC.SP.DOWN.SIZE
 * SHIFT LHS 1 TO LEFT
 .1	JSR ACC.SP.DOWN.SIZE

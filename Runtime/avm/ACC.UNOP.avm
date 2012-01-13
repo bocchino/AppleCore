@@ -8,7 +8,7 @@
 * SET SP[-SIZE,SIZE]*=-1
 * -------------------------------
 ACC.UNOP.NEG
-	JSR ACC.SP.DOWN.A
+	JSR AVM.DSP
 	SEC
 	BCS ACC.UNOP.NOT.1
 * -------------------------------
@@ -18,7 +18,7 @@ ACC.UNOP.NEG
 *	NOT [-SIZE,SIZE]
 * -------------------------------
 ACC.UNOP.NOT
-	JSR ACC.SP.DOWN.A
+	JSR AVM.DSP
 	CLC
 ACC.UNOP.NOT.1
 	JSR ACC.NOT
@@ -64,7 +64,7 @@ ACC.UNOP.INCR
 * SET SP[0,SIZE]=IP[0,SIZE]
 * SET SP+=SIZE
 * -------------------------------
-ACC.UNOP.DECR
+AVM.DCR
 	STA ACC.SIZE
 	TAX
 	JSR ACC.POP.IP

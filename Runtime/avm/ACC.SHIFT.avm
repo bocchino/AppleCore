@@ -62,7 +62,7 @@ ACC.INIT.SHIFT
 	STA ACC.GR
 * ADJUST SP AND STORE SIZE
 	PLA
-	JMP ACC.SP.DOWN.A
+	JMP AVM.DSP
 * -------------------------------
 * INNER LOOP FOR SHR
 * -------------------------------

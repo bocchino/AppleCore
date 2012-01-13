@@ -31,7 +31,7 @@ ADD
 	RAF $0
 ADD.1	
 	JSR ACC.BUILT.IN.EVAL
-	JSR ACC.BINOP.ADD
+	JSR AVM.ADD
 	JMP ACC.BUILT.IN.ASSN
 * -------------------------------
 * FN SUB(A:2,B:2,C:2,S:1)

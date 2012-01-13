@@ -130,7 +130,7 @@ ACC.STACK.OVERFLOW
 * SET SP-=SIZE
 * PRESERVES X,Y
 * -------------------------------
-ACC.SP.DOWN.A
+AVM.DSP
         STA ACC.SIZE
 * -------------------------------
 * SET SP-=SIZE
@@ -273,7 +273,7 @@ ACC.PUSH.A
 * -------------------------------
 ACC.POP.A
 	LDA #1
-	JSR ACC.SP.DOWN.A
+	JSR AVM.DSP
 	LDY #0
 	LDA (ACC.SP),Y
 	RTS
@@ -283,7 +283,7 @@ ACC.POP.A
 * SET A=(SP[0,1] AND $01)
 * -------------------------------
 ACC.BOOLEAN
-        JSR ACC.SP.DOWN.A
+        JSR AVM.DSP
         LDY #0
         LDA (ACC.SP),Y
         AND #1
@@ -305,7 +305,7 @@ ACC.INDIRECT.CALL
 * PRESERVES X,Y
 * -------------------------------
 ACC.INIT.BINOP
-        JSR ACC.SP.DOWN.A
+        JSR AVM.DSP
         JSR ACC.SET.IP.TO.SP
         JSR ACC.SP.DOWN.SIZE
         RTS  	FIXME
@@ -327,7 +327,7 @@ ACC.FN.RETURN
 * SAVE SIZE
 	TAX
 * SAVE PTR TO RETURN VALUE
-	JSR ACC.SP.DOWN.A
+	JSR AVM.DSP
 	JSR ACC.SET.IP.TO.SP
 * RESTORE SP
 	JSR ACC.SET.SP.TO.FP
@@ -343,7 +343,7 @@ ACC.FN.RETURN
 	PHA
 * SKIP SLOT FOR AVM RET ADDR
 	LDA #2
-	JSR ACC.SP.DOWN.A
+	JSR AVM.DSP
 * EVALUATE RETURN VALUE
 	STX ACC.SIZE
 	BEQ .1
