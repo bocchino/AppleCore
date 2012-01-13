@@ -43,21 +43,6 @@ ACC.SET.SP.TO.IP
         STA ACC.SP+1
         RTS
 * -------------------------------
-* SET FP=FP[2,2]
-* SET Y=3
-* PRESERVES X
-* -------------------------------
-ACC.RESTORE.CALLER.FP
-        LDY #2
-        LDA (ACC.FP),Y
-        PHA
-        INY
-        LDA (ACC.FP),Y
-        STA ACC.FP+1
-        PLA
-        STA ACC.FP
-        RTS
-* -------------------------------
 * SET SP[0,2]=FP
 * SET SP+=2
 * SET Y=1
@@ -277,17 +262,6 @@ ACC.POP.A
 	LDY #0
 	LDA (ACC.SP),Y
 	RTS
-* -------------------------------
-* SET SIZE=A
-* SET SP-=SIZE
-* SET A=(SP[0,1] AND $01)
-* -------------------------------
-ACC.BOOLEAN
-        JSR AVM.DSP
-        LDY #0
-        LDA (ACC.SP),Y
-        AND #1
-        RTS
 * -------------------------------
 * INITIALIZATION FOR BINARY OPS
 * SET SIZE=A
