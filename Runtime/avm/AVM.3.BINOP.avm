@@ -1,7 +1,8 @@
 :NEW
 * -------------------------------
 * THE APPLECORE COMPILER, V1.0
-* INTEGER ARITHMETIC OPERATIONS
+* APPLECORE VM, PART 3
+* BINARY OPERATIONS
 * -------------------------------
 * INITIALIZATION FOR BINARY OPS
 * SET SIZE=A
@@ -13,6 +14,14 @@ AVM.INIT.BINOP
         JSR AVM.DSP
         JSR ACC.SET.IP.TO.SP
         JMP ACC.SP.DOWN.SIZE
+* -------------------------------
+* SET A=SP[SIZE-1,1]
+* -------------------------------
+ACC.GET.MSB
+	LDY ACC.SIZE
+	DEY
+	LDA (ACC.SP),Y
+	RTS
 * -------------------------------
 * SET SIZE=A
 * SET SP-=SIZE

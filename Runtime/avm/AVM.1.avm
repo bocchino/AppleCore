@@ -1,7 +1,7 @@
 :NEW
 * -------------------------------
 * THE APPLECORE COMPILER, V1.0
-* APPLECORE VIRTUAL MACHINE
+* APPLECORE VIRTUAL MACHINE, PT 1
 * -------------------------------
 * PROGRAM COUNTER
 * -------------------------------
@@ -90,6 +90,49 @@ AVM.BRANCH
 	PHA
 	LDA ACC.SIZE
 	RTS
+* -------------------------------
+* INSTRUCTION HANDLER ADDRESSES
+* -------------------------------
+AVM.INSTR.TBL
+	.DA AVM.BRK-1	     BRK
+	.DA AVM.BRF-1	     BRF
+	.DA AVM.BRU-1	     BRU
+	.DA AVM.CFD-1	     CFD
+	.DA AVM.CFI-1	     CFI
+	.DA AVM.BRK-1	     ???
+	.DA AVM.BRK-1	     ???
+	.DA AVM.BRK-1	     ???
+	.DA AVM.ADD-1        ADD
+	.DA AVM.ANL-1        ANL
+	.DA AVM.DCR-1        DCR
+	.DA AVM.DSP-1        DSP
+	.DA AVM.ICR-1        ICR
+	.DA AVM.ISP-1        ISP
+	.DA AVM.MTS-1        MTS
+	.DA AVM.MTV-1	     MTV
+	.DA AVM.NEG-1        NEG
+	.DA AVM.NOT-1        NOT
+	.DA AVM.ORL-1        ORL
+	.DA AVM.ORX-1        ORX
+	.DA AVM.PHC-1        PHC
+	.DA AVM.PVA-1        PVA
+	.DA AVM.RAF-1	     RAF
+	.DA AVM.SHL-1        SHL
+	.DA AVM.STM-1        STM
+	.DA AVM.SUB-1        SUB
+	.DA AVM.TEQ-1        TEQ
+	.DA AVM.VTM-1        VTM
+	.DA AVM.DIV-1        DIV
+	.DA AVM.EXT-1        EXT
+	.DA AVM.MUL-1        MUL
+	.DA AVM.SHR-1        SHR
+	.DA AVM.TGE-1        TGE
+	.DA AVM.TGT-1        TGT
+	.DA AVM.TLE-1        TLE
+	.DA AVM.TLT-1        TLT
+	.DA AVM.BRK-1	     ???
+	.DA AVM.BRK-1	     ???
+	.DA AVM.BRK-1	     ???
 * -------------------------------
 * INSTRUCTION HANDLERS
 * -------------------------------
@@ -213,46 +256,3 @@ AVM.DEC.PC
 	DEC AVM.PCH
 .1	DEC AVM.PCL
 	RTS
-* -------------------------------
-* INSTRUCTION HANDLER ADDRESSES
-* -------------------------------
-AVM.INSTR.TBL
-	.DA AVM.BRK-1	     BRK
-	.DA AVM.BRF-1	     BRF
-	.DA AVM.BRU-1	     BRU
-	.DA AVM.CFD-1	     CFD
-	.DA AVM.CFI-1	     CFI
-	.DA AVM.BRK-1	     ???
-	.DA AVM.BRK-1	     ???
-	.DA AVM.BRK-1	     ???
-	.DA AVM.ADD-1        ADD
-	.DA AVM.ANL-1        ANL
-	.DA AVM.DCR-1        DCR
-	.DA AVM.DSP-1        DSP
-	.DA AVM.ICR-1        ICR
-	.DA AVM.ISP-1        ISP
-	.DA AVM.MTS-1        MTS
-	.DA AVM.MTV-1	     MTV
-	.DA AVM.NEG-1        NEG
-	.DA AVM.NOT-1        NOT
-	.DA AVM.ORL-1        ORL
-	.DA AVM.ORX-1        ORX
-	.DA AVM.PHC-1        PHC
-	.DA AVM.PVA-1        PVA
-	.DA AVM.RAF-1	     RAF
-	.DA AVM.SHL-1        SHL
-	.DA AVM.STM-1        STM
-	.DA AVM.SUB-1        SUB
-	.DA AVM.TEQ-1        TEQ
-	.DA AVM.VTM-1        VTM
-	.DA AVM.DIV-1        DIV
-	.DA AVM.EXT-1        EXT
-	.DA AVM.MUL-1        MUL
-	.DA AVM.SHR-1        SHR
-	.DA AVM.TGE-1        TGE
-	.DA AVM.TGT-1        TGT
-	.DA AVM.TLE-1        TLE
-	.DA AVM.TLT-1        TLT
-	.DA AVM.BRK-1	     ???
-	.DA AVM.BRK-1	     ???
-	.DA AVM.BRK-1	     ???

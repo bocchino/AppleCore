@@ -1,6 +1,7 @@
 :NEW
 * -------------------------------
 * THE APPLECORE COMPILER, V1.0
+* APPLECORE VM, PART 5
 * BUILT-IN FUNCTIONS
 * -------------------------------
 * FN:2 ALLOCATE(S:1)
@@ -135,4 +136,14 @@ ACC.BUILT.IN.ASSN
 ACC.BUILT.IN.ASSN.1
 	JSR ACC.SET.IP.TO.VAR
 	JMP AVM.STM.1
+* -------------------------------
+* SET IP=ACC.FP[Y,2]
+* -------------------------------
+ACC.SET.IP.TO.VAR
+	LDA (ACC.FP),Y
+	STA ACC.IP
+	INY
+	LDA (ACC.FP),Y
+	STA ACC.IP+1
+	RTS
 
