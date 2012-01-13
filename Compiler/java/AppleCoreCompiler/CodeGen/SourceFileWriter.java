@@ -125,14 +125,18 @@ public class SourceFileWriter
 		emitter.emitStringTerminator();
 	    }
 	}
-	else {
-	    // Previous passes must ensure cast will succeed.
-	    if (!(node.expr instanceof NumericConstant)) {
-		throw new ACCInternalError("non-constant data for ", node);
-	    }
+	else if (node.expr instanceof NumericConstant) {
 	    NumericConstant nc = 
 		(NumericConstant) node.expr;
 	    emitter.emitAsData(nc);
+	}
+	else if (node.expr instanceof Identifier) {
+	    Identifier id =
+		(Identifier) node.expr;
+	    emitter.emitAsData(id);
+	}
+	else {
+	    throw new ACCInternalError("invalid data for ", node);
 	}
     }
 

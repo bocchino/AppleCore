@@ -195,9 +195,10 @@ public class Parser {
 	DataDecl dataDecl = new DataDecl();
 	setLineNumberOf(dataDecl);
 	expectAndConsume(Token.DATA);
-	dataDecl.label = parsePossibleName();
-	switch (scanner.getCurrentToken()) {
-	case STRING_CONST:
+	String name = parsePossibleName();
+	Token token = scanner.getCurrentToken();
+	if (token==Token.STRING_CONST) {
+	    dataDecl.label = name;
 	    dataDecl.stringConstant = parseStringConstant();
 	    // Check for unterminated string
 	    if (scanner.getCurrentToken() == Token.BACKSLASH) {
@@ -206,10 +207,16 @@ public class Parser {
 	    else {
 		dataDecl.isTerminatedString = true;
 	    }
-	    break;
-	default:
+	}
+	else if (token==Token.SEMI) {
+	    Identifier ident = new Identifier();
+	    setLineNumberOf(ident);
+	    ident.name = name;
+	    dataDecl.expr = ident;
+	}
+	else {
+	    dataDecl.label = name;
 	    dataDecl.expr = parseExpression();
-	    break;
 	}
 	expectAndConsume(Token.SEMI);
 	return dataDecl;

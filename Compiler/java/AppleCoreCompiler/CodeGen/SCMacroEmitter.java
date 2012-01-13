@@ -113,6 +113,10 @@ public class SCMacroEmitter
 	emitAbsoluteInstruction(".HS","00");
     }
 
+    public void emitAsData(Identifier id) {
+	emitAbsoluteInstruction(".DA",makeLabel(id.name));
+    }
+
     public void emitAsData(NumericConstant c) {
 	if (c instanceof IntegerConstant) {
 	    IntegerConstant intConst = (IntegerConstant) c;

@@ -74,6 +74,8 @@ public abstract class NativeCodeEmitter
 	emit(makeLabel(label));
     }
 
+    public abstract void emitAsData(Identifier id);
+
     public abstract void emitAsData(NumericConstant c);
 
     public abstract void emitStringTerminator();
