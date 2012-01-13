@@ -3,43 +3,30 @@
 * THE APPLECORE COMPILER, V1.0
 * APPLECORE VM, PART 2
 * -------------------------------
-* SET Y,SIZE=A
-* PUSH SIZE 0'S OR $FF'S
-* ON ENTRY X MUST BE 0 OR 1
-* SIGN EXTEND IF X=MSb=1
-* ZERO EXTEND OTHERWISE
-* CLOBBERS X
+* SET SP-=2
+* SET IP=SP[0,2]
+* SET SIZE=A
+* SET SP[0,SIZE]=IP[0,SIZE]
+* SET SP+=SIZE
+* SET X=SIZE
+* SET Y=0
 * -------------------------------
-AVM.EXT
+AVM.MTS
         STA ACC.SIZE
-	TXA
-	BEQ ACC.PUSH.X.SIZE.TIMES
-* X=1, LOOK AT MSb
-	DEX
-        JSR ACC.SP.DOWN.SIZE
-	LDY ACC.SIZE
-	DEY
-	LDA (ACC.SP),Y
-        AND #$80
-        PHA
-        JSR ACC.SP.UP.SIZE
-	PLA
-        BEQ ACC.PUSH.X.SIZE.TIMES
-* SET X=$FF
-	DEX
+        JSR ACC.POP.IP
 * -------------------------------
-* SET SP[0,SIZE]=X, SP+=SIZE
-* SET Y=A
-* PRESERVES X
+* SET SP[0,SIZE]=IP[0,SIZE]
+* SET SP+=SIZE
+* CLOBBERS Y
 * -------------------------------
-ACC.PUSH.X.SIZE.TIMES
+AVM.MTS.1
 	LDY ACC.SIZE
-.1	DEY
-	TXA
-	STA (ACC.SP),Y
-	TYA
-	BNE .1
-	JMP ACC.SP.UP.SIZE
+.1      DEY
+        LDA (ACC.IP),Y
+        STA (ACC.SP),Y
+        TYA
+        BNE .1
+        JMP ACC.SP.UP.SIZE
 * -------------------------------
 * SET SP[0,2]=FP
 * SET SP+=2
@@ -92,49 +79,53 @@ ACC.SP.UP.SIZE
 	JSR ACC.PRINT.STRING
 	JMP DOS.COLD.START
 * -------------------------------
-* SET SIZE=A
-* SET SP-=SIZE
-* PRESERVES X,Y
+AVM.MTV
+ 	PHA
+	JSR AVM.FETCH.BYTE
+	TAX
+	PLA
+	TAY
+	LDA $00,X
+	STA (ACC.FP),Y
+	RTS
 * -------------------------------
-AVM.DSP
-        STA ACC.SIZE
+AVM.PHC
+	STA ACC.IDX.1
+	BEQ .2
+.1	JSR AVM.FETCH.BYTE
+	JSR ACC.PUSH.A
+	DEC ACC.IDX.1
+	BNE .1
+.2	RTS
 * -------------------------------
-* SET SP-=SIZE
-* PRESERVES X,Y
-* -------------------------------
-ACC.SP.DOWN.SIZE
-        LDA ACC.SP
-        SEC
-        SBC ACC.SIZE
-        STA ACC.SP
-        BCS .1
-        DEC ACC.SP+1
-.1      RTS
-* -------------------------------
-* SET SP-=2
-* SET IP=SP[0,2]
-* SET SIZE=A
-* SET SP[0,SIZE]=IP[0,SIZE]
-* SET SP+=SIZE
-* SET X=SIZE
-* SET Y=0
-* -------------------------------
-AVM.MTS
-        STA ACC.SIZE
-        JSR ACC.POP.IP
-* -------------------------------
-* SET SP[0,SIZE]=IP[0,SIZE]
-* SET SP+=SIZE
-* CLOBBERS Y
-* -------------------------------
-AVM.MTS.1
-	LDY ACC.SIZE
-.1      DEY
-        LDA (ACC.IP),Y
-        STA (ACC.SP),Y
-        TYA
-        BNE .1
-        JMP ACC.SP.UP.SIZE
+AVM.RAF
+* SAVE SIZE
+	TAX
+* SAVE PTR TO RETURN VALUE
+	JSR AVM.DSP
+	JSR ACC.SET.IP.TO.SP
+* RESTORE SP
+	JSR ACC.SET.SP.TO.FP
+* RESTORE FP
+	JSR ACC.POP.A
+	STA ACC.FP+1
+	JSR ACC.POP.A
+	STA ACC.FP
+* RESTORE 6502 RETURN ADDRESS
+	JSR ACC.POP.A
+	PHA
+	JSR ACC.POP.A
+	PHA
+* RESTORE PROGRAM COUNTER
+	JSR ACC.POP.A
+	STA AVM.PCH
+	JSR ACC.POP.A
+	STA AVM.PCL
+* EVALUATE RETURN VALUE
+	STX ACC.SIZE
+	BEQ .1
+	JMP AVM.MTS.1
+.1	RTS
 * -------------------------------
 * SET SP-=2
 * SET IP=SP[0,2]
@@ -156,6 +147,16 @@ AVM.STM.1
         TYA
         BNE .1
         RTS
+* -------------------------------
+AVM.VTM
+ 	PHA
+	JSR AVM.FETCH.BYTE
+	TAX
+	PLA
+	TAY
+	LDA (ACC.FP),Y
+	STA $00,X
+	RTS
 * -------------------------------
 * SET SP[0,2]=FP
 * SET SP+=2
