@@ -28,6 +28,25 @@ AVM.MTS.1
         BNE .1
         JMP ACC.SP.UP.SIZE
 * -------------------------------
+AVM.MTV
+ 	PHA
+	JSR AVM.FETCH.BYTE
+	TAX
+	PLA
+	TAY
+	LDA $00,X
+	STA (ACC.FP),Y
+	RTS
+* -------------------------------
+AVM.PHC
+	STA ACC.IDX.1
+	BEQ .2
+.1	JSR AVM.FETCH.BYTE
+	JSR ACC.PUSH.A
+	DEC ACC.IDX.1
+	BNE .1
+.2	RTS
+* -------------------------------
 * SET SP[0,2]=FP
 * SET SP+=2
 * SET Y=1
@@ -78,25 +97,6 @@ ACC.SP.UP.SIZE
 	LDA /ACC.STACK.OVERFLOW
 	JSR ACC.PRINT.STRING
 	JMP DOS.COLD.START
-* -------------------------------
-AVM.MTV
- 	PHA
-	JSR AVM.FETCH.BYTE
-	TAX
-	PLA
-	TAY
-	LDA $00,X
-	STA (ACC.FP),Y
-	RTS
-* -------------------------------
-AVM.PHC
-	STA ACC.IDX.1
-	BEQ .2
-.1	JSR AVM.FETCH.BYTE
-	JSR ACC.PUSH.A
-	DEC ACC.IDX.1
-	BNE .1
-.2	RTS
 * -------------------------------
 AVM.RAF
 * SAVE SIZE
