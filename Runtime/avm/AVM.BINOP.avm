@@ -1,0 +1,511 @@
+:NEW
+* -------------------------------
+* THE APPLECORE COMPILER, V1.0
+* INTEGER ARITHMETIC OPERATIONS
+* -------------------------------
+* INITIALIZATION FOR BINARY OPS
+* SET SIZE=A
+* SET IP=SP-SIZE
+* SET SP-=2*SIZE
+* PRESERVES X,Y
+* -------------------------------
+AVM.INIT.BINOP
+        JSR AVM.DSP
+        JSR ACC.SET.IP.TO.SP
+        JMP ACC.SP.DOWN.SIZE
+* -------------------------------
+* SET SIZE=A
+* SET SP-=SIZE
+* SET SP[-SIZE,SIZE]+=SP[0,SIZE]
+* -------------------------------
+AVM.ADD
+	JSR AVM.INIT.BINOP
+	JSR AVM.ADD.1
+        JMP ACC.SET.SP.TO.IP
+* -------------------------------
+* SET SP[0,SIZE]+=IP[0,SIZE]
+* CLOBBERS X,Y
+* -------------------------------
+AVM.ADD.1
+	LDX ACC.SIZE
+	LDY #0
+        CLC
+.1      LDA (ACC.SP),Y
+        ADC (ACC.IP),Y
+        STA (ACC.SP),Y
+        INY
+        DEX
+        BNE .1
+	RTS
+* -------------------------------
+* BINARY OP -
+* SET A=SIZE
+* SET SP-=SIZE
+* SET SP[-SIZE,SIZE]-=SP[0,SIZE]
+* -------------------------------
+AVM.SUB
+        JSR AVM.INIT.BINOP
+	JSR AVM.SUB.1
+        JMP ACC.SET.SP.TO.IP
+* -------------------------------
+* SET SP[0,SIZE]-=IP[0,SIZE]
+* CLOBBERS X,Y
+* -------------------------------
+AVM.SUB.1
+	LDX ACC.SIZE
+	LDY #0
+        SEC
+.1      LDA (ACC.SP),Y
+        SBC (ACC.IP),Y
+        STA (ACC.SP),Y
+        INY
+        DEX
+        BNE .1
+        RTS
+* -------------------------------
+* BINARY OP *
+* SET SIZE=A
+* SET SP-=SIZE
+* SET SP[-SIZE,SIZE]*=SP[0,SIZE]
+* MULT IS SIGNED IF X=/=0
+* CLOBBERS IDX.1,IDX.2,IP
+* -------------------------------
+AVM.MUL
+	STA ACC.SIZE
+	STA ACC.IDX.1
+* SAVE SIGNEDNESS
+	TXA
+	PHA
+* CLEAR RESULT
+	LDX #0
+	JSR ACC.PUSH.X.SIZE.TIMES
+* SET SP AND IP
+	JSR ACC.SP.DOWN.SIZE
+	JSR ACC.SP.DOWN.SIZE
+	JSR ACC.SP.DOWN.SIZE
+	JSR ACC.SET.IP.TO.SP
+	JSR ACC.SP.UP.SIZE
+* CHECK SIGNEDNESS
+	PLA
+	BNE ACC.MUL.SIGNED
+* -------------------------------
+* UNSIGNED MULTIPLICATION
+* -------------------------------
+ACC.MUL.UNSIGNED
+* DO 8 BITS PER BYTE
+.1	LDA #8
+	STA ACC.IDX.2
+.2	LDA ACC.IDX.1
+	PHA
+	JSR ACC.MUL.INNER
+	PLA
+	STA ACC.IDX.1
+	DEC ACC.IDX.2
+	BNE .2
+	DEC ACC.IDX.1
+	BNE .1
+* SET SP, MOVE RESULT INTO PLACE
+	JSR ACC.SP.UP.SIZE
+	JSR ACC.SET.IP.TO.SP
+	JSR ACC.SP.DOWN.SIZE
+	JSR ACC.SP.DOWN.SIZE
+	JMP AVM.MTS.1
+* -------------------------------
+* SIGNED MULTIPLICATION
+* -------------------------------
+ACC.MUL.SIGNED
+* CHECK SIGN BIT OF LHS
+	JSR ACC.SP.DOWN.SIZE
+	JSR ACC.GET.MSB
+	STA ACC.GR
+	BPL .1
+* NEGATIVE, NEGATE
+	SEC
+	JSR ACC.NOT
+* CHECK SIGN BIT OF LHS
+.1	JSR ACC.SP.UP.SIZE
+	JSR ACC.GET.MSB
+	PHA
+	BPL .2
+* NEGATIVE, NEGATE
+	SEC
+	JSR ACC.NOT
+* COMPARE SIGN BITS OF LHS, RHS
+.2      PLA
+	EOR ACC.GR
+	AND #$80
+* DO MULTIPLICATION
+	PHA
+	JSR ACC.MUL.UNSIGNED
+	PLA
+	BNE .3
+	RTS
+* SIGN BITS UNEQ, NEGATE RESULT
+.3	LDA ACC.SIZE
+	JMP AVM.NEG
+* -------------------------------
+* INNER LOOP FOR UNSIGNED MUL
+* ON ENTRY IP POINTS TO LHS,
+* SP POINTS TO RHS
+* -------------------------------
+ACC.MUL.INNER
+* SHIFT RHS 1 TO RIGHT
+	CLC
+	JSR AVM.SHR.INNER
+* CHECK LSB OF RHS
+	BCC .1
+* IF IT'S 1, ADD LHS TO RESULT
+	JSR ACC.SP.UP.SIZE
+	JSR AVM.ADD.1
+	JSR ACC.SP.DOWN.SIZE
+* SHIFT LHS 1 TO LEFT
+.1	JSR ACC.SP.DOWN.SIZE
+	JSR AVM.SHL.INNER
+	JMP ACC.SP.UP.SIZE
+* -------------------------------
+* SET SIZE=A
+* SET SP-=SIZE
+* DIVIDE SP[-SIZE,SIZE]
+*	BY SP[0,SIZE]
+* QUOTIENT IN SP[-SIZE,SIZE]
+* REMAINDER IN SP[SIZE,SIZE]
+* DIV IS SIGNED IF X=/=0
+* CLOBBERS IDX.1,IDX.2,IP,GR
+* -------------------------------
+AVM.DIV
+	STA ACC.SIZE
+	STA ACC.IDX.1
+* SAVE SIGNEDNESS
+	TXA
+	PHA
+* CLEAR REMAINDER
+	LDX #0
+	JSR ACC.PUSH.X.SIZE.TIMES
+* SET SP AND IP
+	JSR ACC.SP.DOWN.SIZE
+	JSR ACC.SP.DOWN.SIZE
+	JSR ACC.SET.IP.TO.SP
+	JSR ACC.SP.DOWN.SIZE
+* CHECK SIGNEDNESS
+	PLA
+	BNE AVM.DIV.SIGNED
+* -------------------------------
+* UNSIGNED DIVISION
+* -------------------------------
+AVM.DIV.UNSIGNED
+* DO 8 BITS PER BYTE
+.1	LDA #8
+	STA ACC.IDX.2
+.2	LDA ACC.IDX.1
+	PHA
+	JSR AVM.DIV.INNER
+	PLA
+	STA ACC.IDX.1
+	DEC ACC.IDX.2
+	BNE .2
+	DEC ACC.IDX.1
+	BNE .1
+* MOVE SP
+	JMP ACC.SP.UP.SIZE
+* -------------------------------
+* SIGNED DIVISION
+* -------------------------------
+AVM.DIV.SIGNED
+	JSR ACC.GET.MSB
+	AND #$80
+	STA ACC.GR
+	BEQ .1
+* LHS < 0, NEGATE
+	SEC
+	JSR ACC.NOT
+.1	JSR ACC.SP.UP.SIZE
+	JSR ACC.GET.MSB
+	AND #$80
+	PHA
+	BEQ .2
+* RHS < 0, NEGATE
+	SEC
+	JSR ACC.NOT
+* DO THE DIVISION
+.2	JSR ACC.SP.DOWN.SIZE
+	JSR AVM.DIV.UNSIGNED
+* COMPARE SIGNS OF LHS,RHS
+	PLA
+	EOR ACC.GR
+	BNE .3
+	RTS
+* NEGATE QUOTIENT
+.3	LDA ACC.SIZE
+	JMP AVM.NEG
+* -------------------------------
+* INNER LOOP FOR UNSIGNED DIV
+* ON ENTRY SP POINTS TO
+* LHS/QUOTIENT, IP POINTS TO RHS
+* -------------------------------
+AVM.DIV.INNER
+* SHIFT LHS/QUOTIENT 1 TO LEFT
+	JSR AVM.SHL.INNER
+	PHP
+	JSR ACC.SP.UP.SIZE
+	JSR ACC.SP.UP.SIZE
+* SHIFT LHS INTO REMAINDER
+	PLP
+	JSR AVM.SHL.INNER.1
+* COMPARE REMAINDER TO RHS
+	LDY ACC.SIZE
+	JSR ACC.CMP.U
+	BCS .1
+* REMAINDER TOO SMALL
+	JSR ACC.SP.DOWN.SIZE
+	JMP ACC.SP.DOWN.SIZE
+* SUBTRACT RHS FROM REMAINDER
+.1	JSR AVM.SUB.1
+* ADD 1 TO QUOTIENT
+	JSR ACC.SP.DOWN.SIZE
+	JSR ACC.SP.DOWN.SIZE
+	LDY #0
+	LDA (ACC.SP),Y
+	ORA #1
+	STA (ACC.SP),Y
+	RTS
+* -------------------------------
+* SET SIZE=A
+* SET SP-=(SIZE+1)
+* SET GR=SP[SIZE,1]
+* SET SP[0,SIZE]<<=GR
+* SET SP+=SIZE
+* -------------------------------
+AVM.SHL
+	JSR ACC.INIT.SHIFT
+* OUTER LOOP OVER SHAMT
+	LDX ACC.GR
+* INNER LOOP OVER SIZE
+.1	JSR AVM.SHL.INNER
+	DEX
+	BNE .1
+	JMP ACC.SP.UP.SIZE
+* -------------------------------
+* SET SIZE=A
+* SET SP-=(SIZE+1)
+* SET GR=SP[SIZE,1]
+* SET SP[0,SIZE]>>=GR
+* SHIFT IS SIGNED IF X=/=0
+* SET SP+=SIZE
+* CLOBBERS IDX.2
+* -------------------------------
+AVM.SHR
+	JSR ACC.INIT.SHIFT
+* STORE SHAMT IN IDX.1
+	LDA ACC.GR
+	STA ACC.IDX.1
+* CHECK SIGNEDNESS
+	TXA
+	BEQ .1
+* SIGNED SHIFT, SET X=MSb
+	LDY ACC.SIZE
+	DEY
+	LDA (ACC.SP),Y
+	TAX
+* OUTER LOOP OVER SHAMT
+.1	ASL
+* INNER LOOP OVER SIZE
+	JSR AVM.SHR.INNER
+	TXA
+	DEC ACC.IDX.1
+	BNE .1
+	JMP ACC.SP.UP.SIZE
+* -------------------------------
+* INITIALIZE SHIFT OP
+* SET SIZE=A
+* SET SP-=(SIZE+1)
+* SET GR=SHAMT
+* PRESERVES X
+* -------------------------------
+ACC.INIT.SHIFT
+	PHA
+* POP AND STORE SHAMT
+	JSR ACC.POP.A
+	STA ACC.GR
+* ADJUST SP AND STORE SIZE
+	PLA
+	JMP AVM.DSP
+* -------------------------------
+* INNER LOOP FOR SHR
+* -------------------------------
+AVM.SHR.INNER
+	LDY ACC.SIZE
+.2	DEY
+	LDA (ACC.SP),Y
+	ROR
+	STA (ACC.SP),Y
+	TYA
+	BNE .2
+	RTS	
+* -------------------------------
+* INNER LOOP FOR SHL
+* CLOBBERS IDX.1
+* -------------------------------
+AVM.SHL.INNER
+	CLC
+AVM.SHL.INNER.1
+	LDY #0
+	LDA ACC.SIZE
+	STA ACC.IDX.1
+.1	LDA (ACC.SP),Y
+	ROL
+	STA (ACC.SP),Y
+	INY
+	DEC ACC.IDX.1
+	BNE .1
+	RTS
+* -------------------------------
+* SET A = SIZE
+* SET SP-=2*SIZE
+* COMPARE SP[0,SIZE]
+* 	TO SP[SIZE,SIZE]
+* COMPARISON IS SIGNED IF X=/=0
+* PUSH 1=EQ, 0=NEQ
+* -------------------------------
+AVM.TEQ
+        JSR ACC.CMP
+	BEQ ACC.PUSH.1
+	BNE ACC.PUSH.0
+* -------------------------------
+* ...PUSH 1=GT, 0=LEQ
+* -------------------------------
+AVM.TGT
+        JSR ACC.CMP
+        BEQ ACC.PUSH.0
+	BNE AVM.TGE.1
+* -------------------------------
+* ...PUSH 1=GEQ, 0=LT
+* -------------------------------
+AVM.TGE
+        JSR ACC.CMP
+AVM.TGE.1
+	BCC ACC.PUSH.0
+	BCS ACC.PUSH.1
+* -------------------------------
+* ...PUSH 1=LEQ, 0=GT
+* -------------------------------
+AVM.TLE
+        JSR ACC.CMP
+	BEQ ACC.PUSH.1
+	BNE AVM.TLT.1
+* -------------------------------
+* ...PUSH 1=LT, 0=GEQ
+* -------------------------------
+AVM.TLT
+        JSR ACC.CMP
+AVM.TLT.1
+        BCC ACC.PUSH.1
+* -------------------------------
+* SET SIZE=1
+* PUSH 0
+* -------------------------------
+ACC.PUSH.0
+	LDA #0
+	JMP ACC.PUSH.A
+* -------------------------------
+* SET SIZE=1
+* PUSH 1
+* -------------------------------
+ACC.PUSH.1
+	LDA #1
+        JMP ACC.PUSH.A
+* -------------------------------
+* SET SIZE=A
+* SET SP-=2*SIZE
+* COMPARE SP[SIZE,A] TO
+*	SP[SIZE,SIZE]
+* COMPARISON IS SIGNED IF X=/=0
+* SET C=GEQ,Z=EQ
+* -------------------------------
+ACC.CMP
+* IP=SP-SIZE, SP-=2*SIZE
+        JSR AVM.INIT.BINOP
+* Y=SIZE
+        LDY ACC.SIZE
+* X=SIGNEDNESS
+        TXA
+        BEQ ACC.CMP.U
+* SIGNED, CHECK SIGN BITS
+        DEY
+        LDA (ACC.SP),Y
+	EOR (ACC.IP),Y
+	AND #$80
+	BEQ ACC.CMP.U.1
+* SIGN BITS UNEQUAL
+	SEC
+	LDA (ACC.IP),Y
+* NOT ZERO
+	ORA #1
+* SIGN BIT INTO CARRY
+	ROL
+	RTS
+* -------------------------------
+* COMPARE SP[0,Y] TO IP[0,Y]
+* COMPARISON IS UNSIGNED
+* SET C=GEQ,Z=EQ
+* -------------------------------
+ACC.CMP.U
+	DEY
+ACC.CMP.U.1
+        LDA (ACC.SP),Y  
+        CMP (ACC.IP),Y
+        BEQ .1
+* UNEQUAL, WE'RE DONE
+	RTS
+* EQUAL, KEEP GOING
+.1	TYA
+        BNE ACC.CMP.U
+* CHECKED ALL BYTES
+	RTS
+* -------------------------------
+* SET SIZE=A
+* SET SP-=2*SIZE
+* SET SP[0,SIZE]=(SP[0,SIZE]
+*	AND SP[SIZE,SIZE])
+* -------------------------------
+AVM.ANL
+        JSR AVM.INIT.BINOP
+	LDY #0
+.1      LDA (ACC.SP),Y
+        AND (ACC.IP),Y
+        STA (ACC.SP),Y
+        INY
+	CPY ACC.SIZE
+        BNE .1
+        JMP ACC.SET.SP.TO.IP
+* -------------------------------
+* SET SIZE=A
+* SET SP-=2*SIZE
+* SET SP[0,SIZE]=(SP[0,SIZE]
+*	OR SP[SIZE,SIZE])
+* -------------------------------
+AVM.ORL
+	JSR AVM.INIT.BINOP
+	LDY #0
+.1      LDA (ACC.SP),Y
+        ORA (ACC.IP),Y
+        STA (ACC.SP),Y
+        INY
+	CPY ACC.SIZE
+        BNE .1
+        JMP ACC.SET.SP.TO.IP
+* -------------------------------
+* SET SIZE=A
+* SET SP-=2*SIZE
+* SET SP[0,SIZE]=(SP[0,SIZE]
+*	XOR SP[SIZE,SIZE])
+* -------------------------------
+AVM.ORX
+	JSR AVM.INIT.BINOP
+	LDY #0
+.1      LDA (ACC.SP),Y
+        EOR (ACC.IP),Y
+        STA (ACC.SP),Y
+        INY
+        CPY ACC.SIZE
+        BNE .1
+        JMP ACC.SET.SP.TO.IP

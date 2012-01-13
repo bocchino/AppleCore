@@ -263,18 +263,6 @@ ACC.POP.A
 	LDA (ACC.SP),Y
 	RTS
 * -------------------------------
-* INITIALIZATION FOR BINARY OPS
-* SET SIZE=A
-* SET IP=SP-SIZE
-* SET SP-=2*SIZE
-* PRESERVES X,Y
-* -------------------------------
-ACC.INIT.BINOP
-        JSR AVM.DSP
-        JSR ACC.SET.IP.TO.SP
-        JSR ACC.SP.DOWN.SIZE
-        RTS  	FIXME
-* -------------------------------
 * SET A=SP[SIZE-1,1]
 * -------------------------------
 ACC.GET.MSB
