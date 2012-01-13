@@ -411,13 +411,15 @@ public class SourceFileWriter
 	emitter.emit("\n");
 	scan(node.thenPart);
 	if (node.elsePart != null)
-	    emitter.emitAbsoluteInstruction("JMP",emitter.makeLabel("endif" + label));
+	    emitter.emitAbsoluteInstruction("JMP",
+					    emitter.makeLabel(mangle("endif" 
+								     + label)));
 	// False part
 	emitter.emitLabel(mangle("false"+label));
 	emitter.emit("\n");
 	if (node.elsePart != null) {
 	    scan(node.elsePart);
-	    emitter.emitLabel("endif"+label);
+	    emitter.emitLabel(mangle("endif"+label));
 	    emitter.emit("\n");
 	}
     }
