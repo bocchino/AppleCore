@@ -116,7 +116,9 @@ sub assemble_unsized_instr(@) {
   emit_byte_as_hex($instr->{"opcode"});
   emit_inline_comment("$mnemonic $arg");
   emit_line_end();
-  emit_address($arg);
+  if ($arg) {
+      emit_address($arg);
+  }
 }
 
 sub assemble_sized_instr(@) {
