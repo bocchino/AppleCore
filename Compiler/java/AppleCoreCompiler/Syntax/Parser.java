@@ -360,7 +360,7 @@ public class Parser {
 	    result = parseBlockStatement();
 	    break;
 	default:
-	    result = parseExpressionStatement();
+	    result = parseCallStatement();
 	    break;
 	}
 	return result;
@@ -477,17 +477,21 @@ public class Parser {
     }
 
     /**
-     * Expr-Stmt ::= Expr ';'
+     * Call-Stmt ::= Call-Expr ';'
      */
-    private Statement parseExpressionStatement() 
+    private Statement parseCallStatement() 
 	throws SyntaxError, IOException
     {
-	ExpressionStatement exprStmt = new ExpressionStatement();
-	setLineNumberOf(exprStmt);
+	CallStatement callStmt = new CallStatement();
+	setLineNumberOf(callStmt);
 	Expression expr = parseExpression();
-	exprStmt.expr = expr;
+	if (!(expr instanceof CallExpression)) {
+	    throw new SyntaxError("not a statement",
+				  scanner.getLineNumber());
+	}
+	callStmt.expr = (CallExpression) expr;
 	expectAndConsume(Token.SEMI);
-	return exprStmt;
+	return callStmt;
     }
 
     /**

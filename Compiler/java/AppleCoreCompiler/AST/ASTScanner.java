@@ -123,7 +123,7 @@ public class ASTScanner extends NodeVisitor {
 	scan(node.expr);
 	visitAfterScan(node);
     }
-    public void visitExpressionStatement(ExpressionStatement node) 
+    public void visitCallStatement(CallStatement node) 
 	throws ACCError 
     {
 	visitBeforeScan(node);

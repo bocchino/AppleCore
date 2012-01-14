@@ -234,6 +234,13 @@ public class AVMTranslatorPass
 	emit(new STMInstruction(node.lhs.getSize()));
     }
 
+    public void visitCallStatement(CallStatement node) 
+	throws ACCError
+    {
+	// TODO: Pop value if enclosed expr has nonzero size
+	super.visitCallStatement(node);
+    }
+
     public void visitIncrStatement(IncrStatement node)
 	throws ACCError
     {
@@ -248,13 +255,6 @@ public class AVMTranslatorPass
 	needAddress = true;
 	scan(node.expr);
 	emit(new DCRInstruction(node.expr.size));
-    }
-
-    public void visitExpressionStatement(ExpressionStatement node) 
-	throws ACCError
-    {
-	// Nothing special to do 
-	super.visitExpressionStatement(node);
     }
 
     public void visitReturnStatement(ReturnStatement node)

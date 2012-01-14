@@ -92,6 +92,13 @@ public class ExpressionTransformer
 	}
 	visitAfterScan(node);
     }
+    public void visitCallStatement(CallStatement node) 
+	throws ACCError 
+    {
+	visitBeforeScan(node);
+	node.expr = transform(node.expr);
+	visitAfterScan(node);
+    }
     public void visitIncrStatement(IncrStatement node) 
 	throws ACCError 
     {
@@ -100,13 +107,6 @@ public class ExpressionTransformer
 	visitAfterScan(node);
     }
     public void visitDecrStatement(DecrStatement node) 
-	throws ACCError 
-    {
-	visitBeforeScan(node);
-	node.expr = transform(node.expr);
-	visitAfterScan(node);
-    }
-    public void visitExpressionStatement(ExpressionStatement node) 
 	throws ACCError 
     {
 	visitBeforeScan(node);

@@ -110,22 +110,21 @@ public class Main {
 		sourceFile.targetFile = (targetFileName == null) ?
 		    defaultTargetFile(sourceFile.name) :
 		    targetFileName;
+
 		AttributionPass attributionPass = 
 		    new AttributionPass(declFiles);
 		attributionPass.runOn(sourceFile);
+
 		ConstantEvaluationPass cePass = 
 		    new ConstantEvaluationPass();
 		cePass.runOn(sourceFile);
-		/*
-		ASTPrintingPass app = new ASTPrintingPass(System.err);
-		app.runOn(sourceFile);
-		*/
+
 		SizePass sizePass = new SizePass();
 		sizePass.runOn(sourceFile);
+
 		LValuePass lvaluePass = new LValuePass();
 		lvaluePass.runOn(sourceFile);
-		ExprStmtPass exprStmtPass = new ExprStmtPass();
-		exprStmtPass.runOn(sourceFile);
+
 		FunctionCallPass functionCallPass = new FunctionCallPass();
 		functionCallPass.runOn(sourceFile);
 

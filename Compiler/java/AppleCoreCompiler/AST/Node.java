@@ -278,14 +278,13 @@ public abstract class Node {
 	}
     }
 
-    // TODO: Make this a call stmt
-    public static class ExpressionStatement
+    public static class CallStatement
 	extends Statement
     {
 	public Expression expr;
 
 	public void accept(Visitor v) throws ACCError {
-	    v.visitExpressionStatement(this);
+	    v.visitCallStatement(this);
 	}
 
 	public String toString() {
@@ -780,7 +779,7 @@ public abstract class Node {
 	    visitDecrStatement(DecrStatement node) 
 	    throws ACCError;
 	public abstract void
-	    visitExpressionStatement(ExpressionStatement node) 
+	    visitCallStatement(CallStatement node) 
 	    throws ACCError;
 	public abstract void 
 	    visitReturnStatement(ReturnStatement node) 

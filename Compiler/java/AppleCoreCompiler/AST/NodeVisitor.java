@@ -21,7 +21,7 @@ public class NodeVisitor implements Visitor {
     public void visitSetStatement(SetStatement node) throws ACCError { visitNode(node); }
     public void visitIncrStatement(IncrStatement node) throws ACCError { visitNode(node); }
     public void visitDecrStatement(DecrStatement node) throws ACCError { visitNode(node); }
-    public void visitExpressionStatement(ExpressionStatement node) throws ACCError { visitNode(node); }
+    public void visitCallStatement(CallStatement node) throws ACCError { visitNode(node); }
     public void visitReturnStatement(ReturnStatement node) throws ACCError { visitNode(node); }
     public void visitBlockStatement(BlockStatement node) throws ACCError { visitNode(node); }
     public void visitIndexedExpression(IndexedExpression node) throws ACCError { visitNode(node); }
