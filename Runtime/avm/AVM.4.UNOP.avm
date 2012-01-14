@@ -57,7 +57,7 @@ AVM.ICR
 	INY
 	DEX
 	BNE .1
-	JMP AVM.MTS.1
+	RTS
 * -------------------------------
 * POP IP
 * SET SIZE=A
@@ -77,6 +77,4 @@ AVM.DCR
 	INY
 	DEX
 	BNE .1
-	JMP AVM.MTS.1
-
-        
+	RTS
