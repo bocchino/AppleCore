@@ -507,8 +507,7 @@ public abstract class Node {
 
 	public enum Operator {
 	    DEREF("DEREF","@"),NOT("NOT","NOT"),
-	    NEG("NEG","-"),INCR("INCR","INCR"),
-	    DECR("DECR","DECR");
+	    NEG("NEG","-");
 	    public final String name;
 	    public final String symbol;
 	    Operator(String name, String symbol) {

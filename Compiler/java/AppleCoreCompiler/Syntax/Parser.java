@@ -347,6 +347,12 @@ public class Parser {
 	case SET:
 	    result = parseSetStatement();
 	    break;
+	case INCR:
+	    result = parseIncrStatement();
+	    break;
+	case DECR:
+	    result = parseDecrStatement();
+	    break;
 	case RETURN:
 	    result = parseReturnStatement();
 	    break;
@@ -410,6 +416,34 @@ public class Parser {
 	setStmt.rhs = parseExpression();
 	expectAndConsume(Token.SEMI);
 	return setStmt;
+    }
+
+    /**
+     * Incr-Stmt ::= INCR Expr ';'
+     */
+    private IncrStatement parseIncrStatement() 
+	throws SyntaxError, IOException
+    {
+	IncrStatement incrStmt = new IncrStatement();
+	setLineNumberOf(incrStmt);
+	expectAndConsume(Token.INCR);
+	incrStmt.expr = parseExpression();
+	expectAndConsume(Token.SEMI);
+	return incrStmt;
+    }
+
+    /**
+     * Decr-Stmt ::= DECR Expr ';'
+     */
+    private DecrStatement parseDecrStatement() 
+	throws SyntaxError, IOException
+    {
+	DecrStatement decrStmt = new DecrStatement();
+	setLineNumberOf(decrStmt);
+	expectAndConsume(Token.DECR);
+	decrStmt.expr = parseExpression();
+	expectAndConsume(Token.SEMI);
+	return decrStmt;
     }
 
     /**
@@ -602,7 +636,7 @@ public class Parser {
 
     /**
      * Unop-Expr ::= Unop Expr
-     * Unop      ::= '@' | 'NOT' | '-' | 'INCR' | 'DECR'
+     * Unop      ::= '@' | 'NOT' | '-'
      */
     private UnopExpression parseUnopExpr(Node.UnopExpression.Operator op) 
 	throws SyntaxError, IOException

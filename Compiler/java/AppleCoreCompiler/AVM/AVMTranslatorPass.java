@@ -234,6 +234,22 @@ public class AVMTranslatorPass
 	emit(new STMInstruction(node.lhs.getSize()));
     }
 
+    public void visitIncrStatement(IncrStatement node)
+	throws ACCError
+    {
+	needAddress = true;
+	scan(node.expr);
+	emit(new ICRInstruction(node.expr.size));
+    }
+
+    public void visitDecrStatmenet(DecrStatement node)
+	throws ACCError
+    {
+	needAddress = true;
+	scan(node.expr);
+	emit(new DCRInstruction(node.expr.size));
+    }
+
     public void visitExpressionStatement(ExpressionStatement node) 
 	throws ACCError
     {
@@ -461,16 +477,6 @@ public class AVMTranslatorPass
 	    needAddress = false;
 	    scan(node.expr);
 	    emit(new NEGInstruction(node.expr.size));
-	    break;
-	case INCR:
-	    needAddress = true;
-	    scan(node.expr);
-	    emit(new ICRInstruction(node.expr.size));
-	    break;
-	case DECR:
-	    needAddress = true;
-	    scan(node.expr);
-	    emit(new DCRInstruction(node.expr.size));
 	    break;
 	default:
 	    throw new ACCInternalError("unhandled unary operator",node);

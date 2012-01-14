@@ -41,6 +41,24 @@ public class LValuePass
 	}
     }
 
+    public void visitIncrStatement(IncrStatement node)
+	throws ACCError
+    {
+	if (!isLValue(node.expr)) {
+	    throw new SemanticError("incr of non-lvalue",
+				    node);
+	}
+    }
+
+    public void visitDecrStatement(DecrStatement node)
+	throws ACCError
+    {
+	if (!isLValue(node.expr)) {
+	    throw new SemanticError("decr of non-lvalue",
+				    node);
+	}
+    }
+
     public void visitUnopExpression(UnopExpression node) 
 	throws ACCError
     {
@@ -53,18 +71,6 @@ public class LValuePass
 	    }	    
 	    if (node.expr instanceof RegisterExpression) {
 		throw new SemanticError("deref of register",
-					node);
-	    }
-	    break;
-	case INCR:
-	    if (!isLValue(node.expr)) {
-		throw new SemanticError("incr of non-lvalue",
-					node);
-	    }
-	    break;
-	case DECR:
-	    if (!isLValue(node.expr)) {
-		throw new SemanticError("decr of non-lvalue",
 					node);
 	    }
 	    break;

@@ -56,13 +56,6 @@ public class ExprStmtPass
 	    result = true;
 	}
 
-	public void visitUnopExpression(UnopExpression node) {
-	    switch (node.operator) {
-	    case INCR: case DECR:
-		result = true;
-	    }
-	}
-
 	public void visitParensExpression(ParensExpression node) 
 	    throws ACCError
 	{
