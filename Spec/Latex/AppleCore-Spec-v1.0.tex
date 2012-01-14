@@ -395,10 +395,10 @@ $$\nonterm{while-stmt} ::= \mbox{\kwd{WHILE} \kwd{(} \nonterm{expr}
 %
 
 \bfhead{Set statements.} A set statement consists of the keyword
-\kwd{SET}, an expression, an equals sign, a right-hand-side
+\kwd{SET}, an lvalue expression, an equals sign, a right-hand-side
 expression, and a terminating semicolon:
 %
-$$\nonterm{set-stmt} ::= \mbox{\kwd{SET} \nonterm{expr} \kwd{=}
+$$\nonterm{set-stmt} ::= \mbox{\kwd{SET} \nonterm{lvalue-expr} \kwd{=}
   \nonterm{expr} \kwd{;}}$$
 %
 
@@ -436,19 +436,30 @@ $$\nonterm{block-stmt} ::= \mbox{\kwd{\{} \nonterm{stmt}$^*$
 \subsection{Expressions}
 \label{sec:syntax:expressions}
 
-An expression is an identifier, a numeric constant, a call expression,
-an indexed expression, a register expression, a binary operation
-expression, a unary operation expression, or a parentheses expression.
+An expression is an lvalue expression, a numeric constant, a call
+expression, a binary operation expression, a unary operation
+expression, or a parentheses expression.
 %
 $$
 %
-\nonterm{expr} ::= \mbox{\nonterm{identifier} $|$
+\nonterm{expr} ::= \mbox{\nonterm{lvalue-expr} $|$
   \nonterm{numeric-const} $|$ \nonterm{call-expr} $|$
-  \nonterm{indexed-expr} $|$ \nonterm{register-expr} $|$
   \nonterm{binop-expr} $|$ \nonterm{unop-expr} $|$
   \nonterm{parens-expr}}
 %
 $$
+%
+An lvalue expression is an expression that may appear on the left-hand
+side of a set statement.  It is an identifier, an indexed expression,
+or a register expression.
+%
+$$
+%
+\nonterm{lvalue-expr} ::= \mbox{\nonterm{identifier} $|$
+  \nonterm{indexed-expr} $|$ \nonterm{register-expr}}
+%
+$$
+
 
 \bfhead{Numeric constants.}  A numeric constant is an integer or
 character constant:

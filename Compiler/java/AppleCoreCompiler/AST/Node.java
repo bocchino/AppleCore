@@ -263,6 +263,22 @@ public abstract class Node {
 	}
     }
 
+    public static class SetStatement
+	extends Statement
+    {
+	public Expression lhs;
+	public Expression rhs;
+
+	public void accept(Visitor v) throws ACCError {
+	    v.visitSetStatement(this);
+	}
+
+	public String toString() {
+	    return "set stmt";
+	}
+    }
+
+    // TODO: Make this a call stmt
     public static class ExpressionStatement
 	extends Statement
     {
@@ -273,7 +289,35 @@ public abstract class Node {
 	}
 
 	public String toString() {
-	    return "expr stmt";
+	    return "call stmt";
+	}
+    }
+
+    public static class IncrStatement
+	extends Statement
+    {
+	public Expression expr;
+
+	public void accept(Visitor v) throws ACCError {
+	    v.visitIncrStatement(this);
+	}
+
+	public String toString() {
+	    return "incr stmt";
+	}
+    }
+
+    public static class DecrStatement
+	extends Statement
+    {
+	public Expression expr;
+
+	public void accept(Visitor v) throws ACCError {
+	    v.visitDecrStatement(this);
+	}
+
+	public String toString() {
+	    return "decr stmt";
 	}
     }
 
@@ -401,21 +445,6 @@ public abstract class Node {
 
 	public String toString() {
 	    return "register expr ^" + register.name;
-	}
-    }
-
-    public static class SetExpression
-	extends Expression
-    {
-	public Expression lhs;
-	public Expression rhs;
-
-	public void accept(Visitor v) throws ACCError {
-	    v.visitSetExpression(this);
-	}
-
-	public String toString() {
-	    return "set expr";
 	}
     }
 
@@ -743,6 +772,15 @@ public abstract class Node {
 	    visitWhileStatement(WhileStatement node) 
 	    throws ACCError;
 	public abstract void
+	    visitSetStatement(SetStatement node) 
+	    throws ACCError;
+	public abstract void
+	    visitIncrStatement(IncrStatement node) 
+	    throws ACCError;
+	public abstract void
+	    visitDecrStatement(DecrStatement node) 
+	    throws ACCError;
+	public abstract void
 	    visitExpressionStatement(ExpressionStatement node) 
 	    throws ACCError;
 	public abstract void 
@@ -754,14 +792,11 @@ public abstract class Node {
 	public abstract void 
 	    visitIndexedExpression(IndexedExpression node)
 	    throws ACCError;
-	public abstract 
-	    void visitCallExpression(CallExpression node) 
+	public abstract void
+	    visitCallExpression(CallExpression node) 
 	    throws ACCError;
 	public abstract void 
 	    visitRegisterExpression(RegisterExpression node) 
-	    throws ACCError;
-	public abstract void 
-	    visitSetExpression(SetExpression node) 
 	    throws ACCError;
 	public abstract void 
 	    visitBinopExpression(BinopExpression node) 

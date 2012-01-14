@@ -81,6 +81,31 @@ public class ExpressionTransformer
 	scan(node.body);
 	visitAfterScan(node);
     }
+    public void visitSetStatement(SetStatement node) 
+	throws ACCError 
+    {
+	visitBeforeScan(node);
+	node.lhs = transform(node.lhs);
+	node.rhs = transform(node.rhs);
+	if (node.rhs == null) {
+	    throw new ACCInternalError("null RHS", node);
+	}
+	visitAfterScan(node);
+    }
+    public void visitIncrStatement(IncrStatement node) 
+	throws ACCError 
+    {
+	visitBeforeScan(node);
+	node.expr = transform(node.expr);
+	visitAfterScan(node);
+    }
+    public void visitDecrStatement(DecrStatement node) 
+	throws ACCError 
+    {
+	visitBeforeScan(node);
+	node.expr = transform(node.expr);
+	visitAfterScan(node);
+    }
     public void visitExpressionStatement(ExpressionStatement node) 
 	throws ACCError 
     {
@@ -110,18 +135,6 @@ public class ExpressionTransformer
 	visitBeforeScan(node);
 	node.fn = transform(node.fn);
 	node.args = transform(node.args);
-	visitAfterScan(node);
-	result = node;
-    }
-    public void visitSetExpression(SetExpression node) 
-	throws ACCError 
-    {
-	visitBeforeScan(node);
-	node.lhs = transform(node.lhs);
-	node.rhs = transform(node.rhs);
-	if (node.rhs == null) {
-	    throw new ACCInternalError("null RHS", node);
-	}
 	visitAfterScan(node);
 	result = node;
     }

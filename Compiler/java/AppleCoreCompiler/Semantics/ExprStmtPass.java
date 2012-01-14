@@ -50,12 +50,6 @@ public class ExprStmtPass
 	    return result;
 	}
 
-	public void visitSetExpression(SetExpression node) 
-	    throws ACCError
-	{
-	    result = true;
-	}
-
 	public void visitCallExpression(CallExpression node) 
 	    throws ACCError
 	{

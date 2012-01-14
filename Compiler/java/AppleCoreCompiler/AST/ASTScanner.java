@@ -101,6 +101,28 @@ public class ASTScanner extends NodeVisitor {
 	scan(node.body);
 	visitAfterScan(node);
     }
+    public void visitSetStatement(SetStatement node) 
+	throws ACCError 
+    {
+	visitBeforeScan(node);
+	scan(node.lhs);
+	scan(node.rhs);
+	visitAfterScan(node);
+    }
+    public void visitIncrStatement(IncrStatement node) 
+	throws ACCError 
+    {
+	visitBeforeScan(node);
+	scan(node.expr);
+	visitAfterScan(node);
+    }
+    public void visitDecrStatement(DecrStatement node) 
+	throws ACCError 
+    {
+	visitBeforeScan(node);
+	scan(node.expr);
+	visitAfterScan(node);
+    }
     public void visitExpressionStatement(ExpressionStatement node) 
 	throws ACCError 
     {
@@ -136,14 +158,6 @@ public class ASTScanner extends NodeVisitor {
 	visitBeforeScan(node);
 	scan(node.fn);
 	scan(node.args);
-	visitAfterScan(node);
-    }
-    public void visitSetExpression(SetExpression node) 
-	throws ACCError 
-    {
-	visitBeforeScan(node);
-	scan(node.lhs);
-	scan(node.rhs);
 	visitAfterScan(node);
     }
     public void visitBinopExpression(BinopExpression node)

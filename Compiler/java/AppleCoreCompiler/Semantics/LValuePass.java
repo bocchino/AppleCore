@@ -31,10 +31,10 @@ public class LValuePass
 	scan(sourceFile);
     }
 
-    public void visitSetExpression(SetExpression node) 
+    public void visitSetStatement(SetStatement node) 
 	throws ACCError
     {
-	super.visitSetExpression(node);
+	super.visitSetStatement(node);
 	if (!isLValue(node.lhs)) {
 	    throw new SemanticError("assignment to non-lvalue",
 				    node);

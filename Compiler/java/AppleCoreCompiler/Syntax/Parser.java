@@ -329,8 +329,8 @@ public class Parser {
     }
 
     /**
-     * Stmt ::= If-Stmt | While-Stmt | Return-Stmt | Block-Stmt |
-     *          Expr-Stmt
+     * Stmt ::= If-Stmt | While-Stmt | Set-Stmt | Call-Stmt |
+     *          Incr-Stmt | Decr-Stmt | Return-Stmt | Block-Stmt
      */
     private Statement parseStatement() 
 	throws SyntaxError, IOException
@@ -343,6 +343,9 @@ public class Parser {
 	    break;
 	case WHILE:
 	    result = parseWhileStatement();
+	    break;
+	case SET:
+	    result = parseSetStatement();
 	    break;
 	case RETURN:
 	    result = parseReturnStatement();
@@ -391,6 +394,22 @@ public class Parser {
 	expectAndConsume(Token.RPAREN);
 	whileStmt.body = parseStatement();
 	return whileStmt;
+    }
+
+    /**
+     * Set-Stmt ::= SET Expr '=' Expr ';'
+     */
+    private SetStatement parseSetStatement() 
+	throws SyntaxError, IOException
+    {
+	SetStatement setStmt =  new SetStatement();
+	setLineNumberOf(setStmt);
+	expectAndConsume(Token.SET);
+	setStmt.lhs = parseLValueExpression();
+	expectAndConsume(Token.EQUALS);
+	setStmt.rhs = parseExpression();
+	expectAndConsume(Token.SEMI);
+	return setStmt;
     }
 
     /**
@@ -468,10 +487,6 @@ public class Parser {
 	    break;
 	case CARET:
 	    result = parseRegisterExpr();
-	    break;
-	case SET:
-	    if (!lvalue) 
-		result = parseSetExpr();
 	    break;
 	case LPAREN:
 	    result = parseParensExpr();
@@ -583,21 +598,6 @@ public class Parser {
 	    }
 	}
 	throw SyntaxError.expected("register name", token);
-    }
-
-    /**
-     * Set-Expr ::= SET LValue-Expr '=' Expr
-     */
-    private SetExpression parseSetExpr() 
-	throws SyntaxError, IOException
-    {
-	SetExpression setExp = new SetExpression();
-	setLineNumberOf(setExp);
-	expectAndConsume(Token.SET);
-	setExp.lhs = parseLValueExpression();
-	expectAndConsume(Token.EQUALS);
-	setExp.rhs = parseExpression();
-	return setExp;
     }
 
     /**

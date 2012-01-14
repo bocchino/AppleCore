@@ -144,20 +144,6 @@ public class SizePass
     }
 
     /**
-     * The size of a set expression is the size of the LHS.  Same for
-     * the signedness.  The RHS of a set expression must have a
-     * nonzero size.
-     */
-    public void visitSetExpression(SetExpression node) 
-	throws ACCError
-    {
-	super.visitSetExpression(node);
-	node.size = node.lhs.size;
-	node.isSigned = node.lhs.isSigned;
-	printStatus(node);
-    }
-
-    /**
      * The size and signedness of an identifier come from its
      * definition.
      */

@@ -18,13 +18,15 @@ public class NodeVisitor implements Visitor {
     public void visitFunctionDecl(FunctionDecl node) throws ACCError { visitNode(node); }
     public void visitIfStatement(IfStatement node) throws ACCError { visitNode(node); }
     public void visitWhileStatement(WhileStatement node) throws ACCError { visitNode(node); }
+    public void visitSetStatement(SetStatement node) throws ACCError { visitNode(node); }
+    public void visitIncrStatement(IncrStatement node) throws ACCError { visitNode(node); }
+    public void visitDecrStatement(DecrStatement node) throws ACCError { visitNode(node); }
     public void visitExpressionStatement(ExpressionStatement node) throws ACCError { visitNode(node); }
     public void visitReturnStatement(ReturnStatement node) throws ACCError { visitNode(node); }
     public void visitBlockStatement(BlockStatement node) throws ACCError { visitNode(node); }
     public void visitIndexedExpression(IndexedExpression node) throws ACCError { visitNode(node); }
     public void visitCallExpression(CallExpression node) throws ACCError { visitNode(node); }
     public void visitRegisterExpression(RegisterExpression node) throws ACCError { visitNode(node); }
-    public void visitSetExpression(SetExpression node) throws ACCError { visitNode(node); }
     public void visitBinopExpression(BinopExpression node) throws ACCError { visitNode(node); }
     public void visitUnopExpression(UnopExpression node) throws ACCError { visitNode(node); }
     public void visitParensExpression(ParensExpression node) throws ACCError { visitNode(node); }

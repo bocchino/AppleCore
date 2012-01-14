@@ -218,7 +218,22 @@ public class AVMTranslatorPass
 	    emit(exitLabel);
 	}
     }
-    
+
+    public void visitSetStatement(SetStatement node) 
+	throws ACCError
+    {
+	// Evaluate RHS as value
+	needAddress = false;
+	scan(node.rhs);
+	adjustSize(node.lhs.getSize(),node.rhs.getSize(),
+		   node.rhs.isSigned);
+	// Evaluate LHS as address.
+	needAddress = true;
+	scan(node.lhs);
+	// Store RHS to (LHS)
+	emit(new STMInstruction(node.lhs.getSize()));
+    }
+
     public void visitExpressionStatement(ExpressionStatement node) 
 	throws ACCError
     {
@@ -364,21 +379,6 @@ public class AVMTranslatorPass
 	if (!needAddress) {
 	    emit(new MTSInstruction(1));
 	}
-    }
-
-    public void visitSetExpression(SetExpression node) 
-	throws ACCError
-    {
-	// Evaluate RHS as value
-	needAddress = false;
-	scan(node.rhs);
-	adjustSize(node.lhs.getSize(),node.rhs.getSize(),
-		   node.rhs.isSigned);
-	// Evaluate LHS as address.
-	needAddress = true;
-	scan(node.lhs);
-	// Store RHS to (LHS)
-	emit(new STMInstruction(node.lhs.getSize()));
     }
 
     public void visitBinopExpression(BinopExpression node) 
