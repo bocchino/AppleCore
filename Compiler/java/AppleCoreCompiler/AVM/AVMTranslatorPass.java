@@ -249,7 +249,7 @@ public class AVMTranslatorPass
 	emit(new ICRInstruction(node.expr.size));
     }
 
-    public void visitDecrStatmenet(DecrStatement node)
+    public void visitDecrStatement(DecrStatement node)
 	throws ACCError
     {
 	needAddress = true;
