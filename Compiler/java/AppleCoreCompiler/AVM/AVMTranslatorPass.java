@@ -237,8 +237,10 @@ public class AVMTranslatorPass
     public void visitCallStatement(CallStatement node) 
 	throws ACCError
     {
-	// TODO: Pop value if enclosed expr has nonzero size
 	super.visitCallStatement(node);
+	if (node.expr.size > 0) {
+	    emit(new DSPInstruction(node.expr.size));
+	}
     }
 
     public void visitIncrStatement(IncrStatement node)
