@@ -26,7 +26,7 @@ particular, other than what it actually does do when you run it.
 
 Currently AppleCore works on UNIX-like systems with the git version
 control system, a Java 6 compiler, and a Java 6 VM installed.  It has
-been tested on Mac OS Lion.  In the future, other systems may be
+been tested on Mac OS X Lion.  In the future, other systems may be
 supported.  If you are enterprising, you should be able to get the
 tools to work on Windows systems by installing Cygwin and writing some
 simple scripts to translate UNIX class paths to Windows class paths.
