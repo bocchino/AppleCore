@@ -39,7 +39,7 @@ running Mac OS X, then I recommend Virtual ][, available here:
 
 In addition to providing an amazingly full-featured Apple II emulation
 (including sounds that mimic the real thing), Virtual ][ supports file
-transfer from a real Apple II to a Mac and vice versa.  Other
+transfer from a Mac to a real Apple II and vice versa.  Other
 emulators may be available for Windows and Linux machines, but I
 haven't used them (after all, this is APPLECore!).
 
