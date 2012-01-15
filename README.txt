@@ -202,9 +202,12 @@ future, more options may be provided:
 -origin=OR - Instruct the assembler to assemble the file with origin
     address OR.  The origin address may be given in positive decimal,
     negative decimal, or hexadecimal preceded by $.  If no -origin=
-    appears on the command line, then the default is $803.  That puts
-    it in the main storage area for programs and data, just above the
-    three bytes signaling an empty Applesoft program.
+    appears on the command line, then for top level mode the default
+    origin is $803.  That puts the start of the program in the main
+    storage area for programs and data, just above the three bytes
+    signaling an empty Applesoft program.  For include mode the
+    default is to use the origin implied by the point in the program
+    where the file is included.
 
 9. THE APPLECORE VIRTUAL MACHINE
 
