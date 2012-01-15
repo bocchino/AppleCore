@@ -101,48 +101,51 @@ public class Main {
 
     public static void main(String args[]) {
 	processArgs(args);
-	Parser parser = new Parser(sourceFileName);
-	SourceFile sourceFile = parser.parse();
-	if (sourceFile != null) {
-	    try {
-		sourceFile.includeMode = includeMode;
-		sourceFile.origin = origin;
-		sourceFile.targetFile = (targetFileName == null) ?
-		    defaultTargetFile(sourceFile.name) :
-		    targetFileName;
-
-		AttributionPass attributionPass = 
-		    new AttributionPass(declFiles);
-		attributionPass.runOn(sourceFile);
-
-		ConstantEvaluationPass cePass = 
-		    new ConstantEvaluationPass();
-		cePass.runOn(sourceFile);
-
-		SizePass sizePass = new SizePass();
-		sizePass.runOn(sourceFile);
-
-		LValuePass lvaluePass = new LValuePass();
-		lvaluePass.runOn(sourceFile);
-
-		FunctionCallPass functionCallPass = new FunctionCallPass();
-		functionCallPass.runOn(sourceFile);
-
-		AVMTranslatorPass translatorPass =
-		    new AVMTranslatorPass();
-		translatorPass.runOn(sourceFile);
-
-		SourceFileWriter writer =
-		    new SourceFileWriter(new SCMacroEmitter(System.out));
-		writer.runOn(sourceFile);
-	    }
-	    catch (ACCError e) {
-		System.err.print("line " + e.getLineNumber() + " of " + 
-				 sourceFileName + ": ");
-		System.err.println(e.getMessage());
-
-	    }
-	} else { System.exit(1); }
+	try {
+	    Parser parser = new Parser(sourceFileName);
+	    SourceFile sourceFile = parser.parse();
+	    sourceFile.includeMode = includeMode;
+	    sourceFile.origin = origin;
+	    sourceFile.targetFile = (targetFileName == null) ?
+		defaultTargetFile(sourceFile.name) :
+		targetFileName;
+	    
+	    AttributionPass attributionPass = 
+		new AttributionPass(declFiles);
+	    attributionPass.runOn(sourceFile);
+	    
+	    ConstantEvaluationPass cePass = 
+		new ConstantEvaluationPass();
+	    cePass.runOn(sourceFile);
+	    
+	    SizePass sizePass = new SizePass();
+	    sizePass.runOn(sourceFile);
+	    
+	    LValuePass lvaluePass = new LValuePass();
+	    lvaluePass.runOn(sourceFile);
+	    
+	    FunctionCallPass functionCallPass = new FunctionCallPass();
+	    functionCallPass.runOn(sourceFile);
+	    
+	    AVMTranslatorPass translatorPass =
+		new AVMTranslatorPass();
+	    translatorPass.runOn(sourceFile);
+	    
+	    SourceFileWriter writer =
+		new SourceFileWriter(new SCMacroEmitter(System.out));
+	    writer.runOn(sourceFile);
+	}
+	catch (ACCError e) {
+	    System.err.print("acc: line " + e.getLineNumber() + " of " + 
+			     sourceFileName + ": ");
+	    System.err.println(e.getMessage());
+	}
+	catch (FileNotFoundException e) {
+	    System.err.println("acc: file " + sourceFileName + " not found");
+	}
+	catch (IOException e) {
+	    System.err.println("acc: I/O exception");
+	}
     }
 
     private static String defaultTargetFile(String sourceFile) {

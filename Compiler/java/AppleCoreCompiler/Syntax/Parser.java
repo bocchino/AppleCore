@@ -36,7 +36,7 @@ public class Parser {
      */
 
     public static void main(String args[]) 
-	throws ACCError
+	throws ACCError, IOException
     {
 	Parser parser = null;
 	try {
@@ -59,30 +59,19 @@ public class Parser {
     /**
      * Parse an AppleCore source file.
      */
-    public SourceFile parse() {
+    public SourceFile parse() 
+	throws ACCError, IOException
+    {
 	SourceFile sourceFile = null;
 	FileReader fr = null;
 	try {
-	    try {
-		fr = new FileReader(sourceFileName);
-		scanner = new Scanner(new BufferedReader(fr));
-		scanner.getNextToken();
-		sourceFile = parseSourceFile();
-	    }
-	    finally {
-		if (fr != null) fr.close();
-	    }
+	    fr = new FileReader(sourceFileName);
+	    scanner = new Scanner(new BufferedReader(fr));
+	    scanner.getNextToken();
+	    sourceFile = parseSourceFile();
 	}
-	catch (SyntaxError e) {
-	    System.err.print("line " + e.getLineNumber() + " of " + 
-			     sourceFileName +": ");
-	    System.err.println(e.getMessage());
-	}
-	catch (FileNotFoundException e) {
-	    System.err.println("file " + sourceFileName + " not found");
-	}
-	catch (IOException e) {
-	    System.err.println("I/O exception");
+	finally {
+	    if (fr != null) fr.close();
 	}
 	return sourceFile;
     }

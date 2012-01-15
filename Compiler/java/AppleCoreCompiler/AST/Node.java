@@ -58,7 +58,10 @@ public abstract class Node {
     public static abstract class Declaration
 	extends Node 
     {
-
+	/**
+	 * Does this declaration have an external definition?
+	 */
+	public boolean isExternal;
     }
 
     public static class ConstDecl 
@@ -183,10 +186,6 @@ public abstract class Node {
 	 */
 	public int frameSize;
 
-	/**
-	 * Does this function have an external definition?
-	 */
-	public boolean isExternal;
 	public int getSize() { return size; }
 	public boolean isSigned() { return this.isSigned; }
 

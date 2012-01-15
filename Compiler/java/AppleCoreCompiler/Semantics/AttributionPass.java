@@ -11,6 +11,7 @@ import AppleCoreCompiler.Errors.*;
 import AppleCoreCompiler.Warnings.*;
 
 import java.util.*;
+import java.io.*;
 
 public class AttributionPass 
     extends ASTScanner 
@@ -92,12 +93,18 @@ public class AttributionPass
 	throws ACCError
     {
 	Parser parser = new Parser(declFile);
-	SourceFile sourceFile = parser.parse();
-	if (sourceFile != null) {
+	try {
+	    SourceFile sourceFile = parser.parse();
 	    for (Declaration decl : sourceFile.decls) {
 		insertDecl.insert(decl, globalSymbols);
 		sourceFileMap.put(decl,sourceFile.name);
 	    }
+	}
+	catch (FileNotFoundException e) {
+	    System.err.println("acc: file " + declFile + " not found");
+	}
+	catch (IOException e) {
+	    System.err.println("acc: I/O exception");
 	}
     }
 
