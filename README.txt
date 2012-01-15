@@ -16,10 +16,10 @@ general use, PROVIDED THAT ATTRIBUTION IS MAINTAINED.  Any public
 copying or distribution of this work or any derivative works thereof
 must clearly state the original author's contribution.
 
-Hopefully this software works as intended.  However, it's still under
-development and bugs can always occur.  Therefore, this software is
-provided "as is" without any warranty, express or implied, that it
-conforms to its specification or otherwise does anything in
+Of course it is hoped this software works as intended.  However, it's
+still under development and bugs can always occur.  Therefore, this
+software is provided "as is" without any warranty, express or implied,
+that it conforms to its specification or otherwise does anything in
 particular, other than what it actually does do when you run it.
 
 3. SYSTEM REQUIREMENTS
@@ -98,7 +98,7 @@ Next, start up the S-C Macro Assembler on the Apple II system and get
 the exec directory contents onto the Apple II.  In Virtual II, this
 can be done simply and easily by dragging the OS X folder containing
 the file into a drive on the virtual Apple II.  Another option is to
-use a tool such as AppleCommander
+use a tool such as Apple Commander
 (http://applecommander.sourceforge.net/) to transfer the files one by
 one, but this is more awkward.
 
@@ -150,7 +150,7 @@ d. Get the FILE.EXEC files onto the Apple II system, as described in
    Section 5.
 
 e. For each FILE.EXEC file, issue the command EXEC in the S-C Macro
-   Assembler.  This creats an assembly file from the EXEC file.  If
+   Assembler.  This creates an assembly file from the EXEC file.  If
    you wish, save the assembly file FILE so it is available on the
    Apple II in assembly format.  (This step saves doing the EXEC every
    time you want to assemble against the file; it is particularly
@@ -201,8 +201,10 @@ future, more options may be provided:
 
 -origin=OR - Instruct the assembler to assemble the file with origin
     address OR.  The origin address may be given in positive decimal,
-    negative decimal, or hexadecimal preceded by $.  If no -orign=
-    appears on the command line, then the default is $803.
+    negative decimal, or hexadecimal preceded by $.  If no -origin=
+    appears on the command line, then the default is $803.  That puts
+    it in the main storage area for programs and data, just above the
+    three bytes signaling an empty Applesoft program.
 
 9. THE APPLECORE VIRTUAL MACHINE
 
