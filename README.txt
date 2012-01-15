@@ -33,12 +33,12 @@ simple scripts to translate UNIX class paths to Windows class paths.
 
 To run AppleCore programs, you will also need an Apple II emulator
 and/or a way to transfer files to an actual Apple II.  If you are
-running Mac OS X, then I recommend Virtual II, available here:
+running Mac OS X, then I recommend Virtual ][, available here:
 
      http://www.virtualii.com/
 
 In addition to providing an amazingly full-featured Apple II emulation
-(including sounds that mimic the real thing), Virtual II supports file
+(including sounds that mimic the real thing), Virtual ][ supports file
 transfer from a real Apple II to a Mac and vice versa.  Other
 emulators may be available for Windows and Linux machines, but I
 haven't used them (after all, this is APPLECore!).
@@ -80,14 +80,14 @@ problem and try again until it works.
 
 To set up your Apple II system, you need to make a DOS 3.3 disk with
 the AppleCore Virtual Machine (AVM) runtime files on it.  If you use
-Virtual II, the easiest way to do this is to drag the disk image
+Virtual ][, the easiest way to do this is to drag the disk image
 ${APPLECORE}/DOS3.3/ACC.v2d into the virtual disk drive.  You should
 see the files AVM.PROLOGUE, AVM.1, AVM.2, AVM.3.BINOP, AVM.4.UNOP, and
 AVM.5.BUILT.IN already on the disk.  Also, the ACC.v2d disk contains
 files STRING and IO that are included by some of the examples.
 Finally, some examples are there (such as HELLO.WORLD).
 
-If you are not using Virtual II, or if you wish to make your own disk
+If you are not using Virtual ][, or if you wish to make your own disk
 with these files on it, then you will need to build these files and
 transfer them to the Apple II yourself.  First, build the runtime
 files on your UNIX system: go to ${APPLECORE}/Runtime and type 'make'.
@@ -95,7 +95,7 @@ The build will create a directory exec with the AVM runtime files in
 it.  
 
 Next, start up the S-C Macro Assembler on the Apple II system and get
-the exec directory contents onto the Apple II.  In Virtual II, this
+the exec directory contents onto the Apple II.  In Virtual ][, this
 can be done simply and easily by dragging the OS X folder containing
 the file into a drive on the virtual Apple II.  Another option is to
 use a tool such as Apple Commander
@@ -108,10 +108,10 @@ the directory, do the following:
  - EXEC FILE.EXEC to read the file into the S-C Macro Assembler's
    memory.  (By convention, DOS 3.3 file names are all uppercase; in
    particular, FILE.exec becomes FILE.EXEC when you drag a directory
-   into Virtual II.)
+   into Virtual ][.)
  - SAVE FILE to save the file to the disk.
 
-(Note that in Virtual II this process goes MUCH faster if you select
+(Note that in Virtual ][ this process goes MUCH faster if you select
 "maximum speed" from the speed control knob on the tool bar.)    
 
 6. WRITING APPLECORE PROGRAMS
