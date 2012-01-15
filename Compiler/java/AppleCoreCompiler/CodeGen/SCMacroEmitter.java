@@ -174,8 +174,12 @@ public class SCMacroEmitter
     public void emitPreamble(SourceFile node) {
 	emit(":NEW\n");
 	emitAbsoluteInstruction(".LIST","OFF");
-	if (node.origin >= 0) {
+	if (node.origin > 0) {
 	    emitAbsoluteInstruction(".OR", node.origin);
+        }
+	else if (!node.includeMode) {
+	    // Default origin
+	    emitAbsoluteInstruction(".OR", 0x803);
 	}
 	if (!node.includeMode) {
 	    emitAbsoluteInstruction(".TF",node.targetFile);
