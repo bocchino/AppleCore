@@ -48,6 +48,9 @@ public class Main {
 	    for (int i = 0; i < args.length; ++i) {
 		processArg(args[i]);
 	    }
+	    if (sourceFileName==null) {
+		throw new NullPointerException();
+	    }
 	}
 	catch (OptionError e) {
 	    System.err.println(e.getMessage());
@@ -95,7 +98,7 @@ public class Main {
 	    }
 	}
 	else {
-	    throw new OptionError("bad option " + arg);
+	    throw new OptionError("acc: bad option " + arg);
 	}
     }
 
