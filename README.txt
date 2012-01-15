@@ -37,7 +37,7 @@ running Mac OS X, then I recommend Virtual II, available here:
 
      http://www.virtualii.com/
 
-In addition to providing a amazingly full-featured Apple II emulation
+In addition to providing an amazingly full-featured Apple II emulation
 (including sounds that mimic the real thing), Virtual II supports file
 transfer from a real Apple II to a Mac and vice versa.  Other
 emulators may be available for Windows and Linux machines, but I
