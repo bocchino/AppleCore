@@ -78,14 +78,14 @@ problem and try again until it works.
 
 5. APPLE II SYSTEM SETUP
 
-To set up your Apple II system setup, you just need to make a DOS 3.3
-disk with the AVM runtime files on it.  If you use Virtual II, the
-easiest way to do this is to drag the disk image
-${APPLECORE}/DOS3.3/ACC.v2d into the virtual disk drive.  You should
-see the files AVM.PROLOGUE, AVM.1, AVM.2, AVM.3.BINOP, AVM.4.UNOP, and
-AVM.5.BUILT.IN already on the disk.  Also, the ACC.v2d disk contains
-files STRING and IO that are included by some of the examples.
-Finally, some examples are there (such as HELLO.WORLD).
+To set up your Apple II system, you need to make a DOS 3.3 disk with
+the AVM runtime files on it.  If you use Virtual II, the easiest way
+to do this is to drag the disk image ${APPLECORE}/DOS3.3/ACC.v2d into
+the virtual disk drive.  You should see the files AVM.PROLOGUE, AVM.1,
+AVM.2, AVM.3.BINOP, AVM.4.UNOP, and AVM.5.BUILT.IN already on the
+disk.  Also, the ACC.v2d disk contains files STRING and IO that are
+included by some of the examples.  Finally, some examples are there
+(such as HELLO.WORLD).
 
 If you are not using Virtual II, or if you wish to make your own disk
 with these files on it, then you will need to build these files and
