@@ -12,6 +12,8 @@ CONST MON_WNDWDTH		$21;
 CONST MON_WNDTOP		$22;
 # BOTTOM OF TEXT WINDOW
 CONST MON_WNDBTM		$23;
+# INVERSE TEXCT FLAG
+CONST MON_INVFLG                $32;
 # --------------------------------------
 # STACK
 # --------------------------------------
@@ -23,6 +25,8 @@ CONST MON_IN			$200;
 # --------------------------------------
 # SUBROUTINE ENTRY POINTS
 # --------------------------------------
+# CLEAR SCREEN AND REPOSITION CURSOR
+CONST MON_HOME                  $FC58;
 # LINE INPUT
 CONST MON_GETLN1		$FD6F; 
 # OUTPUT A-REG AS ASCII VIA MON_CSW

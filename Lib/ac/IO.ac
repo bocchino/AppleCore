@@ -10,7 +10,6 @@ FN:1 GET_LINE() {
   SET MON_IN[^X,1]=0;
   RETURN ^X;
 }
-
 # --------------------------------------
 # PRINT A CHARACTER VIA MON_COUT
 # --------------------------------------
@@ -18,7 +17,6 @@ FN PRINT_CHAR(CHAR:1) {
   SET ^A = (CHAR OR $80);
   MON_COUT();
 }
-
 # --------------------------------------
 # PRINT A STRING
 # --------------------------------------
@@ -29,7 +27,39 @@ FN PRINT_STRING(STR_PTR:2) {
   SET ^A=(@STR_PTR)[1,1];
   AVM_PRINT_STRING();
 }
-
+# --------------------------------------
+# PRINT A WORD-FORMATTED STRING
+# --------------------------------------
+FN PRINT_WORDS(STR_PTR:2,LEN:1) {
+  VAR IDX:1=0;
+  VAR SPC:1=0;
+  VAR CHAR:1;
+  WHILE (TRUE) {
+    IF ((IDX>=LEN) AND (SPC>0)) {
+      SET CHAR=STR_PTR[SPC,1];
+      SET STR_PTR[SPC,1]=0;
+      PRINT_STRING(STR_PTR);
+      SET STR_PTR[SPC,1]=CHAR;
+      MON_CROUT();
+      SET STR_PTR=STR_PTR+SPC;
+      SET IDX=IDX-SPC;
+      WHILE ((STR_PTR[0,1]=' ') AND (IDX > 0)) {
+        INCR STR_PTR;
+        DECR IDX;
+      }
+      SET SPC=0;
+    }
+    SET CHAR=STR_PTR[IDX,1];
+    IF ((IDX > 0) AND ((CHAR=' ') OR (CHAR=$0D))) {
+      SET SPC=IDX;
+    }
+    ELSE IF (CHAR=0) {
+      PRINT_STRING(STR_PTR);
+      RETURN;
+    }
+    INCR IDX;
+  }
+}
 # --------------------------------------
 # PRINT A NUMBER AS HEX DIGITS
 # --------------------------------------
@@ -41,4 +71,22 @@ FN PRINT_HEX(N_PTR:2,SIZE:1) {
      DECR I;
    }
 } 
+# --------------------------------------
+# SET INVERSE VIDEO
+# --------------------------------------
+FN INVERSE() {
+  SET MON_INVFLG[0,1]=$3F;
+}
+# --------------------------------------
+# SET FLASHING VIDEO
+# --------------------------------------
+FN FLASH() {
+  SET MON_INVFLG[0,1]=$7F;
+}
+# --------------------------------------
+# SET NORMAL VIDEO
+# --------------------------------------
+FN NORMAL() {
+  SET MON_INVFLG[0,1]=$FF;
+}
 

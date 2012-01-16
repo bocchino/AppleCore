@@ -57,7 +57,7 @@ public class AttributionPass
 	// Enter the built-in functions
 	enterBuiltInFunctions();
 	// Enter decls from files specified on command line
-	enterImportedDecls();
+	enterImportedDecls(sourceFile.name);
 	// Enter all the top-level declarations from the source file
 	// except constant decls, which may not be forward declared.
 	for (Declaration decl : sourceFile.decls) {
@@ -81,11 +81,13 @@ public class AttributionPass
 	enterDeclsFrom(builtInFns);
     }
 
-    private void enterImportedDecls() 
+    private void enterImportedDecls(String sourceFile) 
 	throws ACCError
     {
 	for (String declFile : declFiles) {
-	    enterDeclsFrom(declFile);
+	    if (!declFile.equals(sourceFile)) {
+		enterDeclsFrom(declFile);
+	    }
 	}
     }
 
