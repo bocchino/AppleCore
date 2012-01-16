@@ -97,13 +97,13 @@ it.
 Next, start up the S-C Macro Assembler on the Apple II system and get
 the exec directory contents onto the Apple II.  In Virtual ][, this
 can be done simply and easily by dragging the OS X folder containing
-the file into a drive on the virtual Apple II.  When you do that,
-Virtual ][ will ask you to provide a file type for each imported file.
-Be sure to specify type T (text) for EXEC files; the default type B
-(binary) won't work.  You need to do this only the first time you drag
-the directory to the virtual drive; once you do it, Virtual ][
-"remembers" the file type information by storing it in the UNIX
-directory.  Another option is to use a tool such as Apple Commander
+the file into a drive on the virtual Apple II.  Virtual ][ will ask
+you to provide a file type for each imported file.  Be sure to specify
+type T (text) for EXEC files; the default type B (binary) won't work.
+You need to do this only the first time you drag the directory to the
+virtual drive; once you do it, Virtual ][ "remembers" the file type
+information by storing it in the UNIX directory.  Another option is to
+use a tool such as Apple Commander
 (http://applecommander.sourceforge.net/) to transfer the files one by
 one, but this is more awkward.
 
