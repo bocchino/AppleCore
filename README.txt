@@ -99,12 +99,13 @@ the exec directory contents onto the Apple II.  In Virtual ][, this
 can be done simply and easily by dragging the OS X folder containing
 the file into a drive on the virtual Apple II.  When you do that,
 Virtual ][ will ask you to provide a file type for each imported file.
-(You need to do this only the first time you drag the directory to the
-virtual drive; once you do it, the type information is stored in the
-directory.)  Be sure to specify type T (text) for EXEC files; the
-default type B (binary) won't work.  Another option is to use a tool
-such as Apple Commander (http://applecommander.sourceforge.net/) to
-transfer the files one by one, but this is more awkward.
+Be sure to specify type T (text) for EXEC files; the default type B
+(binary) won't work.  You need to do this only the first time you drag
+the directory to the virtual drive; once you do it, Virtual ][
+"remembers" the file type information by storing it in the UNIX
+directory.  Another option is to use a tool such as Apple Commander
+(http://applecommander.sourceforge.net/) to transfer the files one by
+one, but this is more awkward.
 
 Once the exec directory contents are on the Apple II, for each FILE in
 the directory, do the following:
