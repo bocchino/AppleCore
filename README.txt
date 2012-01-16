@@ -5,7 +5,7 @@ BY ROB BOCCHINO
 
 The goal of AppleCore is to provide a "low-level high-level" language
 for writing programs that run on the Apple II series of computers.  A
-cross- compiler that runs on UNIX systems is currently available.  For
+cross-compiler that runs on UNIX systems is currently available.  For
 more information on the design and goals of AppleCore, see
 Spec/AppleCore-Spec-v1.0.pdf.
 
