@@ -1,0 +1,29 @@
+# -----------------------------------
+# MINI ADVENTURE
+# COPYRIGHT (C) 2011
+# ROBERT L. BOCCHINO JR.
+# -----------------------------------
+FN MAIN() {
+  SET CURRENT_RM=0;
+  PRINT_RM(CURRENT_RM);
+}
+# -----------------------------------
+# PRINT ROOM DESCRIPTION
+# -----------------------------------
+FN PRINT_RM(RM:1) {
+  VAR PRINTER:2=RM_PRINTER(RM);
+  MON_HOME();
+  INVERSE();
+  PRINT_STRING(RM_NAME(RM));
+  NORMAL();
+  MON_CROUT();
+  MON_CROUT();
+  PRINTER();
+  MON_CROUT();
+}
+
+
+
+INCLUDE "MA.ROOMS";
+#INCLUDE "MA.OBJECTS";
+INCLUDE "IO";

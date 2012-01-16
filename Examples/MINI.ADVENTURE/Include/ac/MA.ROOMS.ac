@@ -1,0 +1,149 @@
+# -----------------------------------
+# MINI ADVENTURE: ROOMS
+# -----------------------------------
+# ROOM CODES
+# -----------------------------------
+CONST RM_ENTER  0;
+CONST RM_GRIMY  1;
+CONST RM_OFFAL  2;
+CONST RM_PIPE   3;
+CONST RM_NONE  -1;
+# -----------------------------------
+# DIRECTION CODES
+# -----------------------------------
+CONST NORTH 0;
+CONST SOUTH 1;
+CONST EAST  2;
+CONST WEST  3;
+CONST UP    4;
+CONST DOWN  5;
+# -----------------------------------
+# DATA OFFSETS
+# -----------------------------------
+CONST RM_NAME_IDX    0;
+CONST RM_PRINTER_IDX 2;
+CONST RM_HELP_IDX    4;
+CONST RM_EXITS_IDX   6;
+CONST RM_DATA_SIZE RM_EXITS_IDX+6;
+# -----------------------------------
+# GET ROOM NAME
+# -----------------------------------
+FN:2 RM_NAME(RM:1) {
+  RETURN RM_BASE(RM)[RM_NAME_IDX,2];
+}
+# -----------------------------------
+# GET ROOM PRINT FN
+# -----------------------------------
+FN:2 RM_PRINTER(RM:1) {
+  RETURN RM_BASE(RM)[RM_PRINTER_IDX,2];
+}
+# -----------------------------------
+# CALC ROOM BASE
+# -----------------------------------
+FN:2 RM_BASE(RM:1) {
+  RETURN RM_ENTER_DATA+RM*RM_DATA_SIZE;
+}
+# -----------------------------------
+# CURRENT ROOM
+# -----------------------------------
+VAR CURRENT_RM:1;
+# -----------------------------------
+# ENTRANCE ROOM DATA
+# -----------------------------------
+DATA RM_ENTER_DATA  RM_ENTER_NAME;
+DATA                RM_ENTER_PRINTER;
+DATA                RM_ENTER_HELP;
+# EXITS: N,S,E,W,U,D
+DATA                RM_NONE;
+DATA                RM_NONE;
+DATA                RM_NONE;
+DATA                RM_NONE;
+DATA                RM_NONE;
+DATA                RM_NONE;
+# -----------------------------------
+# GRIMY ROOM DATA
+# -----------------------------------
+DATA RM_GRIMY_DATA  RM_GRIMY_NAME;
+DATA                RM_GRIMY_PRINTER;
+DATA                RM_GRIMY_HELP;
+# EXITS: N,S,E,W,U,D
+DATA                RM_NONE;
+DATA                RM_PIPE;
+DATA                RM_NONE;
+DATA                RM_NONE;
+DATA                RM_NONE;
+DATA                RM_NONE;
+# -----------------------------------
+# OFFAL ROOM DATA
+# -----------------------------------
+DATA RM_OFFAL_DATA  RM_OFFAL_NAME;
+DATA                RM_OFFAL_PRINTER;
+DATA                RM_OFFAL_HELP;
+# EXITS: N,S,E,W,U,D
+DATA                RM_OFFAL;
+DATA                RM_NONE;
+DATA                RM_PIPE;
+DATA                RM_NONE;
+DATA                RM_NONE;
+DATA                RM_NONE;
+# -----------------------------------
+# PIPE DATA
+# -----------------------------------
+DATA PIPE_DATA      RM_PIPE_NAME;
+DATA                RM_PIPE_PRINTER;
+DATA                RM_PIPE_HELP;
+# EXITS: N,S,E,W,U,D
+DATA                RM_NONE;
+DATA                RM_NONE;
+DATA                RM_NONE;
+DATA                RM_GRIMY;
+DATA                RM_NONE;
+DATA                RM_NONE;
+# -----------------------------------
+# ROOM NAMES
+# -----------------------------------
+DATA RM_ENTER_NAME  "ENTRANCE";
+DATA RM_GRIMY_NAME  "RM_GRIMY ROOM";
+DATA RM_OFFAL_NAME  "OFFAL ROOM";
+DATA RM_PIPE_NAME   "CORRUGATED PIPE";
+# -----------------------------------
+# ROOM DESCRIPTIONS
+# -----------------------------------
+DATA RM_ENTER_DESC 
+     "AFTER A FEW HOURS OF HIKING, "\;
+DATA "YOU HAVE COME TO AN IRON GRATE SET IN "\;
+DATA "THE GROUND.  THE LOCK SECURING THE GRATE "\;
+DATA "HAS LONG SINCE RUSTED, BUT IRON BOLTS "\;
+DATA "STILL HOLD IT IN PLACE.";
+# -----------------------------------
+# ROOM PRINTING FUNCTIONS
+# -----------------------------------
+FN RM_ENTER_PRINTER() {
+  VAR WIN_SZ:1=$21[0,1];
+  PRINT_WORDS(RM_ENTER_DESC,WIN_SZ);
+  # TODO: ADD LOGIC
+}
+
+FN RM_GRIMY_PRINTER() {
+  # TODO
+}
+
+FN RM_OFFAL_PRINTER() {
+  # TODO
+}
+
+FN RM_PIPE_PRINTER() {
+  # TODO
+}
+# -----------------------------------
+# ROOM HELP STATEMENTS
+# -----------------------------------
+DATA RM_ENTER_HELP  "TAKE A CLOSER LOOK.";
+DATA RM_GRIMY_HELP  "YOU'LL HAVE TO FIGURE"\;
+DATA                "IT OUT FOR YOURSELF!";
+DATA RM_OFFAL_HELP  "WHAT IF THERE'S SOMETHING"\;
+DATA                "UNDER THAT MESS?";
+DATA RM_PIPE_HELP   "IF YOU THINK YOU'LL GET"\;
+DATA                "OUT OF HERE WITHOUT A FIGHT,"\;
+DATA                "YOU'RE ALL WET!";
+
