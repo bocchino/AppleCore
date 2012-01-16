@@ -4,9 +4,9 @@ BY ROB BOCCHINO
 1. INTRODUCTION AND RATIONALE
 
 The goal of AppleCore is to provide a "low-level high-level" language
-for writing programs on the Apple II series of computers.  A cross-
-compiler that runs on UNIX systems is currently available.  For more
-information on the design and goals of AppleCore, see
+for writing programs that run on the Apple II series of computers.  A
+cross- compiler that runs on UNIX systems is currently available.  For
+more information on the design and goals of AppleCore, see
 Spec/AppleCore-Spec-v1.0.pdf.
 
 2. LICENSE
@@ -97,10 +97,14 @@ it.
 Next, start up the S-C Macro Assembler on the Apple II system and get
 the exec directory contents onto the Apple II.  In Virtual ][, this
 can be done simply and easily by dragging the OS X folder containing
-the file into a drive on the virtual Apple II.  Another option is to
-use a tool such as Apple Commander
-(http://applecommander.sourceforge.net/) to transfer the files one by
-one, but this is more awkward.
+the file into a drive on the virtual Apple II.  When you do that,
+Virtual ][ will ask you to provide a file type for each imported file.
+(You need to do this only the first time you drag the directory to the
+virtual drive; once you do it, the type information is stored in the
+directory.)  Be sure to specify type T (text) for EXEC files; the
+default type B (binary) won't work.  Another option is to use a tool
+such as Apple Commander (http://applecommander.sourceforge.net/) to
+transfer the files one by one, but this is more awkward.
 
 Once the exec directory contents are on the Apple II, for each FILE in
 the directory, do the following:
