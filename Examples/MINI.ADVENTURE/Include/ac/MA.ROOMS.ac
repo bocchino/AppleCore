@@ -68,7 +68,7 @@ DATA                RM_GRIMY_PRINTER;
 DATA                RM_GRIMY_HELP;
 # EXITS: N,S,E,W,U,D
 DATA                RM_NONE;
-DATA                RM_PIPE;
+DATA                RM_OFFAL;
 DATA                RM_NONE;
 DATA                RM_NONE;
 DATA                RM_NONE;
@@ -80,7 +80,7 @@ DATA RM_OFFAL_DATA  RM_OFFAL_NAME;
 DATA                RM_OFFAL_PRINTER;
 DATA                RM_OFFAL_HELP;
 # EXITS: N,S,E,W,U,D
-DATA                RM_OFFAL;
+DATA                RM_ENTRY;
 DATA                RM_NONE;
 DATA                RM_PIPE;
 DATA                RM_NONE;
