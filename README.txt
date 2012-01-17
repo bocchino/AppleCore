@@ -175,27 +175,27 @@ f. Assemble the top-level FILE (see Section 5.1 of the AppleCore spec)
    assembler will complain that it can't find the files.
 
 The result of all this should be a file called FILE.OBJ on the Apple
-II disk.  Issue the command BRUN FILE.OBJ to run the program.  (Note
+II disk.  Issue the command BRUN FILE.OBJ to run the program.  Note
 that if you do this inside the S-C Macro Assembler, the assembler
 shell clears the screen immediately after the program ends, so you may
 not see the output.  In this case, type FP to go the Applesoft prompt,
 and do BRUN FILE.OBJ from there.  The program will run and return you
-to the Applesoft prompt without clearing the screen.)
+to the Applesoft prompt without clearing the screen.
 
 To see an example of this process, navigate to ${APPLECORE}/Test/Good
 and type 'make'.  After everything builds, drag the exec directory
 into the Apple II.  Then you should be able to do steps d-f above on
 any of the files you wish.  If the assembler complains that some files
 are missing, then put those files on the disk as described in Section
-5 and try again.  (Unfortunately, the assembler just says FILE NOT
+5 and try again.  Unfortunately, the assembler just says FILE NOT
 FOUND, without specifying which file is missing.  However, you can
-figure this out by looking at generated assembly file for the
+figure this out by looking at the generated assembly file for the
 top-level source file: for every directive .IN FILE appearing in the
 assembly file, the file FILE must be present on the disk.  If you
 prefer, you can also look at the top-level AppleCore source file: the
 needed files are just the AVM runtime files listed in Section 5 of
 this document, together with any files specified in the source file
-via an INCLUDE declaration.)
+via an INCLUDE declaration.
 
 8. ACC COMPILER OPTIONS
 
