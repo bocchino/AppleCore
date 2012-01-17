@@ -175,7 +175,12 @@ f. Assemble the top-level FILE (see Section 5.1 of the AppleCore spec)
    assembler will complain that it can't find the files.
 
 The result of all this should be a file called FILE.OBJ on the Apple
-II disk.  Issue the command BRUN FILE.OBJ to run the program.
+II disk.  Issue the command BRUN FILE.OBJ to run the program.  (Note
+that if you do this inside the S-C Macro Assembler, the assembler
+shell clears the screen immediately after the program ends, so you may
+not see the output.  In this case, type FP to go the Applesoft prompt,
+and do BRUN FILE.OBJ from there.  The program will run and return you
+to the Applesoft prompt without clearing the screen.)
 
 To see an example of this process, navigate to ${APPLECORE}/Test/Good
 and type 'make'.  After everything builds, drag the exec directory
