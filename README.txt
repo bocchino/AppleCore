@@ -160,13 +160,13 @@ c. For each AVM file, run the ASM to EXEC translator (asm2exec) to
 d. Get the FILE.EXEC files onto the Apple II system, as described in
    Section 5.
 
-e. For each FILE.EXEC file, issue the command EXEC in the S-C Macro
-   Assembler.  This creates an assembly file from the EXEC file.  If
-   you wish, save the assembly file FILE so it is available on the
-   Apple II in assembly format.  (This step saves doing the EXEC every
-   time you want to assemble against the file; it is particularly
-   useful for library files that do not change as you are working on
-   other files that need them.)
+e. For each FILE.EXEC file, issue the command EXEC FILE.EXEC in the
+   S-C Macro Assembler.  This creates an assembly file from the EXEC
+   file.  If you wish, save the assembly file FILE so it is available
+   on the Apple II in assembly format.  (This step saves doing the
+   EXEC every time you want to assemble against the file; it is
+   particularly useful for library files that do not change as you are
+   working on other files that need them.)
 
 f. Assemble the top-level FILE (see Section 5.1 of the AppleCore spec)
    by issuing the command ASM to the S-C Macro Assembler.  Any
