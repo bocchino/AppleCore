@@ -184,11 +184,13 @@ any of the files you wish.  If the assembler complains that some files
 are missing, then put those files on the disk as described in Section
 5 and try again.  (Unfortunately, the assembler just says FILE NOT
 FOUND, without specifying which file is missing.  However, you can
-figure this out by looking at the list of included files in the
-top-level AppleCore program, and comparing it to the files on the
-disk.  You can also look at the generated assembly file: each INCLUDE
-declaration in the source program is translated to an .IN directive in
-the corresponding assembly file.)
+figure this out by looking at generated assembly file for the
+top-level source file: for every directive .IN FILE appearing in the
+assembly file, the file FILE must be present on the disk.  If you
+prefer, you can also look at the top-level AppleCore source file: the
+needed files are just the AVM runtime files listed in Section 5 of
+this document, together with any files specified in the source file
+via an INCLUDE declaration.)
 
 8. ACC COMPILER OPTIONS
 
