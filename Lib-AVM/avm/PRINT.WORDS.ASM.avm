@@ -9,7 +9,7 @@ PW.CH   .EQ $24
 PW.CLREOL .EQ $FC9C
 PW.COUT   .EQ $FDED
 * -------------------------------
-PRINT.WORDS.AVM
+PRINT.WORDS.ASM
 	STX AVM.IP
 	STA AVM.IP+1
 	LDA #0
