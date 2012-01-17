@@ -1,0 +1,11 @@
+# --------------------------------------
+# PRINT A STRING AS FORMATTED WORDS
+# ON THE SCREEN, RESPECTING LINE WIDTH
+# --------------------------------------
+FN PRINT_WORDS_ASM();
+
+FN PRINT_WORDS(STR_PTR:2) {
+  SET ^X=(@STR_PTR)[0,1];
+  SET ^A=(@STR_PTR)[1,1];
+  PRINT_WORDS_ASM();
+}

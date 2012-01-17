@@ -1,0 +1,5 @@
+FN MAIN() {
+  VAR X:1;
+  # FORGOT 'SET'
+  X=2;
+}

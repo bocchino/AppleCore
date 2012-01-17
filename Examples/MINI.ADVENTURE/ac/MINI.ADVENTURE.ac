@@ -3,29 +3,28 @@
 # COPYRIGHT (C) 2012
 # ROBERT L. BOCCHINO JR.
 # -----------------------------------
+# MAIN PROGRAM
+# -----------------------------------
+VAR DONE:1=FALSE;
+
+DATA PROMPT "WHAT NEXT? ";
+
 FN MAIN() {
+  VAR LEN:1;
   SET CURRENT_RM=0;
   PRINT_RM(CURRENT_RM);
-}
-# -----------------------------------
-# PRINT ROOM DESCRIPTION
-# -----------------------------------
-FN PRINT_RM(RM:1) {
-  VAR PRINTER:2=RM_PRINTER(RM);
-  MON_HOME();
-  INVERSE();
-  PRINT_STRING(RM_NAME(RM));
-  NORMAL();
-  MON_CROUT();
-  MON_CROUT();
-  PRINTER();
-  MON_CROUT();
+  WHILE (NOT DONE) {
+    PRINT_STRING(PROMPT);
+    SET LEN=GET_LINE();
+    IF (LEN=0) RETURN;
+    PARSE_INPUT();    
+    MON_CROUT();
+  }  
 }
 
-
-
+INCLUDE "MA.PARSING";
 INCLUDE "MA.ROOMS";
-#INCLUDE "MA.OBJECTS";
+INCLUDE "MA.OBJECTS";
 INCLUDE "IO";
 INCLUDE "PRINT.WORDS";
 INCLUDE "PRINT.WORDS.ASM";

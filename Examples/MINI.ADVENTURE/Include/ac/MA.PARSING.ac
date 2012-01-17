@@ -1,0 +1,97 @@
+# -----------------------------------
+# MINI ADVENTURE: PARSING
+# -----------------------------------
+VAR WORDS:6;
+VAR NUM_WORDS:1;
+
+FN PARSE_INPUT() {
+  FIND_WORDS();
+  SHOW_WORDS();
+}
+
+FN SHOW_WORDS() {
+  VAR WORD:1=0;
+  WHILE (WORD<NUM_WORDS) {
+    IF ((@WORDS)[WORD*2,2]=0) RETURN;
+    PRINT_STRING((@WORDS)[WORD*2,2]);
+    MON_CROUT();
+    INCR WORD;
+  }
+}
+# -----------------------------------
+# FIND THE WORDS IN THE INPUT LINE
+# -----------------------------------
+FN FIND_WORDS() {
+  VAR BASE:2=MON_IN;
+  VAR PTR:2=MON_IN;
+  VAR CHAR:1;
+  SET (@WORDS)[0,6]=0;
+  SET NUM_WORDS=0;
+  WHILE (NUM_WORDS<3) {
+    SET CHAR=PTR[0,1] AND $7F;
+    IF ((CHAR=' ') OR (CHAR=0)) {
+      SET PTR[0,1]=0;
+      IF (NOT IS_SKIP_WORD(BASE)) {
+        SET (@WORDS)[NUM_WORDS*2,2]=BASE;
+        INCR NUM_WORDS;
+      }
+      IF (CHAR=0) RETURN;
+      INCR PTR;
+      WHILE ((PTR[0,1] AND $7F)=' ') {
+        INCR PTR;
+      }
+      SET BASE=PTR;
+    }
+    ELSE {
+      INCR PTR;
+    }
+  }
+}
+# -----------------------------------
+# WORDS TO SKIP
+# -----------------------------------
+CONST NUM_SKIP_WORDS 4;
+
+DATA WORD_AT_PTR   WORD_AT;
+DATA WORD_WITH_PTR WORD_WITH;
+DATA WORD_THE_PTR  WORD_THE;
+DATA WORD_A_PTR    WORD_A;
+
+DATA WORD_AT       "AT";
+DATA WORD_WITH     "WITH";
+DATA WORD_THE      "THE";
+DATA WORD_A        "A";
+
+FN:1S IS_SKIP_WORD(STR:2) {
+  VAR I:1=0;
+  WHILE (I<NUM_SKIP_WORDS) {
+    IF (NOT CMP_STRING(STR,WORD_AT_PTR[I*2,2])) {
+      RETURN TRUE;
+    }
+    INCR I;
+  } 
+  RETURN FALSE; 
+}
+
+FN:1S CMP_STRING(STR1:2,STR2:2) {
+  VAR CHAR1:1;
+  VAR CHAR2:1;
+  WHILE (TRUE) {
+    SET CHAR1=STR1[0,1] AND $7F;
+    SET CHAR2=STR2[0,1] AND $7F;
+    IF ((CHAR1=0) AND (CHAR2=0)) {
+      RETURN 0;
+    }
+    ELSE IF (CHAR1 < CHAR2) {
+      RETURN -1;
+    }
+    ELSE IF (CHAR1 > CHAR2) {
+      RETURN 1;
+    }
+    INCR STR1;
+    INCR STR2;
+  }
+  RETURN 0;
+}
+
+

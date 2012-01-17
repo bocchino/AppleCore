@@ -1,0 +1,92 @@
+# -----------------------------------
+# MINI ADVENTURE: OBJECTS
+# -----------------------------------
+# OBJECT CODES
+# -----------------------------------
+CONST OBJ_GRATE    0;
+CONST OBJ_WRENCH   1;
+CONST OBJ_POLE     2;
+CONST OBJ_BOLTS    3;
+CONST OBJ_SHELVES  4;
+CONST OBJ_BARREL   5;
+CONST OBJ_LAMP     6;
+CONST OBJ_SPIDERS  7;
+CONST OBJ_SCROLL   8;
+CONST OBJ_TABLET   9;
+CONST OBJ_KNIFE    10;
+CONST OBJ_OTYUGH   11;
+CONST OBJ_GARBAGE  12;
+CONST OBJ_HAND     13;
+CONST OBJ_PIPE     14;
+CONST OBJ_SM_HATCH 15;
+CONST OBJ_LG_HATCH 16;
+CONST OBJ_SELF     17;
+# -----------------------------------
+# OBJECT NAMES
+# -----------------------------------
+DATA "GRATE";
+DATA "WRENCH";
+DATA "POLE";
+DATA "BOLTS";
+DATA "SHELVES";
+DATA "BARREL";
+DATA "LAMP";
+DATA "SPIDERS";
+DATA "SCROLL";
+DATA "TABLET";
+DATA "KNIFE";
+DATA "OTYUGH";
+DATA "GARBAGE";
+DATA "HAND";
+DATA "PIPE";
+DATA "SMALL HATCH";
+DATA "LARGE HATCH";
+# -----------------------------------
+# OBJECT DESCRIPTIONS
+# -----------------------------------
+DATA OBJ_GRATE_DESCR
+     "THE ANCIENT GRATE IS CAKED WITH RUST, BUT THE BOLTS ARE SECURE.  "\;
+DATA "YOU CAN SEE THE  GLIMMER OF A METAL OBJECT THROUGH THE BARS.";
+
+DATA OBJ_WRENCH_DESCR "IT IS A STEEL WRENCH.";
+
+DATA OBJ_POLE_DESCR 
+     "THIS IS A FOUR-FOOT-LONG BLACK POLE.  "\;
+DATA "IT HAS A HOOKLIKE CONSTRUCTION ON ITS TIP.";
+# -----------------------------------
+# OBJECT PRINTING FUNCTIONS
+# -----------------------------------
+FN OBJ_GRATE_DESC_FN() {
+  PRINT_WORDS(OBJ_GRATE_DESCR);
+  MON_CROUT();
+  PRINT_WORDS(OBJ_WRENCH_DESCR);
+}
+
+FN OBJ_WRENCH_DESC_FN() {
+  PRINT_WORDS(OBJ_WRENCH_DESCR);
+}
+# -----------------------------------
+# OBJECT TAKE FUNCTIONS
+# -----------------------------------
+DATA MSG_BOLTED "IT IS BOLTED IN PLACE.";
+
+FN OBJ_TAKE_BOLTED() {
+  PRINT_WORDS(MSG_BOLTED);
+}
+
+DATA MSG_OOR "IT IS OUT OF REACH.";
+
+FN OBJ_TAKE_OOR() {
+  PRINT_WORDS(MSG_OOR);
+}
+# -----------------------------------
+# OBJECT DATA
+# -----------------------------------
+DATA OBJ_GRATE_DATA OBJ_GRATE_DESC_FN;
+DATA                RM_ENTER;
+DATA                OBJ_TAKE_BOLTED;
+
+DATA OBJ_WRENCH_DATA OBJ_WRENCH_DESC_FN;
+DATA                 RM_ENTER;
+DATA                 OBJ_TAKE_OOR;
+
