@@ -73,25 +73,5 @@ FN:1S IS_SKIP_WORD(STR:2) {
   RETURN FALSE; 
 }
 
-FN:1S CMP_STRING(STR1:2,STR2:2) {
-  VAR CHAR1:1;
-  VAR CHAR2:1;
-  WHILE (TRUE) {
-    SET CHAR1=STR1[0,1] AND $7F;
-    SET CHAR2=STR2[0,1] AND $7F;
-    IF ((CHAR1=0) AND (CHAR2=0)) {
-      RETURN 0;
-    }
-    ELSE IF (CHAR1 < CHAR2) {
-      RETURN -1;
-    }
-    ELSE IF (CHAR1 > CHAR2) {
-      RETURN 1;
-    }
-    INCR STR1;
-    INCR STR2;
-  }
-  RETURN 0;
-}
 
 

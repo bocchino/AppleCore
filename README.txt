@@ -114,6 +114,7 @@ the directory, do the following:
    memory.  (By convention, DOS 3.3 file names are all uppercase; in
    particular, FILE.exec becomes FILE.EXEC when you drag a directory
    into Virtual ][.)
+
  - SAVE FILE to save the file to the disk.
 
 (Note that in Virtual ][ this process goes MUCH faster if you select
