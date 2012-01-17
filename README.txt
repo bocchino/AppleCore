@@ -120,6 +120,11 @@ the directory, do the following:
 (Note that in Virtual ][ this process goes MUCH faster if you select
 "maximum speed" from the speed control knob on the tool bar.)    
 
+If you want to compile programs that depend on other AppleCore files
+(e.g., the ones in ${APPLECORE}/Lib/ac) or assembly files (e.g., the
+ones in ${APPLECORE}/Lib/avm), then you need to add those files to the
+disk as well.  Section 7 says a bit more about this.
+
 6. WRITING APPLECORE PROGRAMS
 
 Currently the best documentation for the AppleCore language is the
@@ -177,7 +182,15 @@ and type 'make'.  After everything builds, drag the exec directory
 into the Apple II.  Then you should be able to do steps d-f above on
 any of the files you wish.  If the assembler complains that some files
 are missing, then put those files on the disk as described in Section
-5 and try again.
+5 and try again.  
+
+(Unfortunately, the assembler just says FILE NOT FOUND, without
+specifying which file is missing.  However, you can figure this out by
+looking at the list of included files in the top-level AppleCore
+program, and comparing it to the files on the disk.  You can also look
+at the generated assembly file: each INCLUDE declaration in the source
+program is translated to an .IN directive in the corresponding
+assembly file.)
 
 8. ACC COMPILER OPTIONS
 
