@@ -80,7 +80,7 @@ DATA RM_OFFAL_DATA  RM_OFFAL_NAME;
 DATA                RM_OFFAL_PRINTER;
 DATA                RM_OFFAL_HELP;
 # EXITS: N,S,E,W,U,D
-DATA                RM_ENTRY;
+DATA                RM_ENTER;
 DATA                RM_NONE;
 DATA                RM_PIPE;
 DATA                RM_NONE;
@@ -119,8 +119,7 @@ DATA "STILL HOLD IT IN PLACE.";
 # ROOM PRINTING FUNCTIONS
 # -----------------------------------
 FN RM_ENTER_PRINTER() {
-  VAR WIN_SZ:1=$21[0,1];
-  PRINT_WORDS(RM_ENTER_DESC,WIN_SZ);
+  PRINT_WORDS(RM_ENTER_DESC);
   # TODO: ADD LOGIC
 }
 

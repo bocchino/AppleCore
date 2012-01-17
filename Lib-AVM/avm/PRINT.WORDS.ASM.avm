@@ -1,0 +1,68 @@
+:NEW
+* -------------------------------
+* PRINT STRING AT X LO, A HI
+* AS FORMATTED WORDS ON SCREEN
+* DESTROYS IP, Y
+* -------------------------------
+PW.WNDWDTH .EQ $21
+PW.CH   .EQ $24
+PW.CLREOL .EQ $FC9C
+PW.COUT   .EQ $FDED
+* -------------------------------
+PRINT.WORDS.AVM
+	STX AVM.IP
+	STA AVM.IP+1
+	LDA #0
+	STA PW.COUNTER
+* -------------------------------
+PW.LOOP
+	LDY PW.COUNTER
+	INC PW.COUNTER
+	LDA (AVM.IP),Y
+	AND #$7F
+	STA PW.CHAR
+	BEQ PW.PRINT
+	CMP #' '
+	BEQ PW.PRINT
+	CMP #$09
+	BEQ PW.PRINT
+	CMP #$0D
+	BEQ PW.PRINT
+	BNE PW.LOOP
+* -------------------------------
+PW.PRINT
+	LDA PW.CH
+	BEQ PW.PRINT.1
+	CLC
+	ADC PW.COUNTER
+	CMP PW.WNDWDTH
+	BEQ PW.PRINT.1
+	BCC PW.PRINT.1
+	JSR PW.CLREOL
+	LDA #$8D
+	JSR PW.COUT
+* -------------------------------
+PW.PRINT.1
+	LDY #0
+.1	LDA (AVM.IP),Y
+	BNE .2
+	RTS
+.2	ORA #$80
+	JSR PW.COUT
+	INY
+	CPY PW.COUNTER
+	BNE .1
+	TYA
+	CLC
+	ADC AVM.IP
+	STA AVM.IP
+	BCC PW.DONE
+	INC AVM.IP+1
+* -------------------------------
+PW.DONE
+	LDA #0
+	STA PW.COUNTER
+	JMP PW.LOOP
+* -------------------------------
+PW.COUNTER .HS 00
+PW.CHAR    .HS 00
