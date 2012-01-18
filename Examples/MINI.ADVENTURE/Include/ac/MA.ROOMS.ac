@@ -38,6 +38,12 @@ FN:2 RM_PRINTER(RM:1) {
   RETURN RM_BASE(RM)[RM_PRINTER_IDX,2];
 }
 # -----------------------------------
+# GET ROOM HELP STMT
+# -----------------------------------
+FN:2 RM_HELP(RM:1) {
+  RETURN RM_BASE(RM)[RM_HELP_IDX,2];
+}
+# -----------------------------------
 # CALC ROOM BASE
 # -----------------------------------
 FN:2 RM_BASE(RM:1) {
@@ -155,13 +161,9 @@ FN RM_PIPE_PRINTER() {
 # ROOM HELP STATEMENTS
 # -----------------------------------
 DATA RM_ENTER_HELP  "TAKE A CLOSER LOOK.";
-DATA RM_GRIMY_HELP  "YOU'LL HAVE TO FIGURE "\;
-DATA                "IT OUT FOR YOURSELF!";
-DATA RM_OFFAL_HELP  "WHAT IF THERE'S SOMETHING "\;
-DATA                "UNDER THAT MESS?";
-DATA RM_PIPE_HELP   "IF YOU THINK YOU'LL GET "\;
-DATA                "OUT OF HERE WITHOUT A FIGHT, "\;
-DATA                "YOU'RE ALL WET!";
+DATA RM_GRIMY_HELP  "YOU'LL HAVE TO FIGURE IT OUT FOR YOURSELF!";
+DATA RM_OFFAL_HELP  "WHAT IF THERE'S SOMETHING UNDER THAT MESS?";
+DATA RM_PIPE_HELP   "IF YOU THINK YOU'LL GET OUT OF HERE WITHOUT A FIGHT, YOU'RE ALL WET!";
 # -----------------------------------
 # PRINT ROOM DESCRIPTION
 # -----------------------------------
@@ -181,5 +183,4 @@ FN PRINT_RM(RM:1) {
     PRINT_CHAR('-');
     INCR IDX;
   }  
-  MON_CROUT();
 }

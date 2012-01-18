@@ -6,13 +6,20 @@ VAR NUM_WORDS:1;
 
 FN PARSE_INPUT() {
   FIND_WORDS();
-  SHOW_WORDS();
+  IF (NUM_WORDS=0) {
+    RETURN;
+  }
+  ELSE IF (NUM_WORDS=1) {
+    DO_COMMAND();
+  }
+  ELSE {
+    DO_VERB_PHRASE();
+  }
 }
 
 FN SHOW_WORDS() {
   VAR WORD:1=0;
   WHILE (WORD<NUM_WORDS) {
-    IF ((@WORDS)[WORD*2,2]=0) RETURN;
     PRINT_STRING((@WORDS)[WORD*2,2]);
     MON_CROUT();
     INCR WORD;
@@ -59,6 +66,7 @@ DATA WORD_A_PTR    WORD_A;
 
 DATA WORD_AT       "AT";
 DATA WORD_WITH     "WITH";
+DATA WORD_IN       "IN";
 DATA WORD_THE      "THE";
 DATA WORD_A        "A";
 

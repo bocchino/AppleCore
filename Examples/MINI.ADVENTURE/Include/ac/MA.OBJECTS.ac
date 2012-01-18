@@ -89,4 +89,9 @@ DATA                OBJ_TAKE_BOLTED;
 DATA OBJ_WRENCH_DATA OBJ_WRENCH_DESC_FN;
 DATA                 RM_ENTER;
 DATA                 OBJ_TAKE_OOR;
-
+# -----------------------------------
+# CARRIED OBJECTS
+# -----------------------------------
+CONST MAX_CARRIED 4;
+VAR NUM_CARRIED:1=0;
+VAR CARRIED:8=0;
