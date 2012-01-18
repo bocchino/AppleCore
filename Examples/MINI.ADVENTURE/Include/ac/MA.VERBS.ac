@@ -1,0 +1,9 @@
+# -----------------------------------
+# MINI ADVENTURE: VERBS
+# -----------------------------------
+DATA STR_VERB_PHRASE "VERB PHRASE";
+
+FN DO_VERB_PHRASE() {
+  PRINT_STRING(STR_VERB_PHRASE);
+  MON_CROUT();
+}
