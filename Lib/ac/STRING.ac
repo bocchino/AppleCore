@@ -95,3 +95,14 @@ FN:1S CMP_STRING(STR1:2,STR2:2) {
   }
   RETURN 0;
 }
+# --------------------------------------
+# COMPUTE STRING LENGTH
+# --------------------------------------
+FN:2 STRING_LEN(STR:2) {
+  VAR LEN:2=0;
+  WHILE (NOT (STR[LEN,1]=0)) {
+    INCR LEN;
+  }
+  RETURN LEN;
+}
+
