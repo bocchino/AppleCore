@@ -101,6 +101,10 @@ public class AVMTranslatorPass
 	    DataDecl dataDecl = (DataDecl) def;
 	    emit(new PHCInstruction(new Address(dataDecl.label)));
 	}
+	else if (def instanceof FunctionDecl) {
+	    FunctionDecl fnDecl = (FunctionDecl) def;
+	    emit(new PHCInstruction(new Address(fnDecl.name)));
+	}
     }
 
     /* Non-leaf nodes */
