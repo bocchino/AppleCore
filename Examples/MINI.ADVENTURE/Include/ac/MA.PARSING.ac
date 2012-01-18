@@ -81,6 +81,23 @@ FN:1S IS_SKIP_WORD(STR:2) {
   } 
   RETURN FALSE; 
 }
-
+# -----------------------------------
+# FIND WORD IN LIST
+# -----------------------------------
+FN:1 FIND_WORD(WORD_PTR:2,
+ LIST_PTR:2,MAX:1) {
+  VAR IDX:1=0;
+  IF (WORD_PTR=0) RETURN -1;
+  WHILE (IDX < MAX) {
+    IF (NOT CMP_STRING(WORD_PTR,
+     LIST_PTR)) {
+      RETURN IDX;
+    }
+    SET LIST_PTR=LIST_PTR+
+      STRING_LEN(LIST_PTR)+1;
+    INCR IDX;
+  }
+  RETURN -1;
+}
 
 

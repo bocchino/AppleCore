@@ -7,24 +7,21 @@ DATA CMD_DONT_KNOW "I DON'T UNDERSTAND THAT COMMAND.";
 
 FN DO_COMMAND() {
   VAR WORD:2=(@WORDS)[0,2];
-  VAR CMD_NUM:1=0;
-  VAR CMD_STR:2=CMD_STRS;
+  VAR CMD_NUM:1=FIND_WORD(WORD,
+    CMD_STRS,NUM_CMDS);
   VAR CMD_FN:2;
   MON_CROUT();
-  WHILE (CMD_NUM < NUM_CMDS) {
-    IF (NOT CMP_STRING(WORD,CMD_STR)) {
-      SET CMD_FN=CMD_FN_0[CMD_NUM*2,2];
-      CMD_FN();
-      IF (NOT (CMD_FN=CMD_LOOK_FN)) {
-        MON_CROUT();
-      }
-      RETURN;
-    }
-    SET CMD_STR=CMD_STR+STRING_LEN(CMD_STR)+1;
-    INCR CMD_NUM;
+  IF (CMD_NUM=-1) {
+    PRINT_WORDS(CMD_DONT_KNOW);
+    MON_CROUT();
   }
-  PRINT_WORDS(CMD_DONT_KNOW);
-  MON_CROUT();
+  ELSE {
+    SET CMD_FN=CMD_FNS[CMD_NUM*2,2];
+    CMD_FN();
+    IF (NOT (CMD_FN=CMD_LOOK_FN)) {
+      MON_CROUT();
+    }
+  }
 }
 
 DATA CMD_STRS "QUIT";
@@ -48,26 +45,26 @@ DATA          "INVENTORY";
 DATA          "I";
 DATA          "HELP";
 
-DATA CMD_FN_0  CMD_QUIT_FN;
-DATA           CMD_QUIT_FN;
-DATA           CMD_QUIT_FN;
-DATA           CMD_N_FN;
-DATA           CMD_N_FN;
-DATA           CMD_S_FN;
-DATA           CMD_S_FN;
-DATA           CMD_E_FN;
-DATA           CMD_E_FN;
-DATA           CMD_W_FN;
-DATA  	       CMD_W_FN;
-DATA           CMD_U_FN;
-DATA           CMD_U_FN;
-DATA           CMD_D_FN;
-DATA           CMD_D_FN;
-DATA           CMD_LOOK_FN;
-DATA           CMD_LOOK_FN;
-DATA           CMD_INV_FN;
-DATA           CMD_INV_FN;
-DATA           CMD_HELP_FN;
+DATA CMD_FNS CMD_QUIT_FN;
+DATA         CMD_QUIT_FN;
+DATA         CMD_QUIT_FN;
+DATA         CMD_N_FN;
+DATA         CMD_N_FN;
+DATA         CMD_S_FN;
+DATA         CMD_S_FN;
+DATA         CMD_E_FN;
+DATA         CMD_E_FN;
+DATA         CMD_W_FN;
+DATA         CMD_W_FN;
+DATA         CMD_U_FN;
+DATA         CMD_U_FN;
+DATA         CMD_D_FN;
+DATA         CMD_D_FN;
+DATA         CMD_LOOK_FN;
+DATA         CMD_LOOK_FN;
+DATA         CMD_INV_FN;
+DATA         CMD_INV_FN;
+DATA         CMD_HELP_FN;
 
 FN CMD_QUIT_FN() {
   SET DONE=TRUE;
@@ -104,9 +101,22 @@ FN CMD_LOOK_FN() {
 }
 
 DATA NO_CARRY "YOU AREN'T CARRYING ANYHING.";
+DATA YOU_HAVE "YOU HAVE:\$0D\$0D";
 
 FN CMD_INV_FN() {
-  PRINT_WORDS(NO_CARRY);
+  VAR I:1=0;
+  IF (NUM_CARRIED=0) {
+    PRINT_WORDS(NO_CARRY);
+  }
+  ELSE {
+    PRINT_WORDS(YOU_HAVE);
+    WHILE (I<NUM_CARRIED) {
+      PRINT_HEX(CARRIED_OBJ(I),1);
+      PRINT_WORDS(OBJ_NAME(CARRIED_OBJ(I)));
+      MON_CROUT();
+      INCR I;
+    }
+  }
 }
 
 FN CMD_HELP_FN() {

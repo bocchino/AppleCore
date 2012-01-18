@@ -3,6 +3,8 @@
 # -----------------------------------
 # OBJECT CODES
 # -----------------------------------
+CONST NUM_OBJS     18;
+
 CONST OBJ_GRATE    0;
 CONST OBJ_WRENCH   1;
 CONST OBJ_POLE     2;
@@ -24,29 +26,44 @@ CONST OBJ_SELF     17;
 # -----------------------------------
 # OBJECT NAMES
 # -----------------------------------
-DATA "GRATE";
-DATA "WRENCH";
-DATA "POLE";
-DATA "BOLTS";
-DATA "SHELVES";
-DATA "BARREL";
-DATA "LAMP";
-DATA "SPIDERS";
-DATA "SCROLL";
-DATA "TABLET";
-DATA "KNIFE";
-DATA "OTYUGH";
-DATA "GARBAGE";
-DATA "HAND";
-DATA "PIPE";
-DATA "SMALL HATCH";
-DATA "LARGE HATCH";
+FN:2 OBJ_NAME(OBJ:1) {
+  VAR PTR:2=OBJ_NAMES;
+  VAR I:1=0;
+  WHILE (I<OBJ) {
+    WHILE (NOT (PTR[0,1]=0)) {
+      INCR PTR;
+    }
+    INCR PTR;
+    INCR I;
+  }
+  RETURN PTR;
+}
+
+DATA OBJ_NAMES "GRATE";
+DATA           "WRENCH";
+DATA           "POLE";
+DATA           "BOLTS";
+DATA           "SHELVES";
+DATA           "BARREL";
+DATA           "LAMP";
+DATA           "SPIDERS";
+DATA           "SCROLL";
+DATA           "TABLET";
+DATA           "KNIFE";
+DATA           "OTYUGH";
+DATA           "GARBAGE";
+DATA           "HAND";
+DATA           "PIPE";
+DATA           "SMALL HATCH";
+DATA           "LARGE HATCH";
 # -----------------------------------
 # OBJECT DESCRIPTIONS
 # -----------------------------------
 DATA OBJ_GRATE_DESCR
      "THE ANCIENT GRATE IS CAKED WITH RUST, BUT THE BOLTS ARE SECURE.  "\;
-DATA "YOU CAN SEE THE  GLIMMER OF A METAL OBJECT THROUGH THE BARS.";
+DATA "CAREFUL INSPECTION SHOWS THAT THE BOLTS ARE QUITE A BIT NEWER AND "\;
+DATA "MAY HAVE BEEN LOOSENED RECENTLY.";
+DATA OBJ_GRATE_D2 "YOU CAN SEE THE  GLIMMER OF A METAL OBJECT THROUGH THE BARS.";
 
 DATA OBJ_WRENCH_DESCR "IT IS A STEEL WRENCH.";
 
@@ -65,33 +82,108 @@ FN OBJ_GRATE_DESC_FN() {
 FN OBJ_WRENCH_DESC_FN() {
   PRINT_WORDS(OBJ_WRENCH_DESCR);
 }
+
+FN OBJ_POLE_DESC_FN() {
+  PRINT_WORDS(OBJ_POLE_DESCR);
+}
+# -----------------------------------
+# OBJECT DATA
+# -----------------------------------
+CONST OBJ_DATA_SIZE 5;
+CONST OBJ_DESC_IDX  0;
+CONST OBJ_RM_IDX    2;
+CONST OBJ_TAKE_IDX  3;
+
+DATA OBJ_DATA OBJ_GRATE_DESC_FN;
+DATA          RM_ENTER;
+DATA          OBJ_TAKE_BOLTED;
+
+DATA          OBJ_WRENCH_DESC_FN;
+DATA          RM_ENTER;
+DATA          OBJ_TAKE_WRENCH;
+
+DATA          OBJ_POLE_DESC_FN;
+DATA          RM_ENTER;
+DATA          OBJ_TAKE_OK;
+# -----------------------------------
+# CARRIED OBJECTS
+# -----------------------------------
+CONST MAX_CARRIED 4;
+VAR NUM_CARRIED:1=0;
+VAR CARRIED:4=0;
+FN:1 CARRIED_OBJ(I:1) {
+  RETURN (@CARRIED)[I,1];
+}
+# -----------------------------------
+# OBJECT(S) ACTED ON
+# -----------------------------------
+VAR FOCUS_OBJ:1;
+VAR SECOND_OBJ:1;
+# -----------------------------------
+# WAS OBJECT DROPPED?
+# -----------------------------------
+CONST DROP_FLAG $80;
+
+FN:1 WAS_DROPPED(OBJ:1) {
+  RETURN NOT ((OBJ_RM(OBJ) AND DROP_FLAG)=0);
+}
 # -----------------------------------
 # OBJECT TAKE FUNCTIONS
 # -----------------------------------
+DATA MSG_TAKEN "TAKEN";
+DATA MSG_TOO_MANY "YOU ARE CARRYING TOO MANY ITEMS.";
+
+FN OBJ_TAKE_OK() {
+  VAR RM_PTR:2;
+  IF (NUM_CARRIED < MAX_CARRIED) {
+    PRINT_WORDS(MSG_TAKEN);
+    SET RM_PTR=OBJ_RM_PTR(FOCUS_OBJ);
+    SET RM_PTR[0,1]=RM_TAKEN;
+    SET (@CARRIED)[NUM_CARRIED,1]=FOCUS_OBJ;
+    INCR NUM_CARRIED;
+  }
+  ELSE {
+    PRINT_WORDS(MSG_TOO_MANY);
+  }
+}
+
 DATA MSG_BOLTED "IT IS BOLTED IN PLACE.";
 
 FN OBJ_TAKE_BOLTED() {
   PRINT_WORDS(MSG_BOLTED);
 }
 
-DATA MSG_OOR "IT IS OUT OF REACH.";
+DATA MSG_OOR "YOU REACH FOR THE WRENCH, BUT IT IS JUST BEYOND THE GRASP OF YOUR OUTSTRETCHED HAND.";
 
-FN OBJ_TAKE_OOR() {
-  PRINT_WORDS(MSG_OOR);
+DATA MSG_SNAG "WITH SOME CAREFUL MANEUVERING, YOU MANAGE TO SNAG THE WRENCH WITH THE HOOK OF THE POLE AND BRING IT WITHIN YOUR REACH\$0D\$0D";
+
+FN OBJ_TAKE_WRENCH() {
+  IF (SECOND_OBJ=OBJ_POLE) {
+    PRINT_WORDS(MSG_SNAG);
+    OBJ_TAKE_OK();
+  }
+  ELSE {
+    PRINT_WORDS(MSG_OOR);
+  }
 }
 # -----------------------------------
-# OBJECT DATA
+# OBJECT FIELD GETTERS
 # -----------------------------------
-DATA OBJ_GRATE_DATA OBJ_GRATE_DESC_FN;
-DATA                RM_ENTER;
-DATA                OBJ_TAKE_BOLTED;
-
-DATA OBJ_WRENCH_DATA OBJ_WRENCH_DESC_FN;
-DATA                 RM_ENTER;
-DATA                 OBJ_TAKE_OOR;
-# -----------------------------------
-# CARRIED OBJECTS
-# -----------------------------------
-CONST MAX_CARRIED 4;
-VAR NUM_CARRIED:1=0;
-VAR CARRIED:8=0;
+FN:2 OBJ_BASE(OBJ:1) {
+  RETURN OBJ_DATA+OBJ*OBJ_DATA_SIZE;
+}
+FN:2 OBJ_DESC_FN(OBJ:1) {
+  RETURN (OBJ_BASE(OBJ)+OBJ_DESC_IDX)[0,2];
+}
+FN:2 OBJ_RM_PTR(OBJ:1) {
+  RETURN OBJ_BASE(OBJ)+OBJ_RM_IDX;
+}
+FN:1 OBJ_RM(OBJ:1) {
+  RETURN OBJ_RM_PTR(OBJ)[0,1];
+}
+FN:2 OBJ_TAKE_PTR(OBJ:1) {
+  RETURN OBJ_BASE(OBJ)+OBJ_TAKE_IDX;
+}
+FN:2 OBJ_TAKE_FN(OBJ:1) {
+  RETURN OBJ_TAKE_PTR(OBJ)[0,2];
+}
