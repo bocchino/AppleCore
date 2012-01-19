@@ -1,53 +1,56 @@
 # -----------------------------------
 # MINI ADVENTURE: COMMANDS
 # -----------------------------------
-CONST NUM_CMDS 20;
-
+# COMMAND MESSAGES
+# -----------------------------------
 DATA CMD_DONT_KNOW "I DON'T UNDERSTAND THAT COMMAND.";
+DATA CANT_GO       "YOU CAN'T GO THAT WAY.";
+DATA NO_CARRY      "YOU AREN'T CARRYING ANYHING.";
+DATA YOU_HAVE      "YOU HAVE:\$0D\$0D";
+# -----------------------------------
+# COMMAND DATA
+# -----------------------------------
+CONST NUM_CMDS 18;
 
-FN DO_COMMAND() {
-  VAR WORD:2=(@WORDS)[0,2];
-  VAR CMD_NUM:1=FIND_WORD(WORD,
-    CMD_STRS,NUM_CMDS);
-  VAR CMD_FN:2;
-  MON_CROUT();
-  IF (CMD_NUM=-1) {
-    PRINT_WORDS(CMD_DONT_KNOW);
-    MON_CROUT();
-  }
-  ELSE {
-    SET CMD_FN=CMD_FNS[CMD_NUM*2,2];
-    CMD_FN();
-    IF (NOT (CMD_FN=CMD_LOOK_FN)) {
-      MON_CROUT();
-    }
-  }
-}
+DATA CMD_NAMES CMD_NAME_QUIT;
+DATA           CMD_NAME_NORTH;
+DATA           CMD_NAME_N;
+DATA           CMD_NAME_SOUTH;
+DATA           CMD_NAME_S;
+DATA           CMD_NAME_EAST;
+DATA           CMD_NAME_E;
+DATA           CMD_NAME_WEST;
+DATA           CMD_NAME_W;
+DATA           CMD_NAME_UP;
+DATA           CMD_NAME_U;
+DATA           CMD_NAME_DOWN;
+DATA           CMD_NAME_D;
+DATA           CMD_NAME_LOOK;
+DATA           CMD_NAME_L;
+DATA           CMD_NAME_INV;
+DATA           CMD_NAME_I;
+DATA           CMD_NAME_HELP;
 
-DATA CMD_STRS "QUIT";
-DATA          "END";
-DATA          "STOP";
-DATA          "NORTH";
-DATA          "N";
-DATA          "SOUTH";
-DATA          "S";
-DATA          "EAST";
-DATA          "E";
-DATA          "WEST";
-DATA          "W";
-DATA          "UP";
-DATA          "U";
-DATA          "DOWN";
-DATA          "D";
-DATA          "LOOK";
-DATA          "L";
-DATA          "INVENTORY";
-DATA          "I";
-DATA          "HELP";
+DATA CMD_NAME_QUIT  "QUIT";
+DATA CMD_NAME_NORTH "NORTH";
+DATA CMD_NAME_N     "N";
+DATA CMD_NAME_SOUTH "SOUTH";
+DATA CMD_NAME_S     "S";
+DATA CMD_NAME_EAST  "EAST";
+DATA CMD_NAME_E     "E";
+DATA CMD_NAME_WEST  "WEST";
+DATA CMD_NAME_W     "W";
+DATA CMD_NAME_UP    "UP";
+DATA CMD_NAME_U     "U";
+DATA CMD_NAME_DOWN  "DOWN";
+DATA CMD_NAME_D     "D";
+DATA CMD_NAME_LOOK  "LOOK";
+DATA CMD_NAME_L     "L";
+DATA CMD_NAME_INV   "INVENTORY";
+DATA CMD_NAME_I     "I";
+DATA CMD_NAME_HELP  "HELP";
 
 DATA CMD_FNS CMD_QUIT_FN;
-DATA         CMD_QUIT_FN;
-DATA         CMD_QUIT_FN;
 DATA         CMD_N_FN;
 DATA         CMD_N_FN;
 DATA         CMD_S_FN;
@@ -65,43 +68,53 @@ DATA         CMD_LOOK_FN;
 DATA         CMD_INV_FN;
 DATA         CMD_INV_FN;
 DATA         CMD_HELP_FN;
+# -----------------------------------
+# COMMAND FUNCTIONS
+# -----------------------------------
+FN DO_COMMAND() {
+  VAR WORD:2=(@WORDS)[0,2];
+  VAR CMD_NUM:1=FIND_WORD_PTR(WORD,
+    CMD_NAMES,NUM_CMDS);
+  VAR CMD_FN:2;
+  MON_CROUT();
+  IF (CMD_NUM=-1) {
+    PRINT_WORDS(CMD_DONT_KNOW);
+    MON_CROUT();
+  }
+  ELSE {
+    SET CMD_FN=CMD_FNS[CMD_NUM*2,2];
+    CMD_FN();
+    IF (NOT (CMD_FN=CMD_LOOK_FN)) {
+      MON_CROUT();
+    }
+  }
+}
 
 FN CMD_QUIT_FN() {
   SET DONE=TRUE;
 }
 
-DATA CANT_GO "YOU CAN'T GO THAT WAY.";
-
-FN CMD_N_FN() {
-  PRINT_WORDS(CANT_GO);
+FN GO(TO:1) {
+  VAR EXIT:1=RM_EXIT(CURRENT_RM,TO);
+  IF (EXIT=RM_NONE) {
+    PRINT_WORDS(CANT_GO);
+  }
+  ELSE {
+    SET CURRENT_RM=EXIT;
+    CMD_LOOK_FN();
+  }  
 }
 
-FN CMD_S_FN() {
-  PRINT_WORDS(CANT_GO);
-}
-
-FN CMD_E_FN() {
-  PRINT_WORDS(CANT_GO);
-}
-
-FN CMD_W_FN() {
-  PRINT_WORDS(CANT_GO);
-}
-
-FN CMD_U_FN() {
-  PRINT_WORDS(CANT_GO);
-}
-
-FN CMD_D_FN() {
-  PRINT_WORDS(CANT_GO);
-}
+FN CMD_N_FN() { GO(NORTH); }
+FN CMD_S_FN() { GO(SOUTH); }
+FN CMD_E_FN() { GO(EAST); }
+FN CMD_W_FN() { GO(WEST); }
+FN CMD_U_FN() { GO(UP); }
+FN CMD_D_FN() { GO(DOWN); }
 
 FN CMD_LOOK_FN() {
   PRINT_RM(CURRENT_RM);
 }
-
-DATA NO_CARRY "YOU AREN'T CARRYING ANYHING.";
-DATA YOU_HAVE "YOU HAVE:\$0D\$0D";
 
 FN CMD_INV_FN() {
   VAR I:1=0;
@@ -111,7 +124,6 @@ FN CMD_INV_FN() {
   ELSE {
     PRINT_WORDS(YOU_HAVE);
     WHILE (I<NUM_CARRIED) {
-      PRINT_HEX(CARRIED_OBJ(I),1);
       PRINT_WORDS(OBJ_NAME(CARRIED_OBJ(I)));
       MON_CROUT();
       INCR I;

@@ -25,87 +25,75 @@ CONST RM_NAME_IDX    0;
 CONST RM_PRINTER_IDX 2;
 CONST RM_HELP_IDX    4;
 CONST RM_EXITS_IDX   6;
-CONST RM_DATA_SIZE RM_EXITS_IDX+6;
+CONST RM_DATA_SIZE   12;
 # -----------------------------------
-# GET ROOM NAME
+# ROOM DATA ACCESS FNS
 # -----------------------------------
 FN:2 RM_NAME(RM:1) {
   RETURN RM_BASE(RM)[RM_NAME_IDX,2];
 }
-# -----------------------------------
-# GET ROOM PRINT FN
-# -----------------------------------
+
 FN:2 RM_PRINTER(RM:1) {
   RETURN RM_BASE(RM)[RM_PRINTER_IDX,2];
 }
-# -----------------------------------
-# GET ROOM HELP STMT
-# -----------------------------------
+
 FN:2 RM_HELP(RM:1) {
   RETURN RM_BASE(RM)[RM_HELP_IDX,2];
 }
-# -----------------------------------
-# CALC ROOM BASE
-# -----------------------------------
+
+FN:1 RM_EXIT(RM:1,EXIT:1) {
+  RETURN RM_BASE(RM)[RM_EXITS_IDX+EXIT,1];
+}
+
 FN:2 RM_BASE(RM:1) {
-  RETURN RM_ENTER_DATA+RM*RM_DATA_SIZE;
+  RETURN RM_DATA+RM*RM_DATA_SIZE;
 }
 # -----------------------------------
 # CURRENT ROOM
 # -----------------------------------
 VAR CURRENT_RM:1;
 # -----------------------------------
-# ENTRANCE ROOM DATA
+# ROOM DATA
 # -----------------------------------
-DATA RM_ENTER_DATA  RM_ENTER_NAME;
-DATA                RM_ENTER_PRINTER;
-DATA                RM_ENTER_HELP;
-# EXITS: N,S,E,W,U,D
-DATA                RM_NONE;
-DATA                RM_NONE;
-DATA                RM_NONE;
-DATA                RM_NONE;
-DATA                RM_NONE;
-DATA                RM_NONE;
-# -----------------------------------
-# GRIMY ROOM DATA
-# -----------------------------------
-DATA RM_GRIMY_DATA  RM_GRIMY_NAME;
-DATA                RM_GRIMY_PRINTER;
-DATA                RM_GRIMY_HELP;
-# EXITS: N,S,E,W,U,D
-DATA                RM_NONE;
-DATA                RM_OFFAL;
-DATA                RM_NONE;
-DATA                RM_NONE;
-DATA                RM_NONE;
-DATA                RM_NONE;
-# -----------------------------------
-# OFFAL ROOM DATA
-# -----------------------------------
-DATA RM_OFFAL_DATA  RM_OFFAL_NAME;
-DATA                RM_OFFAL_PRINTER;
-DATA                RM_OFFAL_HELP;
-# EXITS: N,S,E,W,U,D
-DATA                RM_ENTER;
-DATA                RM_NONE;
-DATA                RM_PIPE;
-DATA                RM_NONE;
-DATA                RM_NONE;
-DATA                RM_NONE;
-# -----------------------------------
-# PIPE DATA
-# -----------------------------------
-DATA PIPE_DATA      RM_PIPE_NAME;
-DATA                RM_PIPE_PRINTER;
-DATA                RM_PIPE_HELP;
-# EXITS: N,S,E,W,U,D
-DATA                RM_NONE;
-DATA                RM_NONE;
-DATA                RM_NONE;
-DATA                RM_GRIMY;
-DATA                RM_NONE;
-DATA                RM_NONE;
+DATA RM_DATA RM_ENTER_NAME;
+DATA         RM_ENTER_PRINTER;
+DATA         RM_ENTER_HELP;
+DATA         RM_NONE;
+DATA         RM_NONE;
+DATA         RM_NONE;
+DATA         RM_NONE;
+DATA         RM_NONE;
+DATA         RM_NONE;
+
+DATA         RM_GRIMY_NAME;
+DATA         RM_GRIMY_PRINTER;
+DATA         RM_GRIMY_HELP;
+DATA         RM_NONE;
+DATA         RM_OFFAL;
+DATA         RM_NONE;
+DATA         RM_NONE;
+DATA         RM_NONE;
+DATA         RM_NONE;
+
+DATA         RM_OFFAL_NAME;
+DATA         RM_OFFAL_PRINTER;
+DATA         RM_OFFAL_HELP;
+DATA         RM_ENTER;
+DATA         RM_NONE;
+DATA         RM_PIPE;
+DATA         RM_NONE;
+DATA         RM_NONE;
+DATA         RM_NONE;
+
+DATA         RM_PIPE_NAME;
+DATA         RM_PIPE_PRINTER;
+DATA         RM_PIPE_HELP;
+DATA         RM_NONE;
+DATA         RM_NONE;
+DATA         RM_NONE;
+DATA         RM_GRIMY;
+DATA         RM_NONE;
+DATA         RM_NONE;
 # -----------------------------------
 # ROOM NAMES
 # -----------------------------------

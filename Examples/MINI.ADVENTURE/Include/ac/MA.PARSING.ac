@@ -16,15 +16,6 @@ FN PARSE_INPUT() {
     DO_VERB_PHRASE();
   }
 }
-
-FN SHOW_WORDS() {
-  VAR WORD:1=0;
-  WHILE (WORD<NUM_WORDS) {
-    PRINT_STRING((@WORDS)[WORD*2,2]);
-    MON_CROUT();
-    INCR WORD;
-  }
-}
 # -----------------------------------
 # FIND THE WORDS IN THE INPUT LINE
 # -----------------------------------
@@ -100,4 +91,18 @@ FN:1 FIND_WORD(WORD_PTR:2,
   RETURN -1;
 }
 
+FN:1 FIND_WORD_PTR(WORD_PTR:2,
+ LIST_PTR:2,MAX:1) {
+  VAR IDX:1=0;
+  IF (WORD_PTR=0) RETURN -1;
+  WHILE (IDX < MAX) {
+    IF (NOT CMP_STRING(WORD_PTR,
+     LIST_PTR[IDX*2,2])) {
+      RETURN IDX;
+    }
+    INCR IDX;
+  }
+  RETURN -1;
+}
+ 
 
