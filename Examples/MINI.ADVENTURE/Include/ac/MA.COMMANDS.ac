@@ -73,7 +73,7 @@ DATA         CMD_HELP_FN;
 # -----------------------------------
 FN DO_COMMAND() {
   VAR WORD:2=(@WORDS)[0,2];
-  VAR CMD_NUM:1=FIND_WORD_PTR(WORD,
+  VAR CMD_NUM:1=FIND_WORD(WORD,
     CMD_NAMES,NUM_CMDS);
   VAR CMD_FN:2;
   MON_CROUT();
