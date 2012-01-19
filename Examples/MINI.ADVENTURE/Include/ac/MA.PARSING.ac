@@ -1,7 +1,9 @@
 # -----------------------------------
 # MINI ADVENTURE: PARSING
 # -----------------------------------
-VAR WORDS:6;
+CONST MAX_WORDS 4;
+
+VAR WORDS:8;
 VAR NUM_WORDS:1;
 
 FN PARSE_INPUT() {
@@ -25,7 +27,7 @@ FN FIND_WORDS() {
   VAR CHAR:1;
   SET (@WORDS)[0,6]=0;
   SET NUM_WORDS=0;
-  WHILE (NUM_WORDS<3) {
+  WHILE (NUM_WORDS < MAX_WORDS) {
     SET CHAR=PTR[0,1];
     IF (EQ_CHAR(CHAR,' ') OR (CHAR=0)) {
       SET PTR[0,1]=0;
@@ -48,19 +50,21 @@ FN FIND_WORDS() {
 # -----------------------------------
 # WORDS TO SKIP
 # -----------------------------------
-CONST NUM_SKIP_WORDS 5;
+CONST NUM_SKIP_WORDS 6;
 
 DATA WORD_PTRS WORD_AT;
 DATA           WORD_WITH;
 DATA	       WORD_IN;
 DATA           WORD_THE;
 DATA           WORD_A;
+DATA           WORD_TO;
 
 DATA WORD_AT       "AT";
 DATA WORD_WITH     "WITH";
 DATA WORD_IN       "IN";
 DATA WORD_THE      "THE";
 DATA WORD_A        "A";
+DATA WORD_TO       "TO";
 
 FN:1S IS_SKIP_WORD(STR:2) {
   VAR I:1=0;
