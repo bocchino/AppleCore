@@ -27,35 +27,46 @@ CONST OBJ_SELF     17;
 # OBJECT NAMES
 # -----------------------------------
 FN:2 OBJ_NAME(OBJ:1) {
-  VAR PTR:2=OBJ_NAMES;
-  VAR I:1=0;
-  WHILE (I<OBJ) {
-    WHILE (NOT (PTR[0,1]=0)) {
-      INCR PTR;
-    }
-    INCR PTR;
-    INCR I;
-  }
-  RETURN PTR;
+  RETURN OBJ_NAMES[OBJ*2,2];
 }
 
-DATA OBJ_NAMES "GRATE";
-DATA           "WRENCH";
-DATA           "POLE";
-DATA           "BOLTS";
-DATA           "SHELVES";
-DATA           "BARREL";
-DATA           "LAMP";
-DATA           "SPIDERS";
-DATA           "SCROLL";
-DATA           "TABLET";
-DATA           "KNIFE";
-DATA           "OTYUGH";
-DATA           "GARBAGE";
-DATA           "HAND";
-DATA           "PIPE";
-DATA           "SMALL HATCH";
-DATA           "LARGE HATCH";
+DATA OBJ_NAMES OBJ_GRATE_NAME;
+DATA           OBJ_WRENCH_NAME;
+DATA           OBJ_POLE_NAME;
+DATA           OBJ_BOLTS_NAME;
+DATA           OBJ_SHELVES_NAME;
+DATA           OBJ_BARREL_NAME;
+DATA           OBJ_LAMP_NAME;
+DATA           OBJ_SPIDERS_NAME;
+DATA           OBJ_SCROLL_NAME;
+DATA           OBJ_TABLET_NAME;
+DATA           OBJ_KNIFE_NAME;
+DATA           OBJ_OTYUGH_NAME;
+DATA           OBJ_GARBAGE_NAME;
+DATA           OBJ_HAND_NAME;
+DATA           OBJ_PIPE_NAME;
+DATA           OBJ_SM_HATCH_NAME;
+DATA           OBJ_LG_HATCH_NAME;
+DATA           OBJ_SELF_NAME;
+
+DATA OBJ_GRATE_NAME    "GRATE";
+DATA OBJ_WRENCH_NAME   "WRENCH";
+DATA OBJ_POLE_NAME     "POLE";
+DATA OBJ_BOLTS_NAME    "BOLTS";
+DATA OBJ_SHELVES_NAME  "SHELVES";
+DATA OBJ_BARREL_NAME   "BARREL";
+DATA OBJ_LAMP_NAME     "LAMP";
+DATA OBJ_SPIDERS_NAME  "SPIDERS";
+DATA OBJ_SCROLL_NAME   "SCROLL";
+DATA OBJ_TABLET_NAME   "TABLET";
+DATA OBJ_KNIFE_NAME    "KNIFE";
+DATA OBJ_OTYUGH_NAME   "OTYUGH";
+DATA OBJ_GARBAGE_NAME  "GARBAGE";
+DATA OBJ_HAND_NAME     "HAND";
+DATA OBJ_PIPE_NAME     "PIPE";
+DATA OBJ_SM_HATCH_NAME "SMALL";
+DATA OBJ_LG_HATCH_NAME "LARGE";
+DATA OBJ_SELF_NAME     "SELF";
 # -----------------------------------
 # OBJECT DESCRIPTIONS
 # -----------------------------------
@@ -126,6 +137,19 @@ CONST DROP_FLAG $80;
 
 FN:1 WAS_DROPPED(OBJ:1) {
   RETURN NOT ((OBJ_RM(OBJ) AND DROP_FLAG)=0);
+}
+# -----------------------------------
+# IS OBJECT HERE?
+# -----------------------------------
+FN:1 IS_HERE(OBJ:1,RM:1) {
+  RETURN IS_CARRIED(OBJ) OR
+   IS_IN_ROOM(OBJ,RM);
+}
+FN:1 IS_CARRIED(OBJ:1) {
+  RETURN (OBJ_RM(OBJ)=RM_TAKEN);
+}
+FN:1 IS_IN_ROOM(OBJ:1,RM:1) {
+  RETURN (OBJ_RM(OBJ) AND $7F)=RM;
 }
 # -----------------------------------
 # OBJECT TAKE FUNCTIONS

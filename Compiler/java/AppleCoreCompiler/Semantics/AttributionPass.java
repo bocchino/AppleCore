@@ -102,6 +102,11 @@ public class AttributionPass
 		sourceFileMap.put(decl,sourceFile.name);
 	    }
 	}
+        catch (ACCError e) {
+	    System.err.print("acc: line " + e.getLineNumber() + " of " + 
+			     declFile + ": ");
+	    System.err.println(e.getMessage());
+        }
 	catch (FileNotFoundException e) {
 	    System.err.println("acc: file " + declFile + " not found");
 	}
