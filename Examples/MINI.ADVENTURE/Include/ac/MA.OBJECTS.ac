@@ -24,6 +24,29 @@ CONST OBJ_SM_HATCH 15;
 CONST OBJ_LG_HATCH 16;
 CONST OBJ_SELF     17;
 # -----------------------------------
+# PLURAL OBJECTS
+# -----------------------------------
+FN:1 OBJ_IS_PLURAL(OBJ:1) {
+  RETURN (OBJ=OBJ_BOLTS) OR
+   (OBJ=OBJ_SHELVES) OR
+   (OBJ=OBJ_SPIDERS);
+}
+# -----------------------------------
+# OBJECT PRESENT MESSAGE
+# -----------------------------------
+DATA THERE_IS  "THERE IS A ";
+DATA THERE_ARE "THERE ARE ";
+FN PRINT_OBJ_HERE(OBJ:1) {
+  IF (OBJ_IS_PLURAL(OBJ)) {
+    PRINT_WORDS(THERE_IS);
+  }
+  ELSE {
+    PRINT_WORDS(THERE_ARE);
+  }
+  PRINT_STRING(OBJ_NAME(OBJ));
+  PRINT_STRING(HERE);
+}
+# -----------------------------------
 # OBJECT NAMES
 # -----------------------------------
 FN:2 OBJ_NAME(OBJ:1) {
