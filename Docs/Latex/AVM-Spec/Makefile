@@ -1,7 +1,7 @@
 TEXFILES = ${wildcard *.tex}
 MULTIHTML = multihtml
 HACHAOPTS = -tocbis
-TARGET=AppleCore-Spec-v1.0
+TARGET=AVM-Spec-v1.0
 
 all: $(TARGET).pdf ${MULTIHTML}/index.html
 

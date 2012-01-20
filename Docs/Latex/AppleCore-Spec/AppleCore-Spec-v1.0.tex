@@ -2,14 +2,16 @@
 
 \input{defs}
 
-\begin{document}
-
 \title{\bfseries{The AppleCore Language Specification, v1.0}}
 %
 \author{Robert L. Bocchino Jr.\\
 Pittsburgh, PA}
 
+\begin{document}
+
 \maketitle
+
+\tableofcontents\cutname{contents.html}
 
 \section{Introduction and Rationale}
 
@@ -42,32 +44,29 @@ the Apple II.''  The motivation is as follows:
   support for numeric and string input and output, so if you just want
   to write short programs that read and write things, it's handy. But
   for any but the tiniest programs, Applesoft code becomes an
-  unreadable mess.  In terms of control abstraction Applesoft is
-  actually worse than assembly language, because it forces you to
-  branch to numbered lines, whereas in assembly language you can
-  \kwd{JMP} and \kwd{JSR} to symbolic labels with meaningful names.
+  unreadable mess.  In terms of control abstraction Applesoft is much
+  worse than assembly language, because it forces you to branch to
+  numbered lines, whereas in assembly language you can \kwd{JMP} and
+  \kwd{JSR} to symbolic labels with meaningful names.
 %
 \end{enumerate}
 
 The goal of AppleCore is to rectify this situation by providing a
 ``low-level high-level'' language (at about the same level of
-abstraction as C, but without C's features for structs) that's both
-useful and fun to program with.  First, it's a compiled language, so
-it should run faster than Applesoft.  Second, it's modular and
-supports separate compilation. The entire core language needs only a
-few kilobytes of support routines; additional routines can be linked
-in as needed.  Third, AppleCore strikes a balance between power and
-efficiency.  Notably, it supports integer arithmetic on fixed-size
-variables of up to 255 bytes.  This power does come at a cost in terms
-of speed for single-byte arithmetic that could be done in registers;
-however, if that speed is needed, one can easily call into assembly
-language arithmetic routines.  Fourth, it provides easy integration
-with assembly language routines: you can say things like ``load `A'
-into the accumulator and call \$FDED'' that are impossible to say
-directly in Applesoft.  While you could use the \kwd{USR} function or
-a \kwd{CALL}, in either case you'd need to write some glue code in
-assembly language to get the value from the Applesoft program into the
-accumulator before the call.
+abstraction as C, but without structs) that's both useful and fun to
+program with.  First, it's a compiled language, so it should run
+faster than Applesoft.  Second, it's modular and supports separate
+compilation. The entire core language needs only a few kilobytes of
+support routines; additional routines can be linked in as needed.
+Third, AppleCore strikes a balance between power and efficiency.
+Notably, it supports integer arithmetic on fixed-size variables of up
+to 255 bytes.  This power does come at a cost in terms of speed for
+single-byte arithmetic that could be done in registers; however, if
+that speed is needed, one can easily call into assembly language
+arithmetic routines.  Fourth, it provides easy integration with
+assembly language routines: you can say things like ``load `A' into
+the accumulator and call \$FDED'' that are impossible to say directly
+in Applesoft.
 
 The main things that AppleCore lacks, and that Applesoft provides, are
 automatic memory management and floating-point computation.  I've left
@@ -129,6 +128,7 @@ be a letter.  Upper- and lowercase letters are distinct.
 
 The following sequences of characters are reserved for use as keywords
 and may not be used as identifiers:
+
 \begin{ttfamily}
 \begin{center}
 \begin{tabular}{l l l l}
@@ -182,9 +182,9 @@ backslash \kwd{\bs} followed by a dollar sign \kwd{\$} and two
 hexadecimal digits.  The whole sequence represents the single
 character with the ASCII value given by the digits.  For example, the
 string constant
-%
+
 $$\kwd{"Hello, world!\bs\$0D"}$$
-%
+
 represents a string consisting of the characters \kwd{Hello, world!}
 followed by a CR character.  Similarly, the quote character \kwd{"}
 can be embedded in a string constant with the sequence \kwd{\bs\$22}.
@@ -207,7 +207,7 @@ which is a separate token.
 %
 \kwd{@} & Denotes the address of a variable \\
 %
-\kwd{\^} & Denotes a 6502 register expression \\
+\kwd{\textasciicircum} & Denotes a 6502 register expression \\
 \kwd{*}  & Multiplication \\
 \kwd{/}  & Division \\
 \kwd{+}  & Addition \\
@@ -288,9 +288,8 @@ program.
 
 An AppleCore source file is given by zero or more
 declarations (Section~\ref{sec:syntax:decls}):
-%
+
 $$\nonterm{source-file} ::= \nonterm{decl}^*$$
-%
 
 \subsection{Declarations}
 \label{sec:syntax:decls}
@@ -298,7 +297,7 @@ $$\nonterm{source-file} ::= \nonterm{decl}^*$$
 A declaration is a constant declaration, a data declaration, a
 variable declaration, a function declaration, or an include
 declaration:
-%
+
 $$\nonterm{decl} ::= \mbox{\nonterm{const-decl} $|$
   \nonterm{data-decl} $|$ \nonterm{var-decl} $|$ \nonterm{fn-decl}
     $|$ \nonterm{include-decl}}$$
@@ -306,7 +305,7 @@ $$\nonterm{decl} ::= \mbox{\nonterm{const-decl} $|$
 \bfhead{Constant declarations.} A constant declaration consists of the
 keyword \kwd{CONST}, an identifier, an expression, and a terminating
 semicolon:
-%
+
 $$\nonterm{const-decl} ::= \mbox{\kwd{CONST} \nonterm{identifier}
   \nonterm{expr} \kwd{;}}$$
 
@@ -316,7 +315,7 @@ an expression or a string constant, and a terminating semicolon.  A
 backslash may optionally follow the string constant, indicating that
 the string is unterminated (see
 Section~\ref{sec:code-gen:global-decls}).
-%
+
 $$\nonterm{data-decl} ::= \mbox{\kwd{DATA} \opt{\nonterm{identifier}}
   \group{\nonterm{expr} $|$ \group{\nonterm{string-const} \opt{\bs}}}
   \kwd{;}}$$
@@ -325,7 +324,7 @@ $$\nonterm{data-decl} ::= \mbox{\kwd{DATA} \opt{\nonterm{identifier}}
 keyword \kwd{VAR}, an identifier representing the variable name, a
 signed or unsigned size, an optional initializer expression, and a
 terminating semicolon:
-%
+
 $$\nonterm{var-decl} ::= \mbox{\kwd{VAR} \nonterm{identifier} \kwd{:}
   \nonterm{size} \opt{\kwd{S}} \opt{\kwd{=} \nonterm{expr}} \kwd{;}}$$
 
@@ -333,36 +332,38 @@ $$\nonterm{var-decl} ::= \mbox{\kwd{VAR} \nonterm{identifier} \kwd{:}
 keyword \kwd{FN}, an optional signed or unsigned size, an identifier
 representing the function name, the function parameters enclosed in
 parentheses, and the function body:
-%
+
 $$\nonterm{fn-decl} ::= \mbox{\kwd{FN} \opt{\kwd{:} \nonterm{size}
     \opt{\kwd{S}}} \nonterm{identifier} \kwd{(} \nonterm{fn-params}
   \kwd{)} \nonterm{fn-body}}$$
-%
+
+\noindent
 The function parameters are a comma-separated list of zero or more
 parameters:
-%
+
 $$\nonterm{fn-params} ::= \mbox{\opt{\nonterm{fn-param} \group{\kwd{,}
     \nonterm{fn-param}}$^*$}}$$
-%
+
+\noindent
 A parameter consists of an identifier representing the parameter name
 and a size:
-%
+
 $$\nonterm{fn-param} ::= \mbox{\nonterm{identifier} \kwd{:}
   \nonterm{size} \opt{\kwd{S}}}$$
-%
+
+\noindent
 A function body is either zero or more variable declarations and
 statements enclosed in braces, or a semicolon indicating an externally
 defined function:
-%
+
 $$\nonterm{fn-body} ::= \mbox{\kwd{\{} \nonterm{var-decl}$^*$
   \nonterm{stmt}$^*$ \kwd{\}} $|$ \kwd{;}}$$
 
 \bfhead{Include declarations.} An include declaration consists of the
 keyword \kwd{INCLUDE}, a string constant, and a terminating semicolon:
-%
+
 $$\nonterm{include-decl} ::= \mbox{\kwd{INCLUDE}
   \nonterm{string-const} \kwd{;}}$$
-%
 
 \subsection{Statements}
 \label{sec:syntax:statements}
@@ -370,66 +371,59 @@ $$\nonterm{include-decl} ::= \mbox{\kwd{INCLUDE}
 A statement is an if statement, a while statement, a set statement, a
 call statement, and increment statement, a decrement statement, return
 statement, or a block statement:
-%
+
 $$\nonterm{stmt} ::= \mbox{\nonterm{if-stmt} $|$ \nonterm{while-stmt}
   $|$ \nonterm{set-stmt} $|$ \nonterm{call-stmt} $|$
   \nonterm{incr-stmt} $|$ \nonterm{decr-stmt} $|$
   \nonterm{return-stmt} $|$ \nonterm{block-stmt} }$$
-%
+
 \bfhead{If statements.} An if statement consists of the keyword
 \kwd{IF}, a conditional expression enclosed in parentheses, a
 statement to execute if the condition is true, and optionally the
 keyword \kwd{ELSE} followed by a statement to execute if the condition
 is false:
-%
+
 $$\nonterm{if-stmt} ::= \mbox{\kwd{IF} \kwd{(} \nonterm{expr} \kwd{)}
   \nonterm{stmt} \opt{\kwd{ELSE} \nonterm{stmt}}}$$
-%
 
 \bfhead{While statements.} A while statement consists of the keyword
 \kwd{WHILE}, a test expression enclosed in parentheses, and a
 statement to execute as long as the condition is true:
-%
+
 $$\nonterm{while-stmt} ::= \mbox{\kwd{WHILE} \kwd{(} \nonterm{expr}
   \kwd{)} \nonterm{stmt}}$$
-%
 
 \bfhead{Set statements.} A set statement consists of the keyword
 \kwd{SET}, an lvalue expression, an equals sign, a right-hand-side
 expression, and a terminating semicolon:
-%
+
 $$\nonterm{set-stmt} ::= \mbox{\kwd{SET} \nonterm{lvalue-expr} \kwd{=}
   \nonterm{expr} \kwd{;}}$$
-%
 
 \bfhead{Call statements.} A call statement consists of a call
 expression followed by a terminating semicolon:
-%
+
 $$\nonterm{call-stmt} ::= \mbox{\nonterm{call-expr} \kwd{;}}$$
-%
 
 \bfhead{Increment statements.} An increment statement consists of the
 keyword \kwd{INCR}, an expression, and a terminating semicolon:
-%
+
 $$\nonterm{incr-stmt} ::= \mbox{\kwd{INCR} \nonterm{expr} \kwd{;}}$$
-%
 
 \bfhead{Decrement statements.} n decrement statement consists of the
 keyword \kwd{DECR}, an expression, and a terminating semicolon:
-%
+
 $$\nonterm{decr-stmt} ::= \mbox{\kwd{DECR} \nonterm{expr} \kwd{;}}$$
-%
 
 \bfhead{Return statements.} A return statement consists of the keyword
 \kwd{RETURN}, an optional expression, and a terminating semicolon:
-%
+
 $$\nonterm{return-stmt} ::= \mbox{\kwd{RETURN} \opt{\nonterm{expr}}
     \kwd{;}}$$
-%
 
 \bfhead{Block statements.} A block statement consists of zero or more
 statements enclosed in braces:
-%
+
 $$\nonterm{block-stmt} ::= \mbox{\kwd{\{} \nonterm{stmt}$^*$
   \kwd{\}}}$$
 
@@ -439,7 +433,7 @@ $$\nonterm{block-stmt} ::= \mbox{\kwd{\{} \nonterm{stmt}$^*$
 An expression is an lvalue expression, a numeric constant, a call
 expression, a binary operation expression, a unary operation
 expression, or a parentheses expression.
-%
+
 $$
 %
 \nonterm{expr} ::= \mbox{\nonterm{lvalue-expr} $|$
@@ -448,11 +442,12 @@ $$
   \nonterm{parens-expr}}
 %
 $$
-%
+
+\noindent
 An lvalue expression is an expression that may appear on the left-hand
 side of a set statement.  It is an identifier, an indexed expression,
 or a register expression.
-%
+
 $$
 %
 \nonterm{lvalue-expr} ::= \mbox{\nonterm{identifier} $|$
@@ -460,50 +455,45 @@ $$
 %
 $$
 
-
 \bfhead{Numeric constants.}  A numeric constant is an integer or
 character constant:
-%
+
 $$\nonterm{numeric-const} ::= \mbox{\nonterm{integer-const} $|$
   \nonterm{char-const}}$$
-%
 
 \bfhead{Call expressions.} A call expression consists of an expression
 followed by an argument list enclosed in parentheses:
-%
+
 $$\nonterm{call-expr} ::= \mbox{\nonterm{expr} \kwd{(}
   \opt{\nonterm{expr} \group{\kwd{,} \nonterm{expr}}$^*$} \kwd{)}}$$
-%
-
 
 \bfhead{Indexed expressions.} An indexed expression consists of a
 base expression, an offset expression, and a size:
-%
+
 $$\nonterm{indexed-expr} ::= \mbox{\nonterm{expr} \kwd{[}
     \nonterm{expr} \kwd{,} \nonterm{size} \kwd{]}}$$
-%
 
 \bfhead{Register expressions.} A register expression consists of a
 caret character followed by a 6502 register name:
-%
-$$\nonterm{register-expr} ::= \mbox{\kwd{\^} \group{\kwd{A} $|$
+
+$$\nonterm{register-expr} ::= \mbox{\kwd{\textasciicircum} \group{\kwd{A} $|$
     \kwd{X} $|$ \kwd{Y} $|$ \kwd{P} $|$ \kwd{S}}}$$
-%
 
 \bfhead{Binary operation expressions.} A binary operation expression
 consists of a left-hand-side expression, a binary operator, and a
 right-hand-side expression:
-%
+
 $$\nonterm{binop-expr} ::= \mbox{\nonterm{expr} \nonterm{binop} \nonterm{expr}}$$
 %
 $$\nonterm{binop} ::= \mbox{\kwd{>} $|$ \kwd{<} $|$ \kwd{<=} $|$
   \kwd{>=} $|$ \kwd{AND} $|$ \kwd{OR} $|$ \kwd{XOR} $|$ \kwd{+} $|$
   \kwd{-} $|$ \kwd{*} $|$ \kwd{/} $|$ \kwd{<<} $|$ \kwd{>>} $|$
   \kwd{=}}$$
-%
+
+\noindent
 Parsing of binary operation expressions is disambiguated using the
 following precedence rules:
-%
+
 \begin{enumerate}
 %
 \item In any sequence \nonterm{expr-1} \nonterm{binop-1}
@@ -524,16 +514,15 @@ following precedence rules:
 
 \bfhead{Unary operation expressions.} A unary operation expression
 consists of a unary operator followed by an expression:
-%
+
 $$\nonterm{unop-expr} ::= \mbox{\nonterm{unop} \nonterm{expr}}$$
-%
+
 $$\nonterm{unop} ::= \mbox{\kwd{@} $|$ \kwd{NOT} $|$ \kwd{-}}$$
-%
+
 \bfhead{Parentheses expressions.} A parentheses expression is an
 expression surrounded by parentheses:
-%
+
 $$\nonterm{parens-expr} ::= \mbox{\kwd{(} \nonterm{expr} \kwd{)}}$$
-%
 
 \section{Semantic Checking}
 \label{sec:semantics}
