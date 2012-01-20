@@ -84,9 +84,6 @@ FN DO_COMMAND() {
   ELSE {
     SET CMD_FN=CMD_FNS[CMD_NUM*2,2];
     CMD_FN();
-    IF (NOT (CMD_FN=CMD_LOOK_FN)) {
-      MON_CROUT();
-    }
   }
 }
 
@@ -98,6 +95,7 @@ FN GO(TO:1) {
   VAR EXIT:1=RM_EXIT(CURRENT_RM,TO);
   IF (EXIT=RM_NONE) {
     PRINT_WORDS(CANT_GO);
+    MON_CROUT();
   }
   ELSE {
     SET CURRENT_RM=EXIT;
@@ -120,6 +118,7 @@ FN CMD_INV_FN() {
   VAR I:1=0;
   IF (NUM_CARRIED=0) {
     PRINT_WORDS(NO_CARRY);
+    MON_CROUT();
   }
   ELSE {
     PRINT_WORDS(YOU_HAVE);
@@ -133,4 +132,5 @@ FN CMD_INV_FN() {
 
 FN CMD_HELP_FN() {
   PRINT_WORDS(RM_HELP(CURRENT_RM));
+  MON_CROUT();
 }
