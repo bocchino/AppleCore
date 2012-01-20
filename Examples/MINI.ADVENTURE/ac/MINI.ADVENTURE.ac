@@ -6,6 +6,7 @@
 # MAIN PROGRAM
 # -----------------------------------
 VAR DONE:1=FALSE;
+VAR LAMP_ON:1=FALSE;
 
 DATA PROMPT "WHAT NEXT? ";
 

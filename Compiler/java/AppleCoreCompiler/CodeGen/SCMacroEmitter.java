@@ -82,13 +82,13 @@ public class SCMacroEmitter
     }
 
     private boolean isPrintable(char ch) {
-	return ch >= 32 && ch <= 126;
+	return (ch != '\"') && (ch >= 32 && ch <= 126);
     }
 
     /**
      * Emit a string constant as
      * - .AS "XXX" for the printable chars
-     * - .HS XX    for the non-printable chars
+     * - .HS XX    for the non-printable chars and quotes
      */
     public void emitStringConstant(StringConstant sc) {
 	String s = sc.value;
