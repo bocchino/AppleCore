@@ -523,31 +523,27 @@ public class Parser {
 	    result = parseNumericConstant();
 	    break;
 	default:
-	    if (!lvalue) {
-		Node.UnopExpression.Operator op =
-		    getUnaryOperatorFor(token);
-		if (op != null) {
-		    result = parseUnopExpr(op);
-		}
+	    Node.UnopExpression.Operator op =
+		getUnaryOperatorFor(token);
+	    if (op != null) {
+		result = parseUnopExpr(op);
 	    }
 	    break;
 	}
 	if (result == null) {
-	    String msg = lvalue ? "lvalue expression" : 
-		"expression";
-	    throw SyntaxError.expected(msg, token);
+	    throw SyntaxError.expected("expression", token);
 	}
 	while (true) {
 	    // Check for binary op
 	    Node.BinopExpression.Operator op =
 		getBinaryOperatorFor(scanner.getCurrentToken());
-	    if (op != null && !lvalue) {
+	    if (op != null && (op != BinopExpression.Operator.EQUALS || !lvalue)) {
 		scanner.getNextToken();
 		return parseBinopExpression(result, op);
 	    }
 	    // Check for call expr
 	    else if (scanner.getCurrentToken() 
-		     == Token.LPAREN && !lvalue) {
+		     == Token.LPAREN) {
 		result = parseCallExpression(result);
 	    }
 	    // Check for indexed expr

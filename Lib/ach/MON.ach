@@ -14,6 +14,8 @@ CONST MON_WNDTOP		$22;
 CONST MON_WNDBTM		$23;
 # INVERSE TEXCT FLAG
 CONST MON_INVFLG                $32;
+# PROMPT DISPLAYED BY MON.GETLN
+CONST MON_PROMPT                $33;
 # --------------------------------------
 # STACK
 # --------------------------------------

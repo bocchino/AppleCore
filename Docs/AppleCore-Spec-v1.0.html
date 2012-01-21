@@ -515,11 +515,13 @@ statement to execute as long as the condition is true:<BR>
  <TT>)</TT> <I>stmt</I></DIV><BR>
 <BR>
 <B>Set statements.</B> A set statement consists of the keyword
-<TT>SET</TT>, an lvalue expression, an equals sign, a right-hand-side
+<TT>SET</TT>, an expression, an equals sign, a right-hand-side
 expression, and a terminating semicolon:<BR>
 <BR>
-<DIV CLASS="center"><I>set-stmt</I> ::= <TT>SET</TT> <I>lvalue-expr</I> <TT>=</TT>
+<DIV CLASS="center"><I>set-stmt</I> ::= <TT>SET</TT> <I>expr</I> <TT>=</TT>
  <I>expr</I> <TT>;</TT></DIV><BR>
+<BR>
+The left-hand side expression may not be a binary operation <TT>=</TT>.<BR>
 <BR>
 <B>Call statements.</B> A call statement consists of a call
 expression followed by a terminating semicolon:<BR>
@@ -553,22 +555,15 @@ statements enclosed in braces:<BR>
 <H3 CLASS="subsection"><A NAME="htoc13">3.4</A>&nbsp;&nbsp;Expressions</H3><!--SEC END -->
 
 <A NAME="sec:syntax:expressions"></A>
-An expression is an lvalue expression, a numeric constant, a call
-expression, a binary operation expression, a unary operation
-expression, or a parentheses expression.<BR>
+An expression is an identifier, an indexed expression, a register
+expression, a numeric constant, a call expression, a binary operation
+expression, a unary operation expression, or a parentheses expression.<BR>
 <BR>
-<DIV CLASS="center"><I>expr</I> ::= <I>lvalue-expr</I> |
+<DIV CLASS="center"><I>expr</I> ::= <I>identifier</I> |
+ <I>indexed-expr</I> | <I>register-expr</I> |
  <I>numeric-const</I> | <I>call-expr</I> |
  <I>binop-expr</I> | <I>unop-expr</I> |
  <I>parens-expr</I>
-</DIV><BR>
-<BR>
-An lvalue expression is an expression that may appear on the left-hand
-side of a set statement. It is an identifier, an indexed expression,
-or a register expression.<BR>
-<BR>
-<DIV CLASS="center"><I>lvalue-expr</I> ::= <I>identifier</I> |
- <I>indexed-expr</I> | <I>register-expr</I>
 </DIV><BR>
 <BR>
 <B>Numeric constants.</B> A numeric constant is an integer or

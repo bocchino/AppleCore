@@ -394,11 +394,14 @@ $$\nonterm{while-stmt} ::= \mbox{\kwd{WHILE} \kwd{(} \nonterm{expr}
   \kwd{)} \nonterm{stmt}}$$
 
 \bfhead{Set statements.} A set statement consists of the keyword
-\kwd{SET}, an lvalue expression, an equals sign, a right-hand-side
+\kwd{SET}, an expression, an equals sign, a right-hand-side
 expression, and a terminating semicolon:
 
-$$\nonterm{set-stmt} ::= \mbox{\kwd{SET} \nonterm{lvalue-expr} \kwd{=}
+$$\nonterm{set-stmt} ::= \mbox{\kwd{SET} \nonterm{expr} \kwd{=}
   \nonterm{expr} \kwd{;}}$$
+
+\noindent
+The left-hand side expression may not be a binary operation \kwd{=}.
 
 \bfhead{Call statements.} A call statement consists of a call
 expression followed by a terminating semicolon:
@@ -430,28 +433,17 @@ $$\nonterm{block-stmt} ::= \mbox{\kwd{\{} \nonterm{stmt}$^*$
 \subsection{Expressions}
 \label{sec:syntax:expressions}
 
-An expression is an lvalue expression, a numeric constant, a call
-expression, a binary operation expression, a unary operation
-expression, or a parentheses expression.
+An expression is an identifier, an indexed expression, a register
+expression, a numeric constant, a call expression, a binary operation
+expression, a unary operation expression, or a parentheses expression.
 
 $$
 %
-\nonterm{expr} ::= \mbox{\nonterm{lvalue-expr} $|$
+\nonterm{expr} ::= \mbox{\nonterm{identifier} $|$
+  \nonterm{indexed-expr} $|$ \nonterm{register-expr} $|$
   \nonterm{numeric-const} $|$ \nonterm{call-expr} $|$
   \nonterm{binop-expr} $|$ \nonterm{unop-expr} $|$
   \nonterm{parens-expr}}
-%
-$$
-
-\noindent
-An lvalue expression is an expression that may appear on the left-hand
-side of a set statement.  It is an identifier, an indexed expression,
-or a register expression.
-
-$$
-%
-\nonterm{lvalue-expr} ::= \mbox{\nonterm{identifier} $|$
-  \nonterm{indexed-expr} $|$ \nonterm{register-expr}}
 %
 $$
 
