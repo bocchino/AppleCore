@@ -97,7 +97,7 @@ public abstract class Node {
 	public int getSize() { return 2; }
 
 	public String toString() {
-	    return "data decl " + label;
+	    return "data decl " + ((expr==null) ? stringConstant : expr);
 	}
     }
 

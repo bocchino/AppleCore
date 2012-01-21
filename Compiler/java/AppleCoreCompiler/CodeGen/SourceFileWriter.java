@@ -136,7 +136,7 @@ public class SourceFileWriter
 	    emitter.emitAsData(id);
 	}
 	else {
-	    throw new ACCInternalError("invalid data for ", node);
+	    throw new ACCInternalError("invalid data for "+node, node);
 	}
     }
 

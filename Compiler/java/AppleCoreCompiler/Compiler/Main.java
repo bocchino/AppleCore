@@ -142,12 +142,15 @@ public class Main {
 	    System.err.print("acc: line " + e.getLineNumber() + " of " + 
 			     sourceFileName + ": ");
 	    System.err.println(e.getMessage());
+	    System.exit(1);
 	}
 	catch (FileNotFoundException e) {
 	    System.err.println("acc: file " + sourceFileName + " not found");
+	    System.exit(1);
 	}
 	catch (IOException e) {
 	    System.err.println("acc: I/O exception");
+	    System.exit(1);
 	}
     }
 

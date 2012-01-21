@@ -8,6 +8,7 @@ import AppleCoreCompiler.AST.*;
 import AppleCoreCompiler.AST.Node.*;
 import AppleCoreCompiler.Syntax.*;
 import AppleCoreCompiler.Errors.*;
+import AppleCoreCompiler.Transforms.*;
 import AppleCoreCompiler.Warnings.*;
 
 import java.util.*;
@@ -97,6 +98,9 @@ public class AttributionPass
 	Parser parser = new Parser(declFile);
 	try {
 	    SourceFile sourceFile = parser.parse();
+	    ConstantEvaluationPass cePass = 
+		new ConstantEvaluationPass();
+	    cePass.runOn(sourceFile);
 	    for (Declaration decl : sourceFile.decls) {
 		insertDecl.insert(decl, globalSymbols);
 		sourceFileMap.put(decl,sourceFile.name);
