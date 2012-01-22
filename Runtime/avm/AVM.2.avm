@@ -21,6 +21,8 @@ AVM.MTS
 * -------------------------------
 AVM.MTS.1
 	LDY AVM.SIZE
+	BNE .1
+	RTS
 .1      DEY
         LDA (AVM.IP),Y
         STA (AVM.SP),Y
@@ -123,9 +125,7 @@ AVM.RAF
 	STA AVM.PCL
 * EVALUATE RETURN VALUE
 	STX AVM.SIZE
-	BEQ .1
 	JMP AVM.MTS.1
-.1	RTS
 * -------------------------------
 * SET SP-=2
 * SET IP=SP[0,2]
