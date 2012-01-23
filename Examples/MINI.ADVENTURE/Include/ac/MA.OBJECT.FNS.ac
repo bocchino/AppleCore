@@ -85,6 +85,17 @@ FN OBJ_TAKE_WRENCH() {
     PRINT_WORDS(MSG_OOR);
   }
 }
+
+DATA OT_KILLED "THAT IS LIABLE TO GET YOU KILLED.";
+
+FN OBJ_TAKE_OTYUGH() {
+  IF (OTYUGH_ALIVE) {
+    PRINT_WORDS(OT_KILLED);
+  }
+  ELSE {
+    OBJ_TAKE_TOO_HEAVY();
+  }  
+}
 # -----------------------------------
 # OBJECT PRESENT MESSAGE
 # -----------------------------------
@@ -181,4 +192,12 @@ FN OBJ_TABLET_DESC_FN() {
 FN OBJ_KNIFE_DESC_FN() {
   PRINT_WORDS(KNIFE);
 }
-
+FN OBJ_OTYUGH_DESC_FN() {
+  PRINT_WORDS(OTYUGH);
+  IF (OTYUGH_ALIVE) {
+    PRINT_WORDS(OTYUGH_WAITING);
+  }
+  ELSE {
+    PRINT_WORDS(OTYUGH_DEAD);
+  }
+}
