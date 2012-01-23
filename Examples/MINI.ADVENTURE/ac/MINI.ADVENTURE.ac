@@ -23,8 +23,10 @@ FN MAIN() {
     SET LEN=GET_LINE();
     IF (LEN > 0) {
       PARSE_INPUT();  
-      HANDLE_DARK();
-      HANDLE_OTYUGH();
+      IF (NOT DONE) {
+        HANDLE_DARK();
+        HANDLE_OTYUGH();
+      }
     }
   }  
   IF (DIED) {

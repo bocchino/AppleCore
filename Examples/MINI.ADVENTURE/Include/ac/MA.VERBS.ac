@@ -3,7 +3,7 @@
 # -----------------------------------
 # VERB CODES
 # -----------------------------------
-CONST NUM_VBS 12;
+CONST NUM_VBS 13;
 
 CONST VB_TAKE    0;
 CONST VB_GET     1;
@@ -17,6 +17,7 @@ CONST VB_OPEN    8;
 CONST VB_SAY     9;
 CONST VB_TURN    10;
 CONST VB_READ    11;
+CONST VB_KILL    12;
 
 DATA VB_NAMES VB_TAKE_NAME;
 DATA          VB_GET_NAME;
@@ -30,6 +31,7 @@ DATA          VB_OPEN_NAME;
 DATA          VB_SAY_NAME;
 DATA          VB_TURN_NAME;
 DATA          VB_READ_NAME;
+DATA          VB_KILL_NAME;
   
 DATA VB_TAKE_NAME    "TAKE";
 DATA VB_GET_NAME     "GET";
@@ -43,6 +45,7 @@ DATA VB_OPEN_NAME    "OPEN";
 DATA VB_SAY_NAME     "SAY";
 DATA VB_TURN_NAME    "TURN";
 DATA VB_READ_NAME    "READ";
+DATA VB_KILL_NAME    "KILL";
 
 DATA VB_FNS  VB_TAKE_FN;
 DATA         VB_TAKE_FN;
@@ -56,6 +59,7 @@ DATA         VB_OPEN_FN;
 DATA         VB_SAY_FN;
 DATA         VB_TURN_FN;
 DATA         VB_READ_FN;
+DATA         VB_KILL_FN;
 
 DATA DONT_SEE "I DON'T SEE ANY ";
 DATA HERE     " HERE.";
