@@ -1,5 +1,5 @@
 # -----------------------------------
-# MINI ADVENTURE: VERB HANDLERS
+# MINI ADVENTURE: VERBS, PART 2
 # -----------------------------------
 DATA HAVE_STR "YOU ALREADY HAVE IT.";
 

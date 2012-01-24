@@ -1,5 +1,5 @@
 # -----------------------------------
-# MINI ADVENTURE: VERB HANDLERS PT 2
+# MINI ADVENTURE: VERBS, PART 3
 # -----------------------------------
 DATA WONT_HELP "THAT WON'T HELP YOU.";
 DATA WONT_WORK "THAT WON'T WORK.";

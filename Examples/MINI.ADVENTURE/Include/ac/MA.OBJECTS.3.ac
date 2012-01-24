@@ -1,5 +1,5 @@
 # -----------------------------------
-# MINI ADVENTURE: OBJECT FUNCTIONS 2
+# MINI ADVENTURE: OBJECTS, PART 3
 # -----------------------------------
 FN OBJ_LAMP_DESC_FN() {
   PRINT_WORDS(LAMP);
