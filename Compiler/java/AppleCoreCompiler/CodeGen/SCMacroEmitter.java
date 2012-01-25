@@ -20,7 +20,6 @@ public class SCMacroEmitter
     }
 
     public void emitIncludeDecl(IncludeDecl node) {
-	emitSeparatorComment();
 	emitAbsoluteInstruction(".IN",node.filename);
     }
 
