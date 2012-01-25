@@ -71,8 +71,7 @@ DATA         CMD_HELP_FN;
 # -----------------------------------
 # COMMAND FUNCTIONS
 # -----------------------------------
-FN DO_COMMAND() {
-  VAR WORD:2=(@WORDS)[0,2];
+FN DO_COMMAND(WORD:2) {
   VAR CMD_NUM:1=FIND_WORD(WORD,
     CMD_NAMES,NUM_CMDS);
   VAR CMD_FN:2;
