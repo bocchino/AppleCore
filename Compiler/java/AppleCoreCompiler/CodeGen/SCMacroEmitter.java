@@ -186,13 +186,17 @@ public class SCMacroEmitter
 	}
     }
 
-    public void emitEpilogue() {
-	emitAbsoluteInstruction(".IN","AVM.1");
-	emitAbsoluteInstruction(".IN","AVM.2");
-	emitAbsoluteInstruction(".IN","AVM.3.BINOP");
-	emitAbsoluteInstruction(".IN","AVM.4.UNOP");
-	emitAbsoluteInstruction(".IN","AVM.5.BUILT.IN");
+    public void emitEpilogue(int avmSlot, int avmDrive) {
+	emitIncludeDirective("AVM.1",avmSlot,avmDrive);
+	emitIncludeDirective("AVM.2",avmSlot,avmDrive);
+	emitIncludeDirective("AVM.3.BINOP",avmSlot,avmDrive);
+	emitIncludeDirective("AVM.4.UNOP",avmSlot,avmDrive);
+	emitIncludeDirective("AVM.5.BUILT.IN",avmSlot,avmDrive);
 	// Start of program stack
 	emitLabel("AVM.STACK");
+    }
+
+    public void emitIncludeDirective(String fileName, int slot, int drive) {
+	emitAbsoluteInstruction(".IN", fileName+",S"+slot+",D"+drive);
     }
 }
