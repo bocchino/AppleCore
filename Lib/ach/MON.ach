@@ -16,6 +16,9 @@ CONST MON_WNDBTM		$23;
 CONST MON_INVFLG                $32;
 # PROMPT DISPLAYED BY MON.GETLN
 CONST MON_PROMPT                $33;
+# RANDOM NUMBER SEEDED BY MON.KEYIN
+CONST MON_RNDL                  $4E;
+CONST MON_RNDH                  $4F;
 # --------------------------------------
 # STACK
 # --------------------------------------
@@ -29,6 +32,10 @@ CONST MON_IN			$200;
 # --------------------------------------
 # CLEAR SCREEN AND REPOSITION CURSOR
 CONST MON_HOME                  $FC58;
+# GET CHARACTER VIA MON.KSW
+CONST MON_RDKEY                 $FD0C;
+# GET CHARACTER FROM KEYBOARD
+CONST MON_KEYIN                 $FD1B;
 # LINE INPUT
 CONST MON_GETLN1		$FD6F; 
 # OUTPUT A-REG AS ASCII VIA MON_CSW
