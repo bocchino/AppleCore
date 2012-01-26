@@ -4,7 +4,7 @@
 # DECIMAL-HEXADECIMAL CONVERSION
 # WITH VARIABLE PRECISION
 # -----------------------------------
-# COPYRIGHT (C) 2011 
+# COPYRIGHT (C) 2012
 # ROBERT L. BOCCHINO JR.
 # -----------------------------------
 # SIZE OF DATA IN BYTES
@@ -20,10 +20,11 @@ DATA GREETING "HEXCONVERT\$0D"\;
 DATA          "COPYRIGHT (C) 2011\$0D"\;
 DATA          "ROBERT L. BOCCHINO JR.\$0D"\;
 DATA          "TYPE H FOR HELP\$0D";
-DATA HELP     "$([0-9]|[A-F]) - HEX TO DEC\$0D"\;
-DATA          "[0-9]+         - DEC TO HEX\$0D"\;
-DATA          "S[0-9]+        - SET SIZE IN BYTES\$0D"\;
-DATA          "BLANK LINE     - END\$0D";
+DATA HELP     "$([0-9]|[A-F])+ - HEX TO DEC\$0D"\;
+DATA          "[0-9]+          - DEC TO HEX\$0D"\;
+DATA          "S[0-9]+         - SET SIZE IN BYTES\$0D"\;
+DATA          "S               - DISPLAY SIZE\$0D"\;
+DATA          "BLANK LINE      - END\$0D";
 DATA ERROR    "ERROR";
 # -----------------------------------
 # MAIN FUNCTION
@@ -40,25 +41,26 @@ FN MAIN() {
     SET LEN=GET_LINE();
     IF (LEN=0) RETURN;
     SET OK=FALSE;
-    IF ((MON_IN[0,1] AND $7F)='H') {
+    IF (CMP_CHAR(MON_IN[0,1],'H')=0) {
       IF (LEN=1) {
         PRINT_STRING(HELP);
         SET OK=TRUE;
       }
     }
-    ELSE IF ((MON_IN[0,1] AND $7F)='S') {
-      IF (LEN>1) {
-        SET OK=SET_SIZE();
+    ELSE IF (CMP_CHAR(MON_IN[0,1],'S')=0) {
+      IF (LEN>1) SET OK=SET_SIZE();
+      ELSE {
+        SET OK=TRUE;
+        NUM_TO_STR(@SIZE,1,10,MON_IN);
+	PRINT_CHAR('=');
+        PRINT_STRING(MON_IN);
+        MON_CROUT();
       }
     }
-    ELSE IF ((MON_IN[0,1] AND $7F)='$') {
-      IF (LEN>1) {
-        SET OK=HEX_TO_DEC();
-      }
+    ELSE IF (CMP_CHAR(MON_IN[0,1],'$')=0) {
+      IF (LEN>1) SET OK=HEX_TO_DEC();
     }
-    ELSE {
-      SET OK=DEC_TO_HEX();
-    }
+    ELSE SET OK=DEC_TO_HEX();
     IF (NOT OK) {
       PRINT_STRING(ERROR);
       MON_CROUT();
