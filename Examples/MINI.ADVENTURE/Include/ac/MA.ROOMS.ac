@@ -49,52 +49,6 @@ FN:2 RM_BASE(RM:1) {
   RETURN RM_DATA+RM*RM_DATA_SIZE;
 }
 # -----------------------------------
-# CURRENT ROOM
-# -----------------------------------
-VAR CURRENT_RM:1;
-# -----------------------------------
-# ROOM DATA
-# -----------------------------------
-DATA RM_DATA RM_ENTER_NAME;
-DATA         RM_ENTER_PRINTER;
-DATA         RM_ENTER_HELP;
-DATA         RM_NONE;
-DATA         RM_NONE;
-DATA         RM_NONE;
-DATA         RM_NONE;
-DATA         RM_NONE;
-DATA         RM_NONE;
-
-DATA         RM_GRIMY_NAME;
-DATA         RM_GRIMY_PRINTER;
-DATA         RM_GRIMY_HELP;
-DATA         RM_NONE;
-DATA         RM_OFFAL;
-DATA         RM_NONE;
-DATA         RM_NONE;
-DATA         RM_ENTER;
-DATA         RM_NONE;
-
-DATA         RM_OFFAL_NAME;
-DATA         RM_OFFAL_PRINTER;
-DATA         RM_OFFAL_HELP;
-DATA         RM_GRIMY;
-DATA         RM_NONE;
-DATA         RM_PIPE;
-DATA         RM_NONE;
-DATA         RM_NONE;
-DATA         RM_NONE;
-
-DATA         RM_PIPE_NAME;
-DATA         RM_PIPE_PRINTER;
-DATA         RM_PIPE_HELP;
-DATA         RM_NONE;
-DATA         RM_NONE;
-DATA         RM_NONE;
-DATA         RM_OFFAL;
-DATA         RM_NONE;
-DATA         RM_NONE;
-# -----------------------------------
 # ROOM NAMES
 # -----------------------------------
 DATA RM_ENTER_NAME  "ENTRANCE";

@@ -280,3 +280,21 @@ AVM.POP.IP
 	STA AVM.IP
 	STX AVM.SIZE
         RTS
+* -------------------------------
+* PATCH DOS TO STORE ERROR CODE
+* AND RETURN, INSTEAD OF JUMPING
+* INTO APPLESOFT
+* -------------------------------
+AVM.PATCH.DOS
+	JSR AVM.EXECUTE.FN
+	PHC $A6D59F834CDE86AA5CAE
+	STM $8
+	RAF $0
+* -------------------------------
+* RESTORE DOS ERROR HANDLING
+* -------------------------------
+AVM.UNPATCH.DOS
+	JSR AVM.EXECUTE.FN
+	PHC $A6D504F0AAB6ADBFE620
+	STM $8
+	RAF $0

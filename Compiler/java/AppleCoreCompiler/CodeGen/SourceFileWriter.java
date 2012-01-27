@@ -73,9 +73,13 @@ public class SourceFileWriter
 		emitter.emitAbsoluteInstruction("STY","$AAB6");
 		emitter.emitInstruction("DEY");
 		emitter.emitAbsoluteInstruction("STY","$D9");
+		emitter.emitComment("patch DOS error handling");
+		emitter.emitAbsoluteInstruction("JSR","AVM.PATCH.DOS");
 		emitter.emitComment("do main function");
 		emitter.emitAbsoluteInstruction("JSR",
 						emitter.makeLabel(firstFunction.name));
+		emitter.emitComment("restore DOS error handling");
+		emitter.emitAbsoluteInstruction("JSR","AVM.UNPATCH.DOS");
 		emitter.emitComment("put DOS back in direct mode");
 		emitter.emitInstruction("PLA");
 		emitter.emitAbsoluteInstruction("STA","$AAB6");

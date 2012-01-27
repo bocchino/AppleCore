@@ -1,12 +1,23 @@
 # -----------------------------------
 # MINI ADVENTURE: VARIABLE STATE
 # -----------------------------------
+DATA MA_STATE_BEGIN 0;
+# -----------------------------------
+# EVENTS
+# -----------------------------------
+# NUMBER OF TURNS IN DARK
+VAR DARK_TURNS:1=0;
+# NUMBER OF TURNS CONFRONTING OTYUGH
+VAR OT_TURNS:1=0;
+# NUMBER OF TURNS IN PIPE
+VAR PIPE_TURNS:1=0;
+
 VAR LAMP_ON:1=FALSE;
 VAR OTYUGH_ALIVE:1=TRUE;
 # -----------------------------------
 # CURRENT ROOM
 # -----------------------------------
-VAR CURRENT_RM:1;
+VAR CURRENT_RM:1=RM_ENTER;
 # -----------------------------------
 # ROOM RECORDS
 # -----------------------------------
@@ -138,3 +149,4 @@ DATA          OBJ_TAKE_OK;
 VAR NUM_CARRIED:1=0;
 VAR CARRIED:4=0;
 
+DATA MA_STATE_END 0;

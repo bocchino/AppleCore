@@ -194,25 +194,24 @@ sub emit_HS(@) {
 }
 
 sub get_size_of_const(@) {
-  my $const=hex shift @_;
-  my $size=0;
-  do {
-    $const = $const>>8;
-    $size++;
-  } while ($const>0);
-  return $size;
+  my $const=shift @_;
+  if ((length($const) & 1)==0) {
+      return length($const)>>1;
+  }
+  return (length($const)>>1)+1;
 }
 
 my $MAX_CONST_LEN=10;
 
 sub emit_constant(@) {
   my $const=shift @_;
-  $const=hex $const;
-  do {
-    emit_HS($const & 0xFF);
-    emit_line_end();
-    $const = $const>>8;
-  } while ($const > 0);
+  while (length($const)>2) {
+      emit_HS(hex substr($const,length($const)-2));
+      emit_line_end();
+      $const=substr($const,0,length($const)-2);
+  }
+  emit_HS(hex $const);
+  emit_line_end();
 }
 
 sub assemble_signed_instr(@) {

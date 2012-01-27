@@ -4,7 +4,7 @@
 ACC      ?= ${APPLECORE}/Compiler/bin/acc
 AVM-ASM  ?= ${APPLECORE}/Assembler/bin/avm-asm
 ASM2EXEC = ${APPLECORE}/Scripts/asm2exec
-SRCS     = ${wildcard ac/*.ac}
+SRCS     ?= ${wildcard ac/*.ac}
 MAKE_ALL ?= perl ${APPLECORE}/Scripts/make-all.pl
 
 all : all-exec
@@ -27,8 +27,8 @@ file-asm : avm/${FILE}.avm
 file-exec : asm/${FILE}.asm
 	make exec/${FILE}.exec
 
-avm/${FILE}.avm : ac/${FILE}.ac avm
-	${ACC} $< > $@
+avm/${FILE}.avm : ${SRCS} avm
+	${ACC} ac/${FILE}.ac > $@
 
 asm/${FILE}.asm : avm/${FILE}.avm asm
 	${AVM-ASM} $< > $@
