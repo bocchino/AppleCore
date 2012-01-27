@@ -1,0 +1,140 @@
+# -----------------------------------
+# MINI ADVENTURE: VARIABLE STATE
+# -----------------------------------
+VAR LAMP_ON:1=FALSE;
+VAR OTYUGH_ALIVE:1=TRUE;
+# -----------------------------------
+# CURRENT ROOM
+# -----------------------------------
+VAR CURRENT_RM:1;
+# -----------------------------------
+# ROOM RECORDS
+# -----------------------------------
+DATA RM_DATA RM_ENTER_NAME;
+DATA         RM_ENTER_PRINTER;
+DATA         RM_ENTER_HELP;
+DATA         RM_NONE;
+DATA         RM_NONE;
+DATA         RM_NONE;
+DATA         RM_NONE;
+DATA         RM_NONE;
+DATA         RM_NONE;
+
+DATA         RM_GRIMY_NAME;
+DATA         RM_GRIMY_PRINTER;
+DATA         RM_GRIMY_HELP;
+DATA         RM_NONE;
+DATA         RM_OFFAL;
+DATA         RM_NONE;
+DATA         RM_NONE;
+DATA         RM_ENTER;
+DATA         RM_NONE;
+
+DATA         RM_OFFAL_NAME;
+DATA         RM_OFFAL_PRINTER;
+DATA         RM_OFFAL_HELP;
+DATA         RM_GRIMY;
+DATA         RM_NONE;
+DATA         RM_PIPE;
+DATA         RM_NONE;
+DATA         RM_NONE;
+DATA         RM_NONE;
+
+DATA         RM_PIPE_NAME;
+DATA         RM_PIPE_PRINTER;
+DATA         RM_PIPE_HELP;
+DATA         RM_NONE;
+DATA         RM_NONE;
+DATA         RM_NONE;
+DATA         RM_OFFAL;
+DATA         RM_NONE;
+DATA         RM_NONE;
+# -----------------------------------
+# OBJECT RECORDS
+# -----------------------------------
+CONST OBJ_DATA_SIZE 5;
+CONST OBJ_DESC_IDX  0;
+CONST OBJ_RM_IDX    2;
+CONST OBJ_TAKE_IDX  3;
+
+DATA OBJ_DATA OBJ_GRATE_DESC_FN;
+DATA          RM_ENTER;
+DATA          OBJ_TAKE_BOLTED;
+
+DATA          OBJ_WRENCH_DESC_FN;
+DATA          RM_ENTER;
+DATA          OBJ_TAKE_WRENCH;
+
+DATA          OBJ_POLE_DESC_FN;
+DATA          RM_ENTER;
+DATA          OBJ_TAKE_OK;
+
+DATA          OBJ_BOLTS_DESC_FN;
+DATA          RM_ENTER;
+DATA          OBJ_TAKE_SECURE;
+
+DATA          OBJ_SHELVES_DESC_FN;
+DATA          RM_GRIMY;
+DATA          OBJ_TAKE_FIXED;
+
+DATA          OBJ_BARREL_DESC_FN;
+DATA          RM_GRIMY;
+DATA          OBJ_TAKE_TOO_HEAVY;
+
+DATA          OBJ_LAMP_DESC_FN;
+DATA          RM_GRIMY;
+DATA          OBJ_TAKE_OK;
+
+DATA          OBJ_SPIDERS_DESC_FN;
+DATA          RM_GRIMY;
+DATA          OBJ_TAKE_OK;
+
+DATA	      OBJ_SCROLL_DESC_FN;
+DATA	      RM_NONE;
+DATA	      OBJ_TAKE_OK;
+
+DATA          OBJ_TABLET_DESC_FN;
+DATA          RM_NONE;
+DATA          OBJ_TAKE_OK;
+
+DATA          OBJ_KNIFE_DESC_FN;
+DATA          RM_GRIMY;
+DATA          OBJ_TAKE_OK;
+
+DATA          OBJ_OTYUGH_DESC_FN;
+DATA          RM_OFFAL;
+DATA          OBJ_TAKE_OTYUGH;
+
+DATA          OBJ_GARBAGE_DESC_FN;
+DATA          RM_OFFAL;
+DATA          OBJ_TAKE_GARBAGE;
+
+DATA          OBJ_HAND_DESC_FN;
+DATA          RM_NONE;
+DATA          OBJ_TAKE_OK;
+
+DATA          OBJ_PIPE_DESC_FN;
+DATA          RM_PIPE;
+DATA          OBJ_TAKE_FIXED;
+
+DATA          OBJ_SMALL_DESC_FN;
+DATA          RM_PIPE;
+DATA          OBJ_TAKE_FIXED;
+
+DATA          OBJ_LARGE_DESC_FN;
+DATA          RM_PIPE;
+DATA          OBJ_TAKE_FIXED;
+
+DATA          OBJ_HATCH_DESC_FN;
+DATA          RM_PIPE;
+DATA          OBJ_TAKE_FIXED;
+
+DATA          OBJ_SELF_DESC_FN;
+DATA          RM_TAKEN;
+DATA          OBJ_TAKE_OK;
+# -----------------------------------
+# CARRIED OBJECTS
+# -----------------------------------
+VAR NUM_CARRIED:1=0;
+VAR CARRIED:4=0;
+
