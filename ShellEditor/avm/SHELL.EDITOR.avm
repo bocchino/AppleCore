@@ -1,0 +1,60 @@
+:NEW
+* -------------------------------
+* SIMPLE SHELL EDITOR FOR APPLE //e
+* -------------------------------
+       .IN MON.EQ,D1
+* READ ROM, DON'T WRITE
+RDROM  .EQ $C082
+* READ AND WRITE RAM BANK 2
+RWRAM2 .EQ $C083
+* READ ROM, WRITE RAM BANK 1
+WRRAM1 .EQ $C089
+* READ AND WRITE RAM BANK 1
+RWRAM1 .EQ $C08B
+* -------------------------------
+* DRIVER
+* -------------------------------
+       .OR $0300
+       .TF SHELL.EDITOR.DRIVER.OBJ,D2
+       .IN DRIVER
+* -------------------------------
+* INSTALL APPLESOFT IN LANG CARD
+* -------------------------------
+	.OR $0803
+	.TF INSTALL.APPLESOFT.OBJ,D2
+	.IN INSTALL.APPLESOFT	
+* -------------------------------
+* INSTALL EDITOR IN RAM BANK 2
+* -------------------------------
+       .OR $0803
+       .TF INSTALL.SHELL.EDITOR.OBJ,D2
+       .IN INSTALL.SHELL.EDITOR
+* -------------------------------
+* UNINSTALL EDITOR
+* -------------------------------
+       .OR $0803
+       .TF UNINSTALL.SHELL.EDITOR.OBJ,D2
+       .IN UNINSTALL.SHELL.EDITOR
+* -------------------------------
+* EDITOR
+* -------------------------------
+       .OR $D000
+       .TF SHELL.EDITOR.OBJ,D2
+       .IN EDITOR
+* -------------------------------
+* PRINT STRING POINTED TO BY X,A
+* CLOBBERS MON.A1L,H
+* -------------------------------
+PRINT.STRING
+	STX MON.A1L
+	STA MON.A1H
+	LDY #0
+.1	LDA (MON.A1L),Y
+	BEQ .2
+	ORA #$80
+	JSR MON.COUT
+	INY
+	BNE .1
+.2	RTS
+
+	

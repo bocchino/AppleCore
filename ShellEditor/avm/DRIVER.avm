@@ -1,0 +1,41 @@
+:NEW
+*--------------------------------
+* DRIVER FOR THE SHELL EDITOR
+*--------------------------------
+* INVOKE THE EDITOR
+*--------------------------------
+INVOKE.EDITOR
+* READ AND WRITE RAM BANK 2
+       LDA RWRAM2
+       LDA RWRAM2
+* INVOKE EDITOR
+       JSR GET.INPUT
+*--------------------------------
+* READ AND WRITE RAM BANK 1
+*--------------------------------
+BANK1
+       PHA
+       LDA RWRAM1
+       LDA RWRAM1
+       PLA
+       RTS
+*--------------------------------
+* RESET HANDLER
+*--------------------------------
+RESET
+* PUT RAM BANK 1 BACK
+       JSR BANK1
+* GO TO DOS WARMSTART
+       JMP DOS.WRM
+*--------------------------------
+* PATCH DOS TO COME HERE AND
+* PUT BACK BANK 1 BEFORE GOING
+* TO APPLESOFT
+*--------------------------------
+DOS.PATCH
+* PUT BANK 1 BACK
+       JSR BANK1
+* DO INSTRUCTION ERASED BY PATCH
+       ASL $AA5F
+* JUMP TO NEXT INSTRUCTION
+       JMP $A01E
