@@ -1,0 +1,44 @@
+# --------------------------------------
+# THE APPLECORE COMPILER, V1.0
+# CHARACTER FUNCTIONS
+# --------------------------------------
+# CONVERT DIGIT TO CHAR
+# --------------------------------------
+FN:1 DIGIT_TO_CHAR(DIGIT:1) {
+  IF (DIGIT < 10) {
+     RETURN DIGIT+'0';
+  }
+  RETURN DIGIT-10+'A';
+}
+# --------------------------------------
+# CONVERT CHAR TO DIGIT AT RADIX
+# --------------------------------------
+FN:1 CHAR_TO_DIGIT(CHAR:1,RADIX:1) {
+  VAR DIGIT:1=$FF;
+  SET CHAR=CHAR AND $7F;
+  IF (CHAR>='0' AND CHAR<='9') {
+    SET DIGIT=CHAR-'0';   
+  }
+  ELSE IF(CHAR>='A') {
+    SET DIGIT=10+CHAR-'A';
+  }
+  IF (DIGIT >= RADIX) 
+    SET DIGIT=$FF;
+  RETURN DIGIT;
+}
+# --------------------------------------
+# COMPARE ASCII VALUES (LOWER 7 BITS)
+# --------------------------------------
+FN:1S CMP_CHAR(CHAR1:1,CHAR2:1) {
+  VAR ASCII1:1=CHAR1 AND $7F;
+  VAR ASCII2:1=CHAR2 AND $7F;
+  IF (ASCII1<ASCII2) RETURN -1;
+  IF (ASCII1=ASCII2) RETURN 0;
+  RETURN 1;
+}
+# --------------------------------------
+# EQUAL ASCII VALUES?
+# --------------------------------------
+FN:1 EQ_CHAR(CHAR1:1,CHAR2:1) {
+  RETURN NOT CMP_CHAR(CHAR1,CHAR2);
+}
