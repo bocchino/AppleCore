@@ -26,19 +26,19 @@ RWRAM1 .EQ $C08B
 * -------------------------------
 * INSTALL APPLESOFT IN RAM BANK 2
 * -------------------------------
-	.OR $0803
+	.OR $1000
 	.TF INSTALL.APPLESOFT.OBJ,D2
 	.IN INSTALL.APPLESOFT,D2
 * -------------------------------
 * INSTALL EDITOR IN RAM BANK 1
 * -------------------------------
-       .OR $0803
+       .OR $1000
        .TF INSTALL.SHELL.EDITOR.OBJ,D2
        .IN INSTALL.SHELL.EDITOR,D2
 * -------------------------------
 * UNINSTALL EDITOR
 * -------------------------------
-       .OR $0803
+       .OR $1000
        .TF UNINSTALL.SHELL.EDITOR.OBJ,D2
        .IN UNINSTALL.SHELL.EDITOR,D2
 * -------------------------------
