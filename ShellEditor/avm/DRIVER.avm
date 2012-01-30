@@ -5,37 +5,40 @@
 * INVOKE THE EDITOR
 *--------------------------------
 INVOKE.EDITOR
-* READ AND WRITE RAM BANK 2
-       LDA RWRAM2
-       LDA RWRAM2
+* READ AND WRITE RAM BANK 1
+       LDA RWRAM1
+       LDA RWRAM1
 * INVOKE EDITOR
        JSR GET.INPUT
 *--------------------------------
-* READ AND WRITE RAM BANK 1
+* READ AND WRITE RAM BANK 2
 *--------------------------------
-BANK1
-       PHA
-       LDA RWRAM1
-       LDA RWRAM1
-       PLA
+BANK2
+       LDA RWRAM2
+       LDA RWRAM2
        RTS
 *--------------------------------
 * RESET HANDLER
 *--------------------------------
 RESET
-* PUT RAM BANK 1 BACK
-       JSR BANK1
+* PUT RAM BANK 2 BACK
+       JSR BANK2
 * GO TO DOS WARMSTART
-       JMP DOS.WRM
+       JMP DOS.WARM
 *--------------------------------
 * PATCH DOS TO COME HERE AND
-* PUT BACK BANK 1 BEFORE GOING
-* TO APPLESOFT
+* PUT BACK BANK 2 BEFORE GOING
+* TO APPLESOFT.  DO THIS ONLY IF
+* WE ARE READING RAM.
 *--------------------------------
 DOS.PATCH
-* PUT BANK 1 BACK
-       JSR BANK1
+* ARE WE READING RAM?
+       LDA MON.GETLN1
+       CMP #$4C
+       BNE .1
+* YES, PUT BANK 2 BACK
+       JSR BANK2
 * DO INSTRUCTION ERASED BY PATCH
-       ASL $AA5F
+.1     ASL $AA5F
 * JUMP TO NEXT INSTRUCTION
        JMP $A01E
