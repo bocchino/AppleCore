@@ -67,8 +67,6 @@ public class SourceFileWriter
 		emitter.emitComment("initial carriage return");
 		emitter.emitAbsoluteInstruction("JSR","$FD8E");
 		emitter.emitComment("put DOS in deferred mode");
-		emitter.emitAbsoluteInstruction("LDA","$AAB6");
-		emitter.emitInstruction("PHA");
 		emitter.emitImmediateInstruction("LDY",0);
 		emitter.emitAbsoluteInstruction("STY","$AAB6");
 		emitter.emitInstruction("DEY");
@@ -80,11 +78,6 @@ public class SourceFileWriter
 						emitter.makeLabel(firstFunction.name));
 		emitter.emitComment("restore DOS error handling");
 		emitter.emitAbsoluteInstruction("JSR","AVM.UNPATCH.DOS");
-		emitter.emitComment("put DOS back in direct mode");
-		emitter.emitInstruction("PLA");
-		emitter.emitAbsoluteInstruction("STA","$AAB6");
-		emitter.emitImmediateInstruction("LDY",0);
-		emitter.emitAbsoluteInstruction("STY","$D9");
 		emitter.emitComment("exit to BASIC");
 		emitter.emitAbsoluteInstruction("JMP","$3D3");
 	    }
