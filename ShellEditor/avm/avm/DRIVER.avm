@@ -18,14 +18,6 @@ BANK2
        LDA RWRAM2
        RTS
 *--------------------------------
-* RESET HANDLER
-*--------------------------------
-RESET
-* PUT RAM BANK 2 BACK
-       JSR BANK2
-* GO TO DOS WARMSTART
-       JMP DOS.WARM
-*--------------------------------
 * PATCH DOS TO COME HERE AND
 * PUT BACK BANK 2 BEFORE GOING
 * TO APPLESOFT.  DO THIS ONLY IF
@@ -42,3 +34,10 @@ DOS.PATCH
 .1     ASL $AA5F
 * JUMP TO NEXT INSTRUCTION
        JMP $A01E
+*--------------------------------
+* RESET HANDLER
+*--------------------------------
+RESET
+* PUT RAM BANK 2 BACK
+       JSR BANK2
+* FALL THROUGH TO DOS WARMSTART
