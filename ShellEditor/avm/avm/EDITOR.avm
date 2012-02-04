@@ -34,10 +34,14 @@ INIT   LDA #CR
 *--------------------------------
 ESCAPE
        LDY BUFFER.POS
+       LDA #0
+       STA BUFFER.POS
+       JSR RESTORE.SCREEN.POS
        LDA #CR
-       STA MON.IN,Y
+       STA MON.IN
+       LDY #0
        JSR CLEAR.Y.TO.END
-       LDA BUFFER.POS
+       LDA #0
        STA LENGTH
        JMP INPUT
 *--------------------------------
