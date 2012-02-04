@@ -69,6 +69,7 @@ MON.IN     .EQ $0200
 * PAGE 3 VECTORS
 *--------------------------------
 MON.SOFTEV .EQ $3F2      WARM START
+MON.PWREDUP .EQ $3F4     MUST BE (SOFTEV+1) EOR #$A5
 *--------------------------------
 * SUBROUTINE ENTRY POINTS
 *--------------------------------

@@ -4,12 +4,12 @@
 *--------------------------------
 * ASCII CONSTANTS
 *--------------------------------
-CTRLE  .EQ $85      CONTROL-E
 LF     .EQ $8A      LINE FEED (DOWN ARROW)
 VT     .EQ $8B      VERTICAL TAB (UP ARROW)
 BS     .EQ $88      BACKSPACE (LEFT ARROW)
 CR     .EQ $8D      CARRIAGE RETURN (RETURN)
 FS     .EQ $95      FORWARD SPACE (RIGHT ARROW)
+ESC    .EQ $9B      ESCAPE
 SPC    .EQ $A0      SPACE
 DEL    .EQ $FF      DELETE
 *--------------------------------
@@ -30,9 +30,9 @@ INIT   LDA #CR
        STA HISBUFS+HIS3
        RTS
 *--------------------------------
-* CONTROL-E
+* ESCAPE
 *--------------------------------
-CONTROL.E
+ESCAPE
        LDY BUFFER.POS
        LDA #CR
        STA MON.IN,Y
@@ -93,7 +93,7 @@ FORWARD.SPACE
        LDA MON.IN,Y
        CMP #CR
        BEQ .1            DON'T RUN OFF END
-       JSR MON.COUT      ADVANCE SCREEN POSITION
+       JSR COUT          ADVANCE SCREEN POSITION
        INC BUFFER.POS    AND BUFFER POSITION
 .1     JMP INPUT
 *--------------------------------
@@ -142,20 +142,19 @@ GET.INPUT
 *--------------------------------
 INPUT  JSR MON.RDKEY
        LDY #0
-.6     CMP CODE.TABLE,Y
+* LOOK FOR CONTROL CODE
+.2     CMP CODE.TABLE,Y
        BEQ BRANCH.TO.Y   FOUND IT
        INY
        CPY #ENTRY.TABLE-CODE.TABLE
-       BLT .6
+       BLT .2
        CMP #BS           BACKSPACE (LEFT ARROW)
-       BNE .2
+       BNE .3
        JSR BACKSPACE
        JMP INPUT
-.2     CMP #SPC          CHECK FOR CONTROL CHARACTER
-       BLT INPUT
 * GOT A PRINTABLE CHARACTER
-       LDY LENGTH
-       CPY #$FE          IGNORE IF BUFFER WOULD OVERFLOW
+.3     LDY LENGTH
+       CPY #$FF          IGNORE IF BUFFER WOULD OVERFLOW
        BEQ INPUT
        JSR INSERT.A.REG  INSERT IT
        JSR ECHO.MON.IN   ECHO NEW SCREEN INFO
@@ -168,7 +167,7 @@ INPUT  JSR MON.RDKEY
 * BRANCH TO HANDLER GIVEN IN Y-REG
 *--------------------------------
 BRANCH.TO.Y
-       LDA /CONTROL.E
+       LDA /ESCAPE
        PHA
        LDA ENTRY.TABLE,Y
        PHA
@@ -177,7 +176,7 @@ BRANCH.TO.Y
 * TABLE OF HANDLER CODES
 *--------------------------------
 CODE.TABLE
-       .DA #CTRLE
+       .DA #ESC
        .DA #LF
        .DA #VT
        .DA #CR
@@ -187,7 +186,7 @@ CODE.TABLE
 * TABLE OF HANDLER ENTRY POINTS
 *--------------------------------
 ENTRY.TABLE
-       .DA #CONTROL.E-1
+       .DA #ESCAPE-1
        .DA #DOWN.ARROW-1
        .DA #UP.ARROW-1
        .DA #CARRIAGE.RETURN-1
@@ -230,7 +229,7 @@ ECHO.MON.IN
 .1     LDA MON.IN,Y
        CMP #CR
        BEQ .2
-       JSR MON.COUT
+       JSR COUT
        INY
        BNE .1
 .2     RTS
@@ -253,7 +252,7 @@ ADVANCE
        LDY BUFFER.POS
        LDA MON.IN,Y
        LDY MON.YSAV
-       JMP MON.COUT
+       JMP COUT
 *--------------------------------
 * SHIFT HISTORY BUFFER
 *--------------------------------
@@ -301,6 +300,14 @@ CLEAR.Y.TO.END
        INY
        BNE CLEAR.Y.TO.END
 .1     JMP RESTORE.SCREEN.POS
+*--------------------------------
+* PRINT CONTROL CHAR AS INVERSE
+*--------------------------------
+COUT
+	CMP #SPC
+	BCS .1
+	SBC #$7F
+.1	JMP MON.COUT
 *--------------------------------
 * STORAGE
 *--------------------------------
