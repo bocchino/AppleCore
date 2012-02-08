@@ -2,27 +2,13 @@
        .LIST OFF
 * -------------------------------
 * SIMPLE SHELL EDITOR FOR APPLE //e
+* D1: S-C.ASM
+* D2: SHELL.EDITOR
 * -------------------------------
-* IMPORT MONITOR EQUATES
+* MONITOR EQUATES
        .IN MON.EQ,D1
-* DOS WARMSTART
-DOS.WARM .EQ $3D0
-* READ ROM, DON'T WRITE
-RDROM  .EQ $C082
-* READ AND WRITE RAM BANK 2
-RWRAM2 .EQ $C083
-* READ ROM, WRITE RAM BANK 1
-WRRAM1 .EQ $C089
-* READ ROM, WRITE RAM BANK 2
-WRRAM2 .EQ $C081
-* READ AND WRITE RAM BANK 1
-RWRAM1 .EQ $C08B
-* -------------------------------
-* DRIVER
-* -------------------------------
-       .OR $03AD
-       .TF SHELL.EDITOR.DRIVER.OBJ,D2
-       .IN DRIVER,D2
+* SHELL EDITOR EQUATES
+       .IN EDITOR.EQ,D2
 * -------------------------------
 * INSTALL APPLESOFT IN RAM BANK 2
 * -------------------------------
@@ -35,12 +21,20 @@ RWRAM1 .EQ $C08B
        .OR $1000
        .TF INSTALL.SHELL.EDITOR.OBJ,D2
        .IN INSTALL.SHELL.EDITOR,D2
+       .IN EDITOR.STRING.FNS,D2
 * -------------------------------
 * UNINSTALL EDITOR
 * -------------------------------
        .OR $1000
        .TF UNINSTALL.SHELL.EDITOR.OBJ,D2
        .IN UNINSTALL.SHELL.EDITOR,D2
+* -------------------------------
+* DRIVER
+* -------------------------------
+       .OR $9CDA
+       .TF SHELL.EDITOR.DRIVER.OBJ,D2
+DRIVER
+       .IN DRIVER,D2
 * -------------------------------
 * EDITOR
 * -------------------------------

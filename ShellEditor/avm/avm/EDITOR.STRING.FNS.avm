@@ -1,0 +1,30 @@
+:NEW
+*--------------------------------
+* EDITOR STRING FUNCTIONS
+*--------------------------------
+* PRINT CTRL-D AND BLOAD
+*--------------------------------
+PRINT.BLOAD
+	LDX #BLOAD.STR
+	LDA /BLOAD.STR
+	JMP PRINT.STRING
+* -------------------------------
+* PRINT STRING POINTED TO BY X,A
+* CLOBBERS MON.LOC0,MON.LOC1
+* -------------------------------
+PRINT.STRING
+	STX MON.LOC0
+	STA MON.LOC1
+	LDY #0
+.1	LDA (MON.LOC0),Y
+	BEQ .2
+	ORA #$80
+	JSR MON.COUT
+	INY
+	BNE .1
+.2	RTS
+*--------------------------------
+BLOAD.STR
+	.HS 04
+	.AS "BLOAD "
+	.HS 00

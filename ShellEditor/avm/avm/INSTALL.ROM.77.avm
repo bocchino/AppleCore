@@ -1,0 +1,32 @@
+:NEW
+	.LIST OFF
+*--------------------------------
+* INSTALL THE 1977 ROM, PATCHED
+* FOR USE WITH THE SHELL EDITOR
+*--------------------------------
+       .OR $1000
+       .TF INSTALL.ROM.77.OBJ,D2
+       .IN MON.EQ,D1
+       .IN EDITOR.EQ,D2
+INSTALL.ROM.77
+* READ AND WRITE RAM BANK 2
+       LDA RWRAM2
+       LDA RWRAM2
+* LOAD ROM
+	LDX #BLOAD.STR
+	LDA /BLOAD.STR
+	JSR PRINT.STRING
+	LDX #ROM.STR
+	LDA /ROM.STR
+	JSR PRINT.STRING
+* GO TO DOS COLD START
+        JSR DOS.COLD
+*--------------------------------
+ROM.STR
+	.AS "ROM.77.EDITOR.OBJ"
+	.HS 0D
+	.HS 00
+*--------------------------------
+	.IN EDITOR.STRING.FNS
+
+
