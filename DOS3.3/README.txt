@@ -13,7 +13,7 @@ This directory contains the following Apple II DOS 3.3 disk images:
    Apple II one, plus older ROM images patched to work with the
    editor.  The editor resides in $D000 RAM bank 1, so it works
    seamlessly with whatever is in bank 2 (usually Applesoft or Integer
-   basic).  Also, the editor is invoked automatically by AppleCore
+   BASIC).  Also, the editor is invoked automatically by AppleCore
    programs that ask for input via MON.GETLN.
 
 Please note:
