@@ -1,0 +1,56 @@
+# -----------------------------------
+# ROD'S COLOR PATTERN
+# GENERATES PATTERNS ON THE APPLE II
+# LO-RES GRAPHICS SCREEN
+#
+# ADAPTED FROM THE APPLE II REDBOOK
+# -----------------------------------
+VAR DONE:1=FALSE;
+
+DATA MSG "PRESS ANY KEY TO END";
+
+FN MAIN() {
+  MON_HOME();
+  SET_SWITCH(GRAPHICS);
+  SET_SWITCH(TEXT_WINDOW);
+  MON_CLRTOP();
+  POSITION_CURSOR(21,0);
+  PRINT_STRING(MSG);
+  WHILE (NOT DONE) DRAW_PATTERN();
+  SET_SWITCH(TEXT);
+  MON_HOME();
+}
+
+FN DRAW_PATTERN() {
+  VAR I:1;
+  VAR J:1;
+  VAR W:1=3;
+  VAR K:1;
+  VAR IW12:1;
+  WHILE ((W<=50) AND NOT DONE) {
+    SET I=1;
+    WHILE ((I<=19) AND NOT DONE) {
+      SET J=0;
+      SET IW12=I*W/12;
+      WHILE ((J<=19) AND NOT DONE) {
+        SET K=I+J;
+        SET_COLOR(((J*3)/(I+3))+IW12);
+	PLOT(I,K);
+	PLOT(K,I);
+	PLOT(40-I,40-K);
+	PLOT(40-K,40-I);
+	PLOT(K,40-I);
+	PLOT(40-I,K);
+	PLOT(I,40-K);
+	PLOT(40-K,I);
+	INCR J;
+	SET DONE=KEY_PRESSED();
+      }
+      INCR I;
+    }
+    INCR W;
+  }
+}
+
+INCLUDE "GRAPHICS";
+INCLUDE "IO";

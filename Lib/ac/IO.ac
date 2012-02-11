@@ -2,6 +2,41 @@
 # THE APPLECORE COMPILER, V1.0
 # IO FUNCTIONS
 # --------------------------------------
+# I/O HARDWARE INTERFACE
+# --------------------------------------
+# TOGGLE SPEAKER
+CONST SPEAKER			$C030;
+# READ KEYBOARD
+CONST KBD_STROBE		$C000;
+# CLEAR KEYBOARD STROBE
+CONST CLEAR_KBD_STROBE		$C010;
+# --------------------------------------
+# READ KEYBOARD AND CLEAR STROBE
+# --------------------------------------
+FN:1 READ_KBD() {
+  VAR CHAR:1=KBD_STROBE[0,1];
+  SET CLEAR_KBD_STROBE[0,1]=0;
+  RETURN CHAR;
+}
+# --------------------------------------
+# WAS KEY PRESSED?
+# --------------------------------------
+FN:1 KEY_PRESSED() {
+  RETURN READ_KBD() > $7F;
+}
+# --------------------------------------
+# POSITION CURSOR
+# --------------------------------------
+FN POSITION_CURSOR(X:1,Y:1) {
+  IF (X >= MON_WNDWDTH) { 
+    SET X=MON_WNDWDTH-1; 
+  }
+  IF (Y > 23) { SET Y=23; }
+  SET MON_CV[0,1]=X;
+  SET MON_CH[0,1]=Y;
+  MON_VTAB();
+}
+# --------------------------------------
 # GET NULL-TERMINATED LINE INTO MON_IN
 # RETURN - NUMBER OF CHARS READ
 # --------------------------------------

@@ -1,0 +1,82 @@
+# --------------------------------------
+# THE APPLECORE COMPILER, V1.0
+# GRAPHICS FUNCTIONS
+# --------------------------------------
+# SOFT SWITCHES
+# --------------------------------------
+CONST GRAPHICS		$C050;
+CONST TEXT		$C051;
+CONST NO_TEXT_WINDOW	$C052;
+CONST TEXT_WINDOW	$C053;
+CONST PAGE_1		$C054;
+CONST PAGE_2		$C055;
+CONST LO_RES		$C056;
+CONST HI_RES		$C057;
+# --------------------------------------
+# COLORS
+# --------------------------------------
+CONST BLACK		0;
+CONST RED		1;
+CONST DARK_BLUE		2;
+CONST VIOLET		3;
+CONST DARK_GREEN	4;
+CONST DARK_GREY		5;
+CONST MED_BLUE		6;
+CONST LIGHT_BLUE	7;
+CONST BROWN		8;
+CONST ORANGE		9;
+CONST LIGHT_GREY	10;
+CONST PINK		11;
+CONST LIGHT_GREEN	12;
+CONST YELLOW		13;
+CONST TURQUOISE		14;
+CONST WHITE		15;
+# --------------------------------------
+# SET SWITCH
+# --------------------------------------
+FN SET_SWITCH(SWITCH:2) {
+  SET SWITCH[0,1]=0;
+}
+# --------------------------------------
+# SET LO-RES COLOR
+# --------------------------------------
+FN SET_COLOR(COLOR:1) {
+  SET ^A=COLOR;
+  MON_SETCOL();
+}
+# --------------------------------------
+# PLOT LO-RES BLOCK
+# --------------------------------------
+FN PLOT(X:1,Y:1) {
+  SET ^Y=X;
+  SET ^A=Y;
+  MON_PLOT();
+}
+# --------------------------------------
+# DRAW HORIZONTAL LINE
+# --------------------------------------
+FN HLINE(X1:1,X2:1,Y:1) {
+  SET ^Y=X1;
+  SET MON_H2[0,1]=X2;
+  SET ^A=Y;
+  MON_HLINE();
+}
+# --------------------------------------
+# DRAW VERTICAL LINE
+# --------------------------------------
+FN VLINE(X:1,Y1:1,Y2:1) {
+  SET ^Y=X;
+  SET ^A=Y1;
+  SET MON_V2[0,1]=Y2;
+  MON_VLINE();
+}
+# --------------------------------------
+# READ LO-RES SCREEN
+# --------------------------------------
+FN:1 SCRN(X:1,Y:1) {
+  SET ^Y=X;
+  SET ^A=Y;
+  MON_SCRN();
+  RETURN ^A;
+}
+
