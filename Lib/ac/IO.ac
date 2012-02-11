@@ -32,8 +32,8 @@ FN POSITION_CURSOR(X:1,Y:1) {
     SET X=MON_WNDWDTH-1; 
   }
   IF (Y > 23) { SET Y=23; }
-  SET MON_CV[0,1]=X;
-  SET MON_CH[0,1]=Y;
+  SET MON_CH[0,1]=X;
+  SET MON_CV[0,1]=Y;
   MON_VTAB();
 }
 # --------------------------------------
