@@ -490,20 +490,29 @@ public class Parser {
     private Expression parseLValueExpression() 
 	throws SyntaxError, IOException
     {
-	return parseExpression(true);
+	return parseExpOrTerm(false,true);
     }
 
     /**
-     * Expr ::= LValueExpr | Call-Expr | Set-Expr | 
-     *          Binop-Expr | Unop-Expr | Numeric-Const | 
+     * Expr ::= LValueExpr | Binop-Expr | Term 
      */
     private Expression parseExpression() 
 	throws SyntaxError, IOException
     {
-	return parseExpression(false);
+	return parseExpOrTerm(false, false);
     }
 
-    private Expression parseExpression(boolean lvalue) 
+    /**
+     * Term ::= Call-Expr | Set-Expr | Unop-Expr | Numeric-Const
+     */
+    private Expression parseTerm() 
+	throws SyntaxError, IOException
+    {
+	return parseExpOrTerm(true, false);
+    }
+
+    private Expression parseExpOrTerm(boolean term, 
+				      boolean lvalue) 
 	throws SyntaxError, IOException
     {
 	Token token = scanner.getCurrentToken();
@@ -537,9 +546,12 @@ public class Parser {
 	    // Check for binary op
 	    Node.BinopExpression.Operator op =
 		getBinaryOperatorFor(scanner.getCurrentToken());
-	    if (op != null && (op != BinopExpression.Operator.EQUALS || !lvalue)) {
+	    if ((op != null) && term) {
+		return result;
+	    }
+	    else if (op != null && (op != BinopExpression.Operator.EQUALS || !lvalue)) {
 		scanner.getNextToken();
-		return parseBinopExpression(result, op);
+		result=parseBinopExpression(result, op);
 	    }
 	    // Check for call expr
 	    else if (scanner.getCurrentToken() 
@@ -624,7 +636,7 @@ public class Parser {
     }
 
     /**
-     * Unop-Expr ::= Unop Expr
+     * Unop-Expr ::= Unop Term
      * Unop      ::= '@' | 'NOT' | '-'
      */
     private UnopExpression parseUnopExpr(Node.UnopExpression.Operator op) 
@@ -634,7 +646,7 @@ public class Parser {
 	setLineNumberOf(unopExpr);
 	unopExpr.operator = op;
 	scanner.getNextToken();
-	unopExpr.expr = parseExpression();
+	unopExpr.expr = parseTerm();
 	return unopExpr;
     }
 
@@ -679,19 +691,15 @@ public class Parser {
 	setLineNumberOf(result);
 	result.left = left;
 	result.operator = op;
-	Expression right = parseExpression();
-	if (right instanceof BinopExpression) {
-	    BinopExpression binop = (BinopExpression) right;
-	    if (op.precedence <= binop.operator.precedence) {
+	result.right = parseTerm();
+	if (left instanceof BinopExpression) {
+	    BinopExpression binop = (BinopExpression) left;
+	    if (op.precedence < binop.operator.precedence) {
 		// Switch precedence
-		result.right = binop.left;
-		binop.left = result;
+		result.left = binop.right;
+		binop.right = result;
 		result = binop;
-	    } else {
-		result.right = right;
 	    }
-	} else {
-	    result.right = right;
 	}
 	return result;
     }

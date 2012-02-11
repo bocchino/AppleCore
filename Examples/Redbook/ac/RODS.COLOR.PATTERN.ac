@@ -34,7 +34,7 @@ FN DRAW_PATTERN() {
       SET IW12=(I*W)/12;
       WHILE (J<=19 AND NOT DONE) {
         SET K=I+J;
-        SET_COLOR((J*3)/(I+3)+IW12);
+        SET_COLOR(J*3/(I+3)+IW12);
 	PLOT(I,K);
 	PLOT(K,I);
 	PLOT(40-I,40-K);
