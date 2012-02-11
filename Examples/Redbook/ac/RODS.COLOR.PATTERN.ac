@@ -27,14 +27,14 @@ FN DRAW_PATTERN() {
   VAR W:1=3;
   VAR K:1;
   VAR IW12:1;
-  WHILE ((W<=50) AND NOT DONE) {
+  WHILE (W<=50 AND NOT DONE) {
     SET I=1;
-    WHILE ((I<=19) AND NOT DONE) {
+    WHILE (I<=19 AND NOT DONE) {
       SET J=0;
-      SET IW12=I*W/12;
-      WHILE ((J<=19) AND NOT DONE) {
+      SET IW12=(I*W)/12;
+      WHILE (J<=19 AND NOT DONE) {
         SET K=I+J;
-        SET_COLOR(((J*3)/(I+3))+IW12);
+        SET_COLOR((J*3)/(I+3)+IW12);
 	PLOT(I,K);
 	PLOT(K,I);
 	PLOT(40-I,40-K);
