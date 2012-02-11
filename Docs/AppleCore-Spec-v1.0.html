@@ -566,6 +566,10 @@ expression, a unary operation expression, or a parentheses expression.<BR>
  <I>parens-expr</I>
 </DIV><BR>
 <BR>
+Except for binary expressions as specified below, any ambiguity in
+parsing is resolved using right recursion. For example, <TT>@F()</TT> is
+parsed as <TT>@(F())</TT> and not <TT>(@F)()</TT>.<BR>
+<BR>
 <B>Numeric constants.</B> A numeric constant is an integer or
 character constant:<BR>
 <BR>

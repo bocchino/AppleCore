@@ -447,6 +447,11 @@ $$
 %
 $$
 
+\noindent
+Except for binary expressions as specified below, any ambiguity in
+parsing is resolved using right recursion.  For example, \kwd{@F()} is
+parsed as \kwd{@(F())} and not \kwd{(@F)()}.
+
 \bfhead{Numeric constants.}  A numeric constant is an integer or
 character constant:
 
