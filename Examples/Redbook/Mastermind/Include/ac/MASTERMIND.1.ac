@@ -121,7 +121,8 @@ FN PLAY_ROUND() {
     SET YPOS=TRY*2-36*(TRY*2/36);
     DISPLAY_GUESSES();
     FLASH_CURSOR();
-    GIVE_FEEDBACK();
+    IF (NOT DONE_GAME) 
+      GIVE_FEEDBACK();
   }
 }
 # -----------------------------------
