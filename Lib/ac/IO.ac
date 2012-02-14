@@ -25,6 +25,13 @@ FN:1 KEY_PRESSED() {
   RETURN READ_KBD() > $7F;
 }
 # --------------------------------------
+# WAIT FOR KEYPRESS
+# --------------------------------------
+FN WAIT_KEYPRESS() {
+  SET CLEAR_KBD_STROBE[0,1]=0;
+  WHILE (NOT KEY_PRESSED()) {}
+}
+# --------------------------------------
 # POSITION CURSOR
 # --------------------------------------
 FN POSITION_CURSOR(X:1,Y:1) {
