@@ -22,7 +22,7 @@ This directory contains the following Apple II DOS 3.3 disk images:
 Please note:
 
 1. The v2d format is proprietary to the Virtual II emulator, so the
-   first two disk images require Virtual II.  However, you can make
+   first three disk images require Virtual II.  However, you can make
    your own images that run on a different emulator as explained in
    AppleCore/README.txt.
 
