@@ -79,13 +79,14 @@ problem and try again until it works.
 5. APPLE II SYSTEM SETUP
 
 To set up your Apple II system, you need to make a DOS 3.3 disk with
-the AppleCore Virtual Machine (AVM) runtime files on it.  If you use
-Virtual ][, the easiest way to do this is to drag the disk image
-${APPLECORE}/DOS3.3/ACC.v2d into the virtual disk drive.  You should
+the AppleCore Virtual Machine (AVM) runtime files on it, as well as
+any library files that you need to include in your programs.  If you
+use Virtual ][, the easiest way to do this is to drag the disk image
+${APPLECORE}/DOS3.3/LIB.v2d into the virtual disk drive.  You should
 see the files AVM.PROLOGUE, AVM.1, AVM.2, AVM.3.BINOP, AVM.4.UNOP, and
 AVM.5.BUILT.IN already on the disk.  Also, the ACC.v2d disk contains
-files STRING and IO that are included by some of the examples.
-Finally, some examples are there (such as HELLO.WORLD).
+library files such as files STRING and IO that are included by some of
+the examples.
 
 If you are not using Virtual ][, or if you wish to make your own disk
 with these files on it, then you will need to build these files and
@@ -134,9 +135,9 @@ examples.  Unfortunately there's no tutorial documentation yet.
 However, after browsing the spec to get the general idea of what's
 going on, you should be able to read the examples in
 
-     ${APPLECORE}/Examples/ac
-     ${APPLECORE}/Lib/ac
-     ${APPLECORE}/Test/Good/ac
+     ${APPLECORE}/Examples
+     ${APPLECORE}/Lib
+     ${APPLECORE}/Test/Good
 
 to get a better idea of how to write programs in AppleCore.  More and
 larger examples will be forthcoming.
@@ -162,11 +163,8 @@ d. Get the FILE.EXEC files onto the Apple II system, as described in
 
 e. For each FILE.EXEC file, issue the command EXEC FILE.EXEC in the
    S-C Macro Assembler.  This creates an assembly file from the EXEC
-   file.  If you wish, save the assembly file FILE so it is available
-   on the Apple II in assembly format.  (This step saves doing the
-   EXEC every time you want to assemble against the file; it is
-   particularly useful for library files that do not change as you are
-   working on other files that need them.)
+   file.  Save the assembly file FILE so it is available on the Apple
+   II in assembly format.
 
 f. Assemble the top-level FILE (see Section 5.1 of the AppleCore spec)
    by issuing the command ASM to the S-C Macro Assembler.  Any
@@ -184,14 +182,15 @@ to the Applesoft prompt without clearing the screen.
 
 To see an example of this process, navigate to ${APPLECORE}/Test/Good
 and type 'make'.  After everything builds, drag the exec directory
-into the Apple II.  Then you should be able to do steps d-f above on
-any of the files you wish.  If the assembler complains that some files
-are missing, then put those files on the disk as described in Section
-5 and try again.  Unfortunately, the assembler just says FILE NOT
-FOUND, without specifying which file is missing.  However, you can
-figure this out by looking at the generated assembly file for the
-top-level source file: for every directive .IN FILE appearing in the
-assembly file, the file FILE must be present on the disk.  If you
+into the Apple II.  Then you should be able to do steps d-f on the
+disk LIB.v2d in ${APPLECORE}/DOS3.3, or an equivalent disk you make
+yourself as described in Section 5.  If the assembler complains that
+some files are missing, then put those files on the disk as described
+in Section 5 and try again.  Unfortunately, the assembler just says
+FILE NOT FOUND, without specifying which file is missing.  However,
+you can figure this out by looking at the generated assembly file for
+the top-level source file: for every directive .IN FILE appearing in
+the assembly file, the file FILE must be present on the disk.  If you
 prefer, you can also look at the top-level AppleCore source file: the
 needed files are just the AVM runtime files listed in Section 5 of
 this document, together with any files specified in the source file
@@ -199,7 +198,7 @@ via an INCLUDE declaration.
 
 8. ACC COMPILER OPTIONS
 
-Currently, acc accepts exactly one source file name SF (including
+Currently acc accepts exactly one source file name SF (including
 UNIX path info) on the command line, translates that file, and writes
 the results to standard output.  In the future, more flexible options
 (e.g., compiling multiple files in one acc command) may be provided.

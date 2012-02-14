@@ -4,17 +4,20 @@ AppleCore/DOS3.3
 This directory contains the following Apple II DOS 3.3 disk images:
 
 1. EXAMPLES.v2d: Source code and object code for the programs in
-   AppleCore/Examples/ac.
+   AppleCore/Examples, except for Mini Adventure.
 
 2. MINI.ADVENTURE.v2d: Source code and object code for the program
-   "Mini Adventure" in AppleCore/Examples/MINI.ADVENTURE.
+   "Mini Adventure" in AppleCore/Examples/MiniAdventure.
 
-3. SHELL.EDITOR.dsk: A shell editor that's a bit nicer than the native
+3. LIB.v2d: The AVM and library source files needed to assemble the
+   files on disks 1 and 2.
+
+4. SHELL.EDITOR.dsk: A shell editor that's a bit nicer than the native
    Apple II one, plus older ROM images patched to work with the
    editor.  The editor resides in $D000 RAM bank 1, so it works
    seamlessly with whatever is in bank 2 (usually Applesoft or Integer
-   BASIC).  Also, the editor is invoked automatically by AppleCore
-   programs that ask for input via MON.GETLN.
+   BASIC).  Also, once installed the editor is invoked automatically
+   by AppleCore programs that ask for input via MON.GETLN.
 
 Please note:
 
@@ -27,8 +30,8 @@ Please note:
    and their names end in .OBJ.  Source source files have type I.  To
    inspect the source code, you'll need the S-C Macro Assembler.
 
-3. Booting from the first two disks doesn't work, because they have no
-   DOS image.  You can boot from the SHELL.EDITOR disk.  Doing that
+3. Booting from the first three disks doesn't work, because they have
+   no DOS image.  You can boot from the SHELL.EDITOR disk.  Doing that
    installs the editor.
 
 
