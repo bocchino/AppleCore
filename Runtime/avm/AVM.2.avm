@@ -283,20 +283,61 @@ AVM.POP.IP
 	STX AVM.SIZE
         RTS
 * -------------------------------
-* PATCH DOS TO STORE ERROR CODE
-* AND RETURN, INSTEAD OF JUMPING
-* INTO APPLESOFT
+* REMEMBER WHICH BASIC WAS THERE
+* -------------------------------
+AVM.STORED.BASIC
+	.BS 1
+* -------------------------------
+* PATCH DOS
 * -------------------------------
 AVM.PATCH.DOS
+* GO TO INT BASIC DEFERRED MODE
+        LDA $AAB6
+	STA AVM.STORED.BASIC
+	LDY #$0
+	STY $AAB6
+	DEY
+	STY $D9
+* PATCH ERROR HANDLING
 	JSR AVM.EXECUTE.FN
 	PHC $A6D59F834CDE86AA5CAE
 	STM $8
 	RAF $0
 * -------------------------------
-* RESTORE DOS ERROR HANDLING
+* RESTORE DOS
 * -------------------------------
 AVM.UNPATCH.DOS
+* GO BACK TO PREVIOUS BASIC
+	LDA AVM.STORED.BASIC
+	STA $AAB6
+* RESTORE ERROR HANDLING
 	JSR AVM.EXECUTE.FN
 	PHC $A6D504F0AAB6ADBFE620
 	STM $8
 	RAF $0
+* -------------------------------
+* STORED RESET VECTOR
+* -------------------------------
+AVM.STORED.RESETV 
+        .BS 2
+* -------------------------------
+* RESTORE RESET VECTOR
+* -------------------------------
+AVM.RESTORE.RESETV
+	LDX AVM.STORED.RESETV
+	LDA AVM.STORED.RESETV+1
+* -------------------------------
+* SET RESET VECTOR TO (X,A)
+* -------------------------------
+AVM.SET.RESETV
+	LDY $3F2
+	STY AVM.STORED.RESETV
+	STX $3F2
+	LDY $3F3
+	STY AVM.STORED.RESETV+1
+	STA $3F3
+	EOR #$A5
+	STA $3F4
+	RTS
+
+
