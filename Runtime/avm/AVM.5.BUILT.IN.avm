@@ -4,6 +4,14 @@
 * APPLECORE VM, PART 5
 * BUILT-IN FUNCTIONS
 * -------------------------------
+* EXIT THE PROGRAM
+* -------------------------------
+EXIT
+* RESTORE DOS ERROR HANDLING
+	JSR AVM.UNPATCH.DOS
+* EXIT TO BASIC
+	JMP DOS.COLD.START
+* -------------------------------
 * FN:2 ALLOCATE(S:1)
 * RETURN PTR TO S ZEROS ON STACK
 * -------------------------------
@@ -146,4 +154,3 @@ AVM.SET.IP.TO.VAR
 	LDA (AVM.FP),Y
 	STA AVM.IP+1
 	RTS
-
