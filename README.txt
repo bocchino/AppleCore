@@ -274,7 +274,7 @@ most cases, if you want to load a BASIC program after running an
 AppleCore program, you should first say INT or FP (or 3D3G or
 CONTROL-B from inside the monitor) to reset the BASIC environment.
 Otherwise you may get an OUT OF MEMORY or MEM FULL error when you
-attempt to load the basic program.
+attempt to load the BASIC program.
 
 Currently AppleCore works with DOS 3.3 and DOS 3.3 only; ProDOS is not
 supported.  I've no plans to change that any time soon.  I'm most
