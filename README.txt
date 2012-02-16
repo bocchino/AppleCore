@@ -183,10 +183,10 @@ good one to start with:
 - In that directory, type 'make'.  The build system automatically does
   steps (a) through (c) for you.
 
-- Drag the directory 'exec' into drive 1 (step d) and say 'EXEC
-  RODS.COLOR.PATTERN.EXEC,D1' (step e).  If you want, save the file
-  RODS.COLOR.PATTERN to the exec directory itself or to a different
-  disk image.
+- With the S-C Macro Assembler running, drag the directory 'exec' into
+  drive 1 (step d) and say 'EXEC RODS.COLOR.PATTERN.EXEC,D1' at the
+  prompt (step e).  If you want, save the file RODS.COLOR.PATTERN to
+  the exec directory itself or to a different disk image.
 
 - Put the LIB.v2d disk (or equivalent) in drive 2.
 
