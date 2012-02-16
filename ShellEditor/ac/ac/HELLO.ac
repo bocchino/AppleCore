@@ -56,7 +56,6 @@ FN MAIN() {
   NORMAL();
 
   AVM_UNPATCH_DOS();
-  AVM_RESTORE_RESETV();
   DOS_COLD_START();    
 }
 
