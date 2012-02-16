@@ -280,12 +280,12 @@ Currently AppleCore works with DOS 3.3 and DOS 3.3 only; ProDOS is not
 supported.  I've no plans to change that any time soon.  I'm most
 interested in the "old school" Apple II with Woz's original monitor,
 integer BASIC, and the 40 column display installed.  The only newer
-features I really care about are booting DOS (essential) and
-lower-case characters (nice, but not essential).  All the rest of the
-newer firmware features like 80-character displays, double hi-res
-graphics, alternate character sets, auxiliary memories, etc. are nice,
-but they are also a headache to program and destroy the simplicity and
-elegance of Woz's original design.
+firmware features I really care about are booting DOS (essential) and
+lower-case characters (nice, but not essential).  Other features like
+80-character displays, double hi-res graphics, alternate character
+sets, auxiliary memories, etc. are nice, but they are also a headache
+to program and destroy the simplicity and elegance of Woz's original
+design.
 
 11. SHELL EDITOR
 
