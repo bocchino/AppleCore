@@ -8,7 +8,7 @@ The goal of AppleCore is to provide a "low-level high-level" language
 for writing programs that run on the Apple II series of computers.  A
 cross-compiler that runs on UNIX systems is currently available.  For
 more information on the design and goals of AppleCore, see
-Spec/AppleCore-Spec-v1.0.pdf.
+Docs/AppleCore-Spec-v1.0.pdf.
 
 2. LICENSE
 
@@ -129,7 +129,7 @@ disk as well.  Section 7 says a bit more about this.
 6. WRITING APPLECORE PROGRAMS
 
 Currently the best documentation for the AppleCore language is the
-spec (${APPLECORE}/Spec/AppleCore-Spec-v1.0.pdf).  However, like most
+spec (${APPLECORE}/Docs/AppleCore-Spec-v1.0.pdf).  However, like most
 language specs it's a bit dry and conveys all the details without
 enough worked examples.  Unfortunately there's no tutorial
 documentation yet.  However, after browsing the spec to get the
@@ -265,7 +265,7 @@ The AppleCore compiler compiles AppleCore source files to byte code
 for the AppleCore Virtual Machine (AVM).  The AVM code is then
 interpreted by the AVM runtime.  This makes the code very compact.
 For more details on how this works, see the AVM specification
-(${APPLECORE}/Spec/AVM-Spec-v1.0.pdf).
+(${APPLECORE}/Docs/AVM-Spec-v1.0.pdf).
 
 10. INTEGRATION WITH BASIC AND DOS
 
