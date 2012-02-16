@@ -5,8 +5,6 @@
 #
 # ADAPTED FROM THE APPLE II REDBOOK
 # -----------------------------------
-VAR DONE:1=FALSE;
-
 DATA MSG "PRESS ANY KEY TO END";
 
 FN MAIN() {
@@ -16,9 +14,7 @@ FN MAIN() {
   MON_CLRTOP();
   POSITION_CURSOR(0,21);
   PRINT_STRING(MSG);
-  WHILE (NOT DONE) DRAW_PATTERN();
-  SET_SWITCH(TEXT);
-  MON_HOME();
+  WHILE (TRUE) DRAW_PATTERN();
 }
 
 FN DRAW_PATTERN() {
@@ -27,12 +23,12 @@ FN DRAW_PATTERN() {
   VAR W:1=3;
   VAR K:1;
   VAR IW12:1;
-  WHILE (W<=50 AND NOT DONE) {
+  WHILE (W<=50) {
     SET I=1;
-    WHILE (I<=19 AND NOT DONE) {
+    WHILE (I<=19) {
       SET J=0;
       SET IW12=(I*W)/12;
-      WHILE (J<=19 AND NOT DONE) {
+      WHILE (J<=19) {
         SET K=I+J;
         SET_COLOR(J*3/(I+3)+IW12);
 	PLOT(I,K);
@@ -44,7 +40,11 @@ FN DRAW_PATTERN() {
 	PLOT(I,40-K);
 	PLOT(40-K,I);
 	INCR J;
-	SET DONE=KEY_PRESSED();
+	IF(KEY_PRESSED()) {
+	  SET_SWITCH(TEXT);
+  	  MON_HOME();
+	  EXIT();
+	}
       }
       INCR I;
     }
