@@ -266,13 +266,15 @@ less insanely, but they always restore DOS to its usual ways on exit,
 even via control-reset.  AppleCore programs can be run from the
 monitor prompt, the Integer BASIC prompt, or the AppleSoft prompt.
 
-The one exception is that for various reasons an AppleCore program
-exits via a JMP to $3D0 (DOS warm start) rather than $3D3 (DOS cold
-start).  Thus, if you want to load and run a BASIC program after
-running an AppleCore program, you should first say INT or FP (or 3D3G
-or CONTROL-B from inside the monitor) to reset the BASIC environment.
-Otherwise you may get an OUT OF MEMORY or MEM FULL error when you
-attempt to load the basic program.
+The one exception is that to maintain compatibility with whatever the
+environment is doing with control-reset, AppleCore programs always
+exit via a JMP to the location that stored in the reset vector
+($3F2-$3F3) on program startup.  Usually this is $3D0 (DOS warm
+start).  Thus, in most cases, if you want to load a BASIC program
+after running an AppleCore program, you should first say INT or FP (or
+3D3G or CONTROL-B from inside the monitor) to reset the BASIC
+environment.  Otherwise you may get an OUT OF MEMORY or MEM FULL error
+when you attempt to load the basic program.
 
 Currently AppleCore works with DOS 3.3 and DOS 3.3 only; ProDOS is not
 supported.  I've no plans to change that any time soon.  I'm most
