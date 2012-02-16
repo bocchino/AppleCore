@@ -176,20 +176,31 @@ f. Assemble the top-level FILE (see Section 5.1 of the AppleCore spec)
 The result of all this should be a file called FILE.OBJ on the Apple
 II disk.  Issue the command BRUN FILE.OBJ to run the program.
 
-To see an example of this process, navigate to ${APPLECORE}/Test/Good
-and type 'make'.  After everything builds, drag the exec directory
-into the Apple II.  Then you should be able to do steps d-f on the
-disk LIB.v2d in ${APPLECORE}/DOS3.3, or an equivalent disk you make
-yourself as described in Section 5.
-
-For a more complex example, try compiling any of the programs in
+For a simple example, try compiling any of the programs in
 ${APPLECORE}/Examples.  Examples/Redbook/RodsColorPattern might be a
-good simple one to start with.  Note that this program (and all
-programs in the Examples directory) are configured to expect the
-source files for the program itself on the disk in drive 1, and the
-LIB.v2d disk (or equivalent) in drive 2.  Otherwise, the assembler
-will complain that file(s) are not found when you say ASM.
+good one to start with:
 
+- In that directory, type 'make'.  The build system automatically does
+  steps (a) through (c) for you.
+
+- Drag the directory 'exec' into drive 1 (step d) and say 'EXEC
+  RODS.COLOR.PATTERN.EXEC,D1' (step e).  If you want, save the file
+  RODS.COLOR.PATTERN to the exec directory itself or to a different
+  disk image.
+
+- Put the LIB.v2d disk (or equivalent) in drive 2.
+
+- Say 'ASM'.  After assembly is finished, the file
+  RODS.COLOR.PATTERN.OBJ should be written to drive 1.
+
+For another example, try assembling Examples/Redbook/Mastermind.  This
+one is a bit more complex, because there are three source files you
+need to get onto the drive 1 disk: MASTERMIND, MASTERMIND.1, and
+MASTERMIND.2.
+
+Note that these programs (and all programs in the Examples directory)
+are configured to expect the source files for the program itself on
+the disk in drive 1, and the LIB.v2d disk (or equivalent) in drive 2.
 Unfortunately, when the assembler can't find a file that it needs, it
 just halts and says FILE NOT FOUND; it doesn't specify which file is
 missing.  However, you can figure this out by looking at the generated
