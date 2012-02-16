@@ -210,12 +210,12 @@ it at the zero-page address.
 \subsection{Signed Instructions}
 
 Signed instructions work similarly to sized instructions, except that
-the there is a sign argument and a size argument.  Counting the
-low-order bit as 0, bit 2 of the opcode represents the sign (1 is
-signed 0, is unsigned).  If the size is between 1 and 3 inclusive,
-then the size is stored in the low-order 2 bits of the opcode;
-otherwise the low-order 2 bits are both zeros, and size is stored in
-the byte immediately following the opcode.
+there is a sign argument and a size argument.  Counting the low-order
+bit as 0, bit 2 of the opcode represents the sign (1 is signed 0, is
+unsigned).  If the size is between 1 and 3 inclusive, then the size is
+stored in the low-order 2 bits of the opcode; otherwise the low-order
+2 bits are both zeros, and size is stored in the byte immediately
+following the opcode.
 
 \bfhead{DIV (Divide, Opcodes \$A8--\$AF):} Pull a \emph{size}-byte
 dividend and then a \emph{size}-byte divisor off the stack.  Do signed

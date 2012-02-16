@@ -253,12 +253,12 @@ it at the zero-page address.<BR>
 <H3 CLASS="subsection"><A NAME="htoc6">3.3</A>&nbsp;&nbsp;Signed Instructions</H3><!--SEC END -->
 
 Signed instructions work similarly to sized instructions, except that
-the there is a sign argument and a size argument. Counting the
-low-order bit as 0, bit 2 of the opcode represents the sign (1 is
-signed 0, is unsigned). If the size is between 1 and 3 inclusive,
-then the size is stored in the low-order 2 bits of the opcode;
-otherwise the low-order 2 bits are both zeros, and size is stored in
-the byte immediately following the opcode.<BR>
+there is a sign argument and a size argument. Counting the low-order
+bit as 0, bit 2 of the opcode represents the sign (1 is signed 0, is
+unsigned). If the size is between 1 and 3 inclusive, then the size is
+stored in the low-order 2 bits of the opcode; otherwise the low-order
+2 bits are both zeros, and size is stored in the byte immediately
+following the opcode.<BR>
 <BR>
 <B>DIV (Divide, Opcodes $A8&ndash;$AF):</B> Pull a <EM>size</EM>-byte
 dividend and then a <EM>size</EM>-byte divisor off the stack. Do signed
