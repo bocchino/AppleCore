@@ -1,4 +1,5 @@
 THE APPLECORE PROGRAMMING LANGUAGE, V1.0
+COPYRIGHT (C) 2011-12
 BY ROB BOCCHINO
 
 1. INTRODUCTION AND RATIONALE
@@ -39,9 +40,7 @@ running Mac OS X, then I recommend Virtual ][, available here:
 
 In addition to providing an amazingly full-featured Apple II emulation
 (including sounds that mimic the real thing), Virtual ][ supports file
-transfer from a Mac to a real Apple II and vice versa.  Other
-emulators may be available for Windows and Linux machines, but I
-haven't used them (after all, this is APPLECore!).
+transfer from a Mac to a real Apple II and vice versa.
 
 Finally, to assemble AppleCore programs on the Apple II, you need the
 S-C Macro Assembler, which is available here as a disk image that
@@ -81,9 +80,10 @@ problem and try again until it works.
 To set up your Apple II system, you need to make a DOS 3.3 disk with
 the AppleCore Virtual Machine (AVM) runtime files on it, as well as
 any library files that you need to include in your programs.  If you
-use Virtual ][, the easiest way to do this is to drag the disk image
-${APPLECORE}/DOS3.3/LIB.v2d into the virtual disk drive.  You should
-see the files AVM.PROLOGUE, AVM.1, AVM.2, AVM.3.BINOP, AVM.4.UNOP, and
+use Virtual ][ you can just use the disk image
+${APPLECORE}/DOS3.3/LIB.v2d.  If you boot DOS 3,3, drag that image
+into the virtual disk drive, and type CATALOG, you should see the
+files AVM.PROLOGUE, AVM.1, AVM.2, AVM.3.BINOP, AVM.4.UNOP, and
 AVM.5.BUILT.IN already on the disk.  Also, the ACC.v2d disk contains
 library files such as files STRING and IO that are included by some of
 the examples.
@@ -106,7 +106,7 @@ virtual drive; once you do it, Virtual ][ "remembers" the file type
 information by storing it in the UNIX directory.  Another option is to
 use a tool such as Apple Commander
 (http://applecommander.sourceforge.net/) to transfer the files one by
-one, but this is more awkward.
+one, but I find this method to be more awkward.
 
 Once the exec directory contents are on the Apple II, for each FILE in
 the directory, do the following:
@@ -118,8 +118,8 @@ the directory, do the following:
 
  - SAVE FILE to save the file to the disk.
 
-(Note that in Virtual ][ this process goes MUCH faster if you select
-"maximum speed" from the speed control knob on the tool bar.)    
+Note that in Virtual ][ this process goes MUCH faster if you select
+"maximum speed" from the speed control knob on the tool bar.
 
 If you want to compile programs that depend on other AppleCore files
 (e.g., the ones in ${APPLECORE}/Lib/ac) or assembly files (e.g., the
@@ -129,11 +129,12 @@ disk as well.  Section 7 says a bit more about this.
 6. WRITING APPLECORE PROGRAMS
 
 Currently the best documentation for the AppleCore language is the
-spec (${APPLECORE}/Spec/AppleCore-Spec-v1.0.pdf).  However, like any
-spec it's a bit dry and conveys all the details without enough worked
-examples.  Unfortunately there's no tutorial documentation yet.
-However, after browsing the spec to get the general idea of what's
-going on, you should be able to read the examples in
+spec (${APPLECORE}/Spec/AppleCore-Spec-v1.0.pdf).  However, like most
+language specs it's a bit dry and conveys all the details without
+enough worked examples.  Unfortunately there's no tutorial
+documentation yet.  However, after browsing the spec to get the
+general idea of what's going on, you should be able to read the
+examples in
 
      ${APPLECORE}/Examples
      ${APPLECORE}/Lib
@@ -163,38 +164,47 @@ d. Get the FILE.EXEC files onto the Apple II system, as described in
 
 e. For each FILE.EXEC file, issue the command EXEC FILE.EXEC in the
    S-C Macro Assembler.  This creates an assembly file from the EXEC
-   file.  Save the assembly file FILE so it is available on the Apple
-   II in assembly format.
+   file.  Save the assembly file FILE to the disk.
 
 f. Assemble the top-level FILE (see Section 5.1 of the AppleCore spec)
-   by issuing the command ASM to the S-C Macro Assembler.  Any
-   assembly files that FILE depends on (including the AVM runtime, see
-   Section 5 of this document) must be available on the disk, or the
-   assembler will complain that it can't find the files.
+   by loading it into the assembler and issuing the command ASM to the
+   S-C Macro Assembler.  Any assembly files that FILE depends on
+   (including the AVM runtime, see Section 5 of this document) must be
+   available on the disk, or the assembler will complain that it can't
+   find the files.
 
 The result of all this should be a file called FILE.OBJ on the Apple
-II disk.  Issue the command BRUN FILE.OBJ to run the program.  Note
-that if you do this inside the S-C Macro Assembler, the assembler
-shell clears the screen immediately after the program ends, so you may
-not see the output.  In this case, type FP to go the Applesoft prompt,
-and do BRUN FILE.OBJ from there.  The program will run and return you
-to the Applesoft prompt without clearing the screen.
+II disk.  Issue the command BRUN FILE.OBJ to run the program.
 
 To see an example of this process, navigate to ${APPLECORE}/Test/Good
 and type 'make'.  After everything builds, drag the exec directory
 into the Apple II.  Then you should be able to do steps d-f on the
 disk LIB.v2d in ${APPLECORE}/DOS3.3, or an equivalent disk you make
-yourself as described in Section 5.  If the assembler complains that
-some files are missing, then put those files on the disk as described
-in Section 5 and try again.  Unfortunately, the assembler just says
-FILE NOT FOUND, without specifying which file is missing.  However,
-you can figure this out by looking at the generated assembly file for
-the top-level source file: for every directive .IN FILE appearing in
-the assembly file, the file FILE must be present on the disk.  If you
-prefer, you can also look at the top-level AppleCore source file: the
-needed files are just the AVM runtime files listed in Section 5 of
+yourself as described in Section 5.
+
+For a more complex example, try compiling any of the programs in
+${APPLECORE}/Examples.  Examples/Redbook/RodsColorPattern might be a
+good simple one to start with.  Note that this program (and all
+programs in the Examples directory) are configured to expect the
+source files for the program itself on the disk in drive 1, and the
+LIB.v2d disk (or equivalent) in drive 2.  Otherwise, the assembler
+will complain that file(s) are not found when you say ASM.
+
+Unfortunately, when the assembler can't find a file that it needs, it
+just halts and says FILE NOT FOUND; it doesn't specify which file is
+missing.  However, you can figure this out by looking at the generated
+assembly file for the top-level source file: for every directive .IN
+FILE appearing in the assembly file, the file FILE must be present on
+the disk in the specified drive.  For example, if the top-level file
+contains the directive .IN GRAPHICS,D2, then the assembly file
+GRAPHICS must be present on the disk in drive 2 in order to do the
+assembly.  You can also look at the top-level AppleCore source file:
+the needed files are just the AVM runtime files listed in Section 5 of
 this document, together with any files specified in the source file
-via an INCLUDE declaration.
+via an INCLUDE declaration.  The AVM runtime files must be in the
+drive specified on the compiler command line, as explained in the next
+section.  The INCLUDE declarations specify the drive directly (e.g.,
+INCLUDE "GRAPHICS,D2").
 
 8. ACC COMPILER OPTIONS
 
@@ -228,9 +238,15 @@ future, more options may be provided:
     appears on the command line, then for top level mode the default
     origin is $803.  That puts the start of the program in the main
     storage area for programs and data, just above the three bytes
-    signaling an empty Applesoft program.  For include mode the
-    default is to use the origin implied by the point in the program
-    where the file is included.
+    signaling an empty BASIC program.  For include mode the default is
+    to use the origin implied by the point in the program where the
+    file is included.
+
+-avm-slot=S - Instruct the assembler to look for the AVM source files
+    in slot S (default 6).
+
+-avm-drive=D - Instruct the assembler to look for the AVM source fiels
+    in drive D (default 1).
 
 9. THE APPLECORE VIRTUAL MACHINE
 
@@ -239,3 +255,42 @@ for the AppleCore Virtual Machine (AVM).  The AVM code is then
 interpreted by the AVM runtime.  This makes the code very compact.
 For more details on how this works, see the AVM specification
 (${APPLECORE}/Spec/AVM-Spec-v1.0.pdf).
+
+10. INTEGRATION WITH BASIC AND DOS
+
+For the most part, loading and running AppleCore programs should work
+seamlessly with BASIC and DOS (except that loading an AppleCore
+program clobbers any resident BASIC program, of course).  AppleCore
+programs patch DOS while they are running to make error handling work
+less insanely, but they always restore DOS to its usual ways on exit,
+even via control-reset.  AppleCore programs can be run from the
+monitor prompt, the Integer BASIC prompt, or the AppleSoft prompt.
+
+The one exception is that for various reasons an AppleCore program
+exits via a JMP to $3D0 (DOS warm start) rather than $3D3 (DOS cold
+start).  Thus, if you want to load and run a BASIC program after
+running an AppleCore program, you should first say INT or FP (or 3D3G
+or CONTROL-B from inside the monitor) to reset the BASIC environment.
+Otherwise you may get an OUT OF MEMORY or MEM FULL error when you
+attempt to load the basic program.
+
+Currently AppleCore works with DOS 3.3 and DOS 3.3 only; ProDOS is not
+supported.  I've no plans to change that any time soon.  I'm most
+interested in the "old school" Apple II with Woz's original monitor,
+integer BASIC, and the 40 column display installed.  The only newer
+features I really care about are booting DOS (essential) and
+lower-case characters (nice, but not essential).  All the rest of the
+Apple //e stuff and beyond like 80-character displays, double hi-res
+graphics, alternate character sets, auxiliary memories, etc. are nice,
+but they are also a headache to program and destroy the simplicity and
+elegance of Woz's original design.
+
+11. SHELL EDITOR
+
+As part of the AppleCore release, I've included a niftly little shell
+editor that's fun to use from the monitor or BASIC prompt and is
+automatically invoked by any program that does a JSR to $FD6F (GETLN1)
+to get line input.  It even works nicely with the old monitor and the
+flashing cursor.  For more details, see the documentation in
+${APPLECORE}/DOS3.3/README.txt and the source code in
+${APPLECORE}/ShellEditor.
