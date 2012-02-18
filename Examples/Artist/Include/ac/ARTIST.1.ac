@@ -140,6 +140,7 @@ FN LOAD_HANDLER() {
   SET LEN=GET_LINE();
   IF (LEN > 0) {
     SET (@FILE_NAME)[0,33]=MON_IN[0,33];
+    HIDE_CURSOR();
     LOAD_SCREEN();
   }
   DRAW_WINDOW();
