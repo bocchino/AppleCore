@@ -1,0 +1,96 @@
+# -----------------------------------
+# ARTIST, PART 2
+# -----------------------------------
+# FILE NAME FOR SAVE AND LOAD
+VAR FILE_NAME:33;
+# -----------------------------------
+# LOAD SCREEN FROM DISK
+# -----------------------------------
+DATA LOAD     "LOAD ";
+DATA BLOAD    "\$04BLOAD ";
+
+FN LOAD_SCREEN() {
+  PRINT_STRING(BLOAD);
+  PRINT_STRING(@FILE_NAME);
+  MON_CROUT();
+  SET_SCRN_COLOR();
+}
+# -----------------------------------
+# SAVE SCREEN TO DISK
+# -----------------------------------
+DATA SAVE     "SAVE ";
+DATA BSAVE    "\$04BSAVE ";
+DATA ADDR_LEN ",A$400,L$400\$0D";
+
+FN SAVE_SCREEN() {
+  HIDE_CURSOR();
+  PRINT_STRING(BSAVE);
+  PRINT_STRING(@FILE_NAME);
+  PRINT_STRING(ADDR_LEN);
+}
+# -----------------------------------
+# PROCESS A CHAR
+# -----------------------------------
+FN PROCESS_CHAR(CHAR:1) {
+  VAR I:1=0;
+  VAR COLOR:1;
+  SET COLOR=(CHAR AND $7F)-'A';
+  IF (COLOR < $10) {
+    SET PEN_COLOR=COLOR;
+    SHOW_CURSOR();
+    RETURN;
+  }
+  WHILE (CMD_CHARS[I,1]>0) {
+    IF (EQ_CHAR(CHAR,CMD_CHARS[I,1])) {
+      CMD_HANDLERS[I<<1,2]();
+    }
+    INCR I;
+  }	
+}
+# -----------------------------------
+# MOVE CURSOR TO NEW COORDS
+# -----------------------------------
+FN MOVE_CURSOR_TO(NEWX:1S,NEWY:1S) {
+  NORMALIZE(@NEWX);
+  NORMALIZE(@NEWY);
+  SET_COLOR(SCRN_COLOR);
+  PLOT(XPOS,YPOS);
+  SET XPOS=NEWX;
+  SET YPOS=NEWY;
+  SET_SCRN_COLOR();
+  SHOW_CURSOR();
+}
+# -----------------------------------
+# SHOW THE CURSOR
+# -----------------------------------
+FN SHOW_CURSOR() {
+  IF (NOT (PEN_COLOR=SCRN_COLOR))
+    SET_COLOR(PEN_COLOR);
+  ELSE
+    SET_COLOR(NOT PEN_COLOR);
+  PLOT(XPOS,YPOS);  
+}
+# -----------------------------------
+# HIDE THE CURSOR
+# -----------------------------------
+FN HIDE_CURSOR() {
+  SET_COLOR(SCRN_COLOR);
+  PLOT(XPOS,YPOS);
+}
+# -----------------------------------
+# SET THE SCREEN COLOR AT POSX,POSY
+# -----------------------------------
+FN SET_SCRN_COLOR() {
+  SET SCRN_COLOR=SCRN(XPOS,YPOS);
+}
+# -----------------------------------
+# NORMALIZE COORDS
+# -----------------------------------
+FN NORMALIZE(PTR:2) {
+  VAR COORD:1S=PTR[0,1];
+  IF (COORD < 0)
+    SET PTR[0,1]=39;
+  ELSE IF (COORD > 39) 
+    SET PTR[0,1]=0;
+}
+

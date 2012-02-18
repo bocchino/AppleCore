@@ -1,0 +1,183 @@
+# -----------------------------------
+# ARTIST, PART 1
+# -----------------------------------
+# DRAW THE WINDOW BELOW THE PICTURE
+# -----------------------------------
+FN DRAW_WINDOW() {
+  VAR I:1=0;
+  SET_COLOR(BLACK);
+  HLINE(0,39,39);
+  SET MON_WNDTOP[0,1]=21;
+  POSITION_CURSOR(0,20);
+  MON_CLREOP();
+  WHILE (I<16) {
+    SET_COLOR(I);
+    PLOT(4+(I<<1),39);
+    POSITION_CURSOR(4+(I<<1),20);
+    PRINT_CHAR('A'+I);
+    INCR I;
+  }
+  DISPLAY_WINDOW_TEXT();
+}
+
+DATA ARTIST "ARTIST";
+DATA SIG    "BY ROB BOCCHINO";
+DATA TYPE   "TYPE ";
+DATA HELP   " FOR HELP";
+
+FN DISPLAY_WINDOW_TEXT() {
+  POSITION_CURSOR(0,21);
+  INVERSE();
+  PRINT_STRING(ARTIST);
+  NORMAL();
+  POSITION_CURSOR(40-STRING_LEN(SIG),21);
+  PRINT_STRING(SIG);
+  POSITION_CURSOR(0,23);
+  PRINT_STRING(TYPE);
+  INVERSE();
+  PRINT_CHAR('?');
+  NORMAL();
+  PRINT_STRING(HELP);
+}
+# -----------------------------------
+# INPUT LOOP
+# -----------------------------------
+FN ACCEPT_INPUT() {
+  WHILE (TRUE) {
+    DO_INTERVAL();
+    SET CURSOR_ON=NOT CURSOR_ON;
+  }
+}
+
+# LENGTH OF TIME TO FLASH CURSOR
+CONST CURSOR_INTERVAL 50;
+
+FN DO_INTERVAL() {
+  VAR I:1=0;
+  VAR CHAR:1;
+  IF (CURSOR_ON)
+    SHOW_CURSOR();
+  ELSE
+    HIDE_CURSOR();
+  WHILE (I<CURSOR_INTERVAL) {
+    IF (PDL_BUTTON_DOWN(0)) {
+      SET_COLOR(PEN_COLOR);
+      PLOT(XPOS,YPOS);
+      SET_SCRN_COLOR();
+    }
+    SET CHAR=READ_KBD();
+    IF (CHAR > $7F) {
+      PROCESS_CHAR(CHAR);
+    }
+    INCR I;
+  }
+}
+# -----------------------------------
+# COMMAND CHARS
+# -----------------------------------
+CONST LEFT_CHAR 	$08;
+CONST DOWN_CHAR         $0A;
+CONST UP_CHAR		$0B;
+CONST CTRL_L_CHAR	$0C;
+CONST CTRL_S_CHAR	$13;
+CONST RIGHT_CHAR	$15;
+CONST ESC_CHAR 		$1B;
+CONST QUEST_CHAR	'?';
+# -----------------------------------
+# TABLE OF COMMAND CHARS
+# -----------------------------------
+DATA CMD_CHARS ESC_CHAR;
+DATA 	       LEFT_CHAR;
+DATA	       RIGHT_CHAR;
+DATA	       UP_CHAR;
+DATA	       DOWN_CHAR;
+DATA	       CTRL_L_CHAR;
+DATA	       CTRL_S_CHAR;
+DATA	       QUEST_CHAR;
+DATA  	       0;
+# -----------------------------------
+# TABLE OF COMMAND HANDLERS
+# -----------------------------------
+DATA CMD_HANDLERS ESC_HANDLER;
+DATA 	       LEFT_HANDLER;
+DATA	       RIGHT_HANDLER;
+DATA	       UP_HANDLER;
+DATA	       DOWN_HANDLER;
+DATA	       LOAD_HANDLER;
+DATA	       SAVE_HANDLER;
+DATA	       QUEST_HANDLER;
+# -----------------------------------
+# COMMAND HANDLERS
+# -----------------------------------
+FN ESC_HANDLER() {
+  SET_SWITCH(TEXT);
+  SET MON_WNDTOP[0,1]=0;
+  MON_HOME();
+  EXIT();
+}
+
+FN LEFT_HANDLER() {
+  MOVE_CURSOR_TO(XPOS-1,YPOS);
+}
+
+FN RIGHT_HANDLER() {
+  MOVE_CURSOR_TO(XPOS+1,YPOS);
+}
+
+FN UP_HANDLER() {
+  MOVE_CURSOR_TO(XPOS,YPOS-1);
+}
+
+FN DOWN_HANDLER() {
+  MOVE_CURSOR_TO(XPOS,YPOS+1);
+}
+
+FN LOAD_HANDLER() {
+  VAR LEN:1;
+  POSITION_CURSOR(0,22);
+  MON_CLREOP();
+  PRINT_STRING(LOAD);
+  SET LEN=GET_LINE();
+  IF (LEN > 0) {
+    SET (@FILE_NAME)[0,33]=MON_IN[0,33];
+    LOAD_SCREEN();
+  }
+  DRAW_WINDOW();
+}    
+
+FN SAVE_HANDLER() {
+  VAR LEN:1;
+  POSITION_CURSOR(0,22);
+  MON_CLREOP();
+  PRINT_STRING(SAVE);
+  SET LEN=GET_LINE();
+  IF (LEN > 0) {
+    SET (@FILE_NAME)[0,33]=MON_IN[0,33];
+    SAVE_SCREEN();
+  }
+  DRAW_WINDOW();
+}
+
+DATA TODO "TODO";
+
+FN QUEST_HANDLER() {
+  MOVE($400,$7FF,$2000);
+  SET_SWITCH(TEXT);
+  SET MON_WNDTOP[0,1]=0;
+  MON_HOME();
+  PRINT_STRING(TODO);
+  MON_CROUT();  
+  MON_RDKEY();
+  SET_SWITCH(GRAPHICS);
+  MOVE($2000,$23FF,$400);
+}
+
+FN MOVE(START:2,END:2,DEST:2) {
+  SET ^Y=0;
+  SET MON_A1[0,2]=START;
+  SET MON_A2[0,2]=END;
+  SET MON_A4[0,2]=DEST;
+  MON_MOVE();
+}
+
+

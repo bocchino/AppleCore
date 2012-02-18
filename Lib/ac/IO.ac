@@ -10,6 +10,8 @@ CONST SPEAKER			$C030;
 CONST KBD_STROBE		$C000;
 # CLEAR KEYBOARD STROBE
 CONST CLEAR_KBD_STROBE		$C010;
+# READ PADDLE BUTTON
+CONST PDL_BUTTON		$C061;
 # --------------------------------------
 # READ KEYBOARD AND CLEAR STROBE
 # --------------------------------------
@@ -35,10 +37,10 @@ FN WAIT_KEYPRESS() {
 # POSITION CURSOR
 # --------------------------------------
 FN POSITION_CURSOR(X:1,Y:1) {
-  IF (X >= MON_WNDWDTH) { 
-    SET X=MON_WNDWDTH-1; 
+  IF (X >= MON_WNDWDTH[0,1]) { 
+    SET X=MON_WNDWDTH[0,1]-1; 
   }
-  IF (Y > 23) { SET Y=23; }
+  IF (Y > 23) SET Y=23;
   SET MON_CH[0,1]=X;
   SET MON_CV[0,1]=Y;
   MON_VTAB();
@@ -98,4 +100,9 @@ FN FLASH() {
 FN NORMAL() {
   SET MON_INVFLG[0,1]=$FF;
 }
-
+# --------------------------------------
+# PADDLE BUTTON DOWN?
+# --------------------------------------
+FN:1 PDL_BUTTON_DOWN(PDL:1) {
+  RETURN PDL_BUTTON[PDL,1] > $7F;
+}
