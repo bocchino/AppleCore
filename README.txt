@@ -259,6 +259,14 @@ future, more options may be provided:
 -avm-drive=D - Instruct the assembler to look for the AVM source fiels
     in drive D (default 1).
 
+These compiler options handle most common cases. Finer control over
+what goes where in memory can be achieved by compiling everything in
+include mode and writing a short assembly language program to glue the
+pieces together.  You might do this if the whole program won't fit in
+memory, or if you need the program to occupy discontinuous parts of
+memory (e.g., to wrap it around the hi-res graphics pages).  See
+${APPLECORE}/Examples/Chain for an example of how to do this.
+
 9. THE APPLECORE VIRTUAL MACHINE
 
 The AppleCore compiler compiles AppleCore source files to byte code
