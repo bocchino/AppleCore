@@ -1,0 +1,11 @@
+# -------------------------------
+# PROGRAM 1
+# -------------------------------
+DATA P1_STR "PROGRAM 1\$0D";
+FN PROGRAM_1() {
+  PRINT_STRING(P1_STR);
+  INCR SHARED_VAR;
+  PRINT_STRING(X_IS);
+  PRINT_HEX(@SHARED_VAR,1);
+  MON_CROUT();
+}

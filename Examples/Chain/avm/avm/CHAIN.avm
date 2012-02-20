@@ -1,0 +1,52 @@
+:NEW
+       .LIST OFF
+* -------------------------------
+* SIMPLE PROGRAM THAT LOADS
+* PARTS OF ITSELF WHILE RUNNING
+* -------------------------------
+       .OR $0803
+       .TF CHAIN.OBJ
+PROGRAM.START .EQ $2000
+* -------------------------------
+* PROLOGUE
+* -------------------------------
+* USUAL AVM PROLOGUE
+       .IN AVM.PROLOGUE,D2
+* FIX UP STACK BOUND
+       LDA #PROGRAM.START
+       STA AVM.SP.BOUND
+       LDA /PROGRAM.START
+       STA AVM.SP.BOUND+1
+* RUN PROGRAM AND EXIT
+       JSR MAIN
+       JMP EXIT
+* -------------------------------
+* INCLUDE MASTER PROGRAM
+* -------------------------------
+       .IN MASTER,D1
+* -------------------------------
+* PUT AVM AFTER MASTER
+* -------------------------------
+       .IN AVM.1,D2
+       .IN AVM.2,D2
+       .IN AVM.3.BINOP,D2
+       .IN AVM.4.UNOP,D2
+       .IN AVM.5.BUILT.IN,D2
+       .IN IO,D2
+* -------------------------------
+* PUT AVM STACK AFTER AVM
+* -------------------------------	
+AVM.STACK
+* -------------------------------
+* PUT PROGRAM 1 AT PROGRAM.START
+* -------------------------------
+       .OR PROGRAM.START
+       .TF CHAIN.PROGRAM.1.OBJ,D1
+       .IN CHAIN.PROGRAM.1,D1
+* -------------------------------
+* PUT PROGRAM 2 AT PROGRAM.START
+* -------------------------------
+       .OR PROGRAM.START
+       .TF CHAIN.PROGRAM.2.OBJ,D1
+       .IN CHAIN.PROGRAM.2,D1
+
