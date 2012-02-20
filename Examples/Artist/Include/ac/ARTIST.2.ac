@@ -2,7 +2,9 @@
 # ARTIST, PART 2
 # -----------------------------------
 # FILE NAME FOR SAVE AND LOAD
-VAR FILE_NAME:33;
+VAR FILE_NAME:32;
+# TERMINATING ZERO
+DATA 0;
 # -----------------------------------
 # LOAD SCREEN FROM DISK
 # -----------------------------------
