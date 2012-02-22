@@ -170,7 +170,6 @@ FN GET_INPUT() {
   WHILE (I<CURSOR_INTERVAL) {
     SET CHAR=READ_KBD();
     IF (CHAR > $7F) {
-      SET CLEAR_KBD_STROBE[0,1]=0;
       PROCESS_CHAR(CHAR);
       RETURN;
     }

@@ -17,7 +17,8 @@ CONST PDL_BUTTON		$C061;
 # --------------------------------------
 FN:1 READ_KBD() {
   VAR CHAR:1=KBD_STROBE[0,1];
-  SET CLEAR_KBD_STROBE[0,1]=0;
+  IF (CHAR > $7F)
+    SET CLEAR_KBD_STROBE[0,1]=0;
   RETURN CHAR;
 }
 # --------------------------------------
