@@ -5,9 +5,9 @@
 * FOR USE WITH THE SHELL EDITOR
 *--------------------------------
        .OR $1000
-       .TF INSTALL.ROM.77.OBJ,D2
-       .IN MON.EQ,D1
-       .IN EDITOR.EQ,D2
+       .TF INSTALL.ROM.77.OBJ,D1
+       .IN MON.EQ,D2
+       .IN EDITOR.EQ,D1
 INSTALL.ROM.77
 * READ AND WRITE RAM BANK 2
        LDA RWRAM2
@@ -27,6 +27,6 @@ ROM.STR
 	.HS 0D
 	.HS 00
 *--------------------------------
-	.IN EDITOR.STRING.FNS
+	.IN EDITOR.STRING.FNS,D1
 
 
