@@ -1,0 +1,121 @@
+# -----------------------------------
+# EDIFY COMMAND HANDLERS, PART 1
+# -----------------------------------
+# (A)PPEND
+# -----------------------------------
+DATA A_MSG "TYPE LINES TO APPEND, BLANK LINE TO END\$0D";
+FN A_HANDLER() {
+  VAR LEN:1;
+  SET MODIFIED=TRUE;
+  IF (EQ_CHAR(READ_CHAR(),'B')) {
+    NEXT_CHAR();
+    # TODO
+  }
+  ELSE IF (EQ_CHAR(READ_CHAR(),'T')) {
+    NEXT_CHAR();
+    SET MON_IN[0,1]=0;
+    BUF_ADD_LINE(MON_IN,0);
+  }
+  ELSE {
+    PRINT_STRING(A_MSG);
+    WHILE (TRUE) {
+      SET LEN=GET_BUF_LINE(BUF_SIZE+1);
+      IF (LEN=0) RETURN;
+      BUF_ADD_LINE(MON_IN,LEN);
+    }
+  }
+}
+# -----------------------------------
+# PRINT CLIP(B)OARD
+# -----------------------------------
+FN B_HANDLER() {
+
+}
+# -----------------------------------
+# (C)LEAR BUFFER
+# -----------------------------------
+DATA CLEAR_MSG "CLEAR BUFFER (Y/N)? ";
+
+FN C_HANDLER() {
+  VAR CH:1;
+  PRINT_STRING(CLEAR_MSG);
+  SET CH=GET_CHAR();
+  IF (EQ_CHAR(CH,'Y'))
+    CLEAR_BUFFER();
+}
+# -----------------------------------
+# (D)ELETE LINE
+# -----------------------------------
+FN D_HANDLER() {
+  IF (BUF_SIZE=0)
+    ERROR(BUFFER_EMPTY);
+  ELSE
+    BUF_DELETE_LINE();
+}
+# -----------------------------------
+# (E)NDING LINE
+# -----------------------------------
+DATA ENDING_LINE "ENDING LINE=";
+
+FN E_HANDLER() {
+  IF (BUF_SIZE=0)
+    ERROR(BUFFER_EMPTY);
+  ELSE {
+    PRINT_STRING(ENDING_LINE);
+    PRINT_NUM(BUF_SIZE);
+    MON_CROUT();
+  }
+}
+# -----------------------------------
+# (F)ILE
+# -----------------------------------
+DATA FNAME "FILE NAME=";
+
+FN F_HANDLER() {
+  IF (EQ_CHAR(READ_CHAR(),BINDING_CHAR)) {
+    NEXT_CHAR();
+    IF (READ_CHAR()=NO_CHAR)
+      ERROR(EXPECTED_FILE_NAME);
+    ELSE
+      SET (@FILE_NAME)[0,32]=
+        MON_IN[INPUT_IDX,32];
+    SET INPUT_IDX=INPUT_LEN;
+  }
+  ELSE IF ((@FILE_NAME)[0,1]=0)
+    ERROR(FILE_NAME_NOT_SET);
+  ELSE {
+    PRINT_STRING(FNAME);
+    PRINT_STRING(@FILE_NAME);
+    MON_CROUT();
+  }
+}
+# -----------------------------------
+# (H)ELP
+# -----------------------------------
+FN H_HANDLER() {
+
+}
+# -----------------------------------
+# (I)NSERT
+# -----------------------------------
+FN I_HANDLER() {
+
+}
+# -----------------------------------
+# MAR(K)
+# -----------------------------------
+FN K_HANDLER() {
+
+}
+# -----------------------------------
+# (L)OAD
+# -----------------------------------
+FN L_HANDLER() {
+
+}
+# -----------------------------------
+# (M)ATCH
+# -----------------------------------
+FN M_HANDLER() {
+
+}

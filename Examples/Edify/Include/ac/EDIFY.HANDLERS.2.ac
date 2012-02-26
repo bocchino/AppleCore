@@ -1,0 +1,107 @@
+# -----------------------------------
+# EDIFY COMMAND HANDLERS, PART 2
+# -----------------------------------
+# CURRENT LI(N)E
+# -----------------------------------
+FN N_HANDLER() {
+  VAR NEW_N:1;
+  IF (EQ_CHAR(READ_CHAR(),BINDING_CHAR)) {
+    NEXT_CHAR();
+    SET NEW_N=PARSE_NUM();
+    IF (NOT ERR_FLAG) {
+      IF (NEW_N < 1 OR NEW_N > BUF_SIZE)
+        ERROR(OUT_OF_RANGE);
+      ELSE
+        SET_N(NEW_N);
+    }
+  }
+  ELSE IF (BUF_SIZE=0) {
+    ERROR(BUFFER_EMPTY);
+  }
+  ELSE {
+    PRINT_LINE(N_PTR,N);
+  }
+}
+# -----------------------------------
+# (R)EPLACE
+# -----------------------------------
+FN R_HANDLER() {
+
+}
+# -----------------------------------
+# (S)AVE
+# -----------------------------------
+FN S_HANDLER() {
+
+}
+# -----------------------------------
+# (V)IEW
+# -----------------------------------
+FN V_HANDLER() {
+  VAR I:1=0;
+  VAR LINE_PTR:2=N_PTR;
+  IF (BUF_SIZE=0) {
+    ERROR(BUFFER_EMPTY);
+    RETURN;
+  }
+  WHILE (I < W AND (N+I<=BUF_SIZE)) {
+    PRINT_LINE(LINE_PTR,N+I);
+    NEXT_LINE_PTR(@LINE_PTR);
+    INCR I;
+  }
+}
+# -----------------------------------
+# (W)INDOW SIZE
+# -----------------------------------
+DATA WINDOW_SIZE "WINDOW SIZE=";
+
+FN W_HANDLER() {
+  VAR NEW_W:2;
+  IF (EQ_CHAR(READ_CHAR(),BINDING_CHAR)) {
+    NEXT_CHAR();
+    SET NEW_W=PARSE_NUM();
+    IF (NOT ERR_FLAG) {
+      IF (NEW_W=0)
+        ERROR(OUT_OF_RANGE);
+      ELSE
+        SET W=NEW_W;
+    }    
+  }
+  ELSE {
+    PRINT_STRING(WINDOW_SIZE);
+    PRINT_NUM(W);
+    MON_CROUT();
+  }
+}
+# -----------------------------------
+# E(X)TRACT
+# -----------------------------------
+FN X_HANDLER() {
+
+}
+# -----------------------------------
+# COP(Y)
+# -----------------------------------
+FN Y_HANDLER() {
+
+}
+# -----------------------------------
+# '+'
+# -----------------------------------
+FN PLUS_HANDLER() {
+
+}
+# -----------------------------------
+# '-'
+# -----------------------------------
+FN MINUS_HANDLER() {
+
+}
+# -----------------------------------
+# '#'
+# -----------------------------------
+FN NUM_HANDLER() {
+  SET PRINT_LINE_NUMS=
+    NOT PRINT_LINE_NUMS;
+}
+

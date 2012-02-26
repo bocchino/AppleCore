@@ -1,0 +1,230 @@
+# -----------------------------------
+# EDIFY, PART 1
+# -----------------------------------
+# CONSTANTS
+# -----------------------------------
+CONST BINDING_CHAR    ':';
+CONST DEFAULT_W        20;
+CONST NO_K            $FF;
+CONST NO_CHAR	      0;
+CONST MAX_STACK_SIZE  256;
+# -----------------------------------
+# ERROR MESSAGES
+# -----------------------------------
+DATA EXPECTED_NUM_ARG   "EXPECTED NUMERIC ARGUMENT";
+DATA OUT_OF_RANGE       "OUT OF RANGE";
+DATA EXPECTED_FILE_NAME "EXPECTED FILE NAME";
+DATA BUFFER_EMPTY       "BUFFER IS EMPTY";
+DATA BUFFER_NOT_EMPTY   "BUFFER IS NOT EMPTY";
+DATA FILE_NAME_NOT_SET  "FILE NAME NOT SET";
+DATA MARK_NOT_SET       "MARK NOT SET";
+DATA PATTERN_NOT_SET    "PATTERN NOT SET";
+DATA EXPECTED_PATTERN   "EXPECTED PATTERN";
+# -----------------------------------
+# VARIABLES
+# -----------------------------------
+# FILE NAME TO (L)OAD AND (S)AVE
+VAR FILE_NAME:33=0;
+# NUMBER OF LINES IN CLIPBOARD
+VAR CB_LEN:2=0;
+# START OF CLIPBOARD
+VAR CB_START:2;
+# END OF CLIPBOARD
+VAR CB_END:2;
+# WINDOW SIZE
+VAR W:1=DEFAULT_W;
+# WHETHER TO PRINT LINE NUMBERS
+VAR PRINT_LINE_NUMS:1=TRUE;
+# INPUT LINE
+VAR INPUT:255;
+# INPUT LINE LENGTH
+VAR INPUT_LEN:1;
+# INDEX INTO INPUT LINE
+VAR INPUT_IDX:1;
+# SEARCH PATTERN
+VAR PATTERN:33=0;
+# REPLACEMENT PATTERN
+VAR REPLACEMENT:33=0;
+# COMMAND BEING PROCESSED
+VAR COMMAND:1;
+# DID AN ERROR OCCUR?
+VAR ERR_FLAG:1=FALSE;
+# MARK
+VAR K:1=NO_K;
+# BUFFER FOR LINE NUMBER STRINGS
+VAR NUM_STR:6;
+# -----------------------------------
+# INITIALIZE VARIABLES
+# -----------------------------------
+FN AVM_SP_BOUND();
+FN AVM_STACK();
+
+FN INIT_VARS() {
+  # START OF CLIPBOARD IS TOP OF HEAP
+  SET CB_START=AVM_SP_BOUND[0,2];
+  # RESERVE 512 BYTES FOR STACK
+  SET BUF_START=AVM_STACK+512;
+  # SET NEW STACK BOUND
+  SET AVM_SP_BOUND[0,2]=BUF_START-1;
+  # CLEAR THE BUFFER
+  CLEAR_BUFFER();
+}
+# -----------------------------------
+# PROMPT AND GET INPUT
+# -----------------------------------
+FN:1 GET_INPUT(PROMPT:2) {
+  PRINT_STRING(PROMPT);
+  RETURN GET_LINE();
+}
+# -----------------------------------
+# GET SINGLE CHAR OF INPUT
+# -----------------------------------
+FN:1 GET_CHAR() {
+  VAR CH:1;
+  MON_RDKEY();
+  SET CH=^A;
+  PRINT_CHAR(CH);
+  MON_CROUT();
+  RETURN CH;
+}
+# -----------------------------------
+# EXIT EDIFY
+# -----------------------------------
+DATA SAVE_BUFFER  "SAVE BUFFER? (Y/N) ";
+DATA FNAME_PROMPT "FILE NAME: ";
+
+FN EXIT_EDIFY() {
+  VAR CH:1;
+  IF (MODIFIED) {
+    PRINT_STRING(SAVE_BUFFER);
+    SET CH=GET_CHAR();
+    IF (EQ_CHAR(CH,'Y')) {
+      IF (STRING_LEN(@FILE_NAME)=0) {
+        GET_INPUT(FNAME_PROMPT);
+	SET (@FILE_NAME)[0,32]=MON_IN[0,32];
+      }
+      IF (STRING_LEN(FILE_NAME)>0)
+        S_HANDLER();
+    }   
+  }
+  EXIT();
+}
+# -----------------------------------
+# PARSE INPUT
+# -----------------------------------
+DATA SKIPPED "SKIPPED ";
+
+FN PARSE_INPUT() {
+  SET INPUT_IDX=0;
+  SET ERR_FLAG=FALSE;
+  WHILE (TRUE) {
+    SET COMMAND=READ_CHAR();
+    IF (COMMAND=NO_CHAR) RETURN;
+    NEXT_CHAR();
+    DO_COMMAND();
+    IF (ERR_FLAG AND (INPUT_IDX < INPUT_LEN)) {
+      PRINT_STRING(SKIPPED);
+      PRINT_STRING(INPUT_IDX+INPUT_LEN);
+      MON_CROUT();
+    }
+  }
+}
+# -----------------------------------
+# DO A COMMAND
+# -----------------------------------
+DATA SKIPPING "SKIPPING ";
+FN DO_COMMAND() {
+  VAR CH:1;
+  VAR I:1=0;
+  VAR DONE:1=FALSE;
+  WHILE (NOT DONE) {
+    SET CH=COMMAND_TBL[I,1];
+    IF (EQ_CHAR(CH,NO_CHAR))
+      SET DONE=TRUE;
+    ELSE IF (EQ_CHAR(CH,COMMAND)) {
+      COMMAND_HANDLER_TBL[I<<1,2]();
+      RETURN;
+    }
+    INCR I;
+  }
+  PRINT_STRING(SKIPPING);
+  PRINT_CHAR(COMMAND);
+  MON_CROUT();
+}
+# -----------------------------------
+# TABLE OF COMMANDS
+# -----------------------------------
+DATA COMMAND_TBL 'A';
+DATA 		 'B';
+DATA		 'C';
+DATA		 'D';
+DATA		 'E';
+DATA		 'F';
+DATA		 'H';
+DATA		 'I';
+DATA		 'K';
+DATA		 'L';
+DATA		 'N';
+DATA		 'M';
+DATA		 'R';
+DATA		 'S';
+DATA		 'V';
+DATA		 'W';
+DATA		 'X';
+DATA		 'Y';
+DATA		 '+';
+DATA		 '-';
+DATA		 '#';
+DATA		 NO_CHAR;
+# -----------------------------------
+# TABLE OF COMMAND HANDLERS
+# -----------------------------------
+DATA COMMAND_HANDLER_TBL A_HANDLER;
+DATA 			 B_HANDLER;
+DATA			 C_HANDLER;
+DATA			 D_HANDLER;
+DATA			 E_HANDLER;
+DATA			 F_HANDLER;
+DATA			 H_HANDLER;
+DATA			 I_HANDLER;
+DATA			 K_HANDLER;
+DATA			 L_HANDLER;
+DATA			 N_HANDLER;
+DATA			 M_HANDLER;
+DATA			 R_HANDLER;
+DATA			 S_HANDLER;
+DATA			 V_HANDLER;
+DATA			 W_HANDLER;
+DATA			 X_HANDLER;
+DATA			 Y_HANDLER;
+DATA			 PLUS_HANDLER;
+DATA			 MINUS_HANDLER;
+DATA			 NUM_HANDLER;
+# -----------------------------------
+# READ INPUT LINE AT IDX.  RETURN
+# NO_CHAR IF THERE ARE NO MORE CHARS 
+# IN THE LINE.
+# -----------------------------------
+FN:1 READ_CHAR() {
+  IF (INPUT_IDX >= INPUT_LEN)
+    RETURN NO_CHAR;
+  RETURN (@INPUT)[INPUT_IDX,1];
+}
+# -----------------------------------
+# ADVANCE INPUT_IDX TO NEXT CHAR
+# -----------------------------------
+FN NEXT_CHAR() {
+  IF (INPUT_IDX < INPUT_LEN)
+    INCR INPUT_IDX;
+}
+# -----------------------------------
+# PRINT AN ERROR MESSAGE
+# -----------------------------------
+DATA SEPARATOR ": ";
+FN ERROR(MSG:2) {
+  PRINT_CHAR(COMMAND);
+  PRINT_STRING(SEPARATOR);
+  PRINT_STRING(MSG);
+  MON_CROUT();
+  SET ERR_FLAG=TRUE;
+}

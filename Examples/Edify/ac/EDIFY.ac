@@ -1,0 +1,35 @@
+# -----------------------------------
+# EDIFY: MAIN PROGRAM
+# -----------------------------------
+DATA GREETING "EDIFY: A SIMPLE INTERACTIVE EDITOR\$0D"\;
+DATA 	      "COPYRIGHT (C) 2012 ROB BOCCHINO\$0D"\;
+DATA	      "TYPE H FOR HELP, BLANK LINE TO END\$0D";
+
+DATA EDIFY_PROMPT "EDIFY: ";
+
+FN MAIN() {
+  INIT_VARS();
+  PRINT_STRING(GREETING);
+  WHILE (TRUE) {
+    SET INPUT_LEN=
+     GET_INPUT(EDIFY_PROMPT);
+    IF (INPUT_LEN=0)
+      EXIT_EDIFY();
+    SET (@INPUT)[0,255]=MON_IN[0,255];
+    PARSE_INPUT();
+  }
+}
+# -----------------------------------
+# INCLUDE EDIFY FILES FROM D1
+# -----------------------------------
+INCLUDE "EDIFY.1,D1";
+INCLUDE "EDIFY.2,D1";
+INCLUDE "EDIFY.HANDLERS.1,D1";
+INCLUDE "EDIFY.HANDLERS.2,D1";
+INCLUDE "EDIFY.BUFFER,D1";
+# -----------------------------------
+# INCLUDE LIB FILES FROM D2
+# -----------------------------------
+INCLUDE "IO,D2";
+INCLUDE "STRING,D2";
+INCLUDE "CHAR,D2";
