@@ -96,13 +96,25 @@ FN Y_HANDLER() {
 # '+'
 # -----------------------------------
 FN PLUS_HANDLER() {
-
+  IF (BUF_SIZE=0)
+    ERROR(BUFFER_EMPTY);
+  ELSE {
+    IF (N+W > BUF_SIZE)
+      SET_N(BUF_SIZE);
+    ELSE SET_N(N+W);
+  }
 }
 # -----------------------------------
 # '-'
 # -----------------------------------
 FN MINUS_HANDLER() {
-
+  IF (BUF_SIZE=0)
+    ERROR(BUFFER_EMPTY);
+  ELSE {
+    IF (N <= W)
+      SET_N(1);
+    ELSE SET_N(N-W);
+  }
 }
 # -----------------------------------
 # '#'

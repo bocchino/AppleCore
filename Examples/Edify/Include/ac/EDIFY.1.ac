@@ -21,7 +21,7 @@ DATA MARK_NOT_SET       "MARK NOT SET";
 DATA PATTERN_NOT_SET    "PATTERN NOT SET";
 DATA EXPECTED_PATTERN   "EXPECTED PATTERN";
 DATA FILE_NOT_FOUND     "FILE NOT FOUND";
-DATA IO_ERROR		"I/O ERROR";
+DATA DISK_ERROR		"DISK ERROR";
 # -----------------------------------
 # VARIABLES
 # -----------------------------------
@@ -81,17 +81,6 @@ FN:1 GET_INPUT(PROMPT:2) {
   RETURN GET_LINE();
 }
 # -----------------------------------
-# GET SINGLE CHAR OF INPUT
-# -----------------------------------
-FN:1 GET_CHAR() {
-  VAR CH:1;
-  MON_RDKEY();
-  SET CH=^A;
-  PRINT_CHAR(CH);
-  MON_CROUT();
-  RETURN CH;
-}
-# -----------------------------------
 # EXIT EDIFY
 # -----------------------------------
 DATA SAVE_BUFFER  "SAVE BUFFER? (Y/N) ";
@@ -100,9 +89,8 @@ DATA FNAME_PROMPT "FILE NAME: ";
 FN EXIT_EDIFY() {
   VAR CH:1;
   IF (MODIFIED) {
-    PRINT_STRING(SAVE_BUFFER);
-    SET CH=GET_CHAR();
-    IF (EQ_CHAR(CH,'Y')) {
+    GET_INPUT(SAVE_BUFFER);
+    IF (EQ_CHAR(MON_IN[0,1],'Y')) {
       IF (STRING_LEN(@FILE_NAME)=0) {
         GET_INPUT(FNAME_PROMPT);
 	SET (@FILE_NAME)[0,32]=MON_IN[0,32];
@@ -121,16 +109,16 @@ DATA SKIPPED "SKIPPED ";
 FN PARSE_INPUT() {
   SET INPUT_IDX=0;
   SET ERR_FLAG=FALSE;
-  WHILE (TRUE) {
+  WHILE (NOT ERR_FLAG) {
     SET COMMAND=READ_CHAR();
     IF (COMMAND=NO_CHAR) RETURN;
     NEXT_CHAR();
     DO_COMMAND();
-    IF (ERR_FLAG AND (INPUT_IDX < INPUT_LEN)) {
-      PRINT_STRING(SKIPPED);
-      PRINT_STRING(INPUT_IDX+INPUT_LEN);
-      MON_CROUT();
-    }
+  }
+  IF (ERR_FLAG AND (INPUT_IDX < INPUT_LEN)) {
+    PRINT_STRING(SKIPPED);
+    PRINT_STRING(@INPUT+INPUT_IDX);
+    MON_CROUT();
   }
 }
 # -----------------------------------

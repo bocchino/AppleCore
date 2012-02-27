@@ -90,12 +90,14 @@ DATA		   0;
 
 FN PRINT_LINE_NUM(LINE_NUM:2) {
   VAR I:1=0;
+  INVERSE();
   WHILE (I<3) {
     IF (LINE_NUM < PLACES[I<<1,2])
       PRINT_CHAR('0');
     INCR I;
   }  
   PRINT_NUM(LINE_NUM);
+  NORMAL();
 }
 # -----------------------------------
 # PRINT A DECIMAL NUMBER
