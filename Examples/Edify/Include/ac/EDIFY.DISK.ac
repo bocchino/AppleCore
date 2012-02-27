@@ -1,0 +1,86 @@
+# -----------------------------------
+# EDIFY: DISK OPERATIONS
+# -----------------------------------
+# VARIABLE WHERE DOS ERROR CODE IS STORED
+CONST DOS_ERRNO $DE;
+# DOS ERROR CODE: FILE NOT FOUND
+CONST DOS_NOT_FOUND 6;
+
+DATA DOS_OPEN "\$04OPEN ";
+DATA DOS_READ "\$04READ ";
+DATA DOS_WRITE "\$04WRITE ";
+DATA DOS_CLOSE "\$04CLOSE\$0D";
+DATA DOS_DELETE "\$04DELETE ";
+# -----------------------------------
+# DELETE FILE FROM DISK, IF THERE
+# -----------------------------------
+FN DELETE_FILE() {
+  PRINT_STRING(DOS_DELETE);
+  PRINT_STRING(@FILE_NAME);
+  MON_CROUT();
+}
+# -----------------------------------
+# WRITE BUFFER TO DISK
+# -----------------------------------
+FN WRITE_BUFFER() {
+  VAR I:1=0;
+  VAR LINE_PTR:2=BUF_START;
+  DELETE_FILE();
+  ISSUE_DOS_CMD(DOS_OPEN,@FILE_NAME);
+  ISSUE_DOS_CMD(DOS_WRITE,@FILE_NAME);
+  IF (NOT ERR_FLAG) {
+    WHILE (I < BUF_SIZE) {
+      PRINT_STRING(LINE_PTR+1);
+      MON_CROUT();
+      NEXT_LINE_PTR(@LINE_PTR);
+      INCR I;
+    }
+    MON_CROUT();
+    PRINT_STRING(DOS_CLOSE);
+  }
+}
+# -----------------------------------
+# READ BUFFER FROM DISK
+# -----------------------------------
+FN READ_BUFFER() {
+  VAR LEN:1=0;
+  VAR CH:1;
+  ISSUE_DOS_CMD(DOS_OPEN,@FILE_NAME);
+  ISSUE_DOS_CMD(DOS_READ,@FILE_NAME);
+  IF (NOT ERR_FLAG) {
+    WHILE (DOS_ERRNO[0,1]=0) {
+      MON_RDKEY();
+      SET CH=^A;
+      IF (DOS_ERRNO[0,1]=0) {
+        IF (EQ_CHAR(CH,$0D)) {
+          SET MON_IN[LEN,1]=0;
+          BUF_ADD_LINE(MON_IN,LEN);
+          SET LEN=0;
+        }
+        ELSE {
+          SET MON_IN[LEN,1]=CH;
+	  INCR LEN;
+        }
+      }
+    }
+    MON_CROUT();
+    PRINT_STRING(DOS_CLOSE);
+  }
+}
+# -----------------------------------
+# ISSUE A DOS COMMAND
+# -----------------------------------
+FN ISSUE_DOS_CMD(CMD:2,FNAME:2) {
+  VAR ERR:1;
+  IF (NOT ERR_FLAG) {
+    SET DOS_ERRNO[0,1]=0;
+    PRINT_STRING(CMD);
+    PRINT_STRING(FNAME);
+    MON_CROUT();
+    SET ERR=DOS_ERRNO[0,1];
+    IF (ERR=DOS_NOT_FOUND)
+      ERROR(FILE_NOT_FOUND);
+    ELSE IF (ERR > 0)
+      ERROR(DISK_ERROR);
+  }
+}
