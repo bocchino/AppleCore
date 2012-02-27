@@ -98,7 +98,8 @@ AVM.SP.UP.SIZE
 .2	LDX #AVM.STACK.OVERFLOW
 	LDA /AVM.STACK.OVERFLOW
 	JSR AVM.PRINT.STRING
-	JMP DOS.COLD.START
+	DEC AVM.SP+1
+	JMP EXIT
 * -------------------------------
 AVM.RAF
 * SAVE SIZE
@@ -265,8 +266,10 @@ AVM.CHECK.SP
 * ERROR MESSAGE: "STACK OVERFLOW"
 * -------------------------------
 AVM.STACK.OVERFLOW
+	.HS 0D
 	.HS 07
 	.AS "STACK OVERFLOW"
+	.HS 0D
 	.HS 00
 * -------------------------------
 * SET SP-=2

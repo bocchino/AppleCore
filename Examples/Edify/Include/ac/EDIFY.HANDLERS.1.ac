@@ -42,6 +42,7 @@ FN C_HANDLER() {
   SET CH=GET_CHAR();
   IF (EQ_CHAR(CH,'Y'))
     CLEAR_BUFFER();
+  SET MODIFIED=FALSE;
 }
 # -----------------------------------
 # (D)ELETE LINE
@@ -110,8 +111,22 @@ FN K_HANDLER() {
 # -----------------------------------
 # (L)OAD
 # -----------------------------------
-FN L_HANDLER() {
+DATA READ  "READ ";
+DATA LINES " LINES\$0D";
 
+FN L_HANDLER() {
+  IF ((@FILE_NAME)[0,1]=0)
+    ERROR(FILE_NAME_NOT_SET);
+  ELSE IF (BUF_SIZE > 0)
+    ERROR(BUFFER_NOT_EMPTY);
+  ELSE {
+    READ_BUFFER();
+    SET N=1;
+    SET N_PTR=BUF_START;
+    PRINT_STRING(READ);
+    PRINT_NUM(BUF_SIZE);
+    PRINT_STRING(LINES);
+  }  
 }
 # -----------------------------------
 # (M)ATCH

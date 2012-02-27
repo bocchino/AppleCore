@@ -32,7 +32,14 @@ FN R_HANDLER() {
 # (S)AVE
 # -----------------------------------
 FN S_HANDLER() {
-
+  IF ((@FILE_NAME)[0,1]=0)
+    ERROR(FILE_NAME_NOT_SET);
+  ELSE IF (BUF_SIZE=0)
+    ERROR(BUFFER_EMPTY);
+  ELSE {
+    WRITE_BUFFER();
+    SET MODIFIED=FALSE;
+  }
 }
 # -----------------------------------
 # (V)IEW

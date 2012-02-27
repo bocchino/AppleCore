@@ -15,7 +15,7 @@ FN MAIN() {
      GET_INPUT(EDIFY_PROMPT);
     IF (INPUT_LEN=0)
       EXIT_EDIFY();
-    SET (@INPUT)[0,255]=MON_IN[0,255];
+    COPY(MON_IN,INPUT_LEN,@INPUT);
     PARSE_INPUT();
   }
 }
@@ -27,6 +27,7 @@ INCLUDE "EDIFY.2,D1";
 INCLUDE "EDIFY.HANDLERS.1,D1";
 INCLUDE "EDIFY.HANDLERS.2,D1";
 INCLUDE "EDIFY.BUFFER,D1";
+INCLUDE "EDIFY.DISK,D1";
 # -----------------------------------
 # INCLUDE LIB FILES FROM D2
 # -----------------------------------
