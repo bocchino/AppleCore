@@ -42,8 +42,6 @@ AVM.NOT.2
 * POP IP
 * SET SIZE=A
 * SET IP[0,SIZE]+=1
-* SET SP[0,SIZE]=IP[0,SIZE]
-* SET SP+=SIZE
 * -------------------------------
 AVM.ICR
 	STA AVM.SIZE
@@ -62,8 +60,6 @@ AVM.ICR
 * POP IP
 * SET SIZE=A
 * SET IP[0,SIZE]-=1
-* SET SP[0,SIZE]=IP[0,SIZE]
-* SET SP+=SIZE
 * -------------------------------
 AVM.DCR
 	STA AVM.SIZE
