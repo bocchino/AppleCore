@@ -4,7 +4,7 @@
 # CURRENT LI(N)E
 # -----------------------------------
 FN N_HANDLER() {
-  VAR NEW_N:1;
+  VAR NEW_N:2;
   IF (EQ_CHAR(READ_CHAR(),BINDING_CHAR)) {
     NEXT_CHAR();
     SET NEW_N=PARSE_NUM();
@@ -45,7 +45,7 @@ FN S_HANDLER() {
 # (V)IEW
 # -----------------------------------
 FN V_HANDLER() {
-  VAR I:1=0;
+  VAR I:2=0;
   VAR LINE_PTR:2=N_PTR;
   IF (BUF_SIZE=0) {
     ERROR(BUFFER_EMPTY);

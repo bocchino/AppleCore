@@ -109,7 +109,7 @@ FN PRINT_NUM(NUM:2) {
 # -----------------------------------
 # SET N AND N_PTR
 # -----------------------------------
-FN SET_N(NEW_N:1) {
+FN SET_N(NEW_N:2) {
   WHILE (N < NEW_N) {
     NEXT_LINE_PTR(@N_PTR);
     INCR N;
