@@ -29,6 +29,17 @@ CONST DOS_NOT_DIRECT_CMD	 15;
 FN:1 GET_DOS_ERRNO() {
   RETURN DOS_ERRNO[0,1];
 }
+# -------------------------------
+# READ LINE FROM DISK
+# STOP AT END OF LINE OR DATA
+# RETURN - LENGTH
+# -------------------------------
+FN READ_LINE_ASM();
+
+FN:1 READ_LINE() {
+  READ_LINE_ASM();
+  RETURN ^X;
+}
 # --------------------------------------
 # DOS COMMAND STRINGS
 # --------------------------------------

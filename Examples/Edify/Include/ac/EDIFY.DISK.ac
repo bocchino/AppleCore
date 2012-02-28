@@ -32,26 +32,15 @@ FN WRITE_BUFFER() {
 # -----------------------------------
 FN READ_BUFFER() {
   VAR LEN:1=0;
-  VAR CH:1;
   ISSUE_DOS_CMD(DOS_OPEN,@FILE_NAME);
   ISSUE_DOS_CMD(DOS_READ,@FILE_NAME);
   IF (NOT ERR_FLAG) {
     WHILE (DOS_ERRNO[0,1]=0) {
-      MON_RDKEY();
-      SET CH=^A;
-      IF (DOS_ERRNO[0,1]=0) {
-        IF (EQ_CHAR(CH,$0D)) {
-          SET MON_IN[LEN,1]=0;
-          BUF_ADD_LINE(MON_IN,LEN);
-          SET LEN=0;
-        }
-        ELSE {
-          SET MON_IN[LEN,1]=CH;
-	  INCR LEN;
-        }
-      }
+      SET LEN=READ_LINE();
+      MON_CROUT();
+      IF (DOS_ERRNO[0,1]=0)
+        BUF_ADD_LINE(MON_IN,LEN);
     }
-    MON_CROUT();
     PRINT_STRING(DOS_CLOSE);
   }
 }
