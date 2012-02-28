@@ -23,7 +23,7 @@ FN DELETE_FILE() {
 # WRITE BUFFER TO DISK
 # -----------------------------------
 FN WRITE_BUFFER() {
-  VAR I:1=0;
+  VAR I:2=0;
   VAR LINE_PTR:2=BUF_START;
   DELETE_FILE();
   ISSUE_DOS_CMD(DOS_OPEN,@FILE_NAME);
@@ -35,7 +35,6 @@ FN WRITE_BUFFER() {
       NEXT_LINE_PTR(@LINE_PTR);
       INCR I;
     }
-    MON_CROUT();
     PRINT_STRING(DOS_CLOSE);
   }
 }
