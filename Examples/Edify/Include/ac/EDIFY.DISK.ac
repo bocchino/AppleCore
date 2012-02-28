@@ -1,17 +1,6 @@
 # -----------------------------------
 # EDIFY: DISK OPERATIONS
 # -----------------------------------
-# VARIABLE WHERE DOS ERROR CODE IS STORED
-CONST DOS_ERRNO $DE;
-# DOS ERROR CODE: FILE NOT FOUND
-CONST DOS_NOT_FOUND 6;
-
-DATA DOS_OPEN "\$04OPEN ";
-DATA DOS_READ "\$04READ ";
-DATA DOS_WRITE "\$04WRITE ";
-DATA DOS_CLOSE "\$04CLOSE\$0D";
-DATA DOS_DELETE "\$04DELETE ";
-# -----------------------------------
 # DELETE FILE FROM DISK, IF THERE
 # -----------------------------------
 FN DELETE_FILE() {

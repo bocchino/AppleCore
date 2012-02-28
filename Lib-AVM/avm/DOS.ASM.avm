@@ -1,0 +1,24 @@
+:NEW
+* -------------------------------
+* DOS AVM FNS
+* -------------------------------
+* STORAGE FOR DOS ERR CODE
+DOS.ERRNO .EQ $DE
+* -------------------------------
+* READ LINE FROM DISK
+* STOP AT CR OR END OF DATA
+* -------------------------------
+READ.LINE
+	LDX #0
+	STX DOS.ERRNO
+.1	JSR MON.RDKEY
+	LDY DOS.ERRNO
+	BNE .2
+	CMP #$8D
+	BEQ .2
+	STA MON.IN,Y
+	INX
+	BNE .1
+.2	LDA #0
+	STA MON.IN,X
+	RTS

@@ -1,0 +1,40 @@
+# --------------------------------------
+# THE APPLECORE COMPILER, V1.0
+# DOS FUNCTIONS
+# --------------------------------------
+# CONSTANTS
+# --------------------------------------
+# STORAGE FOR DOS ERROR CODE
+CONST DOS_ERRNO			$DE;
+# DOS ERROR CODES
+CONST DOS_BELL			  0;
+CONST DOS_LANG_NOT_AVAIL	  1;
+CONST DOS_RANGE_ERR_OPC		  2;
+CONST DOS_RANGE_ERR_SUBC	  3;
+CONST DOS_WRITE_PROTECTED	  4;
+CONST DOS_END_OF_DATA		  5;
+CONST DOS_NOT_FOUND               6;
+CONST DOS_VOL_MISMATCH		  7;
+CONST DOS_IO_ERROR		  8;
+CONST DOS_DISK_FULL		  9;
+CONST DOS_FILE_LOCKED		 10;
+CONST DOS_SYNTAX_ERROR		 11;
+CONST DOS_NO_BUFFERS		 12;
+CONST DOS_FILE_TYPE_MISMATCH	 13;
+CONST DOS_PROG_TOO_LARGE	 14;
+CONST DOS_NOT_DIRECT_CMD	 15;
+# --------------------------------------
+# GET DOS ERROR
+# --------------------------------------
+FN:1 GET_DOS_ERRNO() {
+  RETURN DOS_ERRNO[0,1];
+}
+# --------------------------------------
+# DOS COMMAND STRINGS
+# --------------------------------------
+DATA DOS_CATALOG "\$04CATALOG";
+DATA DOS_OPEN "\$04OPEN ";
+DATA DOS_READ "\$04READ ";
+DATA DOS_WRITE "\$04WRITE ";
+DATA DOS_CLOSE "\$04CLOSE\$0D";
+DATA DOS_DELETE "\$04DELETE ";
