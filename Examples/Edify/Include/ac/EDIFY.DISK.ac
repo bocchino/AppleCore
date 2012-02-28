@@ -39,7 +39,7 @@ FN READ_BUFFER() {
       SET LEN=READ_LINE();
       MON_CROUT();
       IF (DOS_ERRNO[0,1]=0)
-        BUF_ADD_LINE(MON_IN,LEN);
+        BUF_APPEND_LINE(MON_IN,LEN);
     }
     PRINT_STRING(DOS_CLOSE);
   }

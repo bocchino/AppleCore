@@ -81,4 +81,3 @@ FN:1 IS_DIGIT(CH:1) {
   SET CH=CH AND $7F;
   RETURN (CH >= '0') AND (CH <= '9');
 }
-

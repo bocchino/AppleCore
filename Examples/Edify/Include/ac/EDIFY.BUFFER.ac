@@ -34,15 +34,27 @@ FN:1 GET_BUF_LINE(NUM:1) {
   RETURN GET_LINE();
 }
 # -----------------------------------
-# ADD LINE TO BUFFER
+# APPEND LINE TO BUFFER
 # -----------------------------------
-FN BUF_ADD_LINE(STR:2,LEN:1) {
+FN BUF_APPEND_LINE(STR:2,LEN:1) {
   SET BUF_END[0,1]=LEN;
   INCR BUF_END;
   COPY(STR,LEN+1,BUF_END);
   SET BUF_END=BUF_END+LEN+1;
   SET BUF_END[0,1]=LEN;
   INCR BUF_END;
+  INCR BUF_SIZE;
+}
+# -----------------------------------
+# INSERT LINE INTO BUFFER
+# -----------------------------------
+FN BUF_INSERT_LINE(STR:2,LEN:1) {
+  COPY_UP(N_PTR,BUF_END-N_PTR+1,N_PTR+LEN+3);
+  SET BUF_END=BUF_END+LEN+3;
+  SET N_PTR[0,1]=LEN;
+  COPY(STR,LEN+1,N_PTR+1);
+  SET N_PTR[LEN+2,1]=LEN;
+  SET_N(N+1);
   INCR BUF_SIZE;
 }
 # -----------------------------------
@@ -64,7 +76,8 @@ FN BUF_DELETE_LINE() {
     SET LEN=BUF_END-N_PTR;
     COPY(N_PTR,LEN,SAVED_N_PTR);    
     SET BUF_END[0,2]=SAVED_N_PTR+LEN;
-    SET_N(SAVED_N);
+    SET N=SAVED_N;
+    SET N_PTR=SAVED_N_PTR;
     DECR BUF_SIZE;
   }
 }
@@ -142,5 +155,12 @@ FN COPY(START:2,LEN:2,DEST:2) {
   SET MON_A2[0,2]=START+LEN-1;
   SET MON_A4[0,2]=DEST;
   MON_MOVE();
+}
+
+FN COPY_UP(START:2,LEN:2,DEST:2) {
+  WHILE (LEN > 0) {
+    SET DEST[LEN-1,1]=START[LEN-1,1];
+    DECR LEN;
+  }
 }
 

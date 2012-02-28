@@ -14,14 +14,14 @@ FN A_HANDLER() {
   ELSE IF (EQ_CHAR(READ_CHAR(),'T')) {
     NEXT_CHAR();
     SET MON_IN[0,1]=0;
-    BUF_ADD_LINE(MON_IN,0);
+    BUF_APPEND_LINE(MON_IN,0);
   }
   ELSE {
     PRINT_STRING(A_MSG);
     WHILE (TRUE) {
       SET LEN=GET_BUF_LINE(BUF_SIZE+1);
       IF (LEN=0) RETURN;
-      BUF_ADD_LINE(MON_IN,LEN);
+      BUF_APPEND_LINE(MON_IN,LEN);
     }
   }
 }
@@ -98,8 +98,28 @@ FN H_HANDLER() {
 # -----------------------------------
 # (I)NSERT
 # -----------------------------------
-FN I_HANDLER() {
+DATA I_MSG "TYPE LINES TO INSERT, BLANK LINE TO END\$0D";
 
+FN I_HANDLER() {
+  VAR LEN:1;
+  IF (BUF_SIZE=0)
+    A_HANDLER();
+  ELSE IF (READ_CHAR()='B') {
+    # TODO
+  }
+  ELSE IF (READ_CHAR='T') {
+    NEXT_CHAR();
+    SET MON_IN[0,1]=0;
+    BUF_INSERT_LINE(MON_IN,0);
+  }
+  ELSE {
+    PRINT_STRING(I_MSG);
+    WHILE (TRUE) {
+      SET LEN=GET_BUF_LINE(N);
+      IF (LEN=0) RETURN;
+      BUF_INSERT_LINE(MON_IN,LEN);
+    }
+  }
 }
 # -----------------------------------
 # MAR(K)
