@@ -1,0 +1,34 @@
+:NEW
+* -------------------------------
+* COPY AVM FNS
+* -------------------------------
+* SET A4[-A2+1,A2]=A1[-A2+1,A2]
+* WORKS IF A4 >= A1
+* -------------------------------
+COPY.UP.ASM
+	LDY #0
+* A2=0?
+.1	LDA MON.A2L
+	ORA MON.A2H
+* YES, EXIT
+	BEQ .5
+* NO, SET A4[0,1]=A1[0,1]
+	LDA (MON.A1L),Y
+	STA (MON.A4L),Y
+* DECR A1,A2,A4
+        LDA MON.A1L
+	BNE .2
+	DEC MON.A1H
+.2	DEC MON.A1L
+	LDA MON.A2L
+	BNE .3
+	DEC MON.A2H
+.3	DEC MON.A2L
+	LDA MON.A4L
+	BNE .4
+	DEC MON.A4H
+.4	DEC MON.A4L
+	JMP .1
+.5	RTS
+
+

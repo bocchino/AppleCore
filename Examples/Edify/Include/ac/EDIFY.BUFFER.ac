@@ -146,21 +146,4 @@ FN PREV_LINE_PTR(LINE_PTR_PTR:2) {
   VAR LINE_PTR:2=LINE_PTR_PTR[0,2]-1;
   SET LINE_PTR_PTR[0,2]=LINE_PTR-LINE_PTR[0,1]-2;
 }
-# -----------------------------------
-# COPY DATA
-# -----------------------------------
-FN COPY(START:2,LEN:2,DEST:2) {
-  SET ^Y=0;
-  SET MON_A1[0,2]=START;
-  SET MON_A2[0,2]=START+LEN-1;
-  SET MON_A4[0,2]=DEST;
-  MON_MOVE();
-}
-
-FN COPY_UP(START:2,LEN:2,DEST:2) {
-  WHILE (LEN > 0) {
-    SET DEST[LEN-1,1]=START[LEN-1,1];
-    DECR LEN;
-  }
-}
 

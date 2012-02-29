@@ -1,0 +1,33 @@
+# --------------------------------------
+# THE APPLECORE COMPILER, V1.0
+# COPY FUNCTIONS
+# --------------------------------------
+# COPY DATA
+# --------------------------------------
+FN COPY(FROM:2,LEN:2,TO:2) {
+  IF (TO <= FROM)
+    COPY_DOWN(FROM,LEN,TO);
+  ELSE
+    COPY_UP(FROM,LEN,TO);
+}
+# --------------------------------------
+# COPY (TO <= FROM)
+# --------------------------------------
+FN COPY_DOWN(FROM:2,LEN:2,TO:2) {
+  SET ^Y=0;
+  SET MON_A1[0,2]=FROM;
+  SET MON_A2[0,2]=FROM+LEN-1;
+  SET MON_A4[0,2]=TO;
+  MON_MOVE();
+}
+# --------------------------------------
+# COPY (TO >= FROM)
+# --------------------------------------
+FN COPY_UP_ASM();
+
+FN COPY_UP(FROM:2,LEN:2,TO:2) {
+  SET MON_A1[0,2]=FROM+LEN-1;
+  SET MON_A2[0,2]=LEN;
+  SET MON_A4[0,2]=TO+LEN-1;
+  COPY_UP_ASM();
+}
