@@ -28,20 +28,29 @@ FN WRITE_BUFFER() {
   }
 }
 # -----------------------------------
-# READ BUFFER FROM DISK
+# READ LINES AND APPEND
 # -----------------------------------
-FN READ_BUFFER() {
+DATA READ  "READ ";
+DATA LINES " LINES\$0D";
+
+FN READ_AND_APPEND() {
   VAR LEN:1=0;
+  VAR NUM_READ:2=0;
   ISSUE_DOS_CMD(DOS_OPEN,@FILE_NAME);
   ISSUE_DOS_CMD(DOS_READ,@FILE_NAME);
   IF (NOT ERR_FLAG) {
     WHILE (DOS_ERRNO[0,1]=0) {
       SET LEN=READ_LINE();
       MON_CROUT();
-      IF (DOS_ERRNO[0,1]=0)
+      IF (DOS_ERRNO[0,1]=0) {
         BUF_APPEND_LINE(MON_IN,LEN);
+	INCR NUM_READ;
+      }
     }
     PRINT_STRING(DOS_CLOSE);
+    PRINT_STRING(READ);
+    PRINT_NUM(NUM_READ);
+    PRINT_STRING(LINES);
   }
 }
 # -----------------------------------
