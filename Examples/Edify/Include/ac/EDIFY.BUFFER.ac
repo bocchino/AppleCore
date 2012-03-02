@@ -13,6 +13,10 @@ VAR BUF_END:2;
 VAR N:2;
 # PTR TO LINE BEING EDITED
 VAR N_PTR:2;
+# MARK
+VAR K:2=NO_K;
+# PTR TO MARKED LINE
+VAR K_PTR:2;
 # -----------------------------------
 # CLEAR THE BUFFER
 # -----------------------------------
@@ -130,6 +134,23 @@ FN SET_N(NEW_N:2) {
   WHILE (N > NEW_N) {
     PREV_LINE_PTR(@N_PTR);
     DECR N;
+  }
+}
+# -----------------------------------
+# SET K AKD K_PTR
+# -----------------------------------
+FN SET_K(NEW_K:2) {
+  IF (K=NO_K) {
+	 SET K=1;
+	 SET K_PTR=BUF_START;
+  }
+  WHILE (K < NEW_K) {
+    NEXT_LINE_PTR(@K_PTR);
+    INCR K;
+  }
+  WHILE (K > NEW_K) {
+    PREV_LINE_PTR(@K_PTR);
+    DECR K;
   }
 }
 # -----------------------------------

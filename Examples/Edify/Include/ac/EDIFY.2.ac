@@ -22,12 +22,12 @@ FN:2 PARSE_NUM() {
 
 FN:2 K_AS_NUM() {
   NEXT_CHAR();
-  IF (K=NO_K) {
-    ERROR(MARK_NOT_SET);
+  IF (BUF_SIZE=0) {
+    ERROR(BUFFER_EMPTY);
     RETURN -1;
   }
-  ELSE IF (BUF_SIZE=0) {
-    ERROR(BUFFER_EMPTY);
+  ELSE IF (K=NO_K) {
+    ERROR(MARK_NOT_SET);
     RETURN -1;
   }
   RETURN K;

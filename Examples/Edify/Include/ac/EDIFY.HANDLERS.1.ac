@@ -139,7 +139,10 @@ FN I_HANDLER() {
   }
   ELSE IF (EQ_CHAR(READ_CHAR(),'L')) {
     NEXT_CHAR();
-    TODO();
+    IF ((@FILE_NAME)[0,1]=0)
+      ERROR(FILE_NAME_NOT_SET);
+    ELSE
+      READ_AND_INSERT();
   }
   ELSE IF (EQ_CHAR(READ_CHAR(),'T')) {
     NEXT_CHAR();
@@ -159,7 +162,22 @@ FN I_HANDLER() {
 # MAR(K)
 # -----------------------------------
 FN K_HANDLER() {
-  TODO();
+  VAR NEW_K:2;
+  IF (EQ_CHAR(READ_CHAR(),BINDING_CHAR)) {
+    NEXT_CHAR();
+    SET NEW_K=PARSE_NUM();
+    IF (NOT ERR_FLAG) {
+      IF (NEW_K < 1 OR NEW_K > BUF_SIZE)
+        ERROR(OUT_OF_RANGE);
+      ELSE
+        SET_K(NEW_K);
+    }
+  }
+  ELSE IF (BUF_SIZE=0)
+    ERROR(BUFFER_EMPTY);
+  ELSE IF (K=NO_K)
+    ERROR(MARK_NOT_SET);
+  ELSE PRINT_LINE(K_PTR,K);
 }
 # -----------------------------------
 # (M)ATCH
