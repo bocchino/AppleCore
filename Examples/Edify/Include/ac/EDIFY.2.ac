@@ -81,3 +81,11 @@ FN:1 IS_DIGIT(CH:1) {
   SET CH=CH AND $7F;
   RETURN (CH >= '0') AND (CH <= '9');
 }
+# -----------------------------------
+# TODO MESSAGE
+# -----------------------------------
+DATA TODO_MSG "TO DO\$0D";
+FN TODO() {
+  PRINT_STRING(TODO_MSG);
+}
+  

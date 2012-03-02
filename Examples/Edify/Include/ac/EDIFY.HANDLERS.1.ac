@@ -10,7 +10,7 @@ FN A_HANDLER() {
   SET MODIFIED=TRUE;
   IF (EQ_CHAR(READ_CHAR(),'B')) {
     NEXT_CHAR();
-    # TODO
+    TODO();
   }
   ELSE IF (EQ_CHAR(READ_CHAR(),'L')) {
     NEXT_CHAR();
@@ -37,7 +37,7 @@ FN A_HANDLER() {
 # PRINT CLIP(B)OARD
 # -----------------------------------
 FN B_HANDLER() {
-
+  TODO();
 }
 # -----------------------------------
 # (C)LEAR BUFFER
@@ -134,7 +134,10 @@ FN I_HANDLER() {
   IF (BUF_SIZE=0)
     A_HANDLER();
   ELSE IF (EQ_CHAR(READ_CHAR(),'B')) {
-    # TODO
+    TODO();
+  }
+  ELSE IF (EQ_CHAR(READ_CHAR(),'L')) {
+    TODO();
   }
   ELSE IF (EQ_CHAR(READ_CHAR(),'T')) {
     NEXT_CHAR();
@@ -154,11 +157,11 @@ FN I_HANDLER() {
 # MAR(K)
 # -----------------------------------
 FN K_HANDLER() {
-
+  TODO();
 }
 # -----------------------------------
 # (M)ATCH
 # -----------------------------------
 FN M_HANDLER() {
-
+  TODO();
 }
