@@ -134,9 +134,11 @@ FN I_HANDLER() {
   IF (BUF_SIZE=0)
     A_HANDLER();
   ELSE IF (EQ_CHAR(READ_CHAR(),'B')) {
+    NEXT_CHAR();
     TODO();
   }
   ELSE IF (EQ_CHAR(READ_CHAR(),'L')) {
+    NEXT_CHAR();
     TODO();
   }
   ELSE IF (EQ_CHAR(READ_CHAR(),'T')) {
