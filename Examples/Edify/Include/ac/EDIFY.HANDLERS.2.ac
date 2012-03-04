@@ -1,6 +1,43 @@
 # -----------------------------------
 # EDIFY COMMAND HANDLERS, PART 2
 # -----------------------------------
+# (M)ATCH
+# -----------------------------------
+VAR SEARCH_NUM:2;
+VAR SEARCH_PTR:2;
+VAR MATCH_NUM:2;
+VAR MATCH_PTR:2;
+
+FN M_HANDLER() {
+  IF (EQ_CHAR(READ_CHAR(),BINDING_CHAR)) {
+    NEXT_CHAR();
+    IF (READ_CHAR()=NO_CHAR) {
+      ERROR(EXPECTED_PATTERN);
+      RETURN;
+    }
+    SET PATTERN=@INPUT+INPUT_IDX;
+    SET INPUT_IDX=INPUT_LEN;
+    SET SEARCH_NUM=1;
+    SET SEARCH_PTR=BUF_START;
+  }
+  ELSE IF (PATTERN=NO_PATTERN) {
+    ERROR(PATTERN_NOT_SET);
+    RETURN;
+  }
+  WHILE (SEARCH_NUM <= BUF_SIZE) {
+    SET MATCH_PTR=
+      MATCH(SEARCH_PTR+1,PATTERN);
+    SET MATCH_NUM=SEARCH_NUM;
+    NEXT_LINE_PTR(@SEARCH_PTR);
+    INCR SEARCH_NUM;
+    IF (NOT (MATCH_PTR=-1)) {
+      DECR MATCH_PTR;
+      PRINT_LINE(MATCH_PTR,MATCH_NUM);
+      RETURN;
+    }
+  }
+}
+# -----------------------------------
 # CURRENT LI(N)E
 # -----------------------------------
 FN N_HANDLER() {

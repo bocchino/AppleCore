@@ -105,4 +105,18 @@ FN:2 STRING_LEN(STR:2) {
   }
   RETURN LEN;
 }
+# --------------------------------------
+# MATCH PATTERN AGAINST STRING
+# STR    - POINTER TO STRING
+# PAT    - POINTER TO PATTERN
+# RETURN - POINTER TO FIRST MATCH IF
+#          FOUND, $FFFF IF NO MATCH
+# --------------------------------------
+FN MATCH_ASM();
 
+FN:2 MATCH(STR:2,PAT:2) {
+  SET MON_A1[0,2]=STR;
+  SET MON_A2[0,2]=PAT;
+  MATCH_ASM();
+  RETURN MON_A1[0,2];
+}

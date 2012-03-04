@@ -179,9 +179,3 @@ FN K_HANDLER() {
     ERROR(MARK_NOT_SET);
   ELSE PRINT_LINE(K_PTR,K);
 }
-# -----------------------------------
-# (M)ATCH
-# -----------------------------------
-FN M_HANDLER() {
-  TODO();
-}
