@@ -4,7 +4,7 @@
 # CONSTANTS
 # -----------------------------------
 CONST BINDING_CHAR    ':';
-CONST DEFAULT_W        20;
+CONST DEFAULT_W       10;
 CONST NO_K            0;
 CONST NO_CHAR	      0;
 CONST NO_PATTERN      0;
@@ -26,7 +26,7 @@ DATA DISK_ERROR		"DISK ERROR";
 # -----------------------------------
 # VARIABLES
 # -----------------------------------
-# FILE NAME TO (L)OAD AND (S)AVE
+# FILE NAME TO READ AND WRITE
 VAR FILE_NAME:33=0;
 # NUMBER OF LINES IN CLIPBOARD
 VAR CB_LEN:2=0;

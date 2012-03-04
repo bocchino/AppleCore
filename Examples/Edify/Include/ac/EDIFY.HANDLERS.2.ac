@@ -5,10 +5,9 @@
 # -----------------------------------
 VAR SEARCH_NUM:2;
 VAR SEARCH_PTR:2;
-VAR MATCH_NUM:2;
-VAR MATCH_PTR:2;
 
 FN M_HANDLER() {
+  VAR MATCH_PTR:2;
   IF (EQ_CHAR(READ_CHAR(),BINDING_CHAR)) {
     NEXT_CHAR();
     IF (READ_CHAR()=NO_CHAR) {
@@ -27,14 +26,12 @@ FN M_HANDLER() {
   WHILE (SEARCH_NUM <= BUF_SIZE) {
     SET MATCH_PTR=
       MATCH(SEARCH_PTR+1,PATTERN);
-    SET MATCH_NUM=SEARCH_NUM;
+    IF (NOT (MATCH_PTR=-1))
+      PRINT_LINE(SEARCH_PTR,SEARCH_NUM);
     NEXT_LINE_PTR(@SEARCH_PTR);
     INCR SEARCH_NUM;
-    IF (NOT (MATCH_PTR=-1)) {
-      DECR MATCH_PTR;
-      PRINT_LINE(MATCH_PTR,MATCH_NUM);
+    IF (NOT (MATCH_PTR=-1))
       RETURN;
-    }
   }
 }
 # -----------------------------------
