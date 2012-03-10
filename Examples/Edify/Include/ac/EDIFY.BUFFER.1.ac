@@ -1,5 +1,5 @@
 # -----------------------------------
-# EDIFY: EDIT BUFFER
+# EDIFY: EDIT BUFFER, PART 1
 # -----------------------------------
 # BUFFER MODIFIED?
 VAR MODIFIED:1=FALSE;
@@ -86,85 +86,55 @@ FN BUF_DELETE_LINE() {
   }
 }
 # -----------------------------------
-# PRINT A LINE OF THE BUFFER
+# REPLACE PATTERN IN CURRENT LINE
 # -----------------------------------
-FN PRINT_LINE(LINE_PTR:2,LINE_NUM:2) {
-  IF (PRINT_LINE_NUMS) {
-    PRINT_LINE_NUM(LINE_NUM);
-    PRINT_CHAR(' ');
-  }
-  PRINT_STRING(LINE_PTR+1);  
-  MON_CROUT();
-}
-# -----------------------------------
-# PRINT A FORMATTED LINE NUMBER
-# -----------------------------------
-DATA PLACES     1000;
-DATA 		 100;
-DATA		   0;
-DATA		  10;
-DATA		   0;
+# BUFFER FOR MODIFIED LINE
+VAR REPL_BUF:255;
 
-FN PRINT_LINE_NUM(LINE_NUM:2) {
-  VAR I:1=0;
-  INVERSE();
-  WHILE (I<3) {
-    IF (LINE_NUM < PLACES[I<<1,2])
-      PRINT_CHAR('0');
-    INCR I;
-  }  
-  PRINT_NUM(LINE_NUM);
-  NORMAL();
-}
-# -----------------------------------
-# PRINT A DECIMAL NUMBER
-# -----------------------------------
-FN PRINT_NUM(NUM:2) {
-  NUM_TO_STR(@NUM,2,10,@NUM_STR);
-  PRINT_STRING(@NUM_STR);
-}
-# -----------------------------------
-# SET N AND N_PTR
-# -----------------------------------
-FN SET_N(NEW_N:2) {
-  WHILE (N < NEW_N) {
-    NEXT_LINE_PTR(@N_PTR);
-    INCR N;
-  }
-  WHILE (N > NEW_N) {
-    PREV_LINE_PTR(@N_PTR);
-    DECR N;
-  }
-}
-# -----------------------------------
-# SET K AKD K_PTR
-# -----------------------------------
-FN SET_K(NEW_K:2) {
-  IF (K=NO_K) {
-	 SET K=1;
-	 SET K_PTR=BUF_START;
-  }
-  WHILE (K < NEW_K) {
-    NEXT_LINE_PTR(@K_PTR);
-    INCR K;
-  }
-  WHILE (K > NEW_K) {
-    PREV_LINE_PTR(@K_PTR);
-    DECR K;
-  }
-}
-# -----------------------------------
-# NEXT LINE PTR
-# -----------------------------------
-FN NEXT_LINE_PTR(LINE_PTR_PTR:2) {
-  VAR LINE_PTR:2=LINE_PTR_PTR[0,2];
-  SET LINE_PTR_PTR[0,2]=LINE_PTR+LINE_PTR[0,1]+3;
-}
-# -----------------------------------
-# PREV LINE PTR
-# -----------------------------------
-FN PREV_LINE_PTR(LINE_PTR_PTR:2) {
-  VAR LINE_PTR:2=LINE_PTR_PTR[0,2]-1;
-  SET LINE_PTR_PTR[0,2]=LINE_PTR-LINE_PTR[0,1]-2;
+# BOUND LENGTH TO BUFFER SIZE
+FN BOUND(BUF_LEN:2,LEN_PTR:2) {
+  VAR LEN:2=LEN_PTR[0,2];
+  IF (BUF_LEN+LEN > 254)
+    SET LEN_PTR[0,2]=254-BUF_LEN;
 }
 
+FN BUF_REPLACE() {
+  VAR LINE_PTR:2=N_PTR+1;
+  VAR BUF_PTR:2=@REPL_BUF;
+  VAR MATCH_PTR:2=MATCH(LINE_PTR,@PATTERN);
+  VAR PAT_LEN:2=STRING_LEN(@PATTERN);
+  VAR REPL_LEN:2=STRING_LEN(@REPL);
+  VAR LEN:2;
+  VAR BUF_LEN:2=0;
+  IF (MATCH_PTR=-1) RETURN;
+  WHILE (NOT (MATCH_PTR=-1)) {
+    SET LEN=MATCH_PTR-LINE_PTR;
+    BOUND(BUF_LEN,@LEN);
+    COPY(LINE_PTR,LEN,BUF_PTR);
+    SET LINE_PTR=LINE_PTR+LEN;
+    SET BUF_PTR=BUF_PTR+LEN;
+    SET BUF_LEN=BUF_LEN+LEN;
+    BOUND(BUF_LEN,@REPL_LEN);
+    COPY(@REPL,REPL_LEN,BUF_PTR);
+    SET LINE_PTR=LINE_PTR+PAT_LEN;
+    SET BUF_LEN=BUF_LEN+REPL_LEN;
+    SET BUF_PTR=BUF_PTR+REPL_LEN;
+    SET MATCH_PTR=MATCH(LINE_PTR,@PATTERN);
+  }
+  SET LEN=STRING_LEN(LINE_PTR);
+  BOUND(BUF_LEN,@LEN);
+  COPY(LINE_PTR,LEN,BUF_PTR);
+  SET BUF_PTR[LEN,1]=0;
+  SET BUF_LEN=BUF_LEN+LEN;
+  IF (N < BUF_SIZE) {
+    SET MATCH_PTR=N_PTR;
+    NEXT_LINE_PTR(@MATCH_PTR);
+    COPY(MATCH_PTR,BUF_END-MATCH_PTR,
+     N_PTR+BUF_LEN+3);
+  }
+  SET BUF_END=BUF_END+BUF_LEN-N_PTR[0,1];
+  SET N_PTR[0,1]=BUF_LEN;
+  COPY(@REPL_BUF,BUF_LEN+1,N_PTR+1);
+  SET N_PTR[BUF_LEN+2,1]=BUF_LEN;
+  PRINT_LINE(N_PTR,N);
+}

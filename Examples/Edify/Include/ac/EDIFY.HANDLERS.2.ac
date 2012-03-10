@@ -8,26 +8,33 @@ VAR SEARCH_PTR:2;
 
 FN M_HANDLER() {
   VAR MATCH_PTR:2;
+  IF (BUF_SIZE=0) {
+    ERROR(BUFFER_EMPTY);
+    RETURN;
+  }
   IF (EQ_CHAR(READ_CHAR(),BINDING_CHAR)) {
     NEXT_CHAR();
     IF (READ_CHAR()=NO_CHAR) {
       ERROR(EXPECTED_PATTERN);
       RETURN;
     }
-    SET PATTERN=@INPUT+INPUT_IDX;
+    SET PATTERN=(@INPUT)[INPUT_IDX,32];
     SET INPUT_IDX=INPUT_LEN;
-    SET SEARCH_NUM=1;
-    SET SEARCH_PTR=BUF_START;
+    SET SEARCH_NUM=N;
+    SET SEARCH_PTR=N_PTR;
   }
-  ELSE IF (PATTERN=NO_PATTERN) {
+  ELSE IF ((@PATTERN)[0,1]=0) {
     ERROR(PATTERN_NOT_SET);
     RETURN;
   }
   WHILE (SEARCH_NUM <= BUF_SIZE) {
     SET MATCH_PTR=
-      MATCH(SEARCH_PTR+1,PATTERN);
-    IF (NOT (MATCH_PTR=-1))
+      MATCH(SEARCH_PTR+1,@PATTERN);
+    IF (NOT (MATCH_PTR=-1)) {
       PRINT_LINE(SEARCH_PTR,SEARCH_NUM);
+      SET N=SEARCH_NUM;
+      SET N_PTR=SEARCH_PTR;
+    }
     NEXT_LINE_PTR(@SEARCH_PTR);
     INCR SEARCH_NUM;
     IF (NOT (MATCH_PTR=-1))
@@ -60,9 +67,28 @@ FN N_HANDLER() {
 # (R)EPLACE
 # -----------------------------------
 FN R_HANDLER() {
-  TODO();
+  IF (BUF_SIZE=0) {
+    ERROR(BUFFER_EMPTY);
+    RETURN;
+  }
+  IF ((@PATTERN)[0,1]=0) {
+    ERROR(PATTERN_NOT_SET);
+    RETURN;
+  }
+  IF (EQ_CHAR(READ_CHAR(),BINDING_CHAR)) {
+    NEXT_CHAR();
+    IF (READ_CHAR()=NO_CHAR)
+      SET (@REPL)[0,1]=0;
+    ELSE {
+      SET (@REPL)[0,32]=(@INPUT)[INPUT_IDX,32];
+      SET INPUT_IDX=INPUT_LEN;
+    }
+  }
+  BUF_REPLACE();
+  SET SEARCH_NUM=N+1;
+  SET SEARCH_PTR=N_PTR+N_PTR[0,1]+3;
 }
-# -----------------------------------
+
 # (S)AVE
 # -----------------------------------
 FN S_HANDLER() {
