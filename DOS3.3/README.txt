@@ -4,7 +4,7 @@ AppleCore/DOS3.3
 This directory contains the following Apple II DOS 3.3 disk images:
 
 1. EXAMPLES.v2d: Source code and object code for the programs in
-   AppleCore/Examples, except for Mini Adventure.
+   AppleCore/Examples, except for Mini Adventure and Edify.
 
 2. MINI.ADVENTURE.v2d: Source code and object code for the program
    "Mini Adventure" in AppleCore/Examples/MiniAdventure.
