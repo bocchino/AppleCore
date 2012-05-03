@@ -1,0 +1,116 @@
+# -----------------------------------
+# EDIFY COMMAND HANDLERS, PART 3
+# -----------------------------------
+# (S)AVE
+# -----------------------------------
+FN S_HANDLER() {
+  IF ((@FILE_NAME)[0,1]=0)
+    ERROR(FILE_NAME_NOT_SET);
+  ELSE IF (BUF_SIZE=0)
+    ERROR(BUFFER_EMPTY);
+  ELSE {
+    WRITE_BUFFER();
+    SET MODIFIED=FALSE;
+  }
+}
+# -----------------------------------
+# (V)IEW
+# -----------------------------------
+FN V_HANDLER() {
+  VAR I:2=0;
+  VAR LINE_PTR:2=N_PTR;
+  IF (BUF_SIZE=0) {
+    ERROR(BUFFER_EMPTY);
+    RETURN;
+  }
+  WHILE (I < W AND (N+I<=BUF_SIZE)) {
+    PRINT_LINE(LINE_PTR,N+I);
+    NEXT_LINE_PTR(@LINE_PTR);
+    INCR I;
+  }
+}
+# -----------------------------------
+# (W)INDOW SIZE
+# -----------------------------------
+DATA WINDOW_SIZE "WINDOW SIZE=";
+
+FN W_HANDLER() {
+  VAR NEW_W:2;
+  IF (EQ_CHAR(READ_CHAR(),BINDING_CHAR)) {
+    NEXT_CHAR();
+    SET NEW_W=PARSE_NUM();
+    IF (NOT ERR_FLAG) {
+      IF (NEW_W=0)
+        ERROR(OUT_OF_RANGE);
+      ELSE
+        SET W=NEW_W;
+    }    
+  }
+  ELSE {
+    PRINT_STRING(WINDOW_SIZE);
+    PRINT_NUM(W);
+    MON_CROUT();
+  }
+}
+# -----------------------------------
+# E(X)TRACT
+# -----------------------------------
+FN X_HANDLER() {
+  TODO();
+}
+# -----------------------------------
+# COP(Y)
+# -----------------------------------
+FN Y_HANDLER() {
+  VAR LOW_PTR:2;
+  VAR HI_PTR:2;
+  VAR LEN:2;
+  IF (BUF_SIZE=0)
+    ERROR(BUFFER_EMPTY);
+  ELSE IF (K=NO_K)
+    ERROR(MARK_NOT_SET);
+  ELSE {
+    IF (K_PTR < N_PTR) {
+      SET LOW_PTR=K_PTR;
+      SET HI_PTR=N_PTR;
+    }
+    ELSE {
+      SET LOW_PTR=N_PTR;
+      SET HI_PTR=K_PTR;
+    }
+    SET LEN=(HI_PTR-LOW_PTR)+(HI_PTR[0,1])+3;
+    SET CB_START=CB_END-LEN+1;
+    COPY(LOW_PTR,LEN,CB_START);
+  }
+}
+# -----------------------------------
+# '+'
+# -----------------------------------
+FN PLUS_HANDLER() {
+  IF (BUF_SIZE=0)
+    ERROR(BUFFER_EMPTY);
+  ELSE {
+    IF (N+W > BUF_SIZE)
+      SET_N(BUF_SIZE);
+    ELSE SET_N(N+W);
+  }
+}
+# -----------------------------------
+# '-'
+# -----------------------------------
+FN MINUS_HANDLER() {
+  IF (BUF_SIZE=0)
+    ERROR(BUFFER_EMPTY);
+  ELSE {
+    IF (N <= W)
+      SET_N(1);
+    ELSE SET_N(N-W);
+  }
+}
+# -----------------------------------
+# '#'
+# -----------------------------------
+FN NUM_HANDLER() {
+  SET PRINT_LINE_NUMS=
+    NOT PRINT_LINE_NUMS;
+}
