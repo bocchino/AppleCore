@@ -41,25 +41,33 @@ FN:1 GET_BUF_LINE(NUM:1) {
 # APPEND LINE TO BUFFER
 # -----------------------------------
 FN BUF_APPEND_LINE(STR:2,LEN:1) {
-  SET BUF_END[0,1]=LEN;
-  INCR BUF_END;
-  COPY(STR,LEN+1,BUF_END);
-  SET BUF_END=BUF_END+LEN+1;
-  SET BUF_END[0,1]=LEN;
-  INCR BUF_END;
-  INCR BUF_SIZE;
+  IF (BUF_END+LEN+1 > CB_END)
+    ERROR(OUT_OF_MEMORY);
+  ELSE {
+    SET BUF_END[0,1]=LEN;
+    INCR BUF_END;
+    COPY(STR,LEN+1,BUF_END);
+    SET BUF_END=BUF_END+LEN+1;
+    SET BUF_END[0,1]=LEN;
+    INCR BUF_END;
+    INCR BUF_SIZE;
+  }
 }
 # -----------------------------------
 # INSERT LINE INTO BUFFER
 # -----------------------------------
 FN BUF_INSERT_LINE(STR:2,LEN:1) {
-  COPY_UP(N_PTR,BUF_END-N_PTR+1,N_PTR+LEN+3);
-  SET BUF_END=BUF_END+LEN+3;
-  SET N_PTR[0,1]=LEN;
-  COPY(STR,LEN+1,N_PTR+1);
-  SET N_PTR[LEN+2,1]=LEN;
-  SET_N(N+1);
-  INCR BUF_SIZE;
+  IF (BUF_END+LEN+3 > CB_END)
+    ERROR(OUT_OF_MEMORY);
+  ELSE {
+    COPY_UP(N_PTR,BUF_END-N_PTR+1,N_PTR+LEN+3);
+    SET BUF_END=BUF_END+LEN+3;
+    SET N_PTR[0,1]=LEN;
+    COPY(STR,LEN+1,N_PTR+1);
+    SET N_PTR[LEN+2,1]=LEN;
+    SET_N(N+1);
+    INCR BUF_SIZE;
+  }
 }
 # -----------------------------------
 # DELETE CURRENT LINE FROM BUFFER
