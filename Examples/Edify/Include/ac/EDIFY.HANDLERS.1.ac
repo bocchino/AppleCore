@@ -62,8 +62,10 @@ DATA CLEAR_MSG "CLEAR BUFFER (Y/N)? ";
 FN C_HANDLER() {
   VAR CH:1;
   GET_INPUT(CLEAR_MSG);
-  IF (EQ_CHAR(MON_IN[0,1],'Y'))
+  IF (EQ_CHAR(MON_IN[0,1],'Y')) {
     CLEAR_BUFFER();
+    CLEAR_CB();
+  }
   SET MODIFIED=FALSE;
 }
 # -----------------------------------

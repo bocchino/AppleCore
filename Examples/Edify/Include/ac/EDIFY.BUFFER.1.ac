@@ -17,15 +17,27 @@ VAR N_PTR:2;
 VAR K:2=NO_K;
 # PTR TO MARKED LINE
 VAR K_PTR:2;
+# NUMBER OF LINES IN CLIPBOARD
+VAR CB_SIZE:2=0;
+# START OF CLIPBOARD
+VAR CB_START:2;
+# END OF CLIPBOARD
+VAR CB_END:2;
 # -----------------------------------
 # CLEAR THE BUFFER
 # -----------------------------------
 FN CLEAR_BUFFER() {
   SET BUF_SIZE=0;
   SET BUF_END=BUF_START;
-  SET CB_END=CB_START;  
   SET N=1;
   SET N_PTR=BUF_START;
+}
+# -----------------------------------
+# CLEAR THE CLIPBOARD
+# -----------------------------------
+FN CLEAR_CB() {
+  SET CB_SIZE=0;
+  SET CB_START=CB_END;  
 }
 # -----------------------------------
 # GET LINE TO ADD TO BUFFER
