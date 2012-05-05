@@ -56,15 +56,24 @@ FN W_HANDLER() {
 # E(X)TRACT
 # -----------------------------------
 FN X_HANDLER() {
-  TODO();
+  VAR X_START:2;
+  VAR X_LEN:2;
+  Y_HANDLER();
+  IF (NOT ERR_FLAG) {
+    SET X_START=Y_LOW_PTR+Y_LEN;
+    SET X_LEN=BUF_END-X_START;
+    COPY(X_START,X_LEN,Y_LOW_PTR);
+    SET BUF_SIZE=BUF_SIZE-CB_SIZE;
+  }
 }
 # -----------------------------------
 # COP(Y)
 # -----------------------------------
+VAR Y_LOW_PTR:2;
+VAR Y_HI_PTR:2;
+VAR Y_LEN:2;
+
 FN Y_HANDLER() {
-  VAR LOW_PTR:2;
-  VAR HI_PTR:2;
-  VAR LEN:2;
   VAR SAVED_CB_SIZE:2=CB_SIZE;
   IF (BUF_SIZE=0)
     ERROR(BUFFER_EMPTY);
@@ -72,25 +81,25 @@ FN Y_HANDLER() {
     ERROR(MARK_NOT_SET);
   ELSE {
     IF (K_PTR < N_PTR) {
-      SET LOW_PTR=K_PTR;
-      SET HI_PTR=N_PTR;
+      SET Y_LOW_PTR=K_PTR;
+      SET Y_HI_PTR=N_PTR;
       SET CB_SIZE=N-K+1;
     }
     ELSE {
-      SET LOW_PTR=N_PTR;
-      SET HI_PTR=K_PTR;
+      SET Y_LOW_PTR=N_PTR;
+      SET Y_HI_PTR=K_PTR;
       SET CB_SIZE=K-N+1;
     }
-    IF (CB_SIZE > 0) {
-      SET LEN=(HI_PTR-LOW_PTR)+(HI_PTR[0,1])+3;
-      SET CB_START=CB_END-LEN;
-      IF (CB_START <= BUF_END) {
-        # DON'T CRASH INTO BUFFER
-	ERROR(OUT_OF_MEMORY);
-	SET CB_SIZE=SAVED_CB_SIZE;
-	RETURN;
-      }
-      COPY(LOW_PTR,LEN,CB_START);
+    SET Y_LEN=(Y_HI_PTR-Y_LOW_PTR)+
+      (Y_HI_PTR[0,1])+3;
+    SET CB_START=CB_END-Y_LEN;
+    IF (CB_START <= BUF_END) {
+      # DON'T CRASH INTO BUFFER
+      ERROR(OUT_OF_MEMORY);
+      SET CB_SIZE=SAVED_CB_SIZE;
+    }
+    ELSE {
+      COPY(Y_LOW_PTR,Y_LEN,CB_START);
     }
   }
 }
