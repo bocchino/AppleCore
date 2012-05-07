@@ -84,7 +84,7 @@ use Virtual ][ you can just use the disk image
 ${APPLECORE}/DOS3.3/LIB.v2d.  If you boot DOS 3,3, drag that image
 into the virtual disk drive, and type CATALOG, you should see the
 files AVM.PROLOGUE, AVM.1, AVM.2, AVM.3.BINOP, AVM.4.UNOP, and
-AVM.5.BUILT.IN already on the disk.  Also, the ACC.v2d disk contains
+AVM.5.BUILT.IN already on the disk.  Also, the LIB.v2d disk contains
 library files such as files STRING and IO that are included by some of
 the examples.
 
