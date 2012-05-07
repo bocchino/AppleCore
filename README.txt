@@ -134,14 +134,8 @@ language specs it's a bit dry and conveys all the details without
 enough worked examples.  Unfortunately there's no tutorial
 documentation yet.  However, after browsing the spec to get the
 general idea of what's going on, you should be able to read the
-examples in
-
-     ${APPLECORE}/Examples
-     ${APPLECORE}/Lib
-     ${APPLECORE}/Test/Good
-
-to get a better idea of how to write programs in AppleCore.  More and
-larger examples will be forthcoming.
+examples in ${APPLECORE}/Examples to get a better idea of how to write
+programs in AppleCore.
 
 7. COMPILING APPLECORE PROGRAMS
 
