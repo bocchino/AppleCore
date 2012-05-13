@@ -95,7 +95,7 @@ FN CMD_I_FN() {
 }
 
 FN CMD_HELP_FN() {
-  # TODO
+  PRINT_HELP(CURRENT_RM);
 }
 
 FN CMD_C_FN() {

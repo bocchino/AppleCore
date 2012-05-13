@@ -11,6 +11,12 @@ DATA              RM_PIT_EDGE_NAME;
 DATA              RM_PIT_BOTTOM_NAME;
 VAR NAME_PADDING:6;
 # -----------------------------------
+# ROOM DESCRIPTIONS
+# -----------------------------------
+DATA              RM_TODO;
+DATA              RM_TODO;
+VAR DESC_PADDING:6;
+# -----------------------------------
 # ROOM EXITS
 # -----------------------------------
 # PIT EDGE

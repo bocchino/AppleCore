@@ -13,6 +13,14 @@ DATA              RM_RUBBER_NAME;
 DATA              RM_CLOSET_NAME;
 DATA              RM_MUDDY_NAME;
 # -----------------------------------
+# ROOM DESCRIPTIONS
+# -----------------------------------
+DATA RM_DESCS     RM_BASEMENT_DESC;
+DATA              RM_FEATHERS_DESC;
+DATA              RM_RUBBER_DESC;
+DATA              RM_CLOSET_DESC;
+DATA              RM_MUDDY_DESC;
+# -----------------------------------
 # ROOM EXITS
 # -----------------------------------
 # BASEMENT
@@ -55,6 +63,14 @@ DATA          RM_BRIGHT;
 DATA          RM_NONE;
 DATA          RM_NONE;
 # -----------------------------------
+# ROOM HELP STATEMENTS
+# -----------------------------------
+DATA RM_HELP      RM_BASEMENT_HELP;
+DATA              RM_FEATHERS_HELP;
+DATA              RM_RUBBER_HELP;
+DATA              RM_CLOSET_HELP;
+DATA              RM_MUDDY_HELP;
+# -----------------------------------
 # ROOM NAME DATA
 # -----------------------------------
 DATA RM_BASEMENT_NAME  "BASEMENT";
@@ -62,4 +78,50 @@ DATA RM_FEATHERS_NAME  "FEATHER STORAGE ROOM";
 DATA RM_RUBBER_NAME    "RUBBER ROOM";
 DATA RM_CLOSET_NAME    "CLOSET ROOM";
 DATA RM_MUDDY_NAME     "MUDDY ROOM";
+# -----------------------------------
+# ROOM DESCRIPTIONS
+# -----------------------------------
+DATA BASEMENT_STR "YOU HAVE JUST HIT YOUR HEAD ON THE PANEL "\;
+DATA              "AND YOU STAND UP, AMAZED.";
+
+FN RM_BASEMENT_DESC() {
+  PRINT_WORDS(BASEMENT_STR);
+}
+
+DATA FEATHERS_STR "YOU ENTER THIS ROOM TO FIND A HUGE PILE OF FEATHERS.  "\;
+DATA              "THERE ARE EXITS TO THE NORTH AND SOUTH.";
+
+FN RM_FEATHERS_DESC() {
+  PRINT_WORDS(FEATHERS_STR);
+}
+
+DATA RUBBER_STR "THIS IS A ROOM WITH SCRAPS OF RUBBER LYING ALL AROUND.  "\;
+DATA            "THERE ARE EXITS TO THE SOUTH AND WEST.";
+
+FN RM_RUBBER_DESC() {
+  PRINT_WORDS(RUBBER_STR);
+}
+
+DATA CLOSET_STR "THIS ROOM HAS SCRAPS OF CARDBOARD AND PAPER LYING AROUND.  "\;
+DATA            "THERE IS A CLOSET, AND AN EXIT TO THE EAST.";
+
+FN RM_CLOSET_DESC() {
+  PRINT_WORDS(CLOSET_STR);
+}
+
+DATA MUDDY_STR "THIS ROOM IS COVERED WITH MUD "\;
+DATA           "AND HAS EXITS TO THE NORTH, EAST, AND WEST.";
+
+FN RM_MUDDY_DESC() {
+  PRINT_WORDS(MUDDY_STR);
+}
+# -----------------------------------
+# ROOM HELP DATA
+# -----------------------------------
+DATA RM_BASEMENT_HELP "TRY USING THINGS.";
+DATA RM_FEATHERS_HELP "THERE COULD BE SOMETHING UNDER THERE...";
+DATA RM_RUBBER_HELP   "LOOK BEFORE YOU LEAK.";
+DATA RM_CLOSET_HELP   "IF YOU'RE WONDERING WHAT TO DO, TIGHTEN VERY WELL THE SCREW!\$0D\$0D"\;
+DATA                  "(I.E., YOU NEED TO FIND A SCREWDRIVER.)";
+DATA RM_MUDDY_HELP    "WIPE YOUR FEET BEFORE YOU LEAVE";
 

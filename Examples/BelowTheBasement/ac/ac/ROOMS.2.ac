@@ -13,6 +13,14 @@ DATA              RM_GREASY_NAME;
 DATA              RM_BEAR_NAME;
 DATA              RM_HOT_NAME;
 # -----------------------------------
+# ROOM DESCRIPTIONS
+# -----------------------------------
+DATA              RM_TODO;
+DATA              RM_TODO;
+DATA              RM_TODO;
+DATA              RM_TODO;
+DATA              RM_TODO;
+# -----------------------------------
 # ROOM EXITS
 # -----------------------------------
 # BARE

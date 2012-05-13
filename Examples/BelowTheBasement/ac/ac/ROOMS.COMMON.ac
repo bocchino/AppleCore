@@ -80,19 +80,30 @@ FN:1 GET_RM_MODULE_FOR(RM:1) {
 # -----------------------------------
 # PRINT ROOM DESCRIPTION
 # -----------------------------------
-DATA SEPARATOR "\$0D\$0D----------------------------------------";
+DATA SEPARATOR "\$0D\$0D----------------------------------------\$08";
 
 FN PRINT_RM(RM:1) {
   VAR RM_OFFSET:1=
     RM_OFFSET_FOR(RM);
   VAR RM_NAME:2;
+  VAR RM_DESC:2;
   LOAD_RM_MODULE_FOR(RM);
   SET RM_NAME=RM_NAMES[2*RM_OFFSET,2];
+  SET RM_DESC=RM_DESCS[2*RM_OFFSET,2];
   MON_HOME();
   INVERSE();
   PRINT_STRING(RM_NAME);
   NORMAL();
+  MON_CROUT();
+  MON_CROUT();
+  RM_DESC();
   PRINT_STRING(SEPARATOR);
+}
+
+DATA TODO "TODO";
+
+FN RM_TODO() {
+  PRINT_STRING(TODO);
 }
 # -----------------------------------
 # GET ROOM EXIT
@@ -102,5 +113,16 @@ FN:1 RM_EXIT(RM:1,DIR:1) {
     RM_OFFSET_FOR(RM);
   LOAD_RM_MODULE_FOR(RM);
   RETURN RM_EXITS[6*OFFSET+DIR,1];
+}
+# -----------------------------------
+# PRINT ROOM HELP
+# -----------------------------------
+FN PRINT_HELP(RM:1) {
+  VAR OFFSET:1=
+    RM_OFFSET_FOR(RM);
+  VAR HELP:2;
+  LOAD_RM_MODULE_FOR(RM);
+  SET HELP=RM_HELP[2*OFFSET,2];
+  PRINT_WORDS(HELP);
 }
 
