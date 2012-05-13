@@ -1,0 +1,65 @@
+# -----------------------------------
+# BELOW THE BASEMENT: ROOM MODULE 2
+# -----------------------------------
+# MODULE NUMBER
+# -----------------------------------
+DATA              2;
+# -----------------------------------
+# ROOM NAMES
+# -----------------------------------
+DATA              RM_BARE_NAME;
+DATA              RM_JAIL_NAME;
+DATA              RM_GREASY_NAME;
+DATA              RM_BEAR_NAME;
+DATA              RM_HOT_NAME;
+# -----------------------------------
+# ROOM EXITS
+# -----------------------------------
+# BARE
+DATA          RM_NONE;
+DATA	      RM_DARK;
+DATA          RM_MUDDY;
+DATA          RM_NONE;
+DATA          RM_NONE;
+DATA          RM_NONE;
+
+# JAIL
+DATA          RM_BEAR;
+DATA	      RM_NONE;
+DATA          RM_DARK;
+DATA          RM_GREASY;
+DATA          RM_NONE;
+DATA          RM_NONE;
+
+# GREASY
+DATA          RM_NONE;
+DATA	      RM_NONE;
+DATA          RM_JAIL;
+DATA          RM_NONE;
+DATA          RM_NONE;
+DATA          RM_NONE;
+
+# BEAR
+DATA          RM_HOT;
+DATA	      RM_JAIL;
+DATA          RM_NONE;
+DATA          RM_PIT_EDGE;
+DATA          RM_NONE;
+DATA          RM_NONE;
+
+# HOT
+DATA          RM_NONE;
+DATA	      RM_BEAR;
+DATA          RM_NONE;
+DATA          RM_NONE;
+DATA          RM_NONE;
+DATA          RM_NONE;
+# -----------------------------------
+# ROOM NAME DATA
+# -----------------------------------
+DATA RM_BARE_NAME    "BARE ROOM";
+DATA RM_JAIL_NAME    "JAIL CELL";
+DATA RM_GREASY_NAME  "GREASY ROOM";
+DATA RM_BEAR_NAME    "BEAR ROOM";
+DATA RM_HOT_NAME     "HOT ROOM";
+

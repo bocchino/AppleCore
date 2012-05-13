@@ -1,0 +1,25 @@
+# -----------------------------------
+# BELOW THE BASEMENT: DISK
+# -----------------------------------
+# ISSUE A DOS COMMAND
+# -----------------------------------
+DATA FILE_NOT_FOUND "FILE NOT FOUND";
+DATA DISK_ERROR     "DISK ERROR";
+
+FN ISSUE_DOS_CMD(CMD:2,FNAME:2) {
+  VAR ERR:1;
+  SET DOS_ERRNO[0,1]=0;
+  PRINT_STRING(CMD);
+  PRINT_STRING(FNAME);
+  MON_CROUT();
+  SET ERR=DOS_ERRNO[0,1];
+  IF (ERR=DOS_NOT_FOUND)
+    ERROR(FILE_NOT_FOUND);
+  ELSE IF (ERR > 0)
+    ERROR(DISK_ERROR);
+}
+
+FN ERROR(MSG:2) {
+  PRINT_STRING(MSG);
+  MON_CROUT();
+}

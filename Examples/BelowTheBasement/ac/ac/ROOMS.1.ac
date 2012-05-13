@@ -1,0 +1,65 @@
+# -----------------------------------
+# BELOW THE BASEMENT: ROOM MODULE 1
+# -----------------------------------
+# MODULE NUMBER
+# -----------------------------------
+DATA              1;
+# -----------------------------------
+# ROOM NAMES
+# -----------------------------------
+DATA	          RM_BRIGHT_NAME;
+DATA              RM_RESERVOIR_NAME;
+DATA              RM_BANK_NAME;
+DATA              RM_FOYER_NAME;
+DATA              RM_DARK_NAME;
+# -----------------------------------
+# ROOM EXITS
+# -----------------------------------
+# BRIGHT
+DATA          RM_NONE;
+DATA	      RM_NONE;
+DATA          RM_MUDDY;
+DATA          RM_NONE;
+DATA          RM_NONE;
+DATA          RM_NONE;
+
+# RESERVOIR
+DATA          RM_BANK;
+DATA	      RM_NONE;
+DATA          RM_NONE;
+DATA          RM_MUDDY;
+DATA          RM_NONE;
+DATA          RM_NONE;
+
+# BANK
+DATA          RM_NONE;
+DATA	      RM_RESERVOIR;
+DATA          RM_FOYER;
+DATA          RM_NONE;
+DATA          RM_NONE;
+DATA          RM_NONE;
+
+# FOYER
+DATA          RM_NONE;
+DATA	      RM_NONE;
+DATA          RM_NONE;
+DATA          RM_BANK;
+DATA          RM_NONE;
+DATA          RM_DARK;
+
+# DARK
+DATA          RM_BARE;
+DATA	      RM_NONE;
+DATA          RM_NONE;
+DATA          RM_JAIL;
+DATA          RM_FOYER;
+DATA          RM_NONE;
+# -----------------------------------
+# ROOM NAME DATA
+# -----------------------------------
+DATA RM_BRIGHT_NAME    "BRIGHT ROOM";
+DATA RM_RESERVOIR_NAME "RESERVOIR";
+DATA RM_BANK_NAME      "EAST BANK";
+DATA RM_FOYER_NAME     "FOYER";
+DATA RM_DARK_NAME      "DARK CHAMBER";
+

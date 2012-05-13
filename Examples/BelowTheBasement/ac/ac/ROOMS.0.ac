@@ -1,0 +1,65 @@
+# -----------------------------------
+# BELOW THE BASEMENT: ROOM MODULE 0
+# -----------------------------------
+# MODULE NUMBER
+# -----------------------------------
+DATA RM_MODULE    0;
+# -----------------------------------
+# ROOM NAMES
+# -----------------------------------
+DATA RM_NAMES     RM_BASEMENT_NAME;
+DATA              RM_FEATHERS_NAME;
+DATA              RM_RUBBER_NAME;
+DATA              RM_CLOSET_NAME;
+DATA              RM_MUDDY_NAME;
+# -----------------------------------
+# ROOM EXITS
+# -----------------------------------
+# BASEMENT
+DATA RM_EXITS RM_NONE;
+DATA          RM_NONE;
+DATA          RM_NONE;
+DATA          RM_NONE;
+DATA          RM_NONE;
+DATA          RM_FEATHERS;
+
+# FEATHERS
+DATA          RM_RUBBER;
+DATA 	      RM_MUDDY;
+DATA          RM_NONE;
+DATA          RM_NONE;
+DATA          RM_NONE;
+DATA          RM_NONE;
+
+# RUBBER
+DATA          RM_NONE;
+DATA	      RM_FEATHERS;
+DATA          RM_NONE;
+DATA          RM_CLOSET;
+DATA          RM_NONE;
+DATA          RM_NONE;
+
+# CLOSET
+DATA          RM_NONE;
+DATA	      RM_NONE;
+DATA          RM_RUBBER;
+DATA          RM_NONE;
+DATA          RM_NONE;
+DATA          RM_NONE;
+
+# MUDDY
+DATA          RM_FEATHERS;
+DATA	      RM_NONE;
+DATA          RM_RESERVOIR;
+DATA          RM_BRIGHT;
+DATA          RM_NONE;
+DATA          RM_NONE;
+# -----------------------------------
+# ROOM NAME DATA
+# -----------------------------------
+DATA RM_BASEMENT_NAME  "BASEMENT";
+DATA RM_FEATHERS_NAME  "FEATHER STORAGE ROOM";
+DATA RM_RUBBER_NAME    "RUBBER ROOM";
+DATA RM_CLOSET_NAME    "CLOSET ROOM";
+DATA RM_MUDDY_NAME     "MUDDY ROOM";
+

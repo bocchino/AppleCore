@@ -1,0 +1,84 @@
+# -----------------------------------
+# BELOW THE BASEMENT: PARSING
+# -----------------------------------
+CONST MAX_WORDS 3;
+
+VAR WORDS:6;
+VAR NUM_WORDS:1;
+
+FN PARSE_INPUT() {
+  FIND_WORDS();
+  IF (NUM_WORDS=0) RETURN;
+  ELSE IF (NUM_WORDS=1)
+    DO_COMMAND((@WORDS)[0,2]);
+#  ELSE
+#    DO_VERB_PHRASE();
+}
+# -----------------------------------
+# FIND THE WORDS IN THE INPUT LINE
+# -----------------------------------
+FN FIND_WORDS() {
+  VAR WORD:2=MON_IN;
+  VAR PTR:2=MON_IN;
+  VAR CHAR:1;
+  SET WORDS=0;
+  SET NUM_WORDS=0;
+  WHILE (NUM_WORDS < MAX_WORDS) {
+    SET CHAR=PTR[0,1];
+    IF (EQ_CHAR(CHAR,' ') OR (CHAR=0)) {
+      SET PTR[0,1]=0;
+      IF (NOT IS_SKIP_WORD(WORD)) {
+        SET (@WORDS)[NUM_WORDS*2,2]=WORD;
+        INCR NUM_WORDS;
+      }
+      IF (CHAR=0) RETURN;
+      INCR PTR;
+      WHILE (EQ_CHAR(PTR[0,1],' '))
+        INCR PTR;
+      SET WORD=PTR;
+    }
+    ELSE INCR PTR;
+  }
+}
+# -----------------------------------
+# WORDS TO SKIP
+# -----------------------------------
+CONST NUM_SKIP_WORDS 6;
+
+DATA WORD_PTRS WORD_AT;
+DATA           WORD_WITH;
+DATA	       WORD_IN;
+DATA           WORD_THE;
+DATA           WORD_A;
+DATA           WORD_TO;
+
+DATA WORD_AT       "AT";
+DATA WORD_WITH     "WITH";
+DATA WORD_IN       "IN";
+DATA WORD_THE      "THE";
+DATA WORD_A        "A";
+DATA WORD_TO       "TO";
+
+FN:1S IS_SKIP_WORD(STR:2) {
+  VAR IDX:1=FIND_WORD(STR,
+    WORD_PTRS,NUM_SKIP_WORDS);
+  RETURN NOT (IDX=-1);
+}
+# -----------------------------------
+# FIND WORD IN LIST
+# -----------------------------------
+FN:1 FIND_WORD(WORD_PTR:2,
+ LIST_PTR:2,MAX:1) {
+  VAR IDX:1=0;
+  IF (WORD_PTR=0) RETURN -1;
+  WHILE (IDX < MAX) {
+    IF (NOT CMP_STRING(WORD_PTR,
+     LIST_PTR[IDX*2,2])) {
+      RETURN IDX;
+    }
+    INCR IDX;
+  }
+  RETURN -1;
+}
+ 
+

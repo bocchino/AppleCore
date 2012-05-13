@@ -1,0 +1,104 @@
+# -----------------------------------
+# BELOW THE BASEMENT: COMMANDS
+# -----------------------------------
+# COMMAND MESSAGES
+# -----------------------------------
+DATA CMD_DONT_KNOW "I DON'T UNDERSTAND THAT COMMAND.";
+DATA CANT_GO       "YOU CAN'T GO THAT WAY.";
+# -----------------------------------
+# COMMAND DATA
+# -----------------------------------
+CONST NUM_CMDS 11;
+
+DATA CMD_NAMES CMD_NAME_QUIT;
+DATA           CMD_NAME_N;
+DATA           CMD_NAME_S;
+DATA           CMD_NAME_E;
+DATA           CMD_NAME_W;
+DATA           CMD_NAME_U;
+DATA           CMD_NAME_D;
+DATA           CMD_NAME_L;
+DATA           CMD_NAME_I;
+DATA           CMD_NAME_HELP;
+DATA	       CMD_NAME_C;
+
+DATA CMD_NAME_QUIT  "QUIT";
+DATA CMD_NAME_N     "N";
+DATA CMD_NAME_S     "S";
+DATA CMD_NAME_E     "E";
+DATA CMD_NAME_W     "W";
+DATA CMD_NAME_U     "U";
+DATA CMD_NAME_D     "D";
+DATA CMD_NAME_L     "L";
+DATA CMD_NAME_I     "I";
+DATA CMD_NAME_HELP  "HELP";
+DATA CMD_NAME_C     "C";
+
+DATA CMD_FNS CMD_QUIT_FN;
+DATA         CMD_N_FN;
+DATA         CMD_S_FN;
+DATA         CMD_E_FN;
+DATA         CMD_W_FN;
+DATA         CMD_U_FN;
+DATA         CMD_D_FN;
+DATA         CMD_L_FN;
+DATA         CMD_I_FN;
+DATA         CMD_HELP_FN;
+DATA         CMD_C_FN;
+# -----------------------------------
+# COMMAND FUNCTIONS
+# -----------------------------------
+FN DO_COMMAND(WORD:2) {
+  VAR CMD_NUM:1=FIND_WORD(WORD,
+    CMD_NAMES,NUM_CMDS);
+  VAR CMD_FN:2;
+  MON_CROUT();
+  IF (CMD_NUM=-1) {
+    PRINT_WORDS(CMD_DONT_KNOW);
+    MON_CROUT();
+  }
+  ELSE {
+    SET CMD_FN=CMD_FNS[CMD_NUM*2,2];
+    CMD_FN();
+  }
+}
+
+FN CMD_QUIT_FN() {
+  SET DONE=TRUE;
+}
+
+FN GO(TO:1) {
+  VAR EXIT:1=RM_EXIT(CURRENT_RM,TO);
+  IF (EXIT=RM_NONE) {
+    PRINT_WORDS(CANT_GO);
+    MON_CROUT();
+  }
+  ELSE {
+    SET CURRENT_RM=EXIT;
+    CMD_L_FN();
+  }  
+}
+
+FN CMD_N_FN() { GO(NORTH); }
+FN CMD_S_FN() { GO(SOUTH); }
+FN CMD_E_FN() { GO(EAST); }
+FN CMD_W_FN() { GO(WEST); }
+FN CMD_U_FN() { GO(UP); }
+FN CMD_D_FN() { GO(DOWN); }
+
+FN CMD_L_FN() {
+  PRINT_RM(CURRENT_RM);
+}
+
+FN CMD_I_FN() {
+  # TODO
+}
+
+FN CMD_HELP_FN() {
+  # TODO
+}
+
+FN CMD_C_FN() {
+  # TODO
+}
+

@@ -1,0 +1,40 @@
+# -----------------------------------
+# BELOW THE BASEMENT: ROOM MODULE 3
+# -----------------------------------
+# MODULE NUMBER
+# -----------------------------------
+DATA              3;
+# -----------------------------------
+# ROOM NAMES
+# -----------------------------------
+DATA              RM_PIT_EDGE_NAME;
+DATA              RM_PIT_BOTTOM_NAME;
+VAR NAME_PADDING:6;
+# -----------------------------------
+# ROOM EXITS
+# -----------------------------------
+# PIT EDGE
+DATA          RM_NONE;
+DATA	      RM_NONE;
+DATA          RM_BEAR;
+DATA          RM_NONE;
+DATA          RM_NONE;
+DATA          RM_PIT_BOTTOM;
+
+# PIT
+DATA          RM_NONE;
+DATA	      RM_NONE;
+DATA          RM_NONE;
+DATA          RM_NONE;
+DATA          RM_PIT_EDGE;
+DATA          RM_NONE;
+
+VAR EXIT_PADDING:18;
+# -----------------------------------
+# ROOM NAME DATA
+# -----------------------------------
+DATA RM_PIT_EDGE_NAME    "EDGE OF PIT";
+DATA RM_PIT_BOTTOM_NAME  "BOTTOM OF PIT";
+
+
+

@@ -1,0 +1,106 @@
+# -----------------------------------
+# BELOW THE BASEMENT: ROOM ACCESS
+# -----------------------------------
+# DIRECTION CONSTANTS
+# -----------------------------------
+CONST NORTH 0;
+CONST SOUTH 1;
+CONST EAST  2;
+CONST WEST  3;
+CONST UP    4;
+CONST DOWN  5;
+# -----------------------------------
+# ROOMS PER MODULE
+# -----------------------------------
+CONST RM_MODULE_SIZE        5;
+# -----------------------------------
+# ROOM IDENTIFIERS
+# -----------------------------------
+CONST RM_BASEMENT   0;
+CONST RM_FEATHERS   1;
+CONST RM_RUBBER     2;
+CONST RM_CLOSET     3;
+CONST RM_MUDDY      4;
+CONST RM_BRIGHT     5;
+CONST RM_RESERVOIR  6;
+CONST RM_BANK       7;
+CONST RM_FOYER      8;
+CONST RM_DARK       9;
+CONST RM_BARE       10;
+CONST RM_JAIL       11;
+CONST RM_GREASY     12;
+CONST RM_BEAR       13;
+CONST RM_HOT        14;
+CONST RM_PIT_EDGE   15;
+CONST RM_PIT_BOTTOM 16;
+CONST RM_WIN        17;
+CONST RM_NONE       $FF;
+# -----------------------------------
+# EXTERN VARIABLE DECLARATION
+# -----------------------------------
+FN RMS_START();
+# -----------------------------------
+# LOAD MODULE FOR ROOM
+# -----------------------------------
+DATA RMS_STR "ROOMS.";
+DATA OBJ_STR ".OBJ";
+
+VAR NUM_STR:3;
+VAR FILE_NAME:15;
+
+FN LOAD_RM_MODULE_FOR(RM:1) {
+  VAR MODULE:1=GET_RM_MODULE_FOR(RM);
+  IF (NOT (GET_RM_MODULE()=MODULE)) {
+    SET FILE_NAME=0;
+    SET (@FILE_NAME)[0,6]=RMS_STR[0,6];
+    NUM_TO_STR(@MODULE,1,10,@FILE_NAME+6);
+    SET (@FILE_NAME)[7,4]=OBJ_STR[0,4];
+    ISSUE_DOS_CMD(DOS_BLOAD,@FILE_NAME);
+  }
+}
+# -----------------------------------
+# GET CURRENT ROOM MODULE
+# -----------------------------------
+FN:1 GET_RM_MODULE() {
+  RETURN RM_MODULE[0,1];
+}
+# -----------------------------------
+# GET OFFSET OF ROOM INTO MODULE
+# -----------------------------------
+FN:1 RM_OFFSET_FOR(RM:1) {
+  RETURN RM-RM_MODULE_SIZE*
+    GET_RM_MODULE_FOR(RM);
+}
+# -----------------------------------
+# GET MODULE NUMBER FOR ROOM
+# -----------------------------------
+FN:1 GET_RM_MODULE_FOR(RM:1) {
+  RETURN RM/RM_MODULE_SIZE;
+}
+# -----------------------------------
+# PRINT ROOM DESCRIPTION
+# -----------------------------------
+DATA SEPARATOR "\$0D\$0D----------------------------------------";
+
+FN PRINT_RM(RM:1) {
+  VAR RM_OFFSET:1=
+    RM_OFFSET_FOR(RM);
+  VAR RM_NAME:2;
+  LOAD_RM_MODULE_FOR(RM);
+  SET RM_NAME=RM_NAMES[2*RM_OFFSET,2];
+  MON_HOME();
+  INVERSE();
+  PRINT_STRING(RM_NAME);
+  NORMAL();
+  PRINT_STRING(SEPARATOR);
+}
+# -----------------------------------
+# GET ROOM EXIT
+# -----------------------------------
+FN:1 RM_EXIT(RM:1,DIR:1) {
+  VAR OFFSET:1=
+    RM_OFFSET_FOR(RM);
+  LOAD_RM_MODULE_FOR(RM);
+  RETURN RM_EXITS[6*OFFSET+DIR,1];
+}
+

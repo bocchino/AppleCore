@@ -1,0 +1,24 @@
+# -----------------------------------
+# BELOW THE BASEMENT: MAIN
+# -----------------------------------
+FN MAIN() {
+  # INIT GLOBAL DATA
+  LOAD_RM_MODULE_FOR(CURRENT_RM);
+  # PROCESS INPUT
+  PROCESS_INPUT();
+}
+
+VAR DONE:1=FALSE;
+
+DATA PROMPT   "\$0DCOMMAND >";
+
+FN PROCESS_INPUT() {
+  VAR LEN:1;
+  SET MON_PROMPT[0,1]=$80;
+  PRINT_RM(CURRENT_RM);
+  WHILE (NOT DONE) {
+    PRINT_STRING(PROMPT);
+    SET LEN=GET_LINE();
+    IF (LEN > 0) PARSE_INPUT();  
+  }
+}

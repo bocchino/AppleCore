@@ -1,0 +1,78 @@
+:NEW
+       .LIST OFF
+* -------------------------------
+* BELOW THE BASEMENT
+* BY MAURICE LOTMAN
+*
+* APPLECORE PORT AND ENHANCEMENTS
+* COPYRIGHT (C) 2012
+* ROBERT L. BOCCHINO JR.
+* -------------------------------
+       .OR $0803
+       .TF BELOW.THE.BASEMENT.OBJ
+* -------------------------------
+* PROLOGUE
+* -------------------------------
+       .IN AVM.PROLOGUE,D2
+* FIX UP STACK BOUND
+       LDA #RMS.START
+       STA AVM.SP.BOUND
+       LDA /RMS.START
+       STA AVM.SP.BOUND+1
+* RUN PROGRAM AND EXIT
+       JSR MAIN
+       JMP EXIT
+* -----------------------------------
+* INCLUDE PROGRAM FILES FROM D1
+* -----------------------------------
+	.IN COMMANDS,D1
+	.IN DISK,D1
+	.IN MAIN,D1
+	.IN PARSING,D1
+	.IN ROOMS.COMMON,D1
+	.IN STATE,D1
+* -----------------------------------
+* INCLUDE LIB FILES FROM D2
+* -----------------------------------
+	.IN CHAR,D2
+	.IN DOS,D2
+	.IN DOS.ASM,D2
+	.IN IO,D2
+	.IN MON.EQ,D2
+	.IN PRINT.WORDS,D2
+	.IN PRINT.WORDS.ASM,D2
+	.IN STRING,D2
+	.IN STRING.ASM,D2
+* -------------------------------
+* INCLUDE AVM
+* -------------------------------
+       .IN AVM.1,D2
+       .IN AVM.2,D2
+       .IN AVM.3.BINOP,D2
+       .IN AVM.4.UNOP,D2
+       .IN AVM.5.BUILT.IN,D2
+* -------------------------------
+* RESERVE SPACE FOR STACK
+* -------------------------------	
+AVM.STACK
+	.BS 256
+* -------------------------------
+* INCLUDE ROOM DATA
+* -------------------------------
+RMS.START
+       .TF ROOMS.0.OBJ,D1
+       .IN ROOMS.0,D1
+*
+       .OR RMS.START
+       .TF ROOMS.1.OBJ,D1
+       .IN ROOMS.1,D1
+*
+       .OR RMS.START
+       .TF ROOMS.2.OBJ,D1
+       .IN ROOMS.2,D1
+*
+       .OR RMS.START
+       .TF ROOMS.3.OBJ,D1
+       .IN ROOMS.3,D1
+
+
