@@ -30,7 +30,9 @@ CONST RM_HOT        14;
 CONST RM_PIT_EDGE   15;
 CONST RM_PIT_BOTTOM 16;
 CONST RM_WIN        17;
-CONST RM_NONE       $FF;
+
+CONST RM_TAKEN      -1;
+CONST RM_NONE       -1;
 # -----------------------------------
 # EXTERN VARIABLE DECLARATION
 # -----------------------------------
@@ -135,4 +137,10 @@ FN PRINT_HELP(RM:1) {
   SET HELP=RM_HELP[2*OFFSET,2];
   PRINT_WORDS(HELP);
 }
-
+# -----------------------------------
+# IS OBJECT IN ROOM?
+# -----------------------------------
+FN:1 IS_HERE(OBJ:1,RM:1) {
+  VAR OBJ_RM:1=GET_OBJ_RM(OBJ);
+  RETURN (OBJ_RM=RM_TAKEN OR OBJ_RM=CURRENT_RM);
+}

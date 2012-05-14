@@ -8,7 +8,7 @@ CONST NUM_OBJS 2;
 CONST OBJ_STOOL    0;
 CONST OBJ_SWITCH   1;
 
-CONST OBJ_NONE     $FF;
+CONST OBJ_NONE     -1;
 # -----------------------------------
 # OBJECT NAMES
 # -----------------------------------
@@ -59,4 +59,9 @@ FN DO_ACTION_ON(OBJ:1) {
   SET ACTION_FN=OBJ_ACTIONS[2*OFFSET,2];
   ACTION_FN();
 }
-
+# -----------------------------------
+# GET CURRENT ROOM OF OBJECT
+# -----------------------------------
+FN:1 GET_OBJ_RM(OBJ:1) {
+  RETURN OBJ_ROOMS[OBJ,1];
+}
