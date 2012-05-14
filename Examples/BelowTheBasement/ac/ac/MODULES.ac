@@ -1,0 +1,27 @@
+# -----------------------------------
+# BELOW THE BASEMENT: MODULES
+# -----------------------------------
+# INDICES PER MODULE
+# -----------------------------------
+CONST MODULE_SIZE        5;
+# -----------------------------------
+# STRING CONSTRUCTION INFO
+# -----------------------------------
+DATA OBJ_STR ".OBJ";
+
+VAR NUM_STR:3;
+VAR FILE_NAME:15;
+# -----------------------------------
+# GET OFFSET OF IDX INTO MODULE
+# -----------------------------------
+FN:1 OFFSET_FOR(IDX:1) {
+  RETURN IDX-MODULE_SIZE*
+    GET_MODULE_FOR(IDX);
+}
+# -----------------------------------
+# GET MODULE NUMBER FOR IDX
+# -----------------------------------
+FN:1 GET_MODULE_FOR(IDX:1) {
+  RETURN IDX/MODULE_SIZE;
+}
+

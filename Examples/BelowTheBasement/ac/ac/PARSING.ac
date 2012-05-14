@@ -11,8 +11,8 @@ FN PARSE_INPUT() {
   IF (NUM_WORDS=0) RETURN;
   ELSE IF (NUM_WORDS=1)
     DO_COMMAND((@WORDS)[0,2]);
-#  ELSE
-#    DO_VERB_PHRASE();
+  ELSE
+    DO_VERB_PHRASE();
 }
 # -----------------------------------
 # FIND THE WORDS IN THE INPUT LINE

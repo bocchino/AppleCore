@@ -1,0 +1,44 @@
+# -----------------------------------
+# BELOW THE BASEMENT: OBJECT MODULE 0
+# -----------------------------------
+# MODULE NUMBER
+# -----------------------------------
+DATA OBJ_MODULE    0;
+# -----------------------------------
+# OBJECT ACTIONS
+# -----------------------------------
+DATA OBJ_ACTIONS  OBJ_STOOL_ACTION;
+DATA              OBJ_SWITCH_ACTION;
+# -----------------------------------
+# ROOM DESCRIPTIONS
+# -----------------------------------
+DATA CLIMB_STOOL "YOU CLIMB THE STEP STOOL TO NOTICE THAT "\;
+DATA             "NOW YOU CAN JUST REACH THAT ELECTRIC SWITCH.";
+
+FN OBJ_STOOL_ACTION() {
+  IF (VB_ID=VB_USE) {
+    PRINT_WORDS(CLIMB_STOOL);
+    SET USED_STOOL=TRUE;
+    SET SUCCESS=TRUE;
+  }
+}
+
+DATA TOO_HIGH "THE SWITCH IS TOO HIGH TO REACH.";
+DATA BUZZING  "WITH A BUZZING NOISE THE PANEL SLIDES BACK "\;
+DATA          "REVEALING A DIMLY LIT STAIRCASE DESCENDING INTO THE UNKNOWN.";
+DATA CLICK    "CLICK.";
+
+FN OBJ_SWITCH_ACTION() {
+  IF (VB_ID=VB_USE) {
+    SET SUCCESS=TRUE;
+    IF (NOT USED_STOOL) 
+      PRINT_WORDS(TOO_HIGH);
+    ELSE IF (NOT USED_SWITCH) {
+      PRINT_WORDS(BUZZING);
+      SET USED_SWITCH=TRUE;
+    }
+    ELSE PRINT_WORDS(CLICK);
+  }
+}
+
+

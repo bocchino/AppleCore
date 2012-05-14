@@ -3,22 +3,28 @@
 # -----------------------------------
 FN MAIN() {
   # INIT GLOBAL DATA
-  LOAD_RM_MODULE_FOR(CURRENT_RM);
+  SET RM_MODULE[0,1]=$FF;
+  SET OBJ_MODULE[0,1]=$FF;
   # PROCESS INPUT
   PROCESS_INPUT();
 }
 
 VAR DONE:1=FALSE;
 
-DATA PROMPT   "\$0D\$0DCOMMAND >";
+DATA PROMPT   "COMMAND >";
 
 FN PROCESS_INPUT() {
   VAR LEN:1;
   SET MON_PROMPT[0,1]=$80;
   PRINT_RM(CURRENT_RM);
+  MON_CROUT();
   WHILE (NOT DONE) {
+    MON_CROUT();
     PRINT_STRING(PROMPT);
     SET LEN=GET_LINE();
-    IF (LEN > 0) PARSE_INPUT();  
+    IF (LEN > 0) {
+      PARSE_INPUT();  
+      MON_CROUT();
+    }
   }
 }

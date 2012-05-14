@@ -10,10 +10,6 @@ CONST WEST  3;
 CONST UP    4;
 CONST DOWN  5;
 # -----------------------------------
-# ROOMS PER MODULE
-# -----------------------------------
-CONST RM_MODULE_SIZE        5;
-# -----------------------------------
 # ROOM IDENTIFIERS
 # -----------------------------------
 CONST RM_BASEMENT   0;
@@ -43,13 +39,9 @@ FN RMS_START();
 # LOAD MODULE FOR ROOM
 # -----------------------------------
 DATA RMS_STR "ROOMS.";
-DATA OBJ_STR ".OBJ";
-
-VAR NUM_STR:3;
-VAR FILE_NAME:15;
 
 FN LOAD_RM_MODULE_FOR(RM:1) {
-  VAR MODULE:1=GET_RM_MODULE_FOR(RM);
+  VAR MODULE:1=GET_MODULE_FOR(RM);
   IF (NOT (GET_RM_MODULE()=MODULE)) {
     SET FILE_NAME=0;
     SET (@FILE_NAME)[0,6]=RMS_STR[0,6];
@@ -65,26 +57,13 @@ FN:1 GET_RM_MODULE() {
   RETURN RM_MODULE[0,1];
 }
 # -----------------------------------
-# GET OFFSET OF ROOM INTO MODULE
-# -----------------------------------
-FN:1 RM_OFFSET_FOR(RM:1) {
-  RETURN RM-RM_MODULE_SIZE*
-    GET_RM_MODULE_FOR(RM);
-}
-# -----------------------------------
-# GET MODULE NUMBER FOR ROOM
-# -----------------------------------
-FN:1 GET_RM_MODULE_FOR(RM:1) {
-  RETURN RM/RM_MODULE_SIZE;
-}
-# -----------------------------------
 # PRINT ROOM DESCRIPTION
 # -----------------------------------
-DATA SEPARATOR "\$0D\$0D----------------------------------------\$08";
+DATA SEPARATOR "\$0D----------------------------------------\$08";
 
 FN PRINT_RM(RM:1) {
   VAR RM_OFFSET:1=
-    RM_OFFSET_FOR(RM);
+    OFFSET_FOR(RM);
   VAR RM_NAME:2;
   VAR RM_DESC:2;
   LOAD_RM_MODULE_FOR(RM);
@@ -97,6 +76,8 @@ FN PRINT_RM(RM:1) {
   MON_CROUT();
   MON_CROUT();
   RM_DESC();
+  MON_CROUT();
+  PRINT_RM_OBJS(CURRENT_RM);
   PRINT_STRING(SEPARATOR);
 }
 
@@ -110,16 +91,45 @@ FN RM_TODO() {
 # -----------------------------------
 FN:1 RM_EXIT(RM:1,DIR:1) {
   VAR OFFSET:1=
-    RM_OFFSET_FOR(RM);
+    OFFSET_FOR(RM);
+  # HANDLE SPECIAL CASES
+  IF (RM=RM_BASEMENT AND DIR=DOWN AND NOT USED_SWITCH)
+    RETURN RM_NONE;
   LOAD_RM_MODULE_FOR(RM);
   RETURN RM_EXITS[6*OFFSET+DIR,1];
+}
+# -----------------------------------
+# PRINT ROOM OBJECTS
+# -----------------------------------
+DATA VIS_ITEMS "\$0DVISIBLE ITEMS: ";
+
+FN PRINT_RM_OBJS(RM:1) {
+  VAR PRINTED_VIS:1=FALSE;
+  VAR I:1=0;
+  VAR OBJ:1;
+  VAR RM_OBJ_PTR:2=
+    RM_OBJS+RM*RM_OBJ_LIST_SIZE;
+  VAR LEN:1=RM_OBJ_PTR[0,1];
+  WHILE (I<LEN) {
+    IF (NOT PRINTED_VIS) {
+      SET PRINTED_VIS=TRUE;
+      PRINT_STRING(VIS_ITEMS);
+    }
+    POSITION_CURSOR(15, MON_CV[0,1]);
+    SET OBJ=RM_OBJ_PTR[I+1,1];
+    PRINT_STRING(OBJ_NAMES[4*OBJ,2]);
+    PRINT_CHAR(' ');
+    PRINT_STRING(OBJ_NAMES[4*OBJ+2,2]);
+    MON_CROUT();
+    INCR I;
+  }
 }
 # -----------------------------------
 # PRINT ROOM HELP
 # -----------------------------------
 FN PRINT_HELP(RM:1) {
   VAR OFFSET:1=
-    RM_OFFSET_FOR(RM);
+    OFFSET_FOR(RM);
   VAR HELP:2;
   LOAD_RM_MODULE_FOR(RM);
   SET HELP=RM_HELP[2*OFFSET,2];

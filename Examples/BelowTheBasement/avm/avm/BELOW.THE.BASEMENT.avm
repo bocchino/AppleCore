@@ -23,16 +23,19 @@
        JSR MAIN
        JMP EXIT
 * -----------------------------------
-* INCLUDE PROGRAM FILES FROM D1
+* PROGRAM FILES FROM D1
 * -----------------------------------
 	.IN COMMANDS,D1
 	.IN DISK,D1
 	.IN MAIN,D1
+        .IN MODULES,D1
+        .IN OBJECTS.COMMON,D1
 	.IN PARSING,D1
 	.IN ROOMS.COMMON,D1
 	.IN STATE,D1
+	.IN VERBS,D1
 * -----------------------------------
-* INCLUDE LIB FILES FROM D2
+* LIB FILES FROM D2
 * -----------------------------------
 	.IN CHAR,D2
 	.IN DOS,D2
@@ -44,7 +47,7 @@
 	.IN STRING,D2
 	.IN STRING.ASM,D2
 * -------------------------------
-* INCLUDE AVM
+* AVM
 * -------------------------------
        .IN AVM.1,D2
        .IN AVM.2,D2
@@ -52,12 +55,12 @@
        .IN AVM.4.UNOP,D2
        .IN AVM.5.BUILT.IN,D2
 * -------------------------------
-* RESERVE SPACE FOR STACK
+* SPACE FOR STACK
 * -------------------------------	
 AVM.STACK
 	.BS 256
 * -------------------------------
-* INCLUDE ROOM DATA
+* ROOM DATA
 * -------------------------------
 RMS.START
        .TF ROOMS.0.OBJ,D1
@@ -74,5 +77,11 @@ RMS.START
        .OR RMS.START
        .TF ROOMS.3.OBJ,D1
        .IN ROOMS.3,D1
-
-
+* -------------------------------
+* OBJECT DATA
+* -------------------------------
+OBJS.START .EQ $4000
+       .OR OBJS.START
+       .TF OBJECTS.0.OBJ,D1
+       .IN OBJECTS.0,D1
+       

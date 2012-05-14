@@ -6,5 +6,78 @@ DATA STATE_BEGIN 0;
 # CURRENT ROOM
 # -----------------------------------
 VAR CURRENT_RM:1=0;
+# -----------------------------------
+# BASEMENT STATE
+# -----------------------------------
+VAR USED_STOOL:1=FALSE;
+VAR USED_SWITCH:1=FALSE;
+# -----------------------------------
+# ROOM OBJECT LISTS
+# -----------------------------------
+CONST RM_OBJ_LIST_SIZE 3;
+
+DATA RM_OBJS    2;
+DATA            OBJ_STOOL;
+DATA            OBJ_SWITCH;
+
+DATA            0;
+DATA            OBJ_NONE;
+DATA            OBJ_NONE;
+
+DATA            0;
+DATA            OBJ_NONE;
+DATA            OBJ_NONE;
+
+DATA            0;
+DATA            OBJ_NONE;
+DATA            OBJ_NONE;
+
+DATA            0;
+DATA            OBJ_NONE;
+DATA            OBJ_NONE;
+
+DATA            0;
+DATA            OBJ_NONE;
+DATA            OBJ_NONE;
+
+DATA            0;
+DATA            OBJ_NONE;
+DATA            OBJ_NONE;
+
+DATA            0;
+DATA            OBJ_NONE;
+DATA            OBJ_NONE;
+
+DATA            0;
+DATA            OBJ_NONE;
+DATA            OBJ_NONE;
+
+DATA            0;
+DATA            OBJ_NONE;
+DATA            OBJ_NONE;
+
+DATA            0;
+DATA            OBJ_NONE;
+DATA            OBJ_NONE;
+
+DATA            0;
+DATA            OBJ_NONE;
+DATA            OBJ_NONE;
+
+DATA            0;
+DATA            OBJ_NONE;
+DATA            OBJ_NONE;
+
+DATA            0;
+DATA            OBJ_NONE;
+DATA            OBJ_NONE;
+
+DATA            0;
+DATA            OBJ_NONE;
+DATA            OBJ_NONE;
+
+DATA            0;
+DATA            OBJ_NONE;
+DATA            OBJ_NONE;
 
 DATA STATE_END 0;

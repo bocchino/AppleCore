@@ -1,0 +1,62 @@
+# -----------------------------------
+# BELOW THE BASEMENT: OBJECTS
+# -----------------------------------
+CONST NUM_OBJS 2;
+# -----------------------------------
+# OBJECT IDENTIFIERS
+# -----------------------------------
+CONST OBJ_STOOL    0;
+CONST OBJ_SWITCH   1;
+
+CONST OBJ_NONE     $FF;
+# -----------------------------------
+# OBJECT NAMES
+# -----------------------------------
+DATA OBJ_NAMES WORD_STEP;
+DATA 	       WORD_STOOL;
+
+DATA 	       WORD_ELECTRIC;
+DATA	       WORD_SWITCH;
+# -----------------------------------
+# OBJECT KEYWORDS
+# -----------------------------------
+DATA WORD_STOOL    "STOOL";
+DATA WORD_STEP     "STEP";
+DATA WORD_ELECTRIC "ELECTRIC";
+DATA WORD_SWITCH   "SWITCH";
+# -----------------------------------
+# EXTERN VARIABLE DECLARATION
+# -----------------------------------
+FN OBJS_START();
+# -----------------------------------
+# LOAD MODULE FOR OBJECTS
+# -----------------------------------
+DATA OBJS_STR "OBJECTS.";
+
+FN LOAD_OBJ_MODULE_FOR(OBJ:1) {
+  VAR MODULE:1=GET_MODULE_FOR(OBJ);
+  IF (NOT (GET_OBJ_MODULE()=MODULE)) {
+    SET FILE_NAME=0;
+    SET (@FILE_NAME)[0,8]=OBJS_STR[0,8];
+    NUM_TO_STR(@MODULE,1,10,@FILE_NAME+8);
+    SET (@FILE_NAME)[9,4]=OBJ_STR[0,4];
+    ISSUE_DOS_CMD(DOS_BLOAD,@FILE_NAME);
+  }
+}
+# -----------------------------------
+# GET CURRENT OBJECT MODULE
+# -----------------------------------
+FN:1 GET_OBJ_MODULE() {
+  RETURN OBJ_MODULE[0,1];
+}
+# -----------------------------------
+# PERFORM OBJECT ACTION
+# -----------------------------------
+FN DO_ACTION_ON(OBJ:1) {
+  VAR OFFSET:1=OFFSET_FOR(OBJ);
+  VAR ACTION_FN:2;
+  LOAD_OBJ_MODULE_FOR(OBJ);
+  SET ACTION_FN=OBJ_ACTIONS[2*OFFSET,2];
+  ACTION_FN();
+}
+
