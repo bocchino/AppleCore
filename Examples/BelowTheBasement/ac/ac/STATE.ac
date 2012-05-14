@@ -20,8 +20,8 @@ DATA RM_OBJS    2;
 DATA            OBJ_STOOL;
 DATA            OBJ_SWITCH;
 
-DATA            0;
-DATA            OBJ_NONE;
+DATA            1;
+DATA            OBJ_OUTLET;
 DATA            OBJ_NONE;
 
 DATA            0;
@@ -84,5 +84,6 @@ DATA            OBJ_NONE;
 # -----------------------------------
 DATA OBJ_ROOMS   RM_BASEMENT;
 DATA             RM_BASEMENT;
+DATA		 RM_FEATHERS;
 
 DATA STATE_END 0;

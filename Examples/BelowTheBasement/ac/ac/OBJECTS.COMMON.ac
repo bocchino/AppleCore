@@ -1,12 +1,13 @@
 # -----------------------------------
 # BELOW THE BASEMENT: OBJECTS
 # -----------------------------------
-CONST NUM_OBJS 2;
+CONST NUM_OBJS 3;
 # -----------------------------------
 # OBJECT IDENTIFIERS
 # -----------------------------------
 CONST OBJ_STOOL    0;
 CONST OBJ_SWITCH   1;
+CONST OBJ_OUTLET   2;
 
 CONST OBJ_NONE     -1;
 # -----------------------------------
@@ -17,6 +18,9 @@ DATA 	       WORD_STOOL;
 
 DATA 	       WORD_ELECTRIC;
 DATA	       WORD_SWITCH;
+
+DATA           WORD_NULL;
+DATA           WORD_OUTLET;
 # -----------------------------------
 # OBJECT KEYWORDS
 # -----------------------------------
@@ -24,6 +28,8 @@ DATA WORD_STOOL    "STOOL";
 DATA WORD_STEP     "STEP";
 DATA WORD_ELECTRIC "ELECTRIC";
 DATA WORD_SWITCH   "SWITCH";
+DATA WORD_OUTLET   "OUTLET";
+DATA WORD_NULL     0;
 # -----------------------------------
 # EXTERN VARIABLE DECLARATION
 # -----------------------------------
@@ -65,3 +71,7 @@ FN DO_ACTION_ON(OBJ:1) {
 FN:1 GET_OBJ_RM(OBJ:1) {
   RETURN OBJ_ROOMS[OBJ,1];
 }
+# -----------------------------------
+# DEFAULT ACTION: DOES NOTHING
+# -----------------------------------
+FN DEFAULT_ACTION() {}
