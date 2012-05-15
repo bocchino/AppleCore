@@ -11,17 +11,16 @@ DATA OBJ_STR ".OBJ";
 
 VAR NUM_STR:3;
 VAR FILE_NAME:15;
+
+VAR MODULE:1;
+VAR OFFSET:1;
 # -----------------------------------
-# GET OFFSET OF IDX INTO MODULE
+# SET MODULE AND OFFSET
 # -----------------------------------
-FN:1 OFFSET_FOR(IDX:1) {
-  RETURN IDX-MODULE_SIZE*
-    GET_MODULE_FOR(IDX);
+FN SET_MODULE_TO(IDX:1) {
+  SET MODULE=IDX/MODULE_SIZE;
+  SET OFFSET=IDX-MODULE_SIZE*
+    MODULE;
 }
-# -----------------------------------
-# GET MODULE NUMBER FOR IDX
-# -----------------------------------
-FN:1 GET_MODULE_FOR(IDX:1) {
-  RETURN IDX/MODULE_SIZE;
-}
+
 
