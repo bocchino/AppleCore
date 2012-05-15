@@ -27,6 +27,7 @@
 * -----------------------------------
 	.IN COMMANDS,D1
 	.IN DISK,D1
+	.IN INVENTORY,D1
 	.IN MAIN,D1
         .IN MODULES,D1
         .IN OBJECTS.COMMON,D1
@@ -84,4 +85,7 @@ OBJS.START .EQ $4000
        .OR OBJS.START
        .TF OBJECTS.0.OBJ,D1
        .IN OBJECTS.0,D1
-       
+*
+	.OR OBJS.START
+	.TF OBJECTS.1.OBJ,D1
+	.IN OBJECTS.1,D1

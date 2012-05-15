@@ -1,0 +1,17 @@
+# -----------------------------------
+# BELOW THE BASEMENT: OBJECT MODULE 1
+# -----------------------------------
+# MODULE NUMBER
+# -----------------------------------
+DATA              1;
+# -----------------------------------
+# OBJECT ACTIONS
+# -----------------------------------
+DATA              TAKE_ACTION;
+DATA              DEFAULT_ACTION;
+DATA		  DEFAULT_ACTION;
+DATA		  DEFAULT_ACTION;
+DATA		  DEFAULT_ACTION;
+# -----------------------------------
+# OBJECT ACTION DATA
+# -----------------------------------

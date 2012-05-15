@@ -20,9 +20,9 @@ DATA RM_OBJS    2;
 DATA            OBJ_STOOL;
 DATA            OBJ_SWITCH;
 
-DATA            1;
+DATA            2;
 DATA            OBJ_OUTLET;
-DATA            OBJ_NONE;
+DATA            OBJ_FEATHERS;
 
 DATA            2;
 DATA            OBJ_KEY;

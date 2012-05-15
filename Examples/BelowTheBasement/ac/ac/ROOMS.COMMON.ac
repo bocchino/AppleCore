@@ -109,7 +109,6 @@ FN PRINT_RM_OBJS(RM:1) {
   VAR LEN:1=RM_OBJ_PTR[0,1];
   WHILE (I<LEN) {
     SET OBJ=RM_OBJ_PTR[I+1,1];
-    LOAD_OBJ_MODULE_FOR(OBJ);
     IF (I=0) PRINT_STRING(VIS_ITEMS);
     POSITION_CURSOR(15, MON_CV[0,1]);
     PRINT_OBJ_NAME(OBJ);
@@ -127,24 +126,29 @@ FN PRINT_HELP(RM:1) {
   PRINT_WORDS(HELP);
 }
 # -----------------------------------
-# FIND OBJECT IN ROOM
+# SET POINTER TO ROOM LIST
 # -----------------------------------
 VAR RM_LIST_LEN:1;
-VAR RM_LIST_IDX:1;
 VAR RM_LIST_PTR:2;
+
+FN SET_RM_LIST_PTR() {
+  SET RM_LIST_PTR=
+    RM_OBJS+RM_OBJ_LIST_SIZE*CURRENT_RM;
+  SET RM_LIST_LEN=RM_LIST_PTR[0,1];
+}
+# -----------------------------------
+# FIND OBJECT IN ROOM
+# -----------------------------------
+VAR RM_LIST_IDX:1;
 
 FN:1 FIND_OBJ_IN_RM(OBJ:2) {
   VAR OBJ_IDX:1;
   VAR NAME_PTR:2;
-  LOAD_RM_MODULE_FOR(CURRENT_RM);
-  SET RM_LIST_PTR=
-    RM_OBJS+RM_OBJ_LIST_SIZE*OFFSET;
-  SET RM_LIST_LEN=RM_LIST_PTR[0,1];
+  SET_RM_LIST_PTR();
   SET RM_LIST_IDX=0;
   WHILE (RM_LIST_IDX < RM_LIST_LEN) {
     SET OBJ_IDX=
       RM_LIST_PTR[RM_LIST_IDX+1,1];
-    LOAD_OBJ_MODULE_FOR(OBJ_IDX);
     SET NAME_PTR=OBJ_NAMES+4*OBJ_IDX;
     IF ((NOT CMP_STRING(OBJ,NAME_PTR[0,2]))
       OR (NOT CMP_STRING(OBJ,NAME_PTR[2,2])))
@@ -161,4 +165,15 @@ FN REMOVE_OBJ_FROM_RM() {
   SET RM_LIST_PTR[RM_LIST_IDX+1,1]=
     RM_LIST_PTR[RM_LIST_LEN,1];
   DECR RM_LIST_PTR[0,1];
+}
+# -----------------------------------
+# ADD OBJECT TO ROOM
+# -----------------------------------
+# TODO: MAKE SURE WE DON'T OVERFLOW THE LIST!!
+# -----------------------------------
+FN ADD_OBJ_TO_RM() {
+  SET_RM_LIST_PTR();
+  SET RM_LIST_PTR[RM_LIST_LEN+1,1]=
+    OBJ_ID;
+  INCR RM_LIST_PTR[0,1];
 }
