@@ -87,7 +87,7 @@ FN CMD_L_FN() {
 }
 
 FN CMD_I_FN() {
-  # TODO
+  PRINT_INV();
 }
 
 FN CMD_HELP_FN() {
