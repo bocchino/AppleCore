@@ -56,6 +56,17 @@ FN:1 GET_OBJ_MODULE() {
   RETURN OBJ_MODULE[0,1];
 }
 # -----------------------------------
+# FIND OBJECT IN SURROUNDINGS
+# -----------------------------------
+FN:1 FIND_OBJ(OBJ:2) {
+  VAR OBJ_ID:1;
+  # LOOK IN ROOM
+  SET OBJ_ID=
+    FIND_OBJ_IN_RM(OBJ,CURRENT_RM);
+  # TODO: LOOK IN HELD OBJECTS
+  RETURN OBJ_ID;
+}
+# -----------------------------------
 # PERFORM OBJECT ACTION
 # -----------------------------------
 FN DO_ACTION_ON(OBJ:1) {
@@ -64,12 +75,6 @@ FN DO_ACTION_ON(OBJ:1) {
   LOAD_OBJ_MODULE_FOR(OBJ);
   SET ACTION_FN=OBJ_ACTIONS[2*OFFSET,2];
   ACTION_FN();
-}
-# -----------------------------------
-# GET CURRENT ROOM OF OBJECT
-# -----------------------------------
-FN:1 GET_OBJ_RM(OBJ:1) {
-  RETURN OBJ_ROOMS[OBJ,1];
 }
 # -----------------------------------
 # DEFAULT ACTION: DOES NOTHING

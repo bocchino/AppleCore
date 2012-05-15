@@ -79,11 +79,5 @@ DATA            OBJ_NONE;
 DATA            0;
 DATA            OBJ_NONE;
 DATA            OBJ_NONE;
-# -----------------------------------
-# OBJECT ROOMS
-# -----------------------------------
-DATA OBJ_ROOMS   RM_BASEMENT;
-DATA             RM_BASEMENT;
-DATA		 RM_FEATHERS;
 
 DATA STATE_END 0;
