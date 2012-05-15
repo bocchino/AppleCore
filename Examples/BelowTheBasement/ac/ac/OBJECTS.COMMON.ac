@@ -1,13 +1,15 @@
 # -----------------------------------
 # BELOW THE BASEMENT: OBJECTS
 # -----------------------------------
-CONST NUM_OBJS 3;
+CONST NUM_OBJS 5;
 # -----------------------------------
 # OBJECT IDENTIFIERS
 # -----------------------------------
 CONST OBJ_STOOL    0;
 CONST OBJ_SWITCH   1;
 CONST OBJ_OUTLET   2;
+CONST OBJ_KEY	   3;
+CONST OBJ_STOPPER  4;
 
 CONST OBJ_NONE     -1;
 # -----------------------------------
@@ -21,6 +23,12 @@ DATA	       WORD_SWITCH;
 
 DATA           WORD_NULL;
 DATA           WORD_OUTLET;
+
+DATA	       WORD_SKELETON;
+DATA	       WORD_KEY;
+
+DATA	       WORD_NULL;
+DATA	       WORD_STOPPER;
 # -----------------------------------
 # OBJECT KEYWORDS
 # -----------------------------------
@@ -29,6 +37,9 @@ DATA WORD_STEP     "STEP";
 DATA WORD_ELECTRIC "ELECTRIC";
 DATA WORD_SWITCH   "SWITCH";
 DATA WORD_OUTLET   "OUTLET";
+DATA WORD_SKELETON "SKELETON";
+DATA WORD_KEY      "KEY";
+DATA WORD_STOPPER  "STOPPER";
 DATA WORD_NULL     0;
 # -----------------------------------
 # EXTERN VARIABLE DECLARATION

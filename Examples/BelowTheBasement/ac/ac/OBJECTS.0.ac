@@ -10,6 +10,8 @@ DATA OBJ_MODULE    0;
 DATA OBJ_ACTIONS  OBJ_STOOL_ACTION;
 DATA              OBJ_SWITCH_ACTION;
 DATA		  DEFAULT_ACTION;
+DATA		  DEFAULT_ACTION;
+DATA		  DEFAULT_ACTION;
 # -----------------------------------
 # OBJECT ACTION DATA
 # -----------------------------------
