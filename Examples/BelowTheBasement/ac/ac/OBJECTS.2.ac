@@ -1,0 +1,26 @@
+# -----------------------------------
+# BELOW THE BASEMENT: OBJECT MODULE 2
+# -----------------------------------
+# MODULE NUMBER
+# -----------------------------------
+DATA              2;
+# -----------------------------------
+# OBJECT ACTIONS
+# -----------------------------------
+DATA              SIGN_ACTION;
+DATA              DEFAULT_ACTION;
+DATA              DEFAULT_ACTION;
+DATA              DEFAULT_ACTION;
+DATA              DEFAULT_ACTION;
+# -----------------------------------
+# OBJECT ACTION DATA
+# -----------------------------------
+DATA READ_SIGN "THE SIGN SAYS: GIVE A HOOT; DON'T POLLUTE.";
+
+FN SIGN_ACTION() {
+  IF (VB_ID=VB_READ) {
+    SET RESPONDED=TRUE;
+    PRINT_WORDS(READ_SIGN);
+  }
+}    
+
