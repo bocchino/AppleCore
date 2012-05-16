@@ -6,17 +6,15 @@ CONST MAX_CARRIED 5;
 VAR NUM_CARRIED:1=0;
 VAR INVENTORY:5;
 
-DATA TOO_MANY "YOU ARE CARRYING TOO MANY ITEMS.";
 # -----------------------------------
 # ADD OBJECT
 # -----------------------------------
-FN ADD_TO_INV() {
+FN:1 ADD_TO_INV() {
   IF (NUM_CARRIED=MAX_CARRIED)
-    PRINT_WORDS(TOO_MANY);
-  ELSE {
-    SET (@INVENTORY)[NUM_CARRIED,1]=OBJ_ID;
-    INCR NUM_CARRIED;
-  }
+    RETURN FALSE;
+  SET (@INVENTORY)[NUM_CARRIED,1]=OBJ_ID;
+  INCR NUM_CARRIED;
+  RETURN TRUE;
 }
 # -----------------------------------
 # REMOVE OBJECT
@@ -27,7 +25,7 @@ FN REMOVE_FROM_INV() {
   DECR NUM_CARRIED;
 }
 # -----------------------------------
-# FIND OBJECT
+# FIND OBJECT BY NAME
 # -----------------------------------
 VAR INV_IDX:1;
 
@@ -45,6 +43,18 @@ FN:1 FIND_OBJ_IN_INV(OBJ:2) {
   }  
   SET INV_IDX=OBJ_NONE;
   RETURN OBJ_NONE;
+}
+# -----------------------------------
+# FIND OBJECT BY ID
+# -----------------------------------
+FN:1 FIND_OBJ_ID_IN_INV(OBJ_ID:1) {
+  SET INV_IDX=0;
+  WHILE (INV_IDX < NUM_CARRIED) {
+    IF ((@INVENTORY)[INV_IDX,1]=OBJ_ID)
+      RETURN TRUE;
+    INCR INV_IDX;
+  }  
+  RETURN FALSE;
 }
 # -----------------------------------
 # LIST ITEMS

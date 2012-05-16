@@ -63,6 +63,14 @@ DATA          RM_JAIL;
 DATA          RM_FOYER;
 DATA          RM_NONE;
 # -----------------------------------
+# ROOM HELP STATEMENTS
+# -----------------------------------
+DATA	          RM_BRIGHT_HELP;
+DATA              RM_RESERVOIR_HELP;
+DATA              RM_BANK_HELP;
+DATA              RM_FOYER_HELP;
+DATA              RM_DARK_HELP;
+# -----------------------------------
 # ROOM NAME DATA
 # -----------------------------------
 DATA RM_BRIGHT_NAME    "BRIGHT ROOM";
@@ -107,5 +115,13 @@ DATA          "AND A STAIRCASE LEADING UP.";
 FN RM_DARK_DESC() {
   PRINT_WORDS(DARK_STR);
 }
+# -----------------------------------
+# ROOM HELP DATA
+# -----------------------------------
+DATA RM_BRIGHT_HELP     "A PADDLE MIGHT BE USEFUL...";
+DATA RM_RESERVOIR_HELP  "DON'T GET YOUR FEET ALL MUDDY.";
+DATA RM_BANK_HELP       "READ THE PAPER.";
+DATA RM_FOYER_HELP      "TRY SEARCHING...";
+DATA RM_DARK_HELP       "WHY? IS IT GETTING TOO HAIRY FOR YOU?!!";
 
 

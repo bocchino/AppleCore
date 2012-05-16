@@ -1,7 +1,7 @@
 # -----------------------------------
 # BELOW THE BASEMENT: OBJECTS
 # -----------------------------------
-CONST NUM_OBJS 6;
+CONST NUM_OBJS 10;
 # -----------------------------------
 # OBJECT IDENTIFIERS
 # -----------------------------------
@@ -11,6 +11,10 @@ CONST OBJ_OUTLET   2;
 CONST OBJ_FEATHERS 3;
 CONST OBJ_KEY	   4;
 CONST OBJ_STOPPER  5;
+CONST OBJ_GLASS    6;
+CONST OBJ_CANOE	   7;
+CONST OBJ_PADDLE   8;
+CONST OBJ_HAMMER   9;
 
 CONST OBJ_NONE     $FF;
 # -----------------------------------
@@ -33,6 +37,18 @@ DATA	       WORD_KEY;
 
 DATA	       WORD_NULL;
 DATA	       WORD_STOPPER;
+
+DATA	       WORD_MAGNIFYING;
+DATA	       WORD_GLASS;
+
+DATA	       WORD_NULL;
+DATA	       WORD_CANOE;
+
+DATA	       WORD_NULL;
+DATA	       WORD_PADDLE;
+
+DATA	       WORD_NULL;
+DATA	       WORD_HAMMER;
 # -----------------------------------
 # OBJECT KEYWORDS
 # -----------------------------------
@@ -45,6 +61,12 @@ DATA WORD_FEATHERS "FEATHERS";
 DATA WORD_SKELETON "SKELETON";
 DATA WORD_KEY      "KEY";
 DATA WORD_STOPPER  "STOPPER";
+DATA WORD_MAGNIFYING "MAGNIFYING";
+DATA WORD_GLASS	   "GLASS";
+DATA WORD_CANOE	   "CANOE";
+DATA WORD_PADDLE   "PADDLE";
+DATA WORD_HAMMER   "HAMMER";
+
 DATA WORD_NULL     0;
 # -----------------------------------
 # EXTERN VARIABLE DECLARATION
@@ -72,7 +94,7 @@ FN:1 GET_OBJ_MODULE() {
   RETURN OBJ_MODULE[0,1];
 }
 # -----------------------------------
-# FIND OBJECT IN SURROUNDINGS
+# FIND OBJECT BY NAME
 # -----------------------------------
 FN:1 FIND_OBJ(OBJ:2) {
   VAR OBJ_ID:1;
@@ -85,6 +107,30 @@ FN:1 FIND_OBJ(OBJ:2) {
   ELSE
     SET INV_IDX=OBJ_NONE;
   RETURN OBJ_ID;
+}
+# -----------------------------------
+# FIND OBJECT BY ID
+# -----------------------------------
+FN:1 FIND_OBJ_ID(OBJ_ID:1) {
+  # LOOK IN ROOM
+  IF (FIND_OBJ_ID_IN_RM(OBJ_ID))
+    RETURN TRUE;
+  # OTHERWISE LOOK IN INVENTORY
+  RETURN FIND_OBJ_ID_IN_INV(OBJ_ID);
+}
+# -----------------------------------
+# DELETE OBJECT FROM GAME
+# -----------------------------------
+FN:1 REMOVE_OBJ_ID(OBJ_ID:1) {
+  IF (FIND_OBJ_ID_IN_RM(OBJ_ID)) {
+    REMOVE_OBJ_FROM_RM();
+    RETURN TRUE;
+  }
+  IF (FIND_OBJ_ID_IN_INV(OBJ_ID)) {
+    REMOVE_FROM_INV();
+    RETURN TRUE;
+  }
+  RETURN FALSE;
 }
 # -----------------------------------
 # PERFORM OBJECT ACTION
@@ -107,12 +153,16 @@ FN DEFAULT_ACTION() {}
 # TAKE ACTION: TAKE AN OBJECT
 # -----------------------------------
 DATA TAKEN "TAKEN";
+DATA TOO_MANY "YOU ARE CARRYING TOO MANY ITEMS.";
 
 FN TAKE_ACTION() {
   IF (VB_ID=VB_TAKE) {
-    PRINT_STRING(TAKEN);
-    REMOVE_OBJ_FROM_RM();
-    ADD_TO_INV();
+    IF (ADD_TO_INV()) {
+      PRINT_STRING(TAKEN);
+      REMOVE_OBJ_FROM_RM();
+    }
+    ELSE
+      PRINT_WORDS(TOO_MANY);
     SET RESPONDED=TRUE; 
   }
 }
@@ -122,13 +172,17 @@ FN TAKE_ACTION() {
 DATA DONT_HAVE "YOU DON'T HAVE IT.";
 DATA DROPPED "DROPPED";
 
+DATA HOARD "LET'S NOT HOARD EVERYTHING IN ONE ROOM.";
+
 FN DROP_ACTION() {
   IF (INV_IDX=OBJ_NONE)
     PRINT_WORDS(DONT_HAVE);
   ELSE {
-    PRINT_STRING(DROPPED);
-    REMOVE_FROM_INV();
-    ADD_OBJ_TO_RM();
+    IF (ADD_OBJ_TO_RM()) {
+      REMOVE_FROM_INV();
+      PRINT_STRING(DROPPED);
+    }
+    ELSE PRINT_WORDS(HOARD);
   }
   SET RESPONDED=TRUE; 
 }
