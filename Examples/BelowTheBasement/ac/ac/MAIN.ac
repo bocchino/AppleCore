@@ -17,12 +17,13 @@ FN PROCESS_INPUT() {
   VAR LEN:1;
   SET MON_PROMPT[0,1]=$80;
   PRINT_RM(CURRENT_RM);
+  MON_CROUT();
   WHILE (NOT DONE) {
-    MON_CROUT();
     MON_CROUT();
     PRINT_STRING(PROMPT);
     SET LEN=GET_LINE();
     IF (LEN > 0)
       PARSE_INPUT();  
+    MON_CROUT();
   }
 }
