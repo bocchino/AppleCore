@@ -1,7 +1,7 @@
 # -----------------------------------
 # BELOW THE BASEMENT: OBJECTS
 # -----------------------------------
-CONST NUM_OBJS 10;
+CONST NUM_OBJS 11;
 # -----------------------------------
 # OBJECT IDENTIFIERS
 # -----------------------------------
@@ -15,6 +15,7 @@ CONST OBJ_GLASS    6;
 CONST OBJ_CANOE	   7;
 CONST OBJ_PADDLE   8;
 CONST OBJ_HAMMER   9;
+CONST OBJ_SIGN     10;
 
 CONST OBJ_NONE     $FF;
 # -----------------------------------
@@ -49,6 +50,9 @@ DATA	       WORD_PADDLE;
 
 DATA	       WORD_NULL;
 DATA	       WORD_HAMMER;
+
+DATA	       WORD_NULL;
+DATA	       WORD_SIGN;
 # -----------------------------------
 # OBJECT KEYWORDS
 # -----------------------------------
@@ -66,6 +70,7 @@ DATA WORD_GLASS	   "GLASS";
 DATA WORD_CANOE	   "CANOE";
 DATA WORD_PADDLE   "PADDLE";
 DATA WORD_HAMMER   "HAMMER";
+DATA WORD_SIGN	   "SIGN";
 
 DATA WORD_NULL     0;
 # -----------------------------------
