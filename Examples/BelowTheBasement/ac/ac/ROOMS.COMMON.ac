@@ -78,12 +78,6 @@ FN PRINT_RM(RM:1) {
   PRINT_RM_OBJS(CURRENT_RM);
   PRINT_STRING(SEPARATOR);
 }
-
-DATA TODO "TODO";
-
-FN RM_TODO() {
-  PRINT_STRING(TODO);
-}
 # -----------------------------------
 # GET ROOM EXIT
 # -----------------------------------

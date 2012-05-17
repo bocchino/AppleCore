@@ -15,11 +15,11 @@ DATA              RM_HOT_NAME;
 # -----------------------------------
 # ROOM DESCRIPTIONS
 # -----------------------------------
-DATA              RM_TODO;
-DATA              RM_TODO;
-DATA              RM_TODO;
-DATA              RM_TODO;
-DATA              RM_TODO;
+DATA              TODO;
+DATA              TODO;
+DATA              TODO;
+DATA              TODO;
+DATA              TODO;
 # -----------------------------------
 # ROOM EXITS
 # -----------------------------------
