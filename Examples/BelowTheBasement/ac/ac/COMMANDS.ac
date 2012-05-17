@@ -88,6 +88,34 @@ FN CMD_W_FN() { GO(WEST); }
 FN CMD_U_FN() { GO(UP); }
 FN CMD_D_FN() { GO(DOWN); }
 # -----------------------------------
+# GO TO DIRECTION
+# -----------------------------------
+VAR EXIT_DIR:1;
+VAR EXIT_RM:1;
+
+FN GO(TO:1) {
+  SET EXIT_DIR=TO;
+  SET EXIT_RM=RM_EXIT(CURRENT_RM,TO);
+  IF (CURRENT_RM=RM_RESERVOIR)
+    EXIT_RESERVOIR();
+  ELSE IF (CURRENT_RM=RM_BANK)
+    EXIT_BANK();
+  ELSE IF (CURRENT_RM=RM_FOYER)
+    EXIT_FOYER();
+  ELSE GO_TO_EXIT_RM();
+}
+# -----------------------------------
+# GO TO EXIT ROOM
+# -----------------------------------
+FN GO_TO_EXIT_RM() {
+  IF (EXIT_RM=RM_NONE)
+    PRINT_WORDS(CANT_GO);
+  ELSE {
+    SET CURRENT_RM=EXIT_RM;
+    CMD_L_FN();
+  }
+}
+# -----------------------------------
 # L)OOK
 # -----------------------------------
 FN CMD_L_FN() {
