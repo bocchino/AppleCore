@@ -33,6 +33,7 @@
         .IN OBJECTS.COMMON,D1
 	.IN PARSING,D1
 	.IN ROOMS.COMMON,D1
+	.IN ROOM.EXITS,D1
 	.IN STATE,D1
 	.IN VERBS,D1
 * -----------------------------------

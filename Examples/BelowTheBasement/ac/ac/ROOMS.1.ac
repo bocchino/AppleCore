@@ -53,7 +53,7 @@ DATA	      RM_NONE;
 DATA          RM_NONE;
 DATA          RM_BANK;
 DATA          RM_NONE;
-DATA          RM_DARK;
+DATA          RM_NONE;
 
 # DARK
 DATA          RM_BARE;
