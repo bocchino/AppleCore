@@ -104,18 +104,20 @@ FN:1 RM_EXIT(RM:1,DIR:1) {
 DATA VIS_ITEMS "\$0DVISIBLE ITEMS: ";
 
 FN PRINT_RM_OBJS(RM:1) {
-  VAR I:1=0;
   VAR OBJ:1;
-  VAR RM_OBJ_PTR:2=
-    RM_OBJS+RM*RM_OBJ_LIST_SIZE;
-  VAR LEN:1=RM_OBJ_PTR[0,1];
-  WHILE (I<LEN) {
-    SET OBJ=RM_OBJ_PTR[I+1,1];
-    IF (I=0) PRINT_STRING(VIS_ITEMS);
-    POSITION_CURSOR(15, MON_CV[0,1]);
-    PRINT_OBJ_NAME(OBJ);
-    MON_CROUT();
-    INCR I;
+  VAR NUM_VISIBLE:1=0;
+  SET_RM_LIST_PTR();
+  WHILE (RM_LIST_IDX<RM_LIST_LEN) {
+    IF (RM_OBJ_VISIBLE()) {
+      SET OBJ=GET_RM_OBJ_AT_IDX();
+      IF (NUM_VISIBLE=0) 
+        PRINT_STRING(VIS_ITEMS);
+      POSITION_CURSOR(15, MON_CV[0,1]);
+      PRINT_OBJ_NAME(OBJ);
+      MON_CROUT();
+      INCR NUM_VISIBLE;
+    }
+    INCR RM_LIST_IDX;
   }
 }
 # -----------------------------------
@@ -132,29 +134,38 @@ FN PRINT_HELP(RM:1) {
 # -----------------------------------
 VAR RM_LIST_LEN:1;
 VAR RM_LIST_PTR:2;
+VAR RM_LIST_IDX:1;
 
 FN SET_RM_LIST_PTR() {
   SET RM_LIST_PTR=
     RM_OBJS+RM_OBJ_LIST_SIZE*CURRENT_RM;
   SET RM_LIST_LEN=RM_LIST_PTR[0,1];
+  SET RM_LIST_IDX=0;
+}
+# -----------------------------------
+# GET OBJECT AT RM_LIST_IDX
+# -----------------------------------
+FN:1 GET_RM_OBJ_AT_IDX() {
+  RETURN RM_LIST_PTR[RM_LIST_IDX+1,1] 
+    AND NOT OBJ_HIDE_FLAG;
+}
+# -----------------------------------
+# IS OBJECT AT RM_LIST_IDX VISIBLE?
+# -----------------------------------
+FN:1 RM_OBJ_VISIBLE() {
+  RETURN (RM_LIST_PTR[RM_LIST_IDX+1,1]
+    AND OBJ_HIDE_FLAG)=0;    
 }
 # -----------------------------------
 # FIND OBJECT IN ROOM BY NAME
 # -----------------------------------
-VAR RM_LIST_IDX:1;
-
-FN:1 FIND_OBJ_IN_RM(OBJ:2) {
-  VAR OBJ_ID:1;
-  VAR NAME_PTR:2;
+FN:1 FIND_OBJ_IN_RM(NAME:2) {
+  VAR ID:1;
   SET_RM_LIST_PTR();
-  SET RM_LIST_IDX=0;
   WHILE (RM_LIST_IDX < RM_LIST_LEN) {
-    SET OBJ_ID=
-      RM_LIST_PTR[RM_LIST_IDX+1,1];
-    SET NAME_PTR=OBJ_NAMES+4*OBJ_ID;
-    IF ((NOT CMP_STRING(OBJ,NAME_PTR[0,2]))
-      OR (NOT CMP_STRING(OBJ,NAME_PTR[2,2])))
-        RETURN OBJ_ID;
+    SET ID=GET_RM_OBJ_AT_IDX();
+    IF (TEST_OBJ_NAME(NAME,ID))
+      RETURN ID;
     INCR RM_LIST_IDX;
   }  
   SET RM_LIST_IDX=$FF;
@@ -165,9 +176,8 @@ FN:1 FIND_OBJ_IN_RM(OBJ:2) {
 # -----------------------------------
 FN:1 FIND_OBJ_ID_IN_RM(OBJ_ID:1) {
   SET_RM_LIST_PTR();
-  SET RM_LIST_IDX=0;
   WHILE (RM_LIST_IDX < RM_LIST_LEN) {
-    IF (RM_LIST_PTR[RM_LIST_IDX+1,1]=OBJ_ID)
+    IF (GET_RM_OBJ_AT_IDX()=OBJ_ID)
       RETURN TRUE;
     INCR RM_LIST_IDX;
   }

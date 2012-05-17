@@ -19,6 +19,7 @@ VAR CANOE_PLUGGED:1=FALSE;
 # ROOM OBJECT LISTS
 # -----------------------------------
 CONST RM_OBJ_LIST_SIZE 6;
+CONST OBJ_HIDE_FLAG $80;
 
 DATA RM_OBJS    2;
 DATA            OBJ_STOOL;
@@ -27,9 +28,9 @@ DATA            OBJ_NONE;
 DATA            OBJ_NONE;
 DATA            OBJ_NONE;
 
-DATA            2;
+DATA            1;
 DATA            OBJ_OUTLET;
-DATA            OBJ_FEATHERS;
+DATA            OBJ_NONE;
 DATA            OBJ_NONE;
 DATA            OBJ_NONE;
 DATA            OBJ_NONE;
@@ -41,9 +42,9 @@ DATA            OBJ_NONE;
 DATA            OBJ_NONE;
 DATA            OBJ_NONE;
 
-DATA            1;
+DATA            2;
 DATA            OBJ_GLASS;
-DATA            OBJ_NONE;
+DATA            (OBJ_CLOSET OR OBJ_HIDE_FLAG);
 DATA            OBJ_NONE;
 DATA            OBJ_NONE;
 DATA            OBJ_NONE;
