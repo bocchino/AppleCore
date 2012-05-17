@@ -126,11 +126,11 @@ DATA RM_DARK_HELP       "WHY? IS IT GETTING TOO HAIRY FOR YOU?!!";
 # -----------------------------------
 # EXIT THE RESERVOIR
 # -----------------------------------
-FN EXIT_RESERVOIR() {
+FN:1 EXIT_RESERVOIR() {
   IF (EXIT_DIR=NORTH)
     IF (NOT HANDLE_CANOE())
-      RETURN;
-  GO_TO_EXIT_RM();
+      RETURN FALSE;
+  RETURN TRUE;
 }
 # -----------------------------------
 # EXIT THE BANK
