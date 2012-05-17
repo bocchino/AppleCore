@@ -16,6 +16,10 @@ VAR USED_SWITCH:1=FALSE;
 # -----------------------------------
 VAR CANOE_PLUGGED:1=FALSE;
 # -----------------------------------
+# CLOSET STATE
+# -----------------------------------
+VAR SCREW_TIGHTENED:1=FALSE;
+# -----------------------------------
 # ROOM OBJECT LISTS
 # -----------------------------------
 CONST RM_OBJ_LIST_SIZE 6;
