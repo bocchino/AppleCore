@@ -86,9 +86,9 @@ DATA            OBJ_NONE;
 DATA            OBJ_NONE;
 DATA            OBJ_NONE;
 
-DATA            0;
-DATA            OBJ_NONE;
-DATA            OBJ_NONE;
+DATA            2;
+DATA            (OBJ_DOOR OR OBJ_HIDE_FLAG);
+DATA            (OBJ_WRITING OR OBJ_HIDE_FLAG);
 DATA            OBJ_NONE;
 DATA            OBJ_NONE;
 DATA            OBJ_NONE;

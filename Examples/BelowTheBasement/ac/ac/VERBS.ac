@@ -98,10 +98,8 @@ FN DO_VERB_PHRASE() {
   }
 }
 
-DATA OK "OK";
-
 FN VB_SAY_FN() {
-  PRINT_STRING(OK);
+  TODO();
 }
 
 FN RESPOND(STR:2) {

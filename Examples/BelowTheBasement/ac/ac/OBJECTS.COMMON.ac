@@ -1,7 +1,7 @@
 # -----------------------------------
 # BELOW THE BASEMENT: OBJECTS
 # -----------------------------------
-CONST NUM_OBJS 12;
+CONST NUM_OBJS 14;
 # -----------------------------------
 # OBJECT IDENTIFIERS
 # -----------------------------------
@@ -17,6 +17,8 @@ CONST OBJ_PADDLE   8;
 CONST OBJ_HAMMER   9;
 CONST OBJ_SIGN     10;
 CONST OBJ_PAPER    11;
+CONST OBJ_DOOR     12;
+CONST OBJ_WRITING  13;
 
 CONST OBJ_NONE     $FF;
 # -----------------------------------
@@ -57,6 +59,12 @@ DATA	       WORD_SIGN;
 
 DATA	       WORD_NULL;
 DATA	       WORD_PAPER;
+
+DATA	       WORD_NULL;
+DATA	       WORD_DOOR;
+
+DATA	       WORD_NULL;
+DATA	       WORD_WRITING;
 # -----------------------------------
 # OBJECT KEYWORDS
 # -----------------------------------
@@ -76,6 +84,8 @@ DATA WORD_PADDLE     "PADDLE";
 DATA WORD_HAMMER     "HAMMER";
 DATA WORD_SIGN	     "SIGN";
 DATA WORD_PAPER	     "PAPER";
+DATA WORD_DOOR	     "DOOR";
+DATA WORD_WRITING    "WRITING";
 
 DATA WORD_NULL     0;
 # -----------------------------------
@@ -167,12 +177,10 @@ DATA TOO_MANY "YOU ARE CARRYING TOO MANY ITEMS.";
 FN TAKE_ACTION() {
   IF (VB_ID=VB_TAKE) {
     IF (ADD_TO_INV()) {
-      PRINT_STRING(TAKEN);
+      RESPOND(TAKEN);
       REMOVE_OBJ_FROM_RM();
     }
-    ELSE
-      PRINT_WORDS(TOO_MANY);
-    SET RESPONDED=TRUE; 
+    ELSE RESPOND(TOO_MANY);
   }
 }
 # -----------------------------------
@@ -185,15 +193,14 @@ DATA HOARD "LET'S NOT HOARD EVERYTHING IN ONE ROOM.";
 
 FN DROP_ACTION() {
   IF (INV_IDX=OBJ_NONE)
-    PRINT_WORDS(DONT_HAVE);
+    RESPOND(DONT_HAVE);
   ELSE {
     IF (ADD_OBJ_TO_RM()) {
       REMOVE_FROM_INV();
-      PRINT_STRING(DROPPED);
+      RESPOND(DROPPED);
     }
-    ELSE PRINT_WORDS(HOARD);
+    ELSE RESPOND(HOARD);
   }
-  SET RESPONDED=TRUE; 
 }
 # -----------------------------------
 # PRINT OBJECT NAME
