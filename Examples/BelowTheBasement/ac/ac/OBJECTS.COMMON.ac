@@ -1,7 +1,7 @@
 # -----------------------------------
 # BELOW THE BASEMENT: OBJECTS
 # -----------------------------------
-CONST NUM_OBJS 15;
+CONST NUM_OBJS 18;
 # -----------------------------------
 # OBJECT IDENTIFIERS
 # -----------------------------------
@@ -20,6 +20,9 @@ CONST OBJ_PAPER    11;
 CONST OBJ_DOOR     12;
 CONST OBJ_WRITING  13;
 CONST OBJ_FEATHERS 14;
+CONST OBJ_CAT	   15;
+CONST OBJ_KNIFE	   16;
+CONST OBJ_SCEPTRE  17;
 
 CONST OBJ_NONE     $FF;
 # -----------------------------------
@@ -69,6 +72,15 @@ DATA	       WORD_WRITING;
 
 DATA	       WORD_PILE;
 DATA	       WORD_FEATHERS;
+
+DATA	       WORD_BLACK;
+DATA	       WORD_CAT;
+
+DATA	       WORD_NULL;
+DATA	       WORD_KNIFE;
+
+DATA	       WORD_NULL;
+DATA	       WORD_SCEPTRE;
 # -----------------------------------
 # OBJECT KEYWORDS
 # -----------------------------------
@@ -94,6 +106,10 @@ DATA WORD_INSCRIPTION "INSCRIPTION";
 DATA WORD_WRITING     "WRITING";
 DATA WORD_PILE	      "PILE";
 DATA WORD_FEATHERS    "FEATHERS";
+DATA WORD_BLACK	      "BLACK";
+DATA WORD_CAT	      "CAT";
+DATA WORD_KNIFE	      "KNIFE";
+DATA WORD_SCEPTRE     "SCEPTRE";
 
 DATA WORD_NULL     0;
 # -----------------------------------
@@ -244,3 +260,19 @@ FN:1 TEST_OBJ_NAME(STR:2,ID:1) {
   RETURN (NOT CMP_STRING(STR,NAME_PTR[0,2]))
     OR (NOT CMP_STRING(STR,NAME_PTR[2,2]));    
 }
+# -----------------------------------
+# PRINT MSG IF OBJECT LOOKED AT
+# -----------------------------------
+FN LOOK(MSG:2) {
+  IF (VB_ID=VB_LOOK) RESPOND(MSG);
+}
+# -----------------------------------
+# IS THERE A WEAPON?
+# -----------------------------------
+DATA NO_WEAPON "YOU DON'T HAVE A WEAPON.";
+FN:1 HAVE_WEAPON() {
+  IF (FIND_OBJ_ID_IN_INV(OBJ_KNIFE))
+    RETURN TRUE;
+  RESPOND(NO_WEAPON);
+  RETURN FALSE;
+}  

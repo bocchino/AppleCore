@@ -3,6 +3,11 @@
 # -----------------------------------
 DATA STATE_BEGIN 0;
 # -----------------------------------
+# NUMBER OF HITS SUFFERED
+# -----------------------------------
+CONST MAX_HITS		2;
+VAR NUM_HITS:1=0;
+# -----------------------------------
 # CURRENT ROOM
 # -----------------------------------
 VAR CURRENT_RM:1=0;
@@ -94,9 +99,9 @@ DATA            OBJ_NONE;
 DATA            OBJ_NONE;
 DATA            OBJ_NONE;
 
-DATA            0;
-DATA            OBJ_NONE;
-DATA            OBJ_NONE;
+DATA            2;
+DATA            (OBJ_CAT OR OBJ_HIDE_FLAG);
+DATA            OBJ_KNIFE;
 DATA            OBJ_NONE;
 DATA            OBJ_NONE;
 DATA            OBJ_NONE;
