@@ -31,6 +31,10 @@ VAR FOYER_LOCKED:1=TRUE;
 VAR FOYER_HELD:1=TRUE;
 VAR FOYER_DOOR_OPEN:1=FALSE;
 # -----------------------------------
+# DARK ROOM STATE
+# -----------------------------------
+VAR CAT_GONE:1=FALSE;
+# -----------------------------------
 # ROOM OBJECT LISTS
 # -----------------------------------
 CONST RM_OBJ_LIST_SIZE 6;
