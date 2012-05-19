@@ -24,6 +24,7 @@ VAR SCREW_TIGHTENED:1=FALSE;
 # -----------------------------------
 VAR FOYER_LOCKED:1=TRUE;
 VAR FOYER_HELD:1=TRUE;
+VAR FOYER_DOOR_OPEN:1=FALSE;
 # -----------------------------------
 # ROOM OBJECT LISTS
 # -----------------------------------
@@ -37,9 +38,9 @@ DATA            OBJ_NONE;
 DATA            OBJ_NONE;
 DATA            OBJ_NONE;
 
-DATA            1;
+DATA            2;
 DATA            OBJ_OUTLET;
-DATA            OBJ_NONE;
+DATA            (OBJ_FEATHERS OR OBJ_HIDE_FLAG);
 DATA            OBJ_NONE;
 DATA            OBJ_NONE;
 DATA            OBJ_NONE;

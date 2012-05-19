@@ -24,7 +24,6 @@ FN PROCESS_INPUT() {
     MON_CROUT();
     PRINT_STRING(PROMPT);
     SET LEN=GET_LINE();
-    MON_CROUT();
     IF (LEN > 0)
       PARSE_INPUT();  
     ELSE

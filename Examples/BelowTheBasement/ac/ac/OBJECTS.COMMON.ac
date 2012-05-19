@@ -1,7 +1,7 @@
 # -----------------------------------
 # BELOW THE BASEMENT: OBJECTS
 # -----------------------------------
-CONST NUM_OBJS 14;
+CONST NUM_OBJS 15;
 # -----------------------------------
 # OBJECT IDENTIFIERS
 # -----------------------------------
@@ -19,6 +19,7 @@ CONST OBJ_SIGN     10;
 CONST OBJ_PAPER    11;
 CONST OBJ_DOOR     12;
 CONST OBJ_WRITING  13;
+CONST OBJ_FEATHERS 14;
 
 CONST OBJ_NONE     $FF;
 # -----------------------------------
@@ -30,7 +31,7 @@ DATA 	       WORD_STOOL;
 DATA 	       WORD_ELECTRIC;
 DATA	       WORD_SWITCH;
 
-DATA           WORD_NULL;
+DATA           WORD_ELECTRIC;
 DATA           WORD_OUTLET;
 
 DATA           WORD_NULL;
@@ -57,35 +58,42 @@ DATA	       WORD_HAMMER;
 DATA	       WORD_NULL;
 DATA	       WORD_SIGN;
 
-DATA	       WORD_NULL;
+DATA	       WORD_SLIP;
 DATA	       WORD_PAPER;
 
 DATA	       WORD_NULL;
 DATA	       WORD_DOOR;
 
-DATA	       WORD_NULL;
+DATA	       WORD_INSCRIPTION;
 DATA	       WORD_WRITING;
+
+DATA	       WORD_PILE;
+DATA	       WORD_FEATHERS;
 # -----------------------------------
 # OBJECT KEYWORDS
 # -----------------------------------
-DATA WORD_STOOL      "STOOL";
-DATA WORD_STEP       "STEP";
-DATA WORD_ELECTRIC   "ELECTRIC";
-DATA WORD_SWITCH     "SWITCH";
-DATA WORD_OUTLET     "OUTLET";
-DATA WORD_CLOSET     "CLOSET";
-DATA WORD_SKELETON   "SKELETON";
-DATA WORD_KEY        "KEY";
-DATA WORD_STOPPER    "STOPPER";
-DATA WORD_MAGNIFYING "MAGNIFYING";
-DATA WORD_GLASS	     "GLASS";
-DATA WORD_CANOE	     "CANOE";
-DATA WORD_PADDLE     "PADDLE";
-DATA WORD_HAMMER     "HAMMER";
-DATA WORD_SIGN	     "SIGN";
-DATA WORD_PAPER	     "PAPER";
-DATA WORD_DOOR	     "DOOR";
-DATA WORD_WRITING    "WRITING";
+DATA WORD_STOOL       "STOOL";
+DATA WORD_STEP        "STEP";
+DATA WORD_ELECTRIC    "ELECTRIC";
+DATA WORD_SWITCH      "SWITCH";
+DATA WORD_OUTLET      "OUTLET";
+DATA WORD_CLOSET      "CLOSET";
+DATA WORD_SKELETON    "SKELETON";
+DATA WORD_KEY         "KEY";
+DATA WORD_STOPPER     "STOPPER";
+DATA WORD_MAGNIFYING  "MAGNIFYING";
+DATA WORD_GLASS	      "GLASS";
+DATA WORD_CANOE	      "CANOE";
+DATA WORD_PADDLE      "PADDLE";
+DATA WORD_HAMMER      "HAMMER";
+DATA WORD_SIGN	      "SIGN";
+DATA WORD_SLIP	      "SLIP";
+DATA WORD_PAPER	      "PAPER";
+DATA WORD_DOOR	      "DOOR";
+DATA WORD_INSCRIPTION "INSCRIPTION";
+DATA WORD_WRITING     "WRITING";
+DATA WORD_PILE	      "PILE";
+DATA WORD_FEATHERS    "FEATHERS";
 
 DATA WORD_NULL     0;
 # -----------------------------------
@@ -184,6 +192,16 @@ FN TAKE_ACTION() {
   }
 }
 # -----------------------------------
+# PRINT MESSAGE WHEN OBJECT CAN'T
+# BE TAKEN
+# -----------------------------------
+DATA TOO_HEAVY "IT IS TOO HEAVY.";
+DATA FIXED     "IT IS FIXED IN PLACE.";
+
+FN CANT_TAKE(MSG:2) {
+  IF (VB_ID=VB_TAKE) RESPOND(MSG);
+}
+# -----------------------------------
 # DROP ACTION: DROP AN OBJECT
 # -----------------------------------
 DATA DONT_HAVE "YOU DON'T HAVE IT.";
@@ -206,11 +224,17 @@ FN DROP_ACTION() {
 # PRINT OBJECT NAME
 # -----------------------------------
 FN PRINT_OBJ_NAME(OBJ:1) {
-  IF (OBJ_NAMES[4*OBJ,2][0,1]>0) {
-    PRINT_STRING(OBJ_NAMES[4*OBJ,2]);
+  VAR NAME_1:2=OBJ_NAMES[4*OBJ,2];
+  VAR NAME_2:2=OBJ_NAMES[4*OBJ+2,2];
+  IF (NAME_1[0,1]>0) {
+    PRINT_STRING(NAME_1);
     PRINT_CHAR(' ');
+    IF (NOT CMP_STRING(NAME_1,WORD_SLIP)) {
+      PRINT_STRING(WORD_OF);
+      PRINT_CHAR(' ');
+    }
   }
-  PRINT_STRING(OBJ_NAMES[4*OBJ+2,2]);
+  PRINT_STRING(NAME_2);
 }
 # -----------------------------------
 # TEST OBJECT NAME AGAINST ID
