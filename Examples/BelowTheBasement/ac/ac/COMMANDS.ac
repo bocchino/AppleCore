@@ -104,6 +104,10 @@ FN GO(TO:1) {
     EXIT_BANK();
   ELSE IF (CURRENT_RM=RM_FOYER)
     EXIT_FOYER();
+  ELSE IF (CURRENT_RM=RM_BEAR) {
+    IF (EXIT_BEAR())
+      GO_TO_EXIT_RM();
+  }
   ELSE GO_TO_EXIT_RM();
 }
 # -----------------------------------

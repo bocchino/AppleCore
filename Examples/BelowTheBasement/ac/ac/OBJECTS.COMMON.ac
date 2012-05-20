@@ -1,7 +1,7 @@
 # -----------------------------------
 # BELOW THE BASEMENT: OBJECTS
 # -----------------------------------
-CONST NUM_OBJS 21;
+CONST NUM_OBJS 22;
 # -----------------------------------
 # OBJECT IDENTIFIERS
 # -----------------------------------
@@ -26,6 +26,7 @@ CONST OBJ_SCEPTRE  17;
 CONST OBJ_CORD     18;
 CONST OBJ_VACUUM   19;
 CONST OBJ_CARD	   20;
+CONST OBJ_BEAR     21;
 
 CONST OBJ_NONE     $FF;
 # -----------------------------------
@@ -93,6 +94,9 @@ DATA	       WORD_CLEANER;
 
 DATA	       WORD_PLASTIC;
 DATA	       WORD_CARD;
+
+DATA	       WORD_NULL;
+DATA	       WORD_BEAR;
 # -----------------------------------
 # OBJECT KEYWORDS
 # -----------------------------------
