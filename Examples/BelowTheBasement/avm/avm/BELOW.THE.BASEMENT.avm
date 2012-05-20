@@ -9,11 +9,11 @@
 * ROBERT L. BOCCHINO JR.
 * -------------------------------
        .OR $0803
-       .TF BELOW.THE.BASEMENT.OBJ
+       .TF BELOW.THE.BASEMENT.OBJ,D2
 * -------------------------------
 * PROLOGUE
 * -------------------------------
-       .IN AVM.PROLOGUE,D2
+       .IN AVM.PROLOGUE,D1
 * FIX UP STACK BOUND
        LDA #RMS.START
        STA AVM.SP.BOUND
@@ -36,25 +36,25 @@
 	.IN STATE,D1
 	.IN VERBS,D1
 * -----------------------------------
-* LIB FILES FROM D2
+* LIB FILES FROM D1
 * -----------------------------------
-	.IN CHAR,D2
-	.IN DOS,D2
-	.IN DOS.ASM,D2
-	.IN IO,D2
-	.IN MON.EQ,D2
-	.IN PRINT.WORDS,D2
-	.IN PRINT.WORDS.ASM,D2
-	.IN STRING,D2
-	.IN STRING.ASM,D2
+	.IN CHAR,D1
+	.IN DOS,D1
+	.IN DOS.ASM,D1
+	.IN IO,D1
+	.IN MON.EQ,D1
+	.IN PRINT.WORDS,D1
+	.IN PRINT.WORDS.ASM,D1
+	.IN STRING,D1
+	.IN STRING.ASM,D1
 * -------------------------------
 * AVM
 * -------------------------------
-       .IN AVM.1,D2
-       .IN AVM.2,D2
-       .IN AVM.3.BINOP,D2
-       .IN AVM.4.UNOP,D2
-       .IN AVM.5.BUILT.IN,D2
+       .IN AVM.1,D1
+       .IN AVM.2,D1
+       .IN AVM.3.BINOP,D1
+       .IN AVM.4.UNOP,D1
+       .IN AVM.5.BUILT.IN,D1
 * -------------------------------
 * SPACE FOR STACK
 * -------------------------------	
@@ -64,40 +64,40 @@ AVM.STACK
 * ROOM DATA
 * -------------------------------
 RMS.START
-       .TF ROOMS.0.OBJ,D1
+       .TF ROOMS.0.OBJ,D2
        .IN ROOMS.0,D1
 *
        .OR RMS.START
-       .TF ROOMS.1.OBJ,D1
+       .TF ROOMS.1.OBJ,D2
        .IN ROOMS.1,D1
 *
        .OR RMS.START
-       .TF ROOMS.2.OBJ,D1
+       .TF ROOMS.2.OBJ,D2
        .IN ROOMS.2,D1
 *
        .OR RMS.START
-       .TF ROOMS.3.OBJ,D1
+       .TF ROOMS.3.OBJ,D2
        .IN ROOMS.3,D1
 * -------------------------------
 * OBJECT DATA
 * -------------------------------
 OBJS.START .EQ $4000
        .OR OBJS.START
-       .TF OBJECTS.0.OBJ,D1
+       .TF OBJECTS.0.OBJ,D2
        .IN OBJECTS.0,D1
 *
 	.OR OBJS.START
-	.TF OBJECTS.1.OBJ,D1
+	.TF OBJECTS.1.OBJ,D2
 	.IN OBJECTS.1,D1
 *
 	.OR OBJS.START
-	.TF OBJECTS.2.OBJ,D1
+	.TF OBJECTS.2.OBJ,D2
 	.IN OBJECTS.2,D1
 *
 	.OR OBJS.START
-	.TF OBJECTS.3.OBJ,D1
+	.TF OBJECTS.3.OBJ,D2
 	.IN OBJECTS.3,D1
 *
 	.OR OBJS.START
-	.TF OBJECTS.4.OBJ,D1
+	.TF OBJECTS.4.OBJ,D2
 	.IN OBJECTS.4,D1
