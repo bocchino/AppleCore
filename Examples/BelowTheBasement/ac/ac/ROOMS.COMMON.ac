@@ -196,10 +196,23 @@ FN REMOVE_OBJ_FROM_RM() {
 # -----------------------------------
 FN:1 ADD_OBJ_TO_RM() {
   SET_RM_LIST_PTR();
-  IF (RM_LIST_LEN=RM_OBJ_LIST_SIZE-1)
+  # SAVE ROOM FOR GAME TO DEPOSIT 
+  # ONE OBJECT!
+  IF (RM_LIST_LEN=RM_OBJ_LIST_SIZE-2)
     RETURN FALSE;
   SET RM_LIST_PTR[RM_LIST_LEN+1,1]=
     OBJ_ID;
   INCR RM_LIST_PTR[0,1];
   RETURN TRUE;
+}
+# -----------------------------------
+# DO WE HAVE AN OUTLET?
+# -----------------------------------
+DATA NEED_OUTLET "YOU NEED AN ELECTRIC OUTLET.";
+
+FN:1 HAVE_OUTLET() {
+  IF (CURRENT_RM=RM_FEATHERS)
+    RETURN TRUE;
+  RESPOND(NEED_OUTLET);
+  RETURN FALSE;
 }

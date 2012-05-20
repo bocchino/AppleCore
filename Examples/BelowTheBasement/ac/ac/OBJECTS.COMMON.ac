@@ -1,7 +1,7 @@
 # -----------------------------------
 # BELOW THE BASEMENT: OBJECTS
 # -----------------------------------
-CONST NUM_OBJS 18;
+CONST NUM_OBJS 21;
 # -----------------------------------
 # OBJECT IDENTIFIERS
 # -----------------------------------
@@ -23,6 +23,9 @@ CONST OBJ_FEATHERS 14;
 CONST OBJ_CAT	   15;
 CONST OBJ_KNIFE	   16;
 CONST OBJ_SCEPTRE  17;
+CONST OBJ_CORD     18;
+CONST OBJ_VACUUM   19;
+CONST OBJ_CARD	   20;
 
 CONST OBJ_NONE     $FF;
 # -----------------------------------
@@ -81,16 +84,29 @@ DATA	       WORD_KNIFE;
 
 DATA	       WORD_NULL;
 DATA	       WORD_SCEPTRE;
+
+DATA	       WORD_EXTENSION;
+DATA	       WORD_CORD;
+
+DATA	       WORD_VACUUM;
+DATA	       WORD_CLEANER;
+
+DATA	       WORD_PLASTIC;
+DATA	       WORD_CARD;
 # -----------------------------------
 # OBJECT KEYWORDS
 # -----------------------------------
 DATA WORD_BEAR	      "BEAR";
 DATA WORD_BLACK	      "BLACK";
 DATA WORD_CANOE	      "CANOE";
+DATA WORD_CARD	      "CARD";
 DATA WORD_CAT	      "CAT";
+DATA WORD_CLEANER     "CLEANER";
 DATA WORD_CLOSET      "CLOSET";
+DATA WORD_CORD	      "CORD";
 DATA WORD_DOOR	      "DOOR";
 DATA WORD_ELECTRIC    "ELECTRIC";
+DATA WORD_EXTENSION   "EXTENSION";
 DATA WORD_FEATHERS    "FEATHERS";
 DATA WORD_GLASS	      "GLASS";
 DATA WORD_HAMMER      "HAMMER";
@@ -102,6 +118,7 @@ DATA WORD_OUTLET      "OUTLET";
 DATA WORD_PADDLE      "PADDLE";
 DATA WORD_PAPER	      "PAPER";
 DATA WORD_PILE	      "PILE";
+DATA WORD_PLASTIC     "PLASTIC";
 DATA WORD_SCEPTRE     "SCEPTRE";
 DATA WORD_SIGN	      "SIGN";
 DATA WORD_SKELETON    "SKELETON";
@@ -110,6 +127,7 @@ DATA WORD_STEP        "STEP";
 DATA WORD_STOOL       "STOOL";
 DATA WORD_STOPPER     "STOPPER";
 DATA WORD_SWITCH      "SWITCH";
+DATA WORD_VACUUM      "VACUUM";
 DATA WORD_WRITING     "WRITING";
 
 DATA WORD_NULL     0;

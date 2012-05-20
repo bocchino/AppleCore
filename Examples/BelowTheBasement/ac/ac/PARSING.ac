@@ -82,5 +82,18 @@ FN:1 FIND_WORD(WORD_PTR:2,
   }
   RETURN -1;
 }
- 
-
+# -----------------------------------
+# GET INPUT FOR 'USE' ACTION
+# -----------------------------------
+FN GET_USE_INPUT(PROMPT:2) {
+  VAR LEN:1;
+  SET WORDS=0;
+  PRINT_WORDS(PROMPT);
+  SET LEN=GET_LINE();
+  FIND_WORDS();
+  IF (NUM_WORDS > 0) {
+    SET OBJ=(@WORDS)[0,2];
+    SET OBJ_ID=FIND_OBJ(OBJ);
+  }
+  ELSE SET OBJ_ID=OBJ_NONE;
+}

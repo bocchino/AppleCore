@@ -16,8 +16,8 @@ DATA              RM_HOT_NAME;
 # ROOM DESCRIPTIONS
 # -----------------------------------
 DATA              TODO;
-DATA              TODO;
-DATA              TODO;
+DATA              RM_JAIL_DESC;
+DATA              RM_GREASY_DESC;
 DATA              TODO;
 DATA              TODO;
 # -----------------------------------
@@ -70,4 +70,20 @@ DATA RM_JAIL_NAME    "JAIL CELL";
 DATA RM_GREASY_NAME  "GREASY ROOM";
 DATA RM_BEAR_NAME    "BEAR ROOM";
 DATA RM_HOT_NAME     "HOT ROOM";
+# -----------------------------------
+# ROOM DESCRIPTIONS
+# -----------------------------------
+DATA JAIL_STR "THIS IS A STONE-WALLED ROOM CONTAINING A SINGLE JAIL CELL. "\;
+DATA 	      "THE CELL HAS A BARRED STEEL DOOR. "\;
+DATA	      "THERE ARE EXITS NORTH, WEST, AND EAST."; 
 
+FN RM_JAIL_DESC() {
+  RESPOND(JAIL_STR);
+}
+
+DATA GREASY_STR "THIS ROOM IS COVERED WITH OIL AND RAGS. "\;
+DATA 		"THERE IS ONE EXIT TO THE EAST.";
+
+FN RM_GREASY_DESC() {
+  RESPOND(GREASY_STR);
+}
