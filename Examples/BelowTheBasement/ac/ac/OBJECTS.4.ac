@@ -1,0 +1,28 @@
+# -----------------------------------
+# BELOW THE BASEMENT: OBJECT MODULE 4
+# -----------------------------------
+# MODULE NUMBER
+# -----------------------------------
+DATA              4;
+# -----------------------------------
+# OBJECT ACTIONS
+# -----------------------------------
+DATA              CARD_ACTION;
+DATA              DEFAULT_ACTION;
+DATA              DEFAULT_ACTION;
+DATA              DEFAULT_ACTION;
+DATA              DEFAULT_ACTION;
+# -----------------------------------
+# OBJECT ACTION DATA
+# -----------------------------------
+DATA LOOK_CARD "IT IS A SMALL PLASTIC CARD. "\;
+DATA 	       "THERE IS WRITING ON IT.";
+
+DATA READ_CARD "IT SAYS: BILL FOSTER    USER #32767";
+
+FN CARD_ACTION() {
+  LOOK(LOOK_CARD);
+  IF (VB_ID=VB_READ)
+    RESPOND(READ_CARD);
+  TAKE_ACTION();
+}
