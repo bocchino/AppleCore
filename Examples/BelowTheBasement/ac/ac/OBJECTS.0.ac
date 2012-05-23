@@ -56,7 +56,7 @@ FN CLOSET_ACTION() {
     IF (NOT SCREW_TIGHTENED)
       RESPOND(LOOSE);
     ELSE {
-      # TODO
+      RESPOND(TODO_STR);
     }    
   }
   CANT_TAKE(FIXED);

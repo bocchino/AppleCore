@@ -50,6 +50,10 @@ VAR ATTACKED_BEAR:1=FALSE;
 VAR CONFRONTED_BEAR:1=FALSE;
 VAR MISSED_BEAR:1=FALSE;
 # -----------------------------------
+# HOT ROOM STATE
+# -----------------------------------
+VAR SD_GIVEN:1=FALSE;
+# -----------------------------------
 # ROOM OBJECT LISTS
 # -----------------------------------
 CONST RM_OBJ_LIST_SIZE 6;
@@ -153,10 +157,10 @@ DATA            OBJ_NONE;
 DATA            OBJ_NONE;
 DATA            OBJ_NONE;
 
-DATA            0;
-DATA            OBJ_NONE;
-DATA            OBJ_NONE;
-DATA            OBJ_NONE;
+DATA            3;
+DATA            (OBJ_MACHINE OR OBJ_HIDE_FLAG);
+DATA            (OBJ_SLOT OR OBJ_HIDE_FLAG);
+DATA            OBJ_SOLDER;
 DATA            OBJ_NONE;
 DATA            OBJ_NONE;
 

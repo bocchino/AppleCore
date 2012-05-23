@@ -19,7 +19,7 @@ DATA              TODO;
 DATA              RM_JAIL_DESC;
 DATA              RM_GREASY_DESC;
 DATA              RM_BEAR_DESC;
-DATA              TODO;
+DATA              RM_HOT_DESC;
 # -----------------------------------
 # ROOM EXITS
 # -----------------------------------
@@ -110,3 +110,12 @@ FN:1 EXIT_BEAR() {
   }
   RETURN TRUE;
 }
+
+DATA HOT_STR "THIS ROOM IS MUCH WARMER THAN THE OTHER ROOMS. "\;
+DATA 	     "A LARGE BOXLIKE MACHINE OCCUPIES MUCH OF THE NORTH WALL. "\;
+DATA 	     "THERE IS AN EXIT SOUTH.";
+
+FN RM_HOT_DESC() {
+  PRINT_WORDS(HOT_STR);
+}
+

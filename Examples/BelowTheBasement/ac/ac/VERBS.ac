@@ -115,3 +115,69 @@ FN RESPOND(STR:2) {
   SET RESPONDED=TRUE;
   PRINT_WORDS(STR);
 }
+# -----------------------------------
+# PERFORM OBJECT ACTION
+# -----------------------------------
+FN DO_ACTION_ON(OBJ:1) {
+  VAR ACTION_FN:2;
+  IF (VB_ID=VB_DROP)
+    DROP_ACTION();
+  ELSE IF (LOAD_OBJ_MODULE_FOR(OBJ)) {
+    SET ACTION_FN=OBJ_ACTIONS[2*OFFSET,2];
+    ACTION_FN();
+  }
+}
+# -----------------------------------
+# DEFAULT ACTION: DOES NOTHING
+# -----------------------------------
+FN DEFAULT_ACTION() {}
+# -----------------------------------
+# TAKE ACTION: TAKE AN OBJECT
+# -----------------------------------
+DATA TAKEN "TAKEN";
+DATA TOO_MANY "YOU ARE CARRYING TOO MANY ITEMS.";
+
+FN TAKE_ACTION() {
+  IF (VB_ID=VB_TAKE) {
+    IF (ADD_TO_INV()) {
+      RESPOND(TAKEN);
+      REMOVE_OBJ_FROM_RM();
+    }
+    ELSE RESPOND(TOO_MANY);
+  }
+}
+# -----------------------------------
+# PRINT MESSAGE WHEN OBJECT CAN'T
+# BE TAKEN
+# -----------------------------------
+DATA TOO_HEAVY "IT IS TOO HEAVY.";
+DATA FIXED     "IT IS FIXED IN PLACE.";
+
+FN CANT_TAKE(MSG:2) {
+  IF (VB_ID=VB_TAKE) RESPOND(MSG);
+}
+# -----------------------------------
+# DROP ACTION: DROP AN OBJECT
+# -----------------------------------
+DATA DONT_HAVE "YOU DON'T HAVE IT.";
+DATA DROPPED "DROPPED";
+
+DATA HOARD "LET'S NOT HOARD EVERYTHING IN ONE ROOM.";
+
+FN DROP_ACTION() {
+  IF (INV_IDX=OBJ_NONE)
+    RESPOND(DONT_HAVE);
+  ELSE {
+    IF (ADD_OBJ_TO_RM(FALSE)) {
+      REMOVE_FROM_INV();
+      RESPOND(DROPPED);
+    }
+    ELSE RESPOND(HOARD);
+  }
+}
+# -----------------------------------
+# PRINT MSG IF OBJECT LOOKED AT
+# -----------------------------------
+FN LOOK(MSG:2) {
+  IF (VB_ID=VB_LOOK) RESPOND(MSG);
+}
