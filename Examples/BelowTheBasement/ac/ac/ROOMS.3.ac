@@ -13,8 +13,8 @@ VAR NAME_PADDING:6;
 # -----------------------------------
 # ROOM DESCRIPTIONS
 # -----------------------------------
-DATA              TODO;
-DATA              TODO;
+DATA              RM_PIT_EDGE_DESC;
+DATA              RM_PIT_BOTTOM_DESC;
 VAR DESC_PADDING:6;
 # -----------------------------------
 # ROOM EXITS
@@ -37,10 +37,36 @@ DATA          RM_NONE;
 
 VAR EXIT_PADDING:18;
 # -----------------------------------
+# ROOM HELP STATEMENTS
+# -----------------------------------
+DATA          RM_PIT_EDGE_HELP;
+DATA          RM_PIT_BOTTOM_HELP;
+# -----------------------------------
 # ROOM NAME DATA
 # -----------------------------------
 DATA RM_PIT_EDGE_NAME    "EDGE OF PIT";
 DATA RM_PIT_BOTTOM_NAME  "BOTTOM OF PIT";
+# -----------------------------------
+# ROOM DESCRIPTIONS
+# -----------------------------------
+DATA PIT_EDGE_STR "YOU ARE STANDING AT THE EDGE OF A DEEP PIT.";
 
+FN RM_PIT_EDGE_DESC() {
+  RESPOND(PIT_EDGE_STR);
+}
 
+DATA IN_PIT "YOU ARE AT THE BOTTOM OF THE PIT. "\;
+DATA 	    "THE ONLY EXIT IS UP.";
+DATA CROSS_HERE   "\$0D\$0DON THE FLOOR OF THE PIT IS A METAL CROSS.";
+
+FN RM_PIT_BOTTOM_DESC() {
+  RESPOND(IN_PIT);
+  IF (FIND_OBJ_ID_IN_RM(OBJ_CROSS))
+    RESPOND(CROSS_HERE);
+}
+# -----------------------------------
+# ROOM HELP DATA
+# -----------------------------------
+DATA RM_PIT_EDGE_HELP   "TRY GOING DOWN.";
+DATA RM_PIT_BOTTOM_HELP "LOOK AT THE CROSS.";
 

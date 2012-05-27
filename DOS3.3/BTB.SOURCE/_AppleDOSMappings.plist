@@ -440,7 +440,21 @@
 		<key>DOSFileType</key>
 		<integer>73</integer>
 		<key>Filename</key>
-		<string>ROOMS.1</string>
+		<string>ROOMS.1.1</string>
+		<key>MacFormat</key>
+		<integer>0</integer>
+		<key>StartingAddress</key>
+		<integer>8192</integer>
+		<key>Valid</key>
+		<true/>
+		<key>Verified</key>
+		<true/>
+	</dict>
+	<dict>
+		<key>DOSFileType</key>
+		<integer>73</integer>
+		<key>Filename</key>
+		<string>ROOMS.1.2</string>
 		<key>MacFormat</key>
 		<integer>0</integer>
 		<key>StartingAddress</key>
@@ -483,6 +497,20 @@
 		<integer>73</integer>
 		<key>Filename</key>
 		<string>ROOMS.COMMON</string>
+		<key>MacFormat</key>
+		<integer>0</integer>
+		<key>StartingAddress</key>
+		<integer>8192</integer>
+		<key>Valid</key>
+		<true/>
+		<key>Verified</key>
+		<true/>
+	</dict>
+	<dict>
+		<key>DOSFileType</key>
+		<integer>73</integer>
+		<key>Filename</key>
+		<string>ROOMS.COMMON.2</string>
 		<key>MacFormat</key>
 		<integer>0</integer>
 		<key>StartingAddress</key>

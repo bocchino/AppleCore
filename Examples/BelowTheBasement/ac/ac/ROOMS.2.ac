@@ -63,6 +63,14 @@ DATA          RM_NONE;
 DATA          RM_NONE;
 DATA          RM_NONE;
 # -----------------------------------
+# ROOM HELP STATEMENTS
+# -----------------------------------
+DATA          RM_BARE_HELP;
+DATA          RM_JAIL_HELP;
+DATA          RM_GREASY_HELP;
+DATA          RM_BEAR_HELP;
+DATA          RM_HOT_HELP;
+# -----------------------------------
 # ROOM NAME DATA
 # -----------------------------------
 DATA RM_BARE_NAME    "BARE ROOM";
@@ -118,4 +126,11 @@ DATA 	     "THERE IS AN EXIT SOUTH.";
 FN RM_HOT_DESC() {
   PRINT_WORDS(HOT_STR);
 }
-
+# -----------------------------------
+# ROOM HELP DATA
+# -----------------------------------
+DATA RM_BARE_HELP "SORRY, YOU'LL HAVE TO FIGURE IT OUT FOR YOURSELF!";
+DATA RM_JAIL_HELP "SOME OIL MIGHT GET THAT DOOR OPEN.";
+DATA RM_GREASY_HELP "MAYBE THERE'S SOMETHING YOU'D LIKE TO VACUUM...";
+DATA RM_BEAR_HELP "KILL THE BEAR.";
+DATA RM_HOT_HELP  "LOOK CLOSELY AT THE MACHINE.";

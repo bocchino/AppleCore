@@ -33,6 +33,7 @@
         .IN OBJECTS.COMMON,D1
 	.IN PARSING,D1
 	.IN ROOMS.COMMON,D1
+	.IN ROOMS.COMMON.2,D1
 	.IN STATE,D1
 	.IN VERBS,D1
 * -----------------------------------
@@ -69,7 +70,8 @@ RMS.START
 *
        .OR RMS.START
        .TF ROOMS.1.OBJ,D2
-       .IN ROOMS.1,D1
+       .IN ROOMS.1.1,D1
+       .IN ROOMS.1.2,D1
 *
        .OR RMS.START
        .TF ROOMS.2.OBJ,D2

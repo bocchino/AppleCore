@@ -32,6 +32,7 @@ VAR CANOE_PLUGGED:1=FALSE;
 # CLOSET STATE
 # -----------------------------------
 VAR SCREW_TIGHTENED:1=FALSE;
+VAR CLOSET_OPEN:1=FALSE;
 # -----------------------------------
 # FOYER STATE
 # -----------------------------------
@@ -42,6 +43,12 @@ VAR FOYER_DOOR_OPEN:1=FALSE;
 # DARK ROOM STATE
 # -----------------------------------
 VAR CAT_GONE:1=FALSE;
+# -----------------------------------
+# JAIL STATE
+# -----------------------------------
+VAR JAIL_OILED:1=FALSE;
+VAR JAIL_OPEN:1=FALSE;
+VAR HAMMER_USED:1=FALSE;
 # -----------------------------------
 # BEAR ROOM STATE
 # -----------------------------------
@@ -136,9 +143,9 @@ DATA            OBJ_NONE;
 DATA            OBJ_NONE;
 DATA            OBJ_NONE;
 
-DATA            0;
-DATA            OBJ_NONE;
-DATA            OBJ_NONE;
+DATA            2;
+DATA            (OBJ_JAIL_DOOR OR OBJ_HIDE_FLAG);
+DATA            (OBJ_METAL OR OBJ_HIDE_FLAG);
 DATA            OBJ_NONE;
 DATA            OBJ_NONE;
 DATA            OBJ_NONE;
@@ -166,6 +173,13 @@ DATA            OBJ_NONE;
 
 DATA            0;
 DATA            OBJ_NONE;
+DATA            OBJ_NONE;
+DATA            OBJ_NONE;
+DATA            OBJ_NONE;
+DATA            OBJ_NONE;
+
+DATA            1;
+DATA            (OBJ_CROSS OR OBJ_HIDE_FLAG);
 DATA            OBJ_NONE;
 DATA            OBJ_NONE;
 DATA            OBJ_NONE;
