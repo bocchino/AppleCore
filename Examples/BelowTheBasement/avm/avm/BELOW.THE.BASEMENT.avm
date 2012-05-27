@@ -31,11 +31,13 @@
 	.IN MAIN,D1
         .IN MODULES,D1
         .IN OBJECTS.COMMON,D1
+        .IN OBJECTS.COMMON.2,D1
 	.IN PARSING,D1
 	.IN ROOMS.COMMON,D1
 	.IN ROOMS.COMMON.2,D1
 	.IN STATE,D1
 	.IN VERBS,D1
+	.IN VERBS.2,D1
 * -----------------------------------
 * LIB FILES FROM D1
 * -----------------------------------
@@ -107,3 +109,7 @@ OBJS.START .EQ $4000
 	.OR OBJS.START
 	.TF OBJECTS.5.OBJ,D2
 	.IN OBJECTS.5,D1
+*
+	.OR OBJS.START
+	.TF OBJECTS.6.OBJ,D2
+	.IN OBJECTS.6,D1

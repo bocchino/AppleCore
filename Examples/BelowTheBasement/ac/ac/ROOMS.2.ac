@@ -15,7 +15,7 @@ DATA              RM_HOT_NAME;
 # -----------------------------------
 # ROOM DESCRIPTIONS
 # -----------------------------------
-DATA              TODO;
+DATA              RM_BARE_DESC;
 DATA              RM_JAIL_DESC;
 DATA              RM_GREASY_DESC;
 DATA              RM_BEAR_DESC;
@@ -81,6 +81,18 @@ DATA RM_HOT_NAME     "HOT ROOM";
 # -----------------------------------
 # ROOM DESCRIPTIONS
 # -----------------------------------
+DATA BARE_STR "THIS ROOM HAS SMOOTH WALLS. "\;
+DATA 	      "THE FAR WALL HAS TWO FLOOR-TO-CEILING CRACKS IN IT. "\;
+DATA	      "THERE IS AN EXIT SOUTH.";
+
+DATA LOCK     "\$0D\$0DBETWEEN THE CRACKS THERE IS A GLOWING LObCK.";
+
+FN RM_BARE_DESC() {
+  RESPOND(BARE_STR);
+  IF (FIND_OBJ_ID(OBJ_SWORD))
+    RESPOND(LOCK);
+}
+
 DATA JAIL_STR "THIS IS A STONE-WALLED ROOM CONTAINING A SINGLE JAIL CELL. "\;
 DATA 	      "THE CELL HAS A BARRED STEEL DOOR. "\;
 DATA	      "THERE ARE EXITS NORTH, WEST, AND EAST."; 

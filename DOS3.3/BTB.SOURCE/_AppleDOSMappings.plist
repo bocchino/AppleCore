@@ -34,7 +34,21 @@
 		<key>DOSFileType</key>
 		<integer>73</integer>
 		<key>Filename</key>
-		<string>AVM.3.BINOP</string>
+		<string>AVM.3.BINOP.1</string>
+		<key>MacFormat</key>
+		<integer>0</integer>
+		<key>StartingAddress</key>
+		<integer>8192</integer>
+		<key>Valid</key>
+		<true/>
+		<key>Verified</key>
+		<true/>
+	</dict>
+	<dict>
+		<key>DOSFileType</key>
+		<integer>73</integer>
+		<key>Filename</key>
+		<string>AVM.3.BINOP.2</string>
 		<key>MacFormat</key>
 		<integer>0</integer>
 		<key>StartingAddress</key>
@@ -370,7 +384,35 @@
 		<key>DOSFileType</key>
 		<integer>73</integer>
 		<key>Filename</key>
+		<string>OBJECTS.6</string>
+		<key>MacFormat</key>
+		<integer>0</integer>
+		<key>StartingAddress</key>
+		<integer>8192</integer>
+		<key>Valid</key>
+		<true/>
+		<key>Verified</key>
+		<true/>
+	</dict>
+	<dict>
+		<key>DOSFileType</key>
+		<integer>73</integer>
+		<key>Filename</key>
 		<string>OBJECTS.COMMON</string>
+		<key>MacFormat</key>
+		<integer>0</integer>
+		<key>StartingAddress</key>
+		<integer>8192</integer>
+		<key>Valid</key>
+		<true/>
+		<key>Verified</key>
+		<true/>
+	</dict>
+	<dict>
+		<key>DOSFileType</key>
+		<integer>73</integer>
+		<key>Filename</key>
+		<string>OBJECTS.COMMON.2</string>
 		<key>MacFormat</key>
 		<integer>0</integer>
 		<key>StartingAddress</key>
@@ -567,6 +609,20 @@
 		<integer>73</integer>
 		<key>Filename</key>
 		<string>VERBS</string>
+		<key>MacFormat</key>
+		<integer>0</integer>
+		<key>StartingAddress</key>
+		<integer>8192</integer>
+		<key>Valid</key>
+		<true/>
+		<key>Verified</key>
+		<true/>
+	</dict>
+	<dict>
+		<key>DOSFileType</key>
+		<integer>73</integer>
+		<key>Filename</key>
+		<string>VERBS.2</string>
 		<key>MacFormat</key>
 		<integer>0</integer>
 		<key>StartingAddress</key>

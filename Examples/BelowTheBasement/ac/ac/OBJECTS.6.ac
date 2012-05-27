@@ -1,0 +1,62 @@
+# -----------------------------------
+# BELOW THE BASEMENT: OBJECT MODULE 6
+# -----------------------------------
+# MODULE NUMBER
+# -----------------------------------
+DATA              6;
+# -----------------------------------
+# OBJECT ACTIONS
+# -----------------------------------
+DATA              IRON_ACTION;
+DATA              SWORD_ACTION;
+DATA              DEFAULT_ACTION;
+DATA              DEFAULT_ACTION;
+DATA              DEFAULT_ACTION;
+# -----------------------------------
+# OBJECT ACTION DATA
+# -----------------------------------
+DATA IRON_HEATING "THE IRON IS HEATING UP. "\;
+DATA 		  "WHAT WOULD YOU LIKE TO SOLDER? ";
+
+DATA NEED_SOLDER  "SORRY, YOU'LL NEED SOME SOLDER.";
+
+DATA SOLDER_PIECES "YOU SOLDER THE PIECES TOGETHER TO FORM A "\;
+DATA 		   "KEY IN THE DESIGN OF A SWORD.";
+
+FN IRON_ACTION() {
+  VAR USE_ID:1;
+  IF (VB_ID=VB_USE) {
+    IF (HAVE_OUTLET()) {
+      GET_USE_INPUT(IRON_HEATING);
+        SET USE_ID=OBJ_ID;
+        IF (NOT FIND_OBJ_ID(OBJ_SOLDER))
+	  RESPOND(NEED_SOLDER);            
+	ELSE IF ((USE_ID=OBJ_CROSS AND
+	 FIND_OBJ_ID(OBJ_METAL)) OR
+	 (USE_ID=OBJ_METAL AND 
+	 FIND_OBJ_ID(OBJ_CROSS))) {
+	  RESPOND(SOLDER_PIECES);
+	  REMOVE_OBJ_ID(OBJ_CROSS);
+	  REMOVE_OBJ_ID(OBJ_METAL);
+	  SET OBJ_ID=OBJ_SWORD;
+	  ADD_OBJ_TO_RM(TRUE);
+	}
+    }
+  }
+  TAKE_ACTION();
+}
+
+DATA SWORD_DESC "THIS IS A MINIATURE SWORD. THE END OF THE BLADE "\;
+DATA 		"FORMS A KEY. THERE IS A SMALL CRACK IN THE BLADE "\;
+DATA		"WHERE IT WAS BROKEN AND FUSED BACK TOGETHER.";
+
+DATA WIN	"YOU WIN! (TODO)";
+
+FN SWORD_ACTION() {
+  LOOK(SWORD_DESC);
+  IF (VB_ID=VB_USE AND CURRENT_RM=RM_BARE) {
+    RESPOND(WIN);
+    SET DONE=TRUE;
+  }
+  TAKE_ACTION();
+}

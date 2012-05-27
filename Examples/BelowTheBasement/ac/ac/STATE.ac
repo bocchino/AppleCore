@@ -136,8 +136,8 @@ DATA            OBJ_NONE;
 DATA            OBJ_NONE;
 DATA            OBJ_NONE;
 
-DATA            0;
-DATA            OBJ_NONE;
+DATA            1;
+DATA            OBJ_IRON;
 DATA            OBJ_NONE;
 DATA            OBJ_NONE;
 DATA            OBJ_NONE;

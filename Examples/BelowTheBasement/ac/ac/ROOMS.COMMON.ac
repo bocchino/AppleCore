@@ -63,6 +63,8 @@ FN:1 GET_RM_MODULE() {
 # -----------------------------------
 DATA SEPARATOR "\$0D----------------------------------------\$08";
 
+DATA JEWELS_GLOWING "\$0D\$0DTHE JEWELS ON TOP OF THE SCEPTRE ARE GLOWING.";
+
 FN PRINT_RM(RM:1) {
   VAR RM_NAME:2;
   VAR RM_DESC:2;
@@ -79,6 +81,10 @@ FN PRINT_RM(RM:1) {
     MON_CROUT();
     PRINT_RM_OBJS(CURRENT_RM);
     PRINT_STRING(SEPARATOR);
+    IF (FIND_OBJ_ID(OBJ_SCEPTRE))
+      IF (FIND_OBJ_ID_IN_RM(OBJ_METAL) OR
+       FIND_OBJ_ID_IN_RM(OBJ_CROSS))
+        PRINT_WORDS(JEWELS_GLOWING);
   }
 }
 # -----------------------------------
