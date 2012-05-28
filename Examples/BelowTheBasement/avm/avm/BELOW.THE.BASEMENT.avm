@@ -22,9 +22,9 @@
 * RUN PROGRAM AND EXIT
        JSR MAIN
        JMP EXIT
-* -----------------------------------
+* -------------------------------
 * PROGRAM FILES FROM D1
-* -----------------------------------
+* -------------------------------
 	.IN COMMANDS,D1
 	.IN DISK,D1
 	.IN INVENTORY,D1
@@ -38,9 +38,9 @@
 	.IN STATE,D1
 	.IN VERBS,D1
 	.IN VERBS.2,D1
-* -----------------------------------
+* -------------------------------
 * LIB FILES FROM D1
-* -----------------------------------
+* -------------------------------
 	.IN CHAR,D1
 	.IN DOS,D1
 	.IN DOS.ASM,D1
@@ -89,22 +89,6 @@ OBJS.START .EQ $4000
        .OR OBJS.START
        .TF OBJECTS.0.OBJ,D2
        .IN OBJECTS.0,D1
-*
-	.OR OBJS.START
-	.TF OBJECTS.1.OBJ,D2
-	.IN OBJECTS.1,D1
-*
-	.OR OBJS.START
-	.TF OBJECTS.2.OBJ,D2
-	.IN OBJECTS.2,D1
-*
-	.OR OBJS.START
-	.TF OBJECTS.3.OBJ,D2
-	.IN OBJECTS.3,D1
-*
-	.OR OBJS.START
-	.TF OBJECTS.4.OBJ,D2
-	.IN OBJECTS.4,D1
 *
 	.OR OBJS.START
 	.TF OBJECTS.5.OBJ,D2

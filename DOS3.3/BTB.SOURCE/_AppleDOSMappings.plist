@@ -118,6 +118,48 @@
 		<key>DOSFileType</key>
 		<integer>73</integer>
 		<key>Filename</key>
+		<string>BTB.1</string>
+		<key>MacFormat</key>
+		<integer>0</integer>
+		<key>StartingAddress</key>
+		<integer>8192</integer>
+		<key>Valid</key>
+		<true/>
+		<key>Verified</key>
+		<true/>
+	</dict>
+	<dict>
+		<key>DOSFileType</key>
+		<integer>73</integer>
+		<key>Filename</key>
+		<string>BTB.2</string>
+		<key>MacFormat</key>
+		<integer>0</integer>
+		<key>StartingAddress</key>
+		<integer>8192</integer>
+		<key>Valid</key>
+		<true/>
+		<key>Verified</key>
+		<true/>
+	</dict>
+	<dict>
+		<key>DOSFileType</key>
+		<integer>73</integer>
+		<key>Filename</key>
+		<string>BTB.3</string>
+		<key>MacFormat</key>
+		<integer>0</integer>
+		<key>StartingAddress</key>
+		<integer>8192</integer>
+		<key>Valid</key>
+		<true/>
+		<key>Verified</key>
+		<true/>
+	</dict>
+	<dict>
+		<key>DOSFileType</key>
+		<integer>73</integer>
+		<key>Filename</key>
 		<string>CHAR</string>
 		<key>MacFormat</key>
 		<integer>0</integer>
