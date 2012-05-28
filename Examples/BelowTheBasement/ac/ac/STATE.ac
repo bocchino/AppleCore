@@ -61,6 +61,11 @@ VAR MISSED_BEAR:1=FALSE;
 # -----------------------------------
 VAR SD_GIVEN:1=FALSE;
 # -----------------------------------
+# INVENTORY STATE
+# -----------------------------------
+VAR NUM_CARRIED:1=0;
+VAR INVENTORY:5;
+# -----------------------------------
 # ROOM OBJECT LISTS
 # -----------------------------------
 CONST RM_OBJ_LIST_SIZE 6;

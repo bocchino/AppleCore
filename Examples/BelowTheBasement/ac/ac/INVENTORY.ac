@@ -2,10 +2,6 @@
 # BELOW THE BASEMENT: INVENTORY
 # -----------------------------------
 CONST MAX_CARRIED 5;
-
-VAR NUM_CARRIED:1=0;
-VAR INVENTORY:5;
-
 # -----------------------------------
 # ADD OBJECT
 # -----------------------------------

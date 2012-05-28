@@ -3,8 +3,8 @@
 # -----------------------------------
 # ISSUE A DOS COMMAND
 # -----------------------------------
-DATA FILE_NOT_FOUND "FILE NOT FOUND";
-DATA DISK_ERROR     "DISK ERROR";
+DATA FILE_NOT_FOUND "I COULDN'T FIND THE FILE";
+DATA DISK_ERROR     "THERE'S A PROBLEM WITH THE DISK";
 
 FN:1 ISSUE_DOS_CMD(CMD:2,FNAME:2) {
   VAR ERR:1;

@@ -142,13 +142,53 @@ FN CMD_HELP_FN() {
 # -----------------------------------
 # SAVE
 # -----------------------------------
+VAR FILE_BUF:47;
+DATA 0;
+
+DATA SAVE_PROMPT "FILE NAME TO SAVE (RET FOR CATALOG)\$0D>";
+DATA A_STR	 ",A$";
+DATA L_STR	 ",L$";
+
 FN CMD_SAVE_FN() {
-  TODO();
+  VAR SAVE_ADDR:2=STATE_BEGIN;
+  VAR SAVE_LEN:2=STATE_END-STATE_BEGIN+1;
+  VAR LEN:1=GET_FILE_NAME(SAVE_PROMPT);
+  IF (LEN > 0) {
+    SET (@FILE_BUF)[0,47]=0;
+    COPY(MON_IN,LEN,@FILE_BUF);
+    COPY(A_STR,3,@FILE_BUF+LEN);
+    NUM_TO_STR(@SAVE_ADDR,2,16,@FILE_BUF+3+LEN);
+    COPY(L_STR,3,@FILE_BUF+7+LEN);
+    NUM_TO_STR(@SAVE_LEN,2,16,@FILE_BUF+10+LEN);
+    ISSUE_DOS_CMD(DOS_BSAVE,@FILE_BUF);
+  }
 }
 # -----------------------------------
 # RESTORE
 # -----------------------------------
-FN CMD_REST_FN() {
-  TODO();
-}
+DATA REST_PROMPT "FILE NAME TO RESTORE (RET FOR CATALOG)\$0D>";
 
+FN CMD_REST_FN() {
+  VAR SAVE_ADDR:2=STATE_BEGIN;
+  VAR LEN:1=GET_FILE_NAME(REST_PROMPT);
+  IF (LEN > 0) {
+    SET (@FILE_BUF)[0,47]=0;
+    COPY(MON_IN,LEN,@FILE_BUF);
+    COPY(A_STR,3,@FILE_BUF+LEN);
+    NUM_TO_STR(@SAVE_ADDR,2,16,@FILE_BUF+3+LEN);
+    IF (ISSUE_DOS_CMD(DOS_BLOAD,@FILE_BUF))
+      CMD_L_FN();
+  }
+}
+# -----------------------------------
+# PROMPT FOR FILE NAME
+# -----------------------------------
+FN:1 GET_FILE_NAME(PROMPT:2) {
+  VAR LEN:1;
+  PRINT_STRING(PROMPT);
+  SET LEN=GET_LINE();
+  IF (LEN=0)
+    ISSUE_DOS_CMD(DOS_CATALOG,WORD_NULL);
+  IF (LEN > 32) RETURN 32;
+  RETURN LEN;
+}
