@@ -9,7 +9,7 @@
 * ROBERT L. BOCCHINO JR.
 * -------------------------------
        .OR $0803
-       .TF BELOW.THE.BASEMENT.OBJ,D2
+       .TF BTB.OBJ,D2
 * -------------------------------
 * PROLOGUE
 * -------------------------------
@@ -41,11 +41,13 @@
 * -------------------------------
 * LIB FILES FROM D1
 * -------------------------------
+	.IN MON.EQ,D1
 	.IN CHAR,D1
+	.IN COPY,D1
+	.IN COPY.ASM,D1
 	.IN DOS,D1
 	.IN DOS.ASM,D1
 	.IN IO,D1
-	.IN MON.EQ,D1
 	.IN PRINT.WORDS,D1
 	.IN PRINT.WORDS.ASM,D1
 	.IN STRING,D1
@@ -55,7 +57,8 @@
 * -------------------------------
        .IN AVM.1,D1
        .IN AVM.2,D1
-       .IN AVM.3.BINOP,D1
+       .IN AVM.3.BINOP.1,D1
+       .IN AVM.3.BINOP.2,D1
        .IN AVM.4.UNOP,D1
        .IN AVM.5.BUILT.IN,D1
 * -------------------------------
@@ -91,9 +94,10 @@ OBJS.START .EQ $4000
        .IN OBJECTS.0,D1
 *
 	.OR OBJS.START
-	.TF OBJECTS.5.OBJ,D2
-	.IN OBJECTS.5,D1
+	.TF OBJECTS.3.OBJ,D2
+	.IN OBJECTS.3,D1
 *
 	.OR OBJS.START
-	.TF OBJECTS.6.OBJ,D2
-	.IN OBJECTS.6,D1
+	.TF OBJECTS.4.OBJ,D2
+	.IN OBJECTS.4,D1
+
