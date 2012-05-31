@@ -1,0 +1,112 @@
+# -------------------------------
+# HELLO FILE FOR 
+# BELOW THE BASEMENT
+# -------------------------------
+# SOFT SWITCH ADDRESSES
+# -------------------------------
+# READ ROM, WRITE RAM BANK 2
+CONST WRRAM2 $C081;
+# READ AND WRITE RAM BANK 2
+CONST RWRAM2 $C083;
+# -------------------------------
+# POINTER TO RESET VECTOR
+# -------------------------------
+CONST RESETV_PTR $3F2;
+# -------------------------------
+# DOS COLD START ENTRY POINTS
+# -------------------------------
+CONST DOS_COLD  $9D84;
+CONST DOS_ENTRY $9DEA;
+# -------------------------------
+# INT BASIC CALL FOR INPUT
+# -------------------------------
+CONST BASIC_PTR $E3D0;
+# -------------------------------
+# 6502 INSTRUCTIONS
+# -------------------------------
+CONST JMP	$4C;
+# -------------------------------
+# MAIN PROGRAM
+# -------------------------------
+CONST HELLO $2000;
+
+VAR PASS:1=0;
+VAR RESETV:3;
+VAR BASIC:3;
+
+DATA INSTALL_AS     "INSTALL.APPLESOFT.OBJ";
+DATA ROM_77	    "ROM.77.EDITOR.OBJ";
+DATA INSTALL_EDITOR "INSTALL.SHELL.EDITOR.OBJ";
+DATA BTB	    "BTB.OBJ";
+
+FN MAIN() {
+  IF (PASS=0) { # PASS 0
+    # INSTALL ROM IN LANGUAGE CARD
+    SET_SWITCH(WRRAM2);
+    BLOAD(ROM_77);
+    # INSTALL SHELL EDITOR
+    SET_SWITCH(RWRAM2);
+    BLOAD_AND_CALL(INSTALL_EDITOR);
+    # SAVE RESETV
+    SET RESETV=RESETV_PTR[0,3];
+    # SAVE BASIC CODE
+    SET BASIC=BASIC_PTR[0,3];
+    # SET UP BASIC ENTRY TO COME BACK HERE
+    SET BASIC_PTR[0,1]=JMP;
+    SET BASIC_PTR[1,2]=HELLO;
+    SET PASS=1;
+    # DOS COLD START, THEN COME BACK
+    DOS_COLD();
+  }
+  ELSE { # PASS 1
+    # RESTORE RESETV
+    SET RESETV_PTR[0,3]=RESETV;
+    # RESTORE BASIC
+    SET BASIC_PTR[0,3]=BASIC;
+    # A=0 SIGNALS INT BASIC
+    SET ^A=0;
+    # REENTER DOS AND RUN BTB
+    DOS_ENTRY();    
+    BRUN(BTB);
+  }
+}
+# -------------------------------
+# SET SOFT SWITCH
+# -------------------------------
+FN SET_SWITCH(SWITCH:2) {
+  VAR X:1;
+  SET X=SWITCH[0,1];
+  SET X=SWITCH[0,1];
+}
+# -------------------------------
+# BLOAD FILE
+# -------------------------------
+FN BLOAD(FILE:2) {
+  PRINT_STRING(DOS_BLOAD);
+  PRINT_STRING(FILE);
+  MON_CROUT();
+}
+# -------------------------------
+# LOAD AND CALL FILE
+# -------------------------------
+# ADDRESS OF LAST BLOAD
+CONST BLOAD_ADDR $AA72;
+
+FN BLOAD_AND_CALL(FILE:2) {
+  BLOAD(FILE);
+  BLOAD_ADDR[0,2]();
+}
+# -------------------------------
+# BRUN FILE
+# -------------------------------
+FN BRUN(FILE:2) {
+  PRINT_STRING(DOS_BRUN);
+  PRINT_STRING(FILE);
+  MON_CROUT();
+}
+
+INCLUDE "MON.EQ,D2";
+INCLUDE "DOS,D2";
+INCLUDE "DOS.ASM,D2";
+INCLUDE "IO,D2";
+

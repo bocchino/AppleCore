@@ -258,6 +258,20 @@
 		<key>DOSFileType</key>
 		<integer>73</integer>
 		<key>Filename</key>
+		<string>HELLO</string>
+		<key>MacFormat</key>
+		<integer>0</integer>
+		<key>StartingAddress</key>
+		<integer>8192</integer>
+		<key>Valid</key>
+		<true/>
+		<key>Verified</key>
+		<true/>
+	</dict>
+	<dict>
+		<key>DOSFileType</key>
+		<integer>73</integer>
+		<key>Filename</key>
 		<string>INVENTORY</string>
 		<key>MacFormat</key>
 		<integer>0</integer>
