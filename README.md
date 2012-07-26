@@ -1,4 +1,4 @@
-THE APPLECORE PROGRAMMING LANGUAGE, V1.0
+The AppleCore Programming Language, v1.0
 ========================================
 Copyright (C) 2011-12 by Rob Bocchino
 
@@ -61,15 +61,15 @@ you are using to run AppleCore programs.
 
 To set up your UNIX system to use AppleCore, do the following:
 
-a. Download the AppleCore distribution from the git repository:
+1.  Download the AppleCore distribution from the git repository:
 
-    git checkout git://github.com/bocchino/AppleCore.git
+    `git checkout git://github.com/bocchino/AppleCore.git`
 
-b. Set the environment variable APPLECORE to point to the top-level
-   directory of the AppleCore distribution.
+2.  Set the environment variable APPLECORE to point to the top-level
+    directory of the AppleCore distribution.
 
-c. Include ${APPLECORE}/Compiler/bin, ${APPLECORE}/Assembler/bin, and
-   ${APPLECORE}/Scripts in your UNIX PATH.
+3.  Include ${APPLECORE}/Compiler/bin, ${APPLECORE}/Assembler/bin, and
+    ${APPLECORE}/Scripts in your UNIX PATH.
 
 Once you've done all that, you can test the implementation:
 
