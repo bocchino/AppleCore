@@ -56,7 +56,7 @@ are using to run the AppleCore tools in this repository and "Apple II
 system" to the Apple II environment (either emulated or actual) that
 you are using to run AppleCore programs.
 
-4. UNIX System Setup
+4\. UNIX System Setup
 --------------------
 
 To set up your UNIX system to use AppleCore, do the following:
@@ -79,7 +79,8 @@ Once you've done all that, you can test the implementation:
 It should build the examples without any errors.  If not, fix the
 problem and try again until it works.
 
-5. APPLE II SYSTEM SETUP
+5\. Apple II System Setup
+------------------------
 
 To set up your Apple II system, you need to make a DOS 3.3 disk with
 the AppleCore Virtual Machine (AVM) runtime files on it, as well as
@@ -122,7 +123,7 @@ the directory, do the following:
 
  - SAVE FILE to save the file to the disk.
 
-Note that in Virtual ][ this process goes MUCH faster if you select
+Note that in Virtual ][ this process goes _much_ faster if you select
 "maximum speed" from the speed control knob on the tool bar.
 
 If you want to compile programs that depend on other AppleCore files
@@ -130,7 +131,8 @@ If you want to compile programs that depend on other AppleCore files
 ones in ${APPLECORE}/Lib/avm), then you need to add those files to the
 disk as well.  Section 7 says a bit more about this.
 
-6. WRITING APPLECORE PROGRAMS
+6\. WRITING APPLECORE PROGRAMS
+------------------------------
 
 Currently the best documentation for the AppleCore language is the
 spec (${APPLECORE}/Docs/AppleCore-Spec-v1.0.pdf).  However, like most
@@ -141,35 +143,36 @@ general idea of what's going on, you should be able to read the
 examples in ${APPLECORE}/Examples to get a better idea of how to write
 programs in AppleCore.
 
-7. COMPILING APPLECORE PROGRAMS
+7\. COMPILING APPLECORE PROGRAMS
+--------------------------------
 
 To compile an AppleCore program, you must carry out the following
 steps:
 
-a. Run the AppleCore compiler (acc) to translate one or more AppleCore
-   source files FILE.ac into AppleCore Virtual Machine (AVM) assembly
-   files FILE.avm.
+1.  Run the AppleCore compiler (acc) to translate one or more AppleCore
+    source files FILE.ac into AppleCore Virtual Machine (AVM) assembly
+    files FILE.avm.
 
-b. Run the AppleCore assembler (avm-asm) to translate each AVM
-   assembly file into a native 6502 assembly file FILE.asm.
+2.  Run the AppleCore assembler (avm-asm) to translate each AVM
+    assembly file into a native 6502 assembly file FILE.asm.
 
-c. For each AVM file, run the ASM to EXEC translator (asm2exec) to
-   generate a file FILE.exec that can be imported into the S-C Macro
-   Assembler on the Apple II using the EXEC command.
+3.  For each AVM file, run the ASM to EXEC translator (asm2exec) to
+    generate a file FILE.exec that can be imported into the S-C Macro
+    Assembler on the Apple II using the EXEC command.
 
-d. Get the FILE.EXEC files onto the Apple II system, as described in
-   Section 5.
+4.  Get the FILE.EXEC files onto the Apple II system, as described in
+    Section 5.
 
-e. For each FILE.EXEC file, issue the command EXEC FILE.EXEC in the
-   S-C Macro Assembler.  This creates an assembly file from the EXEC
-   file.  Save the assembly file FILE to the disk.
+5.  For each FILE.EXEC file, issue the command EXEC FILE.EXEC in the
+    S-C Macro Assembler.  This creates an assembly file from the EXEC
+    file.  Save the assembly file FILE to the disk.
 
-f. Assemble the top-level FILE (see Section 5.1 of the AppleCore spec)
-   by loading it into the assembler and issuing the command ASM to the
-   S-C Macro Assembler.  Any assembly files that FILE depends on
-   (including the AVM runtime, see Section 5 of this document) must be
-   available on the disk, or the assembler will complain that it can't
-   find the files.
+6.  Assemble the top-level FILE (see Section 5.1 of the AppleCore
+    spec) by loading it into the assembler and issuing the command ASM
+    to the S-C Macro Assembler.  Any assembly files that FILE depends
+    on (including the AVM runtime, see Section 5 of this document)
+    must be available on the disk, or the assembler will complain that
+    it can't find the files.
 
 The result of all this should be a file called FILE.OBJ on the Apple
 II disk.  Issue the command BRUN FILE.OBJ to run the program.
@@ -178,17 +181,17 @@ For a simple example, try compiling any of the programs in
 ${APPLECORE}/Examples.  Examples/Redbook/RodsColorPattern might be a
 good one to start with:
 
-- In that directory, type 'make'.  The build system automatically does
-  steps (a) through (c) for you.
+- In that directory, type `make`.  The build system automatically does
+  steps 1 through 3 for you.
 
-- With the S-C Macro Assembler running, drag the directory 'exec' into
-  drive 1 (step d) and say 'EXEC RODS.COLOR.PATTERN.EXEC,D1' at the
-  prompt (step e).  If you want, save the file RODS.COLOR.PATTERN to
+- With the S-C Macro Assembler running, drag the directory exec into
+  drive 1 (step 4) and say `EXEC RODS.COLOR.PATTERN.EXEC,D1` at the
+  prompt (step 5).  If you want, save the file RODS.COLOR.PATTERN to
   the exec directory itself or to a different disk image.
 
 - Put the LIB.v2d disk (or equivalent) in drive 2.
 
-- Say 'ASM'.  After assembly is finished, the file
+- Say `ASM`.  After assembly is finished, the file
   RODS.COLOR.PATTERN.OBJ should be written to drive 1.
 
 For another example, try assembling Examples/Redbook/Mastermind.  This
@@ -215,7 +218,8 @@ drive specified on the compiler command line, as explained in the next
 section.  The INCLUDE declarations specify the drive directly (e.g.,
 INCLUDE "GRAPHICS,D2").
 
-8. ACC COMPILER OPTIONS
+8\. ACC COMPILER OPTIONS
+------------------------
 
 Currently acc accepts exactly one source file name SF (including
 UNIX path info) on the command line, translates that file, and writes
@@ -225,15 +229,19 @@ the results to standard output.  In the future, more flexible options
 Currently acc accepts the following command-line options.  In the
 future, more options may be provided:
 
--decls=DF1:...:DFn - Before translating SF, parse files DF1 through
-    DFn and get the declarations out of them.  This allows SF to refer
-    to functions, constants, data, or variables declared in any of the
-    DFi, which is essential for separate compilation.  The Makefile
+  - `-decls=DF1:...:DFn`
+
+    Before translating SF, parse files DF1 through DFn and get the
+    declarations out of them.  This allows SF to refer to functions,
+    constants, data, or variables declared in any of the DFi, which is
+    essential for separate compilation.  The Makefile
     ${APPLECORE}/Examples/Makefile illustrates how this is done.
 
--include - Translate SF in include mode (see Section 5.1 of the
-    AppleCore specification).  If no -include appears on the command
-    line, then the default is top-level mode.
+  - `-include`
+
+    Translate SF in include mode (see Section 5.1 of the AppleCore
+    specification).  If no -include appears on the command line, then
+    the default is top-level mode.
 
 -tf=TF - Instruct the assembler to write the output to file TF.  (TF
     stands for "text file," which is how the S-C Macro Assembler
