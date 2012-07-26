@@ -11,7 +11,7 @@ cross-compiler that runs on UNIX systems is currently available.  For
 more information on the design and goals of AppleCore, see
 Docs/AppleCore-Spec-v1.0.pdf.
 
-2\. LICENSE
+2\. License
 -----------
 
 This software and the accompanying documentation are provided free for
@@ -25,7 +25,7 @@ software is provided "as is" without any warranty, express or implied,
 that it conforms to its specification or otherwise does anything in
 particular, other than what it actually does do when you run it.
 
-3\. SYSTEM REQUIREMENTS
+3\. System Requirements
 -----------------------
 
 Currently AppleCore works on UNIX-like systems with the git version
@@ -56,13 +56,14 @@ are using to run the AppleCore tools in this repository and "Apple II
 system" to the Apple II environment (either emulated or actual) that
 you are using to run AppleCore programs.
 
-4. UNIX SYSTEM SETUP
+4. UNIX System Setup
+--------------------
 
 To set up your UNIX system to use AppleCore, do the following:
 
 a. Download the AppleCore distribution from the git repository:
 
-   git checkout git://github.com/bocchino/AppleCore.git
+    git checkout git://github.com/bocchino/AppleCore.git
 
 b. Set the environment variable APPLECORE to point to the top-level
    directory of the AppleCore distribution.
@@ -72,8 +73,8 @@ c. Include ${APPLECORE}/Compiler/bin, ${APPLECORE}/Assembler/bin, and
 
 Once you've done all that, you can test the implementation:
 
-   cd ${APPLECORE}/Examples
-   make
+    cd ${APPLECORE}/Examples
+    make
 
 It should build the examples without any errors.  If not, fix the
 problem and try again until it works.
