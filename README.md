@@ -1,8 +1,10 @@
 THE APPLECORE PROGRAMMING LANGUAGE, V1.0
 COPYRIGHT (C) 2011-12
 BY ROB BOCCHINO
+========================================
 
 1. INTRODUCTION AND RATIONALE
+
 
 The goal of AppleCore is to provide a "low-level high-level" language
 for writing programs that run on the Apple II series of computers.  A
