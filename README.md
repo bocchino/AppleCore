@@ -1,7 +1,8 @@
 THE APPLECORE PROGRAMMING LANGUAGE, V1.0
 ========================================
-COPYRIGHT (C) 2011-12
-BY ROB BOCCHINO
+Copyright (C) 2011-12
+
+By Rob Bocchino
 
 1\. INTRODUCTION AND RATIONALE
 ------------------------------
