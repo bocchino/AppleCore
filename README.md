@@ -30,10 +30,10 @@ particular, other than what it actually does do when you run it.
 
 Currently AppleCore works on UNIX-like systems with the git version
 control system, a Java 6 compiler, and a Java 6 VM installed.  It has
-been tested on Mac OS X Lion.  In the future, other systems may be
-supported.  If you are enterprising, you should be able to get the
-tools to work on Windows systems by installing Cygwin and writing some
-simple scripts to translate UNIX class paths to Windows class paths.
+been tested on Mac OS X Lion.  If you are enterprising, you should be
+able to get the tools to work on Windows systems by installing Cygwin
+and writing some simple scripts to translate UNIX class paths to
+Windows class paths.
 
 To run AppleCore programs, you will also need an Apple II emulator
 and/or a way to transfer files to an actual Apple II.  If you are
