@@ -37,19 +37,17 @@ Windows class paths.
 
 To run AppleCore programs, you will also need an Apple II emulator
 and/or a way to transfer files to an actual Apple II.  If you are
-running Mac OS X, then I recommend Virtual ][, available here:
-
-     http://www.virtualii.com/
+running Mac OS X, then I recommend Virtual ][, available at
+http://www.virtualii.com/.
 
 In addition to providing an amazingly full-featured Apple II emulation
 (including sounds that mimic the real thing), Virtual ][ supports file
 transfer from a Mac to a real Apple II and vice versa.
 
 Finally, to assemble AppleCore programs on the Apple II, you need the
-S-C Macro Assembler, which is available here as a disk image that
-works in the emulator (I use version 2.0 for DOS 3.3):
-
-     http://stjarnhimlen.se/apple2/
+S-C Macro Assembler, which is available at http://stjarnhimlen.se/apple2/
+as a disk image that works in the emulator (I use version 2.0 for DOS
+3.3).
 
 Hereafter I'll use the terms "UNIX system" to refer to the system you
 are using to run the AppleCore tools in this repository and "Apple II
