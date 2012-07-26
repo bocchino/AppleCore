@@ -1,10 +1,8 @@
 THE APPLECORE PROGRAMMING LANGUAGE, V1.0
 ========================================
-Copyright (C) 2011-12
+Copyright (C) 2011-12 by Rob Bocchino
 
-By Rob Bocchino
-
-1\. INTRODUCTION AND RATIONALE
+1\. Introduction and Rationale
 ------------------------------
 
 The goal of AppleCore is to provide a "low-level high-level" language
@@ -17,7 +15,7 @@ Docs/AppleCore-Spec-v1.0.pdf.
 -----------
 
 This software and the accompanying documentation are provided free for
-general use, PROVIDED THAT ATTRIBUTION IS MAINTAINED.  Any public
+general use, _provided that attribution is maintained_.  Any public
 copying or distribution of this work or any derivative works thereof
 must clearly state the original author's contribution.
 
@@ -27,7 +25,8 @@ software is provided "as is" without any warranty, express or implied,
 that it conforms to its specification or otherwise does anything in
 particular, other than what it actually does do when you run it.
 
-3. SYSTEM REQUIREMENTS
+3\. SYSTEM REQUIREMENTS
+-----------------------
 
 Currently AppleCore works on UNIX-like systems with the git version
 control system, a Java 6 compiler, and a Java 6 VM installed.  It has
