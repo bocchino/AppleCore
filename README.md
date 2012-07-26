@@ -1,10 +1,10 @@
 THE APPLECORE PROGRAMMING LANGUAGE, V1.0
+========================================
 COPYRIGHT (C) 2011-12
 BY ROB BOCCHINO
-========================================
 
-1. INTRODUCTION AND RATIONALE
-
+1\. INTRODUCTION AND RATIONALE
+------------------------------
 
 The goal of AppleCore is to provide a "low-level high-level" language
 for writing programs that run on the Apple II series of computers.  A
@@ -12,7 +12,8 @@ cross-compiler that runs on UNIX systems is currently available.  For
 more information on the design and goals of AppleCore, see
 Docs/AppleCore-Spec-v1.0.pdf.
 
-2. LICENSE
+2\. LICENSE
+-----------
 
 This software and the accompanying documentation are provided free for
 general use, PROVIDED THAT ATTRIBUTION IS MAINTAINED.  Any public
