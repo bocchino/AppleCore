@@ -1084,13 +1084,6 @@ its address as specified in Section&nbsp;<A HREF="#sec:code-gen:lvalues">5.7</A>
 Copy the result of step (1) into memory starting at the address
 computed in step (2).<BR>
 <BR>
-Notice that the right-hand side of the set statement is evaluated
-first; this is for implementation efficiency reasons. In particular,
-the expression <TT>SET X[0,1]=X+1</TT> is evaluated by <EM>first</EM>
-adding 1 to <TT>X</TT> and <EM>then</EM> computing the destination address,
-so the effect is to store the original value of <TT>X</TT> plus 1 at the
-location given by the original value of <TT>X</TT> plus 1.<BR>
-<BR>
 <B>Call statements.</B> Evaluate the expression contained in the
 statement (Section&nbsp;<A HREF="#sec:code-gen:expressions">5.6</A>). If it produces a
 result of nonzero size, pop the result off the stack.<BR>
