@@ -1011,13 +1011,6 @@ its address as specified in Section~\ref{sec:code-gen:lvalues}.  (3)
 Copy the result of step (1) into memory starting at the address
 computed in step (2).
 
-Notice that the right-hand side of the set statement is evaluated
-first; this is for implementation efficiency reasons.  In particular,
-the expression \kwd{SET X[0,1]=X+1} is evaluated by \emph{first}
-adding 1 to \kwd{X} and \emph{then} computing the destination address,
-so the effect is to store the original value of \kwd{X} plus 1 at the
-location given by the original value of \kwd{X} plus 1.
-
 \bfhead{Call statements.} Evaluate the expression contained in the
 statement (Section~\ref{sec:code-gen:expressions}).  If it produces a
 result of nonzero size, pop the result off the stack.
