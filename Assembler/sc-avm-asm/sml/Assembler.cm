@@ -1,0 +1,8 @@
+Library
+    structure Parser
+is
+    Parser.sig
+    Parser.sml
+
+    $/basis.cm
+    $/smlnj-lib.cm
