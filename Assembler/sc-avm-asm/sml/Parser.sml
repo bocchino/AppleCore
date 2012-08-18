@@ -8,7 +8,6 @@ structure Parser : PARSER =
   datatype label =
     Global of string
   | Local of int
-  | Private of int
     
   datatype term =
     Number of int
@@ -81,9 +80,6 @@ structure Parser : PARSER =
         | SOME(#".",substr') => 
 	  (case parseLabelDigits substr' of
 	      (n,substr'') => (SOME (Local n),substr''))
-        | SOME(#":",substr') =>
-	  (case parseLabelDigits substr' of
-	      (n,substr'') => (SOME (Private n),substr''))
         | SOME(c,substr')    =>				
 	  if Char.isAlpha c then
 	      case Substring.splitl isLabelChar substr of

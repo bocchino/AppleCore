@@ -8,7 +8,6 @@ signature PARSER =
   datatype label =
     Global of string
   | Local of int
-  | Private of int
     
   datatype term =
     Number of int
