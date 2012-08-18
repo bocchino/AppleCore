@@ -1,6 +1,9 @@
 Library
     structure Parser
+    structure Instructions6502
 is
+    Instructions6502.sig
+    Instructions6502.sml
     Parser.sig
     Parser.sml
 

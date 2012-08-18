@@ -3,6 +3,7 @@ structure Parser : PARSER =
 
   exception RangeError
   exception BadLabelError
+  exception BadAddressError
 
   datatype label =
     Global of string
@@ -16,11 +17,11 @@ structure Parser : PARSER =
   | Star
 
   datatype expr =
-    term
-  | Add of expr * term
-  | Sub of expr * term
-  | Mul of expr * term
-  | Div of expr * term
+    Term of term
+  | Add of term * expr
+  | Sub of term * expr
+  | Mul of term * expr
+  | Div of term * expr
 
   fun normalize num =
       if num < ~65535 orelse num > 65535 then
@@ -49,7 +50,7 @@ structure Parser : PARSER =
         | _ => (NONE,substr)
 
   fun parseNumber substr = 
-      case Substring.getc substr of
+      (case Substring.getc substr of
 	  SOME(#"-",substr') =>
           let 
 	      val (num,substr'') = parseNumber substr'
@@ -61,7 +62,8 @@ structure Parser : PARSER =
         | SOME(#"$",substr') => 
 	  parseDigits substr' StringCvt.HEX 
         | _ =>
-	  parseDigits substr StringCvt.DEC
+	  parseDigits substr StringCvt.DEC)
+      handle Overflow => raise RangeError
 
   fun parseLabelDigits substr = 
       case parseDigits substr StringCvt.DEC of 
@@ -87,7 +89,44 @@ structure Parser : PARSER =
 	      case Substring.splitl isLabelChar substr of
 		  (label,substr'') =>
 		  (SOME (Global (Substring.string label)),substr'')
-          else
-	      raise BadLabelError
+          else (NONE,substr)
+
+  fun parseTerm substr =
+      case parseNumber substr of
+	  (SOME n,substr') => (SOME (Number (normalize n)),substr')
+	|  _ => (
+          case parseLabel substr of
+	      (SOME l,substr') => (SOME (Label l),substr')
+	    | _ => (
+	      case Substring.getc substr of
+	          SOME(#"'",substr') => (
+		  case Substring.getc substr' of
+		      SOME (c,substr'') => (SOME (Character c),substr'')
+		    | _                 => raise BadAddressError
+		  )
+                | SOME(#"*",substr') => (SOME Star,substr')
+		| _ => (NONE,substr)
+              )
+	  )
+
+  fun parseExpr substr =
+      let fun binop oper t substr =
+      case parseExpr substr of
+	  (SOME e,substr'') => (SOME (oper(t,e)),substr'')
+        | _                 => raise BadAddressError
+      in
+
+      case parseTerm substr of
+	  (SOME t,substr') => (
+	  case Substring.getc substr' of
+	      SOME(#"+",substr'') => binop Add t substr''
+            | SOME(#"-",substr'') => binop Sub t substr''
+            | SOME(#"*",substr'') => binop Mul t substr''
+            | SOME(#"/",substr'') => binop Div t substr''
+	    | _                   => (SOME (Term t),substr')
+	  )
+        | _ => (NONE,substr)			      
+
+      end
 
   end
