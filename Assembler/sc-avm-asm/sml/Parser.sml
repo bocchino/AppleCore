@@ -114,9 +114,9 @@ structure Parser : PARSER =
         | _                 => raise BadAddressError
       in
 
-      case parseTerm substr of
+      case parseTerm (Substring.dropl Char.isSpace substr) of
 	  SOME (t,substr') => (
-	  case Substring.getc substr' of
+	  case Substring.getc (Substring.dropl Char.isSpace substr') of
 	      SOME (#"+",substr'') => binop Add t substr''
             | SOME (#"-",substr'') => binop Sub t substr''
             | SOME (#"*",substr'') => binop Mul t substr''
@@ -127,4 +127,20 @@ structure Parser : PARSER =
 
       end
 
+  fun parseListRest parse results substr =
+      case Substring.getc (Substring.dropl Char.isSpace substr) of
+	  SOME (#",",substr') => (
+	  case parse (Substring.dropl Char.isSpace substr') of
+	      SOME (result, substr'') => parseListRest parse (result :: results) substr''
+            | _ => raise BadAddressError
+	  )
+        | _ => SOME (List.rev results,substr)
+
+  fun parseList parse substr =
+      case parse (Substring.dropl Char.isSpace substr) of
+	  SOME (result,substr') => parseListRest parse [result] substr'
+        | _ => SOME ([],substr)
+
   end
+
+  

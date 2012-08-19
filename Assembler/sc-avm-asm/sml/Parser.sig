@@ -28,5 +28,9 @@ signature PARSER =
   val parseTerm : Substring.substring -> (term * Substring.substring) option					  
   val parseExpr : Substring.substring -> (expr * Substring.substring) option
 
+  val parseList : (Substring.substring -> ('a * Substring.substring) option)
+		  -> Substring.substring
+		  -> ('a list * Substring.substring) option
+
   end
 
