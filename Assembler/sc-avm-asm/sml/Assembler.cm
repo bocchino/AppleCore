@@ -1,7 +1,10 @@
 Library
+    structure Directives
     structure Parser
     structure Instructions6502
 is
+    Directives.sig
+    Directives.sml
     Instructions6502.sig
     Instructions6502.sml
     Parser.sig
