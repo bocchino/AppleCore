@@ -3,6 +3,7 @@ Library
     structure Parser
     structure Instructions6502
 is
+    AppleCore.sig
     Directives.sig
     Directives.sml
     Instructions6502.sig
