@@ -19,7 +19,7 @@ structure Directives : DIRECTIVES =
 
   fun parseExprArg substr =
       case Parser.parseExpr (Substring.dropl Char.isSpace substr) of
-	  (SOME e,substr') => e
+	  SOME (e,substr') => e
 	| _                => raise Parser.BadAddressError
 
   fun parseDirective substr =

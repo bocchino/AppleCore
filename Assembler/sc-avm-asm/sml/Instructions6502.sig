@@ -74,7 +74,7 @@ signature INSTRUCTIONS6502 =
     Instruction of mnemonic * operand
 
   val getMnemonic : string -> mnemonic option
-  val parseOperand : Substring.substring -> operand option * Substring.substring
-  val parseInstruction : Substring.substring -> instruction option * Substring.substring
+  val parseOperand : Substring.substring -> (operand * Substring.substring) option
+  val parseInstruction : Substring.substring -> instruction option
 
   end

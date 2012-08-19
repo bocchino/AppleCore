@@ -23,10 +23,10 @@ signature PARSER =
   | Div of term * expr
 
   val normalize : int -> int
-  val parseNumber : Substring.substring -> int option * Substring.substring
-  val parseLabel : Substring.substring -> label option * Substring.substring
-  val parseTerm : Substring.substring -> term option * Substring.substring					  
-  val parseExpr : Substring.substring -> expr option * Substring.substring
+  val parseNumber : Substring.substring -> (int * Substring.substring) option
+  val parseLabel : Substring.substring -> (label * Substring.substring) option
+  val parseTerm : Substring.substring -> (term * Substring.substring) option					  
+  val parseExpr : Substring.substring -> (expr * Substring.substring) option
 
   end
 

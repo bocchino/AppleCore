@@ -135,60 +135,53 @@ structure Instructions6502 : INSTRUCTIONS6502 =
 
   fun parseOperand substr =
       case Substring.getc substr of
-	  NONE               => (NONE,substr)
+	  NONE               => NONE
 	| SOME(#"#",substr') => (
 	  case Parser.parseExpr substr' of
-	      (SOME e,substr'') => (SOME (ImmediateLow e),substr'')
+	      SOME (e,substr'') => SOME (ImmediateLow e,substr'')
 	    | _                 => raise Parser.BadAddressError
           )
 	| SOME(#"/",substr') => (
 	  case Parser.parseExpr substr' of
-	      (SOME e,substr'') => (SOME (ImmediateHigh e),substr'')
+	      SOME (e,substr'') => SOME (ImmediateHigh e,substr'')
             | _                 => raise Parser.BadAddressError
 	  )
         | SOME(#"(",substr') => (
 	  case Parser.parseExpr substr' of
-	      (SOME e,substr'') =>
+	      SOME (e,substr'') =>
 	      if Substring.isPrefix ",X)" substr'' then
-		  (SOME (IndirectX e),Substring.triml 3 substr'')
+		  SOME (IndirectX e,Substring.triml 3 substr'')
 	      else if Substring.isPrefix "),Y" substr'' then
-		  (SOME (IndirectY e),Substring.triml 3 substr'')
+		  SOME (IndirectY e,Substring.triml 3 substr'')
 	      else if Substring.isPrefix ")" substr'' then
-		  (SOME (Indirect e),Substring.triml 1 substr'')
+		  SOME (Indirect e,Substring.triml 1 substr'')
 	      else raise Parser.BadAddressError
 	    | _ => raise Parser.BadAddressError
           )
         | _ => (
 	  case Parser.parseExpr substr of
-	      (SOME e,substr'') => (SOME (Direct e),substr'')
+	      SOME (e,substr'') => SOME (Direct e,substr'')
 	    | _ => raise Parser.BadAddressError
         )
 
   fun parseInstruction substr =
       let
-	  val (mem,rest) = Substring.splitl (not o Char.isSpace) substr 
+	  val (mem,rest) = Substring.splitl (not o Char.isSpace) substr 	  		   
       in
 	  case getMnemonic (Substring.string mem) of
-	      NONE      => (NONE,substr)
-	    | SOME mem' => (
-	      case Substring.getc rest of
-		  NONE          => (SOME (Instruction(mem',None)),rest)
-	        | SOME(c,rest') => (
-		  case Substring.getc rest' of
-		      NONE           => (SOME (Instruction(mem',None)),rest)
-		    | SOME(c,rest'') => (
-		      if c = #" " then
-			  (SOME (Instruction(mem',None)),rest)
-		      else
-			  case parseOperand rest' of
-			      (SOME oper,rest''') =>
-			      (SOME (Instruction(mem',oper)),rest''')
-			    | _                   => 
-			      (SOME (Instruction(mem',None)),rest)
-		  )
-	      )
-          )
-
+	      NONE      => NONE
+	    | SOME mem' => 
+	      let
+		  val (spc,arg) = Substring.splitl Char.isSpace rest
+              in
+		  if ((Substring.string spc) = " ") then
+		      case parseOperand arg of
+ 			  SOME (oper,_) =>
+			  SOME (Instruction(mem',oper))
+			| _                   => 
+			  SOME (Instruction(mem',None))
+                  else SOME (Instruction(mem',None))
+	      end
       end
 
 end
