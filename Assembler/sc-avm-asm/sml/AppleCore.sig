@@ -17,7 +17,7 @@ signature APPLECORE =
   | ICR of int
   | ISP of int
   | MTS of int
-  | MTV of int
+  | MTV of int * Parser.expr
   | NEG of int
   | NOT of int
   | ORL of int
