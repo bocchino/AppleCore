@@ -1,6 +1,8 @@
 structure Instructions : INSTRUCTIONS =
   struct
 
+  exception BadOpcodeError
+  
   datatype instruction =
 	   Native of Native.instruction
 	 | Directive of Directives.directive
