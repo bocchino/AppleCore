@@ -19,7 +19,7 @@ fun parseNoLabel substr =
 fun parseLabel substr =
     case Labels.parse substr of
 	NONE => raise Labels.BadLabelError
-      | SOME (l,rest') => SOME (SOME l,parseInstruction rest')
+      | SOME (l,rest) => SOME (SOME l,parseInstruction rest)
 
 fun parseLine str =
     let
