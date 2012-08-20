@@ -22,11 +22,11 @@ structure Parser : PARSER =
   | Mul of term * expr
   | Div of term * expr
 
-  fun normalize num =
-      if num < ~65535 orelse num > 65535 then
+  fun normalize bound num =
+      if num <= ~bound orelse num >= bound then
 	  raise RangeError
       else if num < 0 then
-	  65536 + num
+	  bound + num
       else num
 
   fun parseDigits substr radix =
@@ -66,6 +66,11 @@ structure Parser : PARSER =
 	  parseDigits substr StringCvt.DEC)
       handle Overflow => raise RangeError
 
+  fun parseNumberArg substr =
+      case parseNumber (Substring.dropl Char.isSpace substr) of
+	  SOME (n,_) => n
+	| _          => raise BadAddressError
+
   fun parseLabelDigits substr = 
       case parseDigits substr StringCvt.DEC of 
 	  SOME (n,substr') =>
@@ -91,7 +96,7 @@ structure Parser : PARSER =
 
   fun parseTerm substr =
       case parseNumber substr of
-	  SOME (n,substr') => SOME (Number (normalize n),substr')
+	  SOME (n,substr') => SOME (Number (normalize 65536 n),substr')
 	|  _ => (
           case parseLabel substr of
 	      SOME (l,substr') => SOME (Label l,substr')
@@ -135,6 +140,11 @@ structure Parser : PARSER =
             | _ => raise BadAddressError
 	  )
         | _ => SOME (List.rev results,substr)
+
+  fun parseExprArg substr =
+      case parseExpr substr of
+	  SOME (e,_) => e
+	| _          => raise BadAddressError
 
   fun parseList parse substr =
       case parse (Substring.dropl Char.isSpace substr) of

@@ -22,11 +22,13 @@ signature PARSER =
   | Mul of term * expr
   | Div of term * expr
 
-  val normalize : int -> int
+  val normalize : int -> int -> int
   val parseNumber : Substring.substring -> (int * Substring.substring) option
+  val parseNumberArg : Substring.substring -> int
   val parseLabel : Substring.substring -> (label * Substring.substring) option
   val parseTerm : Substring.substring -> (term * Substring.substring) option					  
   val parseExpr : Substring.substring -> (expr * Substring.substring) option
+  val parseExprArg : Substring.substring -> expr
 
   val parseList : (Substring.substring -> ('a * Substring.substring) option)
 		  -> Substring.substring

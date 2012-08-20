@@ -1,9 +1,11 @@
 Library
+    structure AppleCore
     structure Directives
     structure Parser
     structure Instructions6502
 is
     AppleCore.sig
+    AppleCore.sml
     Directives.sig
     Directives.sml
     Instructions6502.sig

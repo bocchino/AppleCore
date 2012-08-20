@@ -17,11 +17,6 @@ structure Directives : DIRECTIVES =
 	  ""  => raise Parser.BadAddressError
         | str => str
 
-  fun parseExprArg substr =
-      case Parser.parseExpr substr of
-	  SOME (e,_) => e
-	| _          => raise Parser.BadAddressError
-
   fun parseDelimArg substr =
       case Substring.getc (Substring.dropl Char.isSpace substr) of
 	  SOME (c,substr') =>
@@ -77,12 +72,12 @@ structure Directives : DIRECTIVES =
 	  case Substring.string mem of
 	      ".AS" => SOME (AS (parseDelimArg rest))
 	    | ".AT" => SOME (AT (parseDelimArg rest))
-	    | ".BS" => SOME (BS (parseExprArg rest))
+	    | ".BS" => SOME (BS (Parser.parseExprArg rest))
 	    | ".DA" => SOME (DA (parseExprList rest))
-            | ".EQ" => SOME (EQ (parseExprArg rest))
+            | ".EQ" => SOME (EQ (Parser.parseExprArg rest))
 	    | ".HS" => SOME (HS (parseHexString rest))
             | ".IN" => SOME (IN (parseStringArg rest))
-            | ".OR" => SOME (OR (parseExprArg rest))
+            | ".OR" => SOME (OR (Parser.parseExprArg rest))
 	    | ".TF" => SOME (TF (parseStringArg rest))
             | _ => NONE
       end
