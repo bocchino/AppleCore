@@ -71,7 +71,7 @@ fun parse substr =
     let
 	val (mem,rest) = Substring.splitl (not o Char.isSpace) substr 
     in
-	case Substring.string mem of
+	case (Substring.translate (Char.toString o Char.toUpper) mem) of
 	    "BRF" => SOME (BRF (Operands.parseExprArg rest))
 	  | "BRU" => SOME (BRU (Operands.parseExprArg rest))
 	  | "CFD" => SOME (CFD (Operands.parseExprArg rest))

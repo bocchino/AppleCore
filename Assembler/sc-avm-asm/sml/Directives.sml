@@ -69,7 +69,7 @@ fun parse substr =
     let
 	val (mem,rest) = Substring.splitl (not o Char.isSpace) substr 
     in
-	case Substring.string mem of
+	case (Substring.translate (Char.toString o Char.toUpper) mem) of
 	    ".AS" => SOME (AS (parseDelimArg rest))
 	  | ".AT" => SOME (AT (parseDelimArg rest))
 	  | ".BS" => SOME (BS (Operands.parseExprArg rest))

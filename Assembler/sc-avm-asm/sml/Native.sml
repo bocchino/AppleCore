@@ -73,8 +73,8 @@ datatype mnemonic =
 datatype instruction =
 	 Instruction of mnemonic * operand
 			
-fun getMnemonic str =
-    case str of
+fun getMnemonic substr =
+    case (Substring.translate (Char.toString o Char.toUpper) substr) of
 	"ADC" => SOME ADC
       | "AND" => SOME AND
       | "ASL" => SOME ASL
@@ -168,7 +168,7 @@ fun parse substr =
     let
 	val (mem,rest) = Substring.splitl (not o Char.isSpace) substr 	  		   
     in
-	case getMnemonic (Substring.string mem) of
+	case getMnemonic mem of
 	    NONE      => NONE
 	  | SOME mem' => 
 	    let
@@ -178,7 +178,7 @@ fun parse substr =
 		    case parseOperand arg of
  			SOME (oper,_) =>
 			SOME (Instruction(mem',oper))
-		      | _                   => 
+		      | _  => 
 			SOME (Instruction(mem',None))
                 else SOME (Instruction(mem',None))
 	    end
