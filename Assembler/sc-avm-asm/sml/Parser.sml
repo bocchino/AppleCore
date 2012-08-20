@@ -1,17 +1,11 @@
 structure Parser : PARSER =
   struct
 
-  exception RangeError
-  exception BadLabelError
   exception BadAddressError
 
-  datatype label =
-    Global of string
-  | Local of int
-    
   datatype term =
     Number of int
-  | Label of label
+  | Label of Labels.label
   | Character of char
   | Star
 
@@ -22,83 +16,18 @@ structure Parser : PARSER =
   | Mul of term * expr
   | Div of term * expr
 
-  fun normalize bound num =
-      if num <= ~bound orelse num >= bound then
-	  raise RangeError
-      else if num < 0 then
-	  bound + num
-      else num
-
-  fun parseDigits substr radix =
-      case radix of 
-	  StringCvt.HEX =>
-	  let 
-              val (num,substr') = Substring.splitl Char.isHexDigit substr
-          in
-	      case StringCvt.scanString(Int.scan StringCvt.HEX) 
-				       (Substring.string num) of
-		  SOME n => SOME (n,substr')
-	        | NONE   => NONE
-	  end
-	| StringCvt.DEC =>
-	  let
-	      val (num,substr') = Substring.splitl Char.isDigit substr
-          in
-	      case Int.fromString (Substring.string num) of
-		  SOME n => SOME (n,substr')
-                | NONE   => NONE
-          end
-        | _ => NONE
-
-  fun parseNumber substr = 
-      (case Substring.getc substr of
-	  SOME (#"-",substr') =>
-          let 
-	      val n = parseNumber substr'
-          in 
-	      case n of
-		  NONE              => NONE
-		| SOME (n',substr'') => SOME (~n',substr'')
-	  end
-        | SOME(#"$",substr') => 
-	  parseDigits substr' StringCvt.HEX 
-        | _ =>
-	  parseDigits substr StringCvt.DEC)
-      handle Overflow => raise RangeError
+  (* type line = (label option) * (Instructions.instruction option) *)
 
   fun parseNumberArg substr =
-      case parseNumber (Substring.dropl Char.isSpace substr) of
+      case Numbers.parseNumber (Substring.dropl Char.isSpace substr) of
 	  SOME (n,_) => n
 	| _          => raise BadAddressError
 
-  fun parseLabelDigits substr = 
-      case parseDigits substr StringCvt.DEC of 
-	  SOME (n,substr') =>
-	  if n < 100 then (n,substr')
-	  else raise BadLabelError
-        | _   => raise BadLabelError
-
-  fun isLabelChar c =
-      Char.isAlphaNum c orelse c = #"."
-
-  fun parseLabel substr =
-      case Substring.getc substr of
-	  NONE               => NONE
-        | SOME(#".",substr') => 
-	  (case parseLabelDigits substr' of
-	      (n,substr'') => SOME (Local n,substr''))
-        | SOME(c,substr')    =>				
-	  if Char.isAlpha c then
-	      case Substring.splitl isLabelChar substr of
-		  (label,substr'') =>
-		  SOME (Global (Substring.string label),substr'')
-          else NONE
-
   fun parseTerm substr =
-      case parseNumber substr of
-	  SOME (n,substr') => SOME (Number (normalize 65536 n),substr')
+      case Numbers.parseNumber substr of
+	  SOME (n,substr') => SOME (Number (Numbers.normalize 65536 n),substr')
 	|  _ => (
-          case parseLabel substr of
+          case Labels.parse substr of
 	      SOME (l,substr') => SOME (Label l,substr')
 	    | _ => (
 	      case Substring.getc substr of
@@ -150,6 +79,28 @@ structure Parser : PARSER =
       case parse (Substring.dropl Char.isSpace substr) of
 	  SOME (result,substr') => parseListRest parse [result] substr'
         | _ => SOME ([],substr)
+
+  (*
+  fun parseInstruction substr = NONE
+
+  fun parseLine str =
+      let
+	  val substr = Substring.full str
+      in
+	  case Substring.getc substr of
+	      NONE => NONE
+	    | SOME (c,rest) =>
+	      if Char.isSpace c 
+	      then if (c = #"*")
+		   then NONE
+		   else (NONE,parseInstruction rest)
+	      else (
+		  case Labels.parse substr of
+		      NONE => raise BadLabelError
+		    | SOME (l,rest') => (l,parseInstruction rest')
+		  )
+      end
+  *)
 
   end
 

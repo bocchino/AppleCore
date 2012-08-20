@@ -40,10 +40,10 @@ structure AppleCore : APPLECORE =
   | TLT of size
 
   fun parseUnsigned substr =
-      Parser.normalize 256 (Parser.parseNumberArg substr)
+      Numbers.normalize 256 (Parser.parseNumberArg substr)
 
   fun parseSigned substr =
-      case Parser.parseNumber (Substring.dropl Char.isSpace substr) of
+      case Numbers.parseNumber (Substring.dropl Char.isSpace substr) of
 	  SOME (num,rest) => (
 	  case Substring.getc rest of
 	      SOME (c,_) => if (Char.toUpper c) = #"S" 
@@ -54,7 +54,7 @@ structure AppleCore : APPLECORE =
         | _ => raise Parser.BadAddressError
 
   fun parseMV (instr,delim) substr =
-      case Parser.parseNumber (Substring.dropl Char.isSpace substr) of
+      case Numbers.parseNumber (Substring.dropl Char.isSpace substr) of
 	  SOME (var,rest) => 
 	  let
 	      val (d,rest') = Substring.splitAt(Substring.dropl Char.isSpace rest,2) 

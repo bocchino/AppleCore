@@ -1,18 +1,24 @@
 Library
     structure AppleCore
     structure Directives
-    structure Parser
     structure Instructions
+    structure Labels
     structure Native
+    structure Numbers
+    structure Parser
 is
     AppleCore.sig
     AppleCore.sml
     Directives.sig
     Directives.sml
-    Native.sig
-    Native.sml
+    Labels.sig
+    Labels.sml
     Instructions.sig
     Instructions.sml
+    Native.sig
+    Native.sml
+    Numbers.sig
+    Numbers.sml
     Parser.sig
     Parser.sml
 

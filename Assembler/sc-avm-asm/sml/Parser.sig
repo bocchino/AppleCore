@@ -1,17 +1,11 @@
 signature PARSER =
   sig
 
-  exception RangeError
-  exception BadLabelError
   exception BadAddressError
 
-  datatype label =
-    Global of string
-  | Local of int
-    
   datatype term =
     Number of int
-  | Label of label
+  | Label of Labels.label
   | Character of char
   | Star
 
@@ -22,10 +16,8 @@ signature PARSER =
   | Mul of term * expr
   | Div of term * expr
 
-  val normalize : int -> int -> int
-  val parseNumber : Substring.substring -> (int * Substring.substring) option
-  val parseNumberArg : Substring.substring -> int
-  val parseLabel : Substring.substring -> (label * Substring.substring) option
+  (* type line = (label option) * (Instructions.instruction option) *)
+
   val parseTerm : Substring.substring -> (term * Substring.substring) option					  
   val parseExpr : Substring.substring -> (expr * Substring.substring) option
   val parseExprArg : Substring.substring -> expr
@@ -33,6 +25,9 @@ signature PARSER =
   val parseList : (Substring.substring -> ('a * Substring.substring) option)
 		  -> Substring.substring
 		  -> ('a list * Substring.substring) option
+  val parseNumberArg : Substring.substring -> int
+
+  (* val parseLine : string -> line option *)
 
   end
 
