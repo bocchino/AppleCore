@@ -1,4 +1,4 @@
-signature INSTRUCTIONS6502 =
+signature NATIVE =
   sig
 
   datatype operand =

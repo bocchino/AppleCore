@@ -1,4 +1,4 @@
-structure Instructions6502 : INSTRUCTIONS6502 =
+structure Native : NATIVE =
   struct
 
   datatype operand =

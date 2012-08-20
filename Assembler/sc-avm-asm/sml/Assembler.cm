@@ -2,14 +2,17 @@ Library
     structure AppleCore
     structure Directives
     structure Parser
-    structure Instructions6502
+    structure Instructions
+    structure Native
 is
     AppleCore.sig
     AppleCore.sml
     Directives.sig
     Directives.sml
-    Instructions6502.sig
-    Instructions6502.sml
+    Native.sig
+    Native.sml
+    Instructions.sig
+    Instructions.sml
     Parser.sig
     Parser.sml
 
