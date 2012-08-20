@@ -1,6 +1,8 @@
 signature DIRECTIVES =
 sig
     
+    exception UnsupportedDirective
+
     datatype directive =
 	     AS of string
 	   | AT of string
@@ -11,7 +13,8 @@ sig
 	   | IN of string
 	   | OR of Operands.expr
 	   | TF of string
-		   
+	   | Ignored
+
     val parse : Substring.substring -> directive option
 						
 end

@@ -1,6 +1,8 @@
 structure Directives : DIRECTIVES =
 struct
 
+exception UnsupportedDirective
+
 datatype directive =
 	 AS of string
        | AT of string
@@ -11,6 +13,7 @@ datatype directive =
        | IN of string
        | OR of Operands.expr
        | TF of string
+       | Ignored
 	       
 fun parseStringArg substr =
     case Substring.string (Substring.dropl Char.isSpace substr) of
@@ -79,6 +82,17 @@ fun parse substr =
           | ".IN" => SOME (IN (parseStringArg rest))
           | ".OR" => SOME (OR (Operands.parseExprArg rest))
 	  | ".TF" => SOME (TF (parseStringArg rest))
+	  | ".TA" => SOME Ignored
+	  | ".TI" => SOME Ignored
+	  | ".LIST" => SOME Ignored
+	  | ".PG" => SOME Ignored
+	  | ".EN" => raise UnsupportedDirective
+	  | ".DO" => raise UnsupportedDirective
+	  | ".ELSE" => raise UnsupportedDirective
+	  | ".FIN" => raise UnsupportedDirective
+	  | ".MA" => raise UnsupportedDirective
+	  | ".EM" => raise UnsupportedDirective
+	  | ".US" => raise UnsupportedDirective
           | _ => NONE
     end
     

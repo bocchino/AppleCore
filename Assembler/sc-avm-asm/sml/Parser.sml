@@ -5,7 +5,8 @@ type line = (Labels.label option) * (Instructions.instruction option)
 
 fun parseInstruction substr =
     case Instructions.parse substr of
-	SOME i => SOME i
+        SOME (Instructions.Directive Directives.Ignored) => NONE
+      |	SOME i => SOME i
       | _      =>
 	if Substring.isEmpty (Substring.dropl Char.isSpace substr)
 	then NONE
