@@ -5,6 +5,7 @@ Library
     structure Labels
     structure Native
     structure Numbers
+    structure Operands
     structure Parser
 is
     AppleCore.sig
@@ -19,6 +20,8 @@ is
     Native.sml
     Numbers.sig
     Numbers.sml
+    Operands.sig
+    Operands.sml
     Parser.sig
     Parser.sml
 
