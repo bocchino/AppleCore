@@ -16,13 +16,43 @@ datatype expr =
        | Mul of term * expr
        | Div of term * expr
 		
+fun parseHexString substr =
+    let
+	fun getHexNum substr =
+	    let
+		val (digits,_) = Substring.splitAt(substr,2)
+		    handle Subscript => raise BadAddressError
+            in
+		case StringCvt.scanString(Int.scan StringCvt.HEX) 
+					 (Substring.string digits) of
+		    SOME n => n
+	          | NONE   => raise BadAddressError
+            end
+	fun parseHexString' results substr =
+	    case Substring.first substr of
+		NONE   => List.rev results
+              | SOME c =>
+		if Char.isSpace c then 
+		    List.rev results
+		else
+		    let 
+			val num = getHexNum substr
+		    in
+			parseHexString' (num :: results) (Substring.triml 2 substr)
+		    end
+    in
+	case parseHexString' [] (Substring.dropl Char.isSpace substr) of
+	    []      => raise BadAddressError
+	  | results => results
+    end
+    
 fun parseNumberArg substr =
-    case Numbers.parseNumber (Substring.dropl Char.isSpace substr) of
+    case Numbers.parse (Substring.dropl Char.isSpace substr) of
 	SOME (n,_) => n
       | _          => raise BadAddressError
 			    
 fun parseTerm substr =
-    case Numbers.parseNumber substr of
+    case Numbers.parse substr of
 	SOME (n,substr') => SOME (Number (Numbers.normalize 65536 n),substr')
       |  _ => (
          case Labels.parse substr of

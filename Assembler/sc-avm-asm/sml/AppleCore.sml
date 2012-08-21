@@ -4,6 +4,10 @@ struct
 datatype size =
 	 Signed of int
        | Unsigned of int
+
+datatype constant =
+	 Label of Labels.label
+       | Literal of IntInf.int
 		     
 datatype instruction =
 	 BRF of Operands.expr
@@ -22,7 +26,7 @@ datatype instruction =
        | NOT of int
        | ORL of int
        | ORX of int
-       | PHC of int
+       | PHC of constant
        | PVA of int
        | RAF of int
        | SHL of int
@@ -43,25 +47,41 @@ fun parseUnsigned substr =
     Numbers.normalize 256 (Operands.parseNumberArg substr)
     
 fun parseSigned substr =
-    case Numbers.parseNumber (Substring.dropl Char.isSpace substr) of
-	SOME (num,rest) => (
-	case Substring.getc rest of
-	    SOME (c,_) => if (Char.toUpper c) = #"S" 
-			  then Signed num
-			  else Unsigned num
-          | NONE => Unsigned num
-	)	      
+    case Numbers.parse (Substring.dropl Char.isSpace substr) of
+	SOME (num,rest) =>
+	let
+	    val num' = Numbers.normalize 256 num
+	in
+	    case Substring.getc rest of
+		SOME (c,_) => if (Char.toUpper c) = #"S" 
+			      then Signed num'
+			      else Unsigned num'
+              | NONE => Unsigned num'
+	end
       | _ => raise Operands.BadAddressError
+
+fun parseConstant substr =
+    let
+        val constant = (Substring.dropl Char.isSpace substr)
+    in
+	case Numbers.parse constant of
+	    SOME (n,_) => Literal n
+	  | NONE => (
+	    case Labels.parse constant of
+		SOME (l,_) => Label l
+	      | NONE => raise Operands.BadAddressError
+	    )
+    end
 		   
 fun parseMV (instr,delim) substr =
-    case Numbers.parseNumber (Substring.dropl Char.isSpace substr) of
+    case Numbers.parse (Substring.dropl Char.isSpace substr) of
 	SOME (var,rest) => 
 	let
 	    val (d,rest') = Substring.splitAt(Substring.dropl Char.isSpace rest,2) 
 		handle Subscript => raise Operands.BadAddressError
         in
 	    if (Substring.string d)=delim
-	    then instr (var,Operands.parseExprArg rest')
+	    then instr (Numbers.normalize 256 var,Operands.parseExprArg rest')
             else raise Operands.BadAddressError
         end
       | _ => raise Operands.BadAddressError
@@ -88,7 +108,7 @@ fun parse substr =
 	  | "NOT" => SOME (NOT (parseUnsigned rest))
 	  | "ORL" => SOME (ORL (parseUnsigned rest))
 	  | "ORX" => SOME (ORX (parseUnsigned rest))
-	  | "PHC" => SOME (PHC (parseUnsigned rest))
+	  | "PHC" => SOME (PHC (parseConstant rest))
 	  | "PVA" => SOME (PVA (parseUnsigned rest))
 	  | "RAF" => SOME (RAF (parseUnsigned rest))
 	  | "SHL" => SOME (SHL (parseUnsigned rest))

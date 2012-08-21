@@ -5,6 +5,10 @@ sig
 	     Signed of int
 	   | Unsigned of int
 			 
+    datatype constant =
+	     Label of Labels.label
+	   | Literal of IntInf.int
+		     
     datatype instruction =
 	     BRF of Operands.expr
 	   | BRU of Operands.expr
@@ -22,7 +26,7 @@ sig
 	   | NOT of int
 	   | ORL of int
 	   | ORX of int
-	   | PHC of int
+	   | PHC of constant
 	   | PVA of int
 	   | RAF of int
 	   | SHL of int

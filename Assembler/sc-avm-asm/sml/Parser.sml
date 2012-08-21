@@ -22,9 +22,9 @@ fun parseLabel substr =
 	NONE => raise Labels.BadLabelError
       | SOME (l,rest) => SOME (SOME l,parseInstruction rest)
 
-fun parseLine str =
+fun parseLine line =
     let
-	val substr = Substring.full str
+	val substr = Substring.full line
     in
 	case Substring.getc substr of
 	    NONE => NONE
@@ -32,8 +32,21 @@ fun parseLine str =
 	    if Char.isSpace c 
 	    then parseNoLabel rest
 	    else 
-		if (c = #"*") then NONE
+		if c = #"*" orelse c = #":" then NONE
 		else parseLabel substr
+    end
+
+fun parseAll file =
+    let
+	fun parseAll' stream =
+	    case TextIO.inputLine stream of
+		SOME line => ( 
+		parseLine line handle e => (print line; raise e); 
+		parseAll' stream 
+		)
+	      | NONE => ()
+    in
+	parseAll' (TextIO.openIn file)
     end
 
 end

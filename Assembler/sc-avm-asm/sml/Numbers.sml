@@ -3,32 +3,39 @@ struct
 
 exception RangeError
 
+val MAX_INT = IntInf.<<(1,Word.fromInt (256*8)) - (IntInf.fromInt 1)
+
+fun checkRange n =
+    if (n < ~MAX_INT orelse n > MAX_INT)
+    then raise RangeError
+    else n
+
 fun parseDigits substr radix =
     case radix of 
 	StringCvt.HEX =>
 	let 
             val (num,substr') = Substring.splitl Char.isHexDigit substr
         in
-	    case StringCvt.scanString(Int.scan StringCvt.HEX) 
+	    case StringCvt.scanString(IntInf.scan StringCvt.HEX) 
 				     (Substring.string num) of
-		SOME n => SOME (n,substr')
+		SOME n => SOME (checkRange n,substr')
 	      | NONE   => NONE
 	end
       | StringCvt.DEC =>
 	let
 	    val (num,substr') = Substring.splitl Char.isDigit substr
         in
-	    case Int.fromString (Substring.string num) of
-		SOME n => SOME (n,substr')
+	    case IntInf.fromString (Substring.string num) of
+		SOME n => SOME (checkRange n,substr')
               | NONE   => NONE
         end
       | _ => NONE
 	     
-fun parseNumber substr = 
+fun parse substr = 
     (case Substring.getc substr of
 	 SOME (#"-",substr') =>
          let 
-	     val n = parseNumber substr'
+	     val n = parse substr'
          in 
 	     case n of
 		 NONE              => NONE
@@ -38,13 +45,21 @@ fun parseNumber substr =
 	 parseDigits substr' StringCvt.HEX 
        | _ =>
 	 parseDigits substr StringCvt.DEC)
-    handle Overflow => raise RangeError
 
 fun normalize bound num =
-    if num <= ~bound orelse num >= bound then
+    let
+	val bound' = IntInf.fromInt bound
+    in
+    if num <= ~bound' orelse num >= bound' then
 	raise RangeError
-    else if num < 0 then
-	bound + num
-    else num
+    else 
+	let
+	    val num' = IntInf.toInt num
+	in
+	    if num' < 0 then
+		bound + num'
+	    else num'
+	end
+    end
 
 end

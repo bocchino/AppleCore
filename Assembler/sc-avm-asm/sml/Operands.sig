@@ -15,7 +15,8 @@ sig
 	   | Sub of term * expr
 	   | Mul of term * expr
 	   | Div of term * expr
-		    
+
+    val parseHexString : Substring.substring -> int list
     val parseTerm : Substring.substring -> (term * Substring.substring) option					  
     val parseExpr : Substring.substring -> (expr * Substring.substring) option
     val parseExprArg : Substring.substring -> expr
@@ -23,7 +24,7 @@ sig
     val parseList : (Substring.substring -> ('a * Substring.substring) option)
 		    -> Substring.substring
 		    -> ('a list * Substring.substring) option
-    val parseNumberArg : Substring.substring -> int
+    val parseNumberArg : Substring.substring -> IntInf.int
 
 end
 

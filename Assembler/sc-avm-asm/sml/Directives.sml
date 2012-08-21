@@ -38,36 +38,6 @@ fun parseExprList substr =
       | SOME (lst,_) => lst
       | NONE         => raise Operands.BadAddressError
 			      
-fun parseHexString substr =
-    let
-	fun getHexNum substr =
-	    let
-		val (digits,_) = Substring.splitAt(substr,2)
-		    handle Subscript => raise Operands.BadAddressError
-            in
-		case StringCvt.scanString(Int.scan StringCvt.HEX) 
-					 (Substring.string digits) of
-		    SOME n => n
-	          | NONE   => raise Operands.BadAddressError
-            end
-	fun parseHexString' results substr =
-	    case Substring.first substr of
-		NONE   => List.rev results
-              | SOME c =>
-		if Char.isSpace c then 
-		    List.rev results
-		else
-		    let 
-			val num = getHexNum substr
-		    in
-			parseHexString' (num :: results) (Substring.triml 2 substr)
-		    end
-    in
-	case parseHexString' [] (Substring.dropl Char.isSpace substr) of
-	    []      => raise Operands.BadAddressError
-	  | results => results
-    end
-    
 fun parse substr =
     let
 	val (mem,rest) = Substring.splitl (not o Char.isSpace) substr 
@@ -78,7 +48,7 @@ fun parse substr =
 	  | ".BS" => SOME (BS (Operands.parseExprArg rest))
 	  | ".DA" => SOME (DA (parseExprList rest))
           | ".EQ" => SOME (EQ (Operands.parseExprArg rest))
-	  | ".HS" => SOME (HS (parseHexString rest))
+	  | ".HS" => SOME (HS (Operands.parseHexString rest))
           | ".IN" => SOME (IN (parseStringArg rest))
           | ".OR" => SOME (OR (Operands.parseExprArg rest))
 	  | ".TF" => SOME (TF (parseStringArg rest))
