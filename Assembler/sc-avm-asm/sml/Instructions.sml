@@ -1,7 +1,7 @@
 structure Instructions : INSTRUCTIONS =
   struct
 
-  exception BadOpcodeError
+  exception InvalidMnemonic of string
   
   datatype instruction =
 	   Native of Native.instruction

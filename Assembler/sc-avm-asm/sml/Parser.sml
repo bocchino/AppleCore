@@ -8,10 +8,15 @@ fun parseInstruction substr =
         SOME (Instructions.Directive Directives.Ignored) => NONE
       |	SOME i => SOME i
       | _      =>
-	if Substring.isEmpty (Substring.dropl Char.isSpace substr)
-	then NONE
-	else raise Instructions.BadOpcodeError
-
+	let
+	    val rest = Substring.dropl Char.isSpace substr
+	in
+	    if Substring.isEmpty rest
+	    then NONE
+	    else raise Instructions.InvalidMnemonic 
+			   (Substring.string (Substring.takel (not o Char.isSpace) rest))
+	end
+		       
 fun parseNoLabel substr =
     case parseInstruction substr of
 	SOME i => SOME (NONE, SOME i)
@@ -36,17 +41,23 @@ fun parseLine line =
 		else parseLabel substr
     end
 
+fun show n e =
+    print ("line " ^ (Int.toString n) ^ ": " ^ 
+    (case e of 
+	Instructions.InvalidMnemonic mem => "invalid mnemonic " ^ mem
+      | _ => raise e) ^ "\n")
+
 fun parseAll file =
     let
-	fun parseAll' stream =
+	fun parseAll' stream n =
 	    case TextIO.inputLine stream of
 		SOME line => ( 
-		parseLine line handle e => (print line; raise e); 
-		parseAll' stream 
+		ignore (parseLine line) handle e => show n e;
+		parseAll' stream (n + 1)
 		)
 	      | NONE => ()
     in
-	parseAll' (TextIO.openIn file)
+	parseAll' (TextIO.openIn file) 1
     end
 
 end

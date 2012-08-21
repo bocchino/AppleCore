@@ -1,7 +1,7 @@
 signature INSTRUCTIONS =
 sig
 
-    exception BadOpcodeError
+    exception InvalidMnemonic of string
     
     datatype instruction =
 	     Native of Native.instruction
