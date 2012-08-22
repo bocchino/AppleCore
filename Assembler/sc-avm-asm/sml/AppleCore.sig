@@ -1,6 +1,6 @@
 signature APPLECORE =
 sig
-    
+  
     datatype size =
 	     Signed of int
 	   | Unsigned of int

@@ -14,15 +14,11 @@ structure Instructions : INSTRUCTIONS =
   fun parse substr = 
       case apply Native.parse substr of
 	  SOME inst => SOME (Native inst)
-        | _  => (
-	  case apply AppleCore.parse substr of
-	      SOME inst => SOME (AppleCore inst)
-	    | _ => (
-	      case apply Directives.parse substr of
-		  SOME inst => SOME (Directive inst)
-		| _ => NONE
-	      )
-	  )
+        | _  => (case apply AppleCore.parse substr of
+		     SOME inst => SOME (AppleCore inst)
+		   | _ => (case apply Directives.parse substr of
+			       SOME inst => SOME (Directive inst)
+			     | _ => NONE))
 
   end
 

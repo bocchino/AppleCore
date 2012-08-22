@@ -51,10 +51,9 @@ fun parseAll file =
     let
 	fun parseAll' stream n =
 	    case TextIO.inputLine stream of
-		SOME line => ( 
-		ignore (parseLine line) handle e => show n e;
-		parseAll' stream (n + 1)
-		)
+		SOME line => 
+		(ignore (parseLine line) handle e => show n e;
+		 parseAll' stream (n + 1))
 	      | NONE => ()
     in
 	parseAll' (TextIO.openIn file) 1

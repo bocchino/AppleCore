@@ -66,11 +66,9 @@ fun parseConstant substr =
     in
 	case Numbers.parse constant of
 	    SOME (n,_) => Literal n
-	  | NONE => (
-	    case Labels.parse constant of
-		SOME (l,_) => Label l
-	      | NONE => raise Operands.BadAddressError
-	    )
+	  | NONE => (case Labels.parse constant of
+			 SOME (l,_) => Label l
+		       | NONE => raise Operands.BadAddressError)
     end
 		   
 fun parseMV (instr,delim) substr =
@@ -80,7 +78,7 @@ fun parseMV (instr,delim) substr =
 	    val (d,rest') = Substring.splitAt(Substring.dropl Char.isSpace rest,2) 
 		handle Subscript => raise Operands.BadAddressError
         in
-	    if (Substring.string d)=delim
+	    if (Substring.string d) = delim
 	    then instr (Numbers.normalize 256 var,Operands.parseExprArg rest')
             else raise Operands.BadAddressError
         end

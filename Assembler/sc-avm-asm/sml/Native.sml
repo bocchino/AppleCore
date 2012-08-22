@@ -136,33 +136,29 @@ fun getMnemonic substr =
 fun parseOperand substr =
     case Substring.getc substr of
 	NONE               => NONE
-      | SOME(#"#",substr') => (
-	case Operands.parseExpr substr' of
-	    SOME (e,substr'') => SOME (ImmediateLow e,substr'')
-	  | _                 => raise Operands.BadAddressError
-        )
-      | SOME(#"/",substr') => (
-	case Operands.parseExpr substr' of
-	    SOME (e,substr'') => SOME (ImmediateHigh e,substr'')
-          | _                 => raise Operands.BadAddressError
-	)
-      | SOME(#"(",substr') => (
-	case Operands.parseExpr substr' of
-	    SOME (e,substr'') =>
-	    if Substring.isPrefix ",X)" substr'' then
-		SOME (IndirectX e,Substring.triml 3 substr'')
-	    else if Substring.isPrefix "),Y" substr'' then
-		SOME (IndirectY e,Substring.triml 3 substr'')
-	    else if Substring.isPrefix ")" substr'' then
-		SOME (Indirect e,Substring.triml 1 substr'')
-	    else raise Operands.BadAddressError
-	  | _ => raise Operands.BadAddressError
-        )
-      | _ => (
-	case Operands.parseExpr substr of
-	    SOME (e,substr'') => SOME (Direct e,substr'')
-	  | _ => raise Operands.BadAddressError
-        )
+      | SOME(#"#",substr') => 
+	(case Operands.parseExpr substr' of
+	     SOME (e,substr'') => SOME (ImmediateLow e,substr'')
+	   | _                 => raise Operands.BadAddressError)
+      | SOME(#"/",substr') => 
+	(case Operands.parseExpr substr' of
+	     SOME (e,substr'') => SOME (ImmediateHigh e,substr'')
+           | _                 => raise Operands.BadAddressError)
+      | SOME(#"(",substr') => 
+	(case Operands.parseExpr substr' of
+	     SOME (e,substr'') =>
+	     if Substring.isPrefix ",X)" substr'' then
+		 SOME (IndirectX e,Substring.triml 3 substr'')
+	     else if Substring.isPrefix "),Y" substr'' then
+		 SOME (IndirectY e,Substring.triml 3 substr'')
+	     else if Substring.isPrefix ")" substr'' then
+		 SOME (Indirect e,Substring.triml 1 substr'')
+	     else raise Operands.BadAddressError
+	   | _ => raise Operands.BadAddressError)
+      | _ => 
+	(case Operands.parseExpr substr of
+	     SOME (e,substr'') => SOME (Direct e,substr'')
+	   | _ => raise Operands.BadAddressError)
 	     
 fun parse substr =
     let

@@ -9,10 +9,9 @@ struct
     
     fun parseDigits substr = 
 	case Numbers.parseDigits substr StringCvt.DEC of 
-	    SOME (n,substr') => (
-	    ((Numbers.normalize 100 n),substr') 
-	    handle RangeError => raise BadLabelError
-	    )
+	    SOME (n,substr') => 
+	    ((Numbers.normalize 100 n,substr') 
+	     handle RangeError => raise BadLabelError)
           | _   => raise BadLabelError
 			 
     fun isLabelChar c =
