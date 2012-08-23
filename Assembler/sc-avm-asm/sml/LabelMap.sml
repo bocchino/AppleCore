@@ -21,7 +21,7 @@ type map = {lm:localMap,gm:globalMap}
 
 exception RedefinedLabel of label * source
 
-val new = {lm=LocalMap.empty,gm=GlobalMap.empty}
+val fresh = {lm=LocalMap.empty,gm=GlobalMap.empty}
 
 fun lookup' (m:map,l:label) =
     case (m,l) of
