@@ -6,5 +6,6 @@ sig
 
     val fresh : map
     val add : (map * Labels.label * source) -> map
+    val lookup :(map * Labels.label) -> int option
 
 end
