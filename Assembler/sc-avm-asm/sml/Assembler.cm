@@ -3,6 +3,7 @@ Library
     structure Directives
     structure Error
     structure Instructions
+    structure LabelMap
     structure Labels
     structure Native
     structure Numbers
@@ -15,6 +16,8 @@ is
     Directives.sml
     Error.sig
     Error.sml
+    LabelMap.sig
+    LabelMap.sml
     Labels.sig
     Labels.sml
     Instructions.sig
