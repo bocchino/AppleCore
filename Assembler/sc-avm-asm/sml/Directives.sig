@@ -1,8 +1,6 @@
 signature DIRECTIVES =
 sig
     
-    exception UnsupportedDirective
-
     datatype directive =
 	     AS of string
 	   | AT of string

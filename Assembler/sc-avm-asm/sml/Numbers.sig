@@ -1,8 +1,6 @@
 signature NUMBERS =
 sig
 
-    exception RangeError
-
     val MAX_INT : IntInf.int
 
     val parseDigits : Substring.substring -> 

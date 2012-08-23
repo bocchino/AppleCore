@@ -1,6 +1,8 @@
 structure AppleCore : APPLECORE =
 struct
 
+open Error
+
 datatype size =
 	 Signed of int
        | Unsigned of int
@@ -58,7 +60,7 @@ fun parseSigned substr =
 			      else Unsigned num'
               | NONE => Unsigned num'
 	end
-      | _ => raise Operands.BadAddressError
+      | _ => raise BadAddress
 
 fun parseConstant substr =
     let
@@ -68,7 +70,7 @@ fun parseConstant substr =
 	    SOME (n,_) => Literal n
 	  | NONE => (case Labels.parse constant of
 			 SOME (l,_) => Label l
-		       | NONE => raise Operands.BadAddressError)
+		       | NONE => raise BadAddress)
     end
 		   
 fun parseMV (instr,delim) substr =
@@ -76,13 +78,13 @@ fun parseMV (instr,delim) substr =
 	SOME (var,rest) => 
 	let
 	    val (d,rest') = Substring.splitAt(Substring.dropl Char.isSpace rest,2) 
-		handle Subscript => raise Operands.BadAddressError
+		handle Subscript => raise BadAddress
         in
 	    if (Substring.string d) = delim
 	    then instr (Numbers.normalize 256 var,Operands.parseExprArg rest')
-            else raise Operands.BadAddressError
+            else raise BadAddress
         end
-      | _ => raise Operands.BadAddressError
+      | _ => raise BadAddress
 		   
 		   
 fun parse substr =

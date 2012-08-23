@@ -1,8 +1,6 @@
 signature OPERANDS =
 sig
 
-    exception BadAddressError
-	      
     datatype term =
 	   Number of int
 	 | Label of Labels.label

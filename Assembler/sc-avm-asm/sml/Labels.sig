@@ -1,8 +1,6 @@
 signature LABELS =
 sig
 
-    exception BadLabelError
-
     datatype label =
 	     Global of string
 	   | Local of int

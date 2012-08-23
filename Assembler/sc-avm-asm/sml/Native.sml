@@ -1,6 +1,8 @@
 structure Native : NATIVE =
 struct
 
+open Error
+
 datatype operand =
 	 None
        | ImmediateLow of Operands.expr
@@ -139,11 +141,11 @@ fun parseOperand substr =
       | SOME(#"#",substr') => 
 	(case Operands.parseExpr substr' of
 	     SOME (e,substr'') => SOME (ImmediateLow e,substr'')
-	   | _                 => raise Operands.BadAddressError)
+	   | _                 => raise BadAddress)
       | SOME(#"/",substr') => 
 	(case Operands.parseExpr substr' of
 	     SOME (e,substr'') => SOME (ImmediateHigh e,substr'')
-           | _                 => raise Operands.BadAddressError)
+           | _                 => raise BadAddress)
       | SOME(#"(",substr') => 
 	(case Operands.parseExpr substr' of
 	     SOME (e,substr'') =>
@@ -153,12 +155,12 @@ fun parseOperand substr =
 		 SOME (IndirectY e,Substring.triml 3 substr'')
 	     else if Substring.isPrefix ")" substr'' then
 		 SOME (Indirect e,Substring.triml 1 substr'')
-	     else raise Operands.BadAddressError
-	   | _ => raise Operands.BadAddressError)
+	     else raise BadAddress
+	   | _ => raise BadAddress)
       | _ => 
 	(case Operands.parseExpr substr of
 	     SOME (e,substr'') => SOME (Direct e,substr'')
-	   | _ => raise Operands.BadAddressError)
+	   | _ => raise BadAddress)
 	     
 fun parse substr =
     let

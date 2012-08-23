@@ -1,7 +1,7 @@
 structure Numbers : NUMBERS =
 struct
 
-exception RangeError
+open Error
 
 val MAX_INT = IntInf.<<(1,Word.fromInt (256*8)) - (IntInf.fromInt 1)
 

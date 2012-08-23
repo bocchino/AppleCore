@@ -1,7 +1,7 @@
 structure Operands : OPERANDS =
 struct
 
-exception BadAddressError
+open Error
 	    
 datatype term =
 	 Number of int
@@ -21,12 +21,12 @@ fun parseHexString substr =
 	fun getHexNum substr =
 	    let
 		val (digits,_) = Substring.splitAt(substr,2)
-		    handle Subscript => raise BadAddressError
+		    handle Subscript => raise BadAddress
             in
 		case StringCvt.scanString(Int.scan StringCvt.HEX) 
 					 (Substring.string digits) of
 		    SOME n => n
-	          | NONE   => raise BadAddressError
+	          | NONE   => raise BadAddress
             end
 	fun parseHexString' results substr =
 	    case Substring.first substr of
@@ -42,14 +42,14 @@ fun parseHexString substr =
 		    end
     in
 	case parseHexString' [] (Substring.dropl Char.isSpace substr) of
-	    []      => raise BadAddressError
+	    []      => raise BadAddress
 	  | results => results
     end
     
 fun parseNumberArg substr =
     case Numbers.parse (Substring.dropl Char.isSpace substr) of
 	SOME (n,_) => n
-      | _          => raise BadAddressError
+      | _          => raise BadAddress
 			    
 fun parseTerm substr =
     case Numbers.parse substr of
@@ -62,7 +62,7 @@ fun parseTerm substr =
 	           SOME(#"'",substr') =>
 		   (case Substring.getc substr' of
 		       SOME (c,substr'') => SOME (Character c,substr'')
-		     | _                 => raise BadAddressError)
+		     | _                 => raise BadAddress)
 		 | SOME(#"*",substr') => SOME (Star,substr')
 		 | _ => NONE))
 	      
@@ -70,7 +70,7 @@ fun parseExpr substr =
     let fun binop oper t substr =
 	    case parseExpr substr of
 		SOME (e,substr'') => SOME (oper(t,e),substr'')
-              | _                 => raise BadAddressError
+              | _                 => raise BadAddress
     in
 	
 	case parseTerm (Substring.dropl Char.isSpace substr) of
@@ -90,13 +90,13 @@ fun parseListRest parse results substr =
 	SOME (#",",substr') =>
 	(case parse (Substring.dropl Char.isSpace substr') of
 	    SOME (result, substr'') => parseListRest parse (result :: results) substr''
-          | _ => raise BadAddressError)
+          | _ => raise BadAddress)
       | _ => SOME (List.rev results,substr)
 	     
 fun parseExprArg substr =
     case parseExpr substr of
 	SOME (e,_) => e
-      | _          => raise BadAddressError
+      | _          => raise BadAddress
 			    
 fun parseList parse substr =
     case parse (Substring.dropl Char.isSpace substr) of

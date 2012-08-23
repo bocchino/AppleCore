@@ -1,8 +1,6 @@
 signature INSTRUCTIONS =
 sig
 
-    exception InvalidMnemonic of string
-    
     datatype instruction =
 	     Native of Native.instruction
 	   | Directive of Directives.directive

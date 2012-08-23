@@ -1,7 +1,7 @@
 structure Directives : DIRECTIVES =
 struct
 
-exception UnsupportedDirective
+open Error
 
 datatype directive =
 	 AS of string
@@ -17,7 +17,7 @@ datatype directive =
 	       
 fun parseStringArg substr =
     case Substring.string (Substring.dropl Char.isSpace substr) of
-	""  => raise Operands.BadAddressError
+	""  => raise BadAddress
       | str => str
 	       
 fun parseDelimArg substr =
@@ -28,15 +28,15 @@ fun parseDelimArg substr =
         in
 	    case Substring.getc rest of
 		SOME (c,_) => Substring.string str
-              | _          => raise Operands.BadAddressError
+              | _          => raise BadAddress
         end
-      | _ => raise Operands.BadAddressError
+      | _ => raise BadAddress
 		   
 fun parseExprList substr =
     case Operands.parseList Operands.parseExpr substr of
-        SOME ([],_)  => raise Operands.BadAddressError
+        SOME ([],_)  => raise BadAddress
       | SOME (lst,_) => lst
-      | NONE         => raise Operands.BadAddressError
+      | NONE         => raise BadAddress
 			      
 fun parse substr =
     let

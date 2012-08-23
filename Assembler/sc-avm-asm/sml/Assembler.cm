@@ -1,6 +1,7 @@
 Library
     structure AppleCore
     structure Directives
+    structure Error
     structure Instructions
     structure Labels
     structure Native
@@ -12,6 +13,8 @@ is
     AppleCore.sml
     Directives.sig
     Directives.sml
+    Error.sig
+    Error.sml
     Labels.sig
     Labels.sml
     Instructions.sig

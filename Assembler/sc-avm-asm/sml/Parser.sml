@@ -1,6 +1,8 @@
 structure Parser : PARSER =
 struct
 
+open Error
+
 type line = (Labels.label option) * (Instructions.instruction option)
 
 fun parseInstruction substr =
@@ -13,7 +15,7 @@ fun parseInstruction substr =
 	in
 	    if Substring.isEmpty rest
 	    then NONE
-	    else raise Instructions.InvalidMnemonic 
+	    else raise InvalidMnemonic 
 			   (Substring.string (Substring.takel (not o Char.isSpace) rest))
 	end
 		       
@@ -24,7 +26,7 @@ fun parseNoLabel substr =
 
 fun parseLabel substr =
     case Labels.parse substr of
-	NONE => raise Labels.BadLabelError
+	NONE => raise Error.BadLabel
       | SOME (l,rest) => SOME (SOME l,parseInstruction rest)
 
 fun parseLine line =
@@ -44,7 +46,7 @@ fun parseLine line =
 fun show n e =
     print ("line " ^ (Int.toString n) ^ ": " ^ 
     (case e of 
-	Instructions.InvalidMnemonic mem => "invalid mnemonic " ^ mem
+	InvalidMnemonic mem => "invalid mnemonic " ^ mem
       | _ => raise e) ^ "\n")
 
 fun parseAll file =

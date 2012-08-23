@@ -1,8 +1,6 @@
 structure Instructions : INSTRUCTIONS =
   struct
 
-  exception InvalidMnemonic of string
-  
   datatype instruction =
 	   Native of Native.instruction
 	 | Directive of Directives.directive
