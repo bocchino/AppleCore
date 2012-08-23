@@ -43,18 +43,13 @@ fun parseLine line =
 		else parseLabel substr
     end
 
-fun show n e =
-    print ("line " ^ (Int.toString n) ^ ": " ^ 
-    (case e of 
-	InvalidMnemonic mem => "invalid mnemonic " ^ mem
-      | _ => raise e) ^ "\n")
-
 fun parseAll file =
     let
 	fun parseAll' stream n =
 	    case TextIO.inputLine stream of
 		SOME line => 
-		(ignore (parseLine line) handle e => show n e;
+		(ignore (parseLine line) handle e => 
+						(Error.show n e; print line);
 		 parseAll' stream (n + 1))
 	      | NONE => ()
     in

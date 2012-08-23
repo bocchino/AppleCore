@@ -41,8 +41,9 @@ fun parseExprList substr =
 fun parse substr =
     let
 	val (mem,rest) = Substring.splitl (not o Char.isSpace) substr 
+	val dir = Substring.translate (Char.toString o Char.toUpper) mem
     in
-	case (Substring.translate (Char.toString o Char.toUpper) mem) of
+	case dir of
 	    ".AS" => SOME (AS (parseDelimArg rest))
 	  | ".AT" => SOME (AT (parseDelimArg rest))
 	  | ".BS" => SOME (BS (Operands.parseExprArg rest))
@@ -56,13 +57,13 @@ fun parse substr =
 	  | ".TI" => SOME Ignored
 	  | ".LIST" => SOME Ignored
 	  | ".PG" => SOME Ignored
-	  | ".EN" => raise UnsupportedDirective
-	  | ".DO" => raise UnsupportedDirective
-	  | ".ELSE" => raise UnsupportedDirective
-	  | ".FIN" => raise UnsupportedDirective
-	  | ".MA" => raise UnsupportedDirective
-	  | ".EM" => raise UnsupportedDirective
-	  | ".US" => raise UnsupportedDirective
+	  | ".EN" => raise UnsupportedDirective dir
+	  | ".DO" => raise UnsupportedDirective dir
+	  | ".ELSE" => raise UnsupportedDirective dir
+	  | ".FIN" => raise UnsupportedDirective dir
+	  | ".MA" => raise UnsupportedDirective dir
+	  | ".EM" => raise UnsupportedDirective dir
+	  | ".US" => raise UnsupportedDirective dir
           | _ => NONE
     end
     
