@@ -2,7 +2,7 @@ structure LabelMap : LABEL_MAP =
 struct
 
 open Error
-open Labels
+open Label
 
 structure GlobalMap = SplayMapFn(struct
 				 type ord_key = string
@@ -19,21 +19,21 @@ type globalMap = source GlobalMap.map;
 type localMap = source LocalMap.map;
 type map = {lm:localMap,gm:globalMap}
 
-exception RedefinedLabel of label * source
+exception RedefinedLabel of Label.t * source
 
 val fresh = {lm=LocalMap.empty,gm=GlobalMap.empty}
 
-fun lookup' (m:map,l:label) =
+fun lookup' (m:map,l:Label.t) =
     case (m,l) of
 	({lm,gm},Global str) => GlobalMap.find (gm,str)
       | ({lm,gm},Local n)  => LocalMap.find (lm,n)
 
-fun lookup (m:map,l:label) =
+fun lookup (m:map,l:Label.t) =
     case lookup' (m,l) of
 	SOME {address=a,...} => SOME a
       | NONE => NONE
 
-fun add (m:map,l:label,s:source) =
+fun add (m:map,l:Label.t,s:source) =
     case lookup' (m,l) of
 	SOME s' => raise RedefinedLabel(l,s')
       | NONE => (case (m,l) of

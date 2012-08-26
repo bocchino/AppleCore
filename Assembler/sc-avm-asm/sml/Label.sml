@@ -1,9 +1,9 @@
-structure Labels : LABELS =
+structure Label : LABEL =
 struct
 
 open Error
 
-datatype label =
+datatype t =
 	 Global of string
        | Local of int
 

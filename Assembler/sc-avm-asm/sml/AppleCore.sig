@@ -6,7 +6,7 @@ sig
 	   | Unsigned of int
 			 
     datatype constant =
-	     Label of Labels.label
+	     Label of Label.t
 	   | Literal of IntInf.int
 		     
     datatype instruction =

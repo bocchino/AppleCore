@@ -8,7 +8,7 @@ datatype size =
        | Unsigned of int
 
 datatype constant =
-	 Label of Labels.label
+	 Label of Label.t
        | Literal of IntInf.int
 		     
 datatype instruction =
@@ -68,7 +68,7 @@ fun parseConstant substr =
     in
 	case Numbers.parse constant of
 	    SOME (n,_) => Literal n
-	  | NONE => (case Labels.parse constant of
+	  | NONE => (case Label.parse constant of
 			 SOME (l,_) => Label l
 		       | NONE => raise BadAddress)
     end

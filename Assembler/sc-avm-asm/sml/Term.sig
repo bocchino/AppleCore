@@ -4,9 +4,13 @@ signature TERM =
 sig
 
     datatype t =
+	   (* A concrete address *)
 	   Number of int
-	 | Label of Labels.label
+	   (* A symbolic address *)
+	 | Label of Label.t
+	   (* A character such as 'A *)
 	 | Character of char
+  	   (* A star indicating the current address *)
 	 | Star
     
     (* Parse a term from a substring *)	 

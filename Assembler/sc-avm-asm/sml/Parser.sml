@@ -3,7 +3,7 @@ struct
 
 open Error
 
-type line = (Labels.label option) * (Instructions.instruction option)
+type line = (Label.t option) * (Instructions.instruction option)
 
 fun parseInstruction substr =
     case Instructions.parse substr of
@@ -25,7 +25,7 @@ fun parseNoLabel substr =
       | _      => NONE
 
 fun parseLabel substr =
-    case Labels.parse substr of
+    case Label.parse substr of
 	NONE => raise Error.BadLabel
       | SOME (l,rest) => SOME (SOME l,parseInstruction rest)
 

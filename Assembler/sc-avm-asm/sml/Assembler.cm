@@ -5,7 +5,7 @@ Library
     structure Expression
     structure Instructions
     structure LabelMap
-    structure Labels
+    structure Label
     structure Native
     structure Numbers
     structure Parser
@@ -21,8 +21,8 @@ is
     Expression.sml
     LabelMap.sig
     LabelMap.sml
-    Labels.sig
-    Labels.sml
+    Label.sig
+    Label.sml
     Instructions.sig
     Instructions.sml
     Native.sig
