@@ -1,7 +1,6 @@
 structure Term : TERM =
 struct
 
-open Char
 open Error
 open LabelMap
 	    
@@ -35,5 +34,10 @@ fun eval (labelMap:map,starAddr:int) term:t =
 	   | NONE   => term)
       | Character c => Number (ord c)
       | Star => Number starAddr
+
+fun isZeroPage term =
+    case term of
+	Number n => n >= 0 andalso n <= 255
+      | _ => false
     
 end

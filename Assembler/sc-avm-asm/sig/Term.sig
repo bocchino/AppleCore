@@ -19,4 +19,7 @@ sig
     (* Evaluate a term, given bindings for labels and for * *)
     val eval : (LabelMap.map * int) -> t -> t
 
+    (* Report whether a term represents a zero-page address *)
+    val isZeroPage : t -> bool
+
 end
