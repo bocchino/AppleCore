@@ -1,11 +1,11 @@
-signature INSTRUCTIONS =
+signature INSTRUCTION =
 sig
 
-    datatype instruction =
+    datatype t =
 	     Native of Native.instruction
 	   | Directive of Directives.directive
 	   | AppleCore of AppleCore.instruction
 			
-    val parse : Substring.substring -> instruction option
+    val parse : Substring.substring -> t option
 
 end

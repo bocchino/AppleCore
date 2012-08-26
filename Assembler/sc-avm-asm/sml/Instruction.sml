@@ -1,7 +1,7 @@
-structure Instructions : INSTRUCTIONS =
+structure Instruction : INSTRUCTION =
   struct
 
-  datatype instruction =
+  datatype t =
 	   Native of Native.instruction
 	 | Directive of Directives.directive
 	 | AppleCore of AppleCore.instruction

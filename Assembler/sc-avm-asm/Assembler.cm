@@ -3,7 +3,7 @@ Library
     structure Directives
     structure Error
     structure Expression
-    structure Instructions
+    structure Instruction
     structure LabelMap
     structure Label
     structure Native
@@ -17,7 +17,7 @@ is
     sig/Expression.sig
     sig/LabelMap.sig
     sig/Label.sig
-    sig/Instructions.sig
+    sig/Instruction.sig
     sig/Native.sig
     sig/Numbers.sig
     sig/Parser.sig
@@ -28,7 +28,7 @@ is
     sml/Expression.sml
     sml/LabelMap.sml
     sml/Label.sml
-    sml/Instructions.sml
+    sml/Instruction.sml
     sml/Native.sml
     sml/Numbers.sml
     sml/Parser.sml

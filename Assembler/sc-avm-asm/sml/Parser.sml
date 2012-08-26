@@ -3,11 +3,11 @@ struct
 
 open Error
 
-type line = (Label.t option) * (Instructions.instruction option)
+type line = (Label.t option) * (Instruction.t option)
 
 fun parseInstruction substr =
-    case Instructions.parse substr of
-        SOME (Instructions.Directive Directives.Ignored) => NONE
+    case Instruction.parse substr of
+        SOME (Instruction.Directive Directives.Ignored) => NONE
       |	SOME i => SOME i
       | _      =>
 	let
