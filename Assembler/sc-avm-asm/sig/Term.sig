@@ -4,9 +4,9 @@ signature TERM =
 sig
 
     datatype t =
-	   (* A concrete address *)
+	   (* A concrete operand *)
 	   Number of int
-	   (* A symbolic address *)
+	   (* A symbolic operand *)
 	 | Label of Label.t
 	   (* A character such as 'A *)
 	 | Character of char
