@@ -10,7 +10,6 @@ sig
 
     val parse : Substring.substring -> (t * Substring.substring) option
     val parseArg : Substring.substring -> t
-					      
     val parseList : (Substring.substring -> ('a * Substring.substring) option)
 		    -> Substring.substring
 		    -> ('a list * Substring.substring) option
