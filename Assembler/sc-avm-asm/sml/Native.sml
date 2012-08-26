@@ -5,14 +5,14 @@ open Error
 
 datatype operand =
 	 None
-       | ImmediateLow of Operands.expr
-       | ImmediateHigh of Operands.expr
-       | Direct of Operands.expr
-       | DirectX of Operands.expr
-       | DirectY of Operands.expr
-       | Indirect of Operands.expr
-       | IndirectX of Operands.expr
-       | IndirectY of Operands.expr
+       | ImmediateLow of Expression.t
+       | ImmediateHigh of Expression.t
+       | Direct of Expression.t
+       | DirectX of Expression.t
+       | DirectY of Expression.t
+       | Indirect of Expression.t
+       | IndirectX of Expression.t
+       | IndirectY of Expression.t
 		      
 datatype mnemonic =
 	 ADC
@@ -139,15 +139,15 @@ fun parseOperand substr =
     case Substring.getc substr of
 	NONE               => NONE
       | SOME(#"#",substr') => 
-	(case Operands.parseExpr substr' of
+	(case Expression.parse substr' of
 	     SOME (e,substr'') => SOME (ImmediateLow e,substr'')
 	   | _                 => raise BadAddress)
       | SOME(#"/",substr') => 
-	(case Operands.parseExpr substr' of
+	(case Expression.parse substr' of
 	     SOME (e,substr'') => SOME (ImmediateHigh e,substr'')
            | _                 => raise BadAddress)
       | SOME(#"(",substr') => 
-	(case Operands.parseExpr substr' of
+	(case Expression.parse substr' of
 	     SOME (e,substr'') =>
 	     if Substring.isPrefix ",X)" substr'' then
 		 SOME (IndirectX e,Substring.triml 3 substr'')
@@ -158,7 +158,7 @@ fun parseOperand substr =
 	     else raise BadAddress
 	   | _ => raise BadAddress)
       | _ => 
-	(case Operands.parseExpr substr of
+	(case Expression.parse substr of
 	     SOME (e,substr'') => SOME (Direct e,substr'')
 	   | _ => raise BadAddress)
 	     

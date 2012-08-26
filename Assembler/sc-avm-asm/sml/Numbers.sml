@@ -46,6 +46,11 @@ fun parse substr =
        | _ =>
 	 parseDigits substr StringCvt.DEC)
 
+fun parseArg substr =
+    case parse (Substring.dropl Char.isSpace substr) of
+	SOME (n,_) => n
+      | _          => raise BadAddress
+			    
 fun normalize bound num =
     let
 	val bound' = IntInf.fromInt bound

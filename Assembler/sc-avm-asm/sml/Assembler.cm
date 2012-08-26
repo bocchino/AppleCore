@@ -2,13 +2,14 @@ Library
     structure AppleCore
     structure Directives
     structure Error
+    structure Expression
     structure Instructions
     structure LabelMap
     structure Labels
     structure Native
     structure Numbers
-    structure Operands
     structure Parser
+    structure Term
 is
     AppleCore.sig
     AppleCore.sml
@@ -16,6 +17,8 @@ is
     Directives.sml
     Error.sig
     Error.sml
+    Expression.sig
+    Expression.sml
     LabelMap.sig
     LabelMap.sml
     Labels.sig
@@ -26,10 +29,10 @@ is
     Native.sml
     Numbers.sig
     Numbers.sml
-    Operands.sig
-    Operands.sml
     Parser.sig
     Parser.sml
+    Term.sig
+    Term.sml
 
     $/basis.cm
     $/smlnj-lib.cm

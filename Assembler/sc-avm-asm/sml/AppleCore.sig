@@ -10,9 +10,9 @@ sig
 	   | Literal of IntInf.int
 		     
     datatype instruction =
-	     BRF of Operands.expr
-	   | BRU of Operands.expr
-	   | CFD of Operands.expr
+	     BRF of Expression.t
+	   | BRU of Expression.t
+	   | CFD of Expression.t
 	   | CFI
 	   | ADD of int
 	   | ANL of int
@@ -21,7 +21,7 @@ sig
 	   | ICR of int
 	   | ISP of int
 	   | MTS of int
-	   | MTV of int * Operands.expr
+	   | MTV of int * Expression.t
 	   | NEG of int
 	   | NOT of int
 	   | ORL of int
@@ -33,7 +33,7 @@ sig
 	   | STM of int
 	   | SUB of int
 	   | TEQ of int
-	   | VTM of int * Operands.expr
+	   | VTM of int * Expression.t
 	   | DIV of size
 	   | EXT of size
 	   | MUL of size

@@ -3,14 +3,14 @@ sig
     
     datatype operand =
 	     None
-	   | ImmediateLow of Operands.expr
-	   | ImmediateHigh of Operands.expr
-	   | Direct of Operands.expr
-	   | DirectX of Operands.expr
-	   | DirectY of Operands.expr
-	   | Indirect of Operands.expr
-	   | IndirectX of Operands.expr
-	   | IndirectY of Operands.expr
+	   | ImmediateLow of Expression.t
+	   | ImmediateHigh of Expression.t
+	   | Direct of Expression.t
+	   | DirectX of Expression.t
+	   | DirectY of Expression.t
+	   | Indirect of Expression.t
+	   | IndirectX of Expression.t
+	   | IndirectY of Expression.t
 			  
     datatype mnemonic =
 	     ADC

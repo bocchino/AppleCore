@@ -8,5 +8,6 @@ sig
 		      (IntInf.int * Substring.substring) option
     val parse : Substring.substring -> (IntInf.int * Substring.substring) option
     val normalize : int -> IntInf.int -> int				     
+    val parseArg : Substring.substring -> IntInf.int
 
 end

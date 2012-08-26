@@ -12,9 +12,9 @@ datatype constant =
        | Literal of IntInf.int
 		     
 datatype instruction =
-	 BRF of Operands.expr
-       | BRU of Operands.expr
-       | CFD of Operands.expr
+	 BRF of Expression.t
+       | BRU of Expression.t
+       | CFD of Expression.t
        | CFI
        | ADD of int
        | ANL of int
@@ -23,7 +23,7 @@ datatype instruction =
        | ICR of int
        | ISP of int
        | MTS of int
-       | MTV of int * Operands.expr
+       | MTV of int * Expression.t
        | NEG of int
        | NOT of int
        | ORL of int
@@ -35,7 +35,7 @@ datatype instruction =
        | STM of int
        | SUB of int
        | TEQ of int
-       | VTM of int * Operands.expr
+       | VTM of int * Expression.t
        | DIV of size
        | EXT of size
        | MUL of size
@@ -46,7 +46,7 @@ datatype instruction =
        | TLT of size
 		
 fun parseUnsigned substr =
-    Numbers.normalize 256 (Operands.parseNumberArg substr)
+    Numbers.normalize 256 (Numbers.parseArg substr)
     
 fun parseSigned substr =
     case Numbers.parse (Substring.dropl Char.isSpace substr) of
@@ -81,7 +81,7 @@ fun parseMV (instr,delim) substr =
 		handle Subscript => raise BadAddress
         in
 	    if (Substring.string d) = delim
-	    then instr (Numbers.normalize 256 var,Operands.parseExprArg rest')
+	    then instr (Numbers.normalize 256 var,Expression.parseArg rest')
             else raise BadAddress
         end
       | _ => raise BadAddress
@@ -92,9 +92,9 @@ fun parse substr =
 	val (mem,rest) = Substring.splitl (not o Char.isSpace) substr 
     in
 	case (Substring.translate (Char.toString o Char.toUpper) mem) of
-	    "BRF" => SOME (BRF (Operands.parseExprArg rest))
-	  | "BRU" => SOME (BRU (Operands.parseExprArg rest))
-	  | "CFD" => SOME (CFD (Operands.parseExprArg rest))
+	    "BRF" => SOME (BRF (Expression.parseArg rest))
+	  | "BRU" => SOME (BRU (Expression.parseArg rest))
+	  | "CFD" => SOME (CFD (Expression.parseArg rest))
           | "CFI" => SOME CFI  
           | "ADD" => SOME (ADD (parseUnsigned rest))
           | "ANL" => SOME (ANL (parseUnsigned rest))

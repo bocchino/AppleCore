@@ -6,12 +6,12 @@ open Error
 datatype directive =
 	 AS of string
        | AT of string
-       | BS of Operands.expr
-       | DA of Operands.expr list
-       | EQ of Operands.expr
+       | BS of Expression.t
+       | DA of Expression.t list
+       | EQ of Expression.t
        | HS of int list   
        | IN of string
-       | OR of Operands.expr
+       | OR of Expression.t
        | TF of string
        | Ignored
 	       
@@ -33,11 +33,41 @@ fun parseDelimArg substr =
       | _ => raise BadAddress
 		   
 fun parseExprList substr =
-    case Operands.parseList Operands.parseExpr substr of
+    case Expression.parseList Expression.parse substr of
         SOME ([],_)  => raise BadAddress
       | SOME (lst,_) => lst
       | NONE         => raise BadAddress
 			      
+fun parseHexString substr =
+    let
+	fun getHexNum substr =
+	    let
+		val (digits,_) = Substring.splitAt(substr,2)
+		    handle Subscript => raise BadAddress
+            in
+		case StringCvt.scanString(Int.scan StringCvt.HEX) 
+					 (Substring.string digits) of
+		    SOME n => n
+	          | NONE   => raise BadAddress
+            end
+	fun parseHexString' results substr =
+	    case Substring.first substr of
+		NONE   => List.rev results
+              | SOME c =>
+		if Char.isSpace c then 
+		    List.rev results
+		else
+		    let 
+			val num = getHexNum substr
+		    in
+			parseHexString' (num :: results) (Substring.triml 2 substr)
+		    end
+    in
+	case parseHexString' [] (Substring.dropl Char.isSpace substr) of
+	    []      => raise BadAddress
+	  | results => results
+    end
+    
 fun parse substr =
     let
 	val (mem,rest) = Substring.splitl (not o Char.isSpace) substr 
@@ -46,12 +76,12 @@ fun parse substr =
 	case dir of
 	    ".AS" => SOME (AS (parseDelimArg rest))
 	  | ".AT" => SOME (AT (parseDelimArg rest))
-	  | ".BS" => SOME (BS (Operands.parseExprArg rest))
+	  | ".BS" => SOME (BS (Expression.parseArg rest))
 	  | ".DA" => SOME (DA (parseExprList rest))
-          | ".EQ" => SOME (EQ (Operands.parseExprArg rest))
-	  | ".HS" => SOME (HS (Operands.parseHexString rest))
+          | ".EQ" => SOME (EQ (Expression.parseArg rest))
+	  | ".HS" => SOME (HS (parseHexString rest))
           | ".IN" => SOME (IN (parseStringArg rest))
-          | ".OR" => SOME (OR (Operands.parseExprArg rest))
+          | ".OR" => SOME (OR (Expression.parseArg rest))
 	  | ".TF" => SOME (TF (parseStringArg rest))
 	  | ".TA" => SOME Ignored
 	  | ".TI" => SOME Ignored
