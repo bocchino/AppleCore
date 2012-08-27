@@ -2,6 +2,7 @@ structure Parser : PARSER =
 struct
 
 open Error
+open TextIO
 
 type line = (Label.t option) * (Instruction.t option)
 
@@ -31,7 +32,7 @@ fun parseLabel substr =
 
 fun parseLine line =
     let
-	val substr = Substring.full line
+	val substr = Substring.dropr Char.isSpace (Substring.full line)
     in
 	case Substring.getc substr of
 	    NONE => NONE
@@ -43,17 +44,29 @@ fun parseLine line =
 		else parseLabel substr
     end
 
-fun parseAll file =
+fun nextLine paths file =
+    case File.nextLine file of
+	NONE => NONE
+      |	SOME (line,file) => 
+	(print line;
+	 let
+	     val line = parseLine line
+	 in 
+	     case line of
+		 SOME (_,SOME (Instruction.Directive (Directives.IN name))) =>
+		 SOME (line, File.includeIn paths file name)
+	       | _ => SOME (line, file)
+	 end)
+	handle e => (Error.show line (File.lineNumber file) e; NONE)
+		    
+fun parseAll paths fileName =
     let
-	fun parseAll' stream n =
-	    case TextIO.inputLine stream of
-		SOME line => 
-		(ignore (parseLine line) handle e => 
-						(Error.show n e; print line);
-		 parseAll' stream (n + 1))
+	fun parseAll' file =
+	    case nextLine paths file of
+		SOME (_,file) => parseAll' file
 	      | NONE => ()
     in
-	parseAll' (TextIO.openIn file) 1
+	parseAll' (File.openIn paths fileName)
     end
 
 end

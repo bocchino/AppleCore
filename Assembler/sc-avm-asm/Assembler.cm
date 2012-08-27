@@ -3,6 +3,7 @@ Library
     structure Directives
     structure Error
     structure Expression
+    structure File
     structure Instruction
     structure LabelMap
     structure Label
@@ -15,6 +16,7 @@ is
     sig/Directives.sig
     sig/Error.sig
     sig/Expression.sig
+    sig/File.sig
     sig/LabelMap.sig
     sig/Label.sig
     sig/Instruction.sig
@@ -26,6 +28,7 @@ is
     sml/Directives.sml
     sml/Error.sml
     sml/Expression.sml
+    sml/File.sml
     sml/LabelMap.sml
     sml/Label.sml
     sml/Instruction.sml
