@@ -3,7 +3,9 @@ struct
 
 open Char
 open Error
+open LabelMap
 open Substring
+open Term
 	    
 datatype t =
 	 Term of Term.t
@@ -47,5 +49,36 @@ fun parseList parse substr =
     case parse (dropl isSpace substr) of
 	SOME (result,substr') => parseListRest parse [result] substr'
       | _ => SOME ([],substr)
+
+fun eval (labelMap:map,starAddr:int) (expr:t) =
+    let 
+	fun evalBinop(lhs,constr,oper,rhs) =
+	    let
+		val lhs = Term.eval (labelMap,starAddr) lhs
+		val rhs = eval (labelMap,starAddr) rhs
+	    in
+		case (lhs,rhs) of
+		    (Number n,Term (Number n')) =>
+		    Term (Number (oper(n,n')))
+		  | _ => constr (lhs,rhs)
+	    end
+    in
+	case expr of
+	    Term term => Term (Term.eval (labelMap,starAddr) term)
+	  | Add (expr,term) => evalBinop(expr,Add,op+,term)
+	  | Sub (expr,term) => evalBinop(expr,Sub,op-,term)
+	  | Mul (expr,term) => evalBinop(expr,Mul,op*,term)
+	  | Div (expr,term) => evalBinop(expr,Div,op div,term)
+    end
+
+fun evalAsAddr (labelMap:map,starAddr:int) (expr:t) =
+    case eval (labelMap,starAddr) expr of
+	Term (Number n) => n
+      | _ => raise UndefinedLabel
+
+fun isZeroPage (expr:t) =
+    case expr of
+	Term term => Term.isZeroPage term
+      | _ => false
 
 end

@@ -9,5 +9,6 @@ sig
     val parse : Substring.substring -> (IntInf.int * Substring.substring) option
     val normalize : int -> IntInf.int -> int				     
     val parseArg : Substring.substring -> IntInf.int
+    val isZeroPage : int -> bool
 
 end

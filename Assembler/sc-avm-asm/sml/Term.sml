@@ -25,7 +25,7 @@ fun parse substr =
 		 | SOME(#"*",substr') => SOME (Star,substr')
 		 | _ => NONE))
 
-fun eval (labelMap:map,starAddr:int) term:t =
+fun eval (labelMap:map,starAddr:int) (term:t) =
     case term of
 	Number n => term
       | Label l => 
@@ -35,9 +35,9 @@ fun eval (labelMap:map,starAddr:int) term:t =
       | Character c => Number (ord c)
       | Star => Number starAddr
 
-fun isZeroPage term =
+fun isZeroPage (term:t) =
     case term of
-	Number n => n >= 0 andalso n <= 255
+	Number n => Numbers.isZeroPage n
       | _ => false
     
 end

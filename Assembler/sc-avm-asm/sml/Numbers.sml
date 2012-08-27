@@ -67,4 +67,7 @@ fun normalize bound num =
 	end
     end
 
+fun isZeroPage n =
+    n >= 0 andalso n <= 255
+
 end

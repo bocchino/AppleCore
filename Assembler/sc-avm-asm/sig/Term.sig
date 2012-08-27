@@ -15,7 +15,6 @@ sig
     
     (* Parse a term from a substring *)	 
     val parse : Substring.substring -> (t * Substring.substring) option					  
-
     (* Evaluate a term, given bindings for labels and for * *)
     val eval : (LabelMap.map * int) -> t -> t
 
