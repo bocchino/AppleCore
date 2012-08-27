@@ -59,14 +59,14 @@ fun nextLine paths file =
 	 end)
 	handle e => (Error.show line (File.lineNumber file) e; NONE)
 		    
-fun parseAll paths fileName =
+fun parseFile paths fileName =
     let
-	fun parseAll' file =
+	fun parseFile' file =
 	    case nextLine paths file of
-		SOME (_,file) => parseAll' file
+		SOME (_,file) => parseFile' file
 	      | NONE => ()
     in
-	parseAll' (File.openIn paths fileName)
+	parseFile' (File.openIn paths fileName)
     end
 
 end

@@ -5,6 +5,7 @@ sig
 
     val nextLine : File.paths -> File.t -> (line option * File.t) option
     val parseLine : string -> line option
-    val parseAll : File.paths -> string -> unit			      
+    val parseFile : File.paths -> string -> unit			      
+
 end
 
