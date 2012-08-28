@@ -1,15 +1,62 @@
-structure Expression : EXPRESSION =
+structure Expression : EXPRESSION = 
 struct
 
 open Char
 open Error
 open LabelMap
 open Substring
-open Term
+
+structure Term = struct
+
+datatype t =
+	 (* A concrete operand *)
+	 Number of int
+       (* A symbolic operand *)
+       | Label of Label.t
+       (* A character such as 'A *)
+       | Character of char
+       (* A star indicating the current address *)
+       | Star
+
+(* Parse a term from a substring *)	 
+fun parse substr =
+    case Numbers.parse substr of
+	SOME (n,substr') => SOME (Number (Numbers.normalize 65536 n),substr')
+      |  _ => 
+	 (case Label.parse substr of
+	      SOME (l,substr') => SOME (Label l,substr')
+	    | _ => 
+	      (case Substring.getc substr of
+	           SOME(#"'",substr') =>
+		   (case Substring.getc substr' of
+		       SOME (c,substr'') => SOME (Character c,substr'')
+		     | _                 => raise BadAddress)
+		 | SOME(#"*",substr') => SOME (Star,substr')
+		 | _ => NONE))
+
+(* Evaluate a term, given bindings for labels and for * *)
+fun eval (labelMap:map,starAddr:int) (term:t) =
+    case term of
+	Number n => term
+      | Label l => 
+	(case lookup (labelMap,l) of
+	     SOME n => Number n
+	   | NONE   => term)
+      | Character c => Number (ord c)
+      | Star => Number starAddr
+
+(* Report whether a term represents a zero-page address *)
+fun isZeroPage (term:t) =
+    case term of
+	Number n => Numbers.isZeroPage n
+      | _ => false
+    
+end
 	    
+open Term
+
 (* An expression is a single term or a binary operation
    comprising a term and an expression *)
-
 datatype t =
 	 Term of Term.t
        | Add of Term.t * t
