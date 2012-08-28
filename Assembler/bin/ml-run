@@ -1,0 +1,1 @@
+${SML_NJ}/bin/.run/run.x86-darwin @SMLcmdname=./sml @SMLload="$@"

@@ -1,0 +1,4 @@
+BIN=${APPLECORE}/Assembler/bin
+BUILD=${APPLECORE}/Assembler/sc-avm-asm/
+
+${BIN}/ml-run ${BUILD}/sc-avm-asm.x86-darwin "$@"

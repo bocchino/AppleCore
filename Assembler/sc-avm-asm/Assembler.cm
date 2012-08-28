@@ -1,5 +1,6 @@
 Library
     structure AppleCore
+    structure Assembler
     structure Directives
     structure Error
     structure Expression
@@ -13,6 +14,7 @@ Library
     structure Term
 is
     sig/AppleCore.sig
+    sig/Assembler.sig
     sig/Directives.sig
     sig/Error.sig
     sig/Expression.sig
@@ -25,6 +27,7 @@ is
     sig/Parser.sig
     sig/Term.sig
     sml/AppleCore.sml
+    sml/Assembler.sml
     sml/Directives.sml
     sml/Error.sml
     sml/Expression.sml
