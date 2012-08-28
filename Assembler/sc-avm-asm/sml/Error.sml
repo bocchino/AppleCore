@@ -9,18 +9,18 @@ exception RangeError
 exception UndefinedLabel
 exception UnsupportedDirective of string
 	  
-fun show line n e = (
-    print ("line " ^ (Int.toString n) ^ ": " ^ 
-	   (case e of 
+fun show {line,name,number,exn} = 
+    (print ("at line " ^ (Int.toString number) ^ " of " ^ name ^ ":\n");
+     print line;
+     print (case exn of 
 		BadAddress => "bad address"
 	      | BadLabel => "bad label"
 	      | FileNotFound file => "file " ^ file ^ " not found"
 	      | InvalidMnemonic mem => "invalid mnemonic " ^ mem
 	      | RangeError => "range error"
 	      | UnsupportedDirective dir => "unsupported directive " ^ dir
-	      | _ => raise e) ^ "\n");
-    print line
-)
+	      | _ => raise exn);
+     print "\n");
     
 end
 

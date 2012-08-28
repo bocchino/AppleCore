@@ -3,28 +3,32 @@ struct
 
 open Error
 
-type t = int * (TextIO.instream list)
+type t = (string * int * TextIO.instream) list
 type paths = string list
 type name = string
 
 fun openIn' [] name =
     raise FileNotFound name
   | openIn' (hd::tl) name =
-    TextIO.openIn (hd ^ "/" ^ name)
+    (name,0,TextIO.openIn (hd ^ "/" ^ name))
     handle IO.Io {...} => openIn' tl name
 
 fun openIn paths name = 
-    (0,[openIn' paths name])
+    [openIn' paths name]
 
-fun includeIn paths (n,streams) name =
-    (n,((openIn' paths name) :: streams))
+fun includeIn paths file name =
+    (openIn' paths name) :: file
 
-fun nextLine (n,[]) = NONE
-  | nextLine (n,(hd :: tl)) =
-    case TextIO.inputLine hd of
-	SOME line => SOME (line, (n+1,hd :: tl))
-      | NONE => nextLine (n,tl)
+fun nextLine [] = NONE
+  | nextLine ((name,n,stream) :: tl) =
+    case TextIO.inputLine stream of
+	SOME line => SOME (line, (name,n+1,stream) :: tl)
+      | NONE => nextLine tl
     
-fun lineNumber (n,_) = n
+fun name [] = "<empty>"
+  | name ((str,_,_)::tl) = str
+
+fun line [] = 0
+  | line ((_,n,_)::tl) = n
 
 end

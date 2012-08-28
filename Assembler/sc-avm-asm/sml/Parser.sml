@@ -57,7 +57,8 @@ fun nextLine paths file =
 		 SOME (line, File.includeIn paths file name)
 	       | _ => SOME (line, file)
 	 end)
-	handle e => (Error.show line (File.lineNumber file) e; NONE)
+	handle e => (Error.show {line=line,name=(File.name file),
+				 number=(File.line file),exn=e}; NONE)
 		    
 fun parseFile paths fileName =
     let

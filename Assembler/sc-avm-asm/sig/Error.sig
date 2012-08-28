@@ -9,6 +9,9 @@ sig
     exception UndefinedLabel
     exception UnsupportedDirective of string
 
-    val show : string -> int -> exn -> unit
+    val show : {line:string,
+		name:string,
+		number:int,
+		exn:exn} -> unit
 
 end

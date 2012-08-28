@@ -8,7 +8,8 @@ sig
     val openIn : paths -> name -> t
     val includeIn : paths -> t -> name -> t
     val nextLine : t -> (string * t) option
-    val lineNumber : t -> int
+    val name : t -> string
+    val line : t -> int
 
 end
 
