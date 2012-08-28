@@ -1,11 +1,9 @@
 signature INSTRUCTION =
 sig
 
-    datatype t =
-	     Native of Native.instruction
-	   | Directive of Directives.directive
-	   | AppleCore of AppleCore.instruction
+    type t
 			
     val parse : Substring.substring -> t option
+    val includeIn : File.paths -> File.t -> t -> File.t
 
 end

@@ -6,29 +6,15 @@ open TextIO
 
 type line = (Label.t option) * (Instruction.t option)
 
-fun parseInstruction substr =
-    case Instruction.parse substr of
-        SOME (Instruction.Directive Directives.Ignored) => NONE
-      |	SOME i => SOME i
-      | _      =>
-	let
-	    val rest = Substring.dropl Char.isSpace substr
-	in
-	    if Substring.isEmpty rest
-	    then NONE
-	    else raise InvalidMnemonic 
-			   (Substring.string (Substring.takel (not o Char.isSpace) rest))
-	end
-		       
 fun parseNoLabel substr =
-    case parseInstruction substr of
+    case Instruction.parse substr of
 	SOME i => SOME (NONE, SOME i)
       | _      => NONE
 
 fun parseLabel substr =
     case Label.parse substr of
 	NONE => raise Error.BadLabel
-      | SOME (l,rest) => SOME (SOME l,parseInstruction rest)
+      | SOME (l,rest) => SOME (SOME l,Instruction.parse rest)
 
 fun parseLine line =
     let
@@ -53,8 +39,8 @@ fun nextLine paths file =
 	     val line = parseLine line
 	 in 
 	     case line of
-		 SOME (_,SOME (Instruction.Directive (Directives.IN name))) =>
-		 SOME (line, File.includeIn paths file name)
+		 SOME (_,SOME inst) =>
+		 SOME (line, Instruction.includeIn paths file inst)
 	       | _ => SOME (line, file)
 	 end)
 	handle e => (Error.show {line=line,name=(File.name file),
