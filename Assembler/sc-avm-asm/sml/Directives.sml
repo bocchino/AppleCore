@@ -19,7 +19,13 @@ fun parseStringArg substr =
     case Substring.string (Substring.dropl Char.isSpace substr) of
 	""  => raise BadAddress
       | str => str
-	       
+	    
+fun parseFileArg substr =
+    case Substring.string (Substring.takel (fn c => not (c = #",")) 
+					   (Substring.dropl Char.isSpace substr)) of
+	"" => raise BadAddress
+      | str => str
+   
 fun parseDelimArg substr =
     case Substring.getc (Substring.dropl Char.isSpace substr) of
 	SOME (c,substr') =>
@@ -80,7 +86,7 @@ fun parse substr =
 	  | ".DA" => SOME (DA (parseExprList rest))
           | ".EQ" => SOME (EQ (Expression.parseArg rest))
 	  | ".HS" => SOME (HS (parseHexString rest))
-          | ".IN" => SOME (IN (parseStringArg rest))
+          | ".IN" => SOME (IN (parseFileArg rest))
           | ".OR" => SOME (OR (Expression.parseArg rest))
 	  | ".TF" => SOME (TF (parseStringArg rest))
 	  | ".TA" => SOME Ignored
