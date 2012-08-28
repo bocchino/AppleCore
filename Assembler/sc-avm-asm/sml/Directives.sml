@@ -24,7 +24,7 @@ fun parseFileArg substr =
     case Substring.string (Substring.takel (fn c => not (c = #",")) 
 					   (Substring.dropl Char.isSpace substr)) of
 	"" => raise BadAddress
-      | str => str
+      | str => str ^ ".avm"
    
 fun parseDelimArg substr =
     case Substring.getc (Substring.dropl Char.isSpace substr) of
