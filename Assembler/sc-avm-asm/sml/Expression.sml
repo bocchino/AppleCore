@@ -3,7 +3,7 @@ struct
 
 open Char
 open Error
-open LabelMap
+open Label
 open Substring
 
 structure Term = struct

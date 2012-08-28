@@ -6,7 +6,6 @@ Library
     structure Expression
     structure File
     structure Instruction
-    structure LabelMap
     structure Label
     structure Native
     structure Numbers
@@ -16,7 +15,6 @@ is
     sig/Error.sig
     sig/Expression.sig
     sig/File.sig
-    sig/LabelMap.sig
     sig/Label.sig
     sig/Instruction.sig
     sig/Numbers.sig
@@ -27,7 +25,6 @@ is
     sml/Error.sml
     sml/Expression.sml
     sml/File.sml
-    sml/LabelMap.sml
     sml/Label.sml
     sml/Instruction.sml
     sml/Native.sml
