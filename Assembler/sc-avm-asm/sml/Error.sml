@@ -14,6 +14,7 @@ fun show line n e = (
 	   (case e of 
 		BadAddress => "bad address"
 	      | BadLabel => "bad label"
+	      | FileNotFound file => "file " ^ file ^ " not found"
 	      | InvalidMnemonic mem => "invalid mnemonic " ^ mem
 	      | RangeError => "range error"
 	      | UnsupportedDirective dir => "unsupported directive " ^ dir
