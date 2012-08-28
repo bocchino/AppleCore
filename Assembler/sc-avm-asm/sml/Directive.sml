@@ -1,9 +1,9 @@
-structure Directives : DIRECTIVES =
+structure Directive : INSTRUCTION =
 struct
 
 open Error
 
-datatype directive =
+datatype t =
 	 AS of string
        | AT of string
        | BS of Expression.t
@@ -102,5 +102,11 @@ fun parse substr =
 	  | ".US" => raise UnsupportedDirective dir
           | _ => NONE
     end
+
+fun includeIn paths file inst =
+    case inst of
+	IN name =>
+	File.includeIn paths file name
+      | _ => file
     
 end

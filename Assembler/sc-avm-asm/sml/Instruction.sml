@@ -4,9 +4,9 @@ structure Instruction : INSTRUCTION =
   open Error
 
   datatype t =
-	   Native of Native.instruction
-	 | Directive of Directives.directive
-	 | AppleCore of AppleCore.instruction
+	   Native of Native.t
+	 | Directive of Directive.t
+	 | AppleCore of AppleCore.t
 
   fun apply parser substr =
       parser (Substring.dropl Char.isSpace substr)
@@ -16,14 +16,13 @@ structure Instruction : INSTRUCTION =
 	  SOME inst => SOME (Native inst)
         | _  => (case apply AppleCore.parse substr of
 		     SOME inst => SOME (AppleCore inst)
-		   | _ => (case apply Directives.parse substr of
+		   | _ => (case apply Directive.parse substr of
 			       SOME inst => SOME (Directive inst)
 			     | _ => NONE))
 
   fun parse substr =
       case parse' substr of
-          SOME (Directive Directives.Ignored) => NONE
-	| SOME i => SOME i
+	  SOME i => SOME i
 	| _  =>
 	  let
 	      val rest = Substring.dropl Char.isSpace substr
@@ -36,8 +35,8 @@ structure Instruction : INSTRUCTION =
 
   fun includeIn paths file inst =
       case inst of
-	  Directive (Directives.IN name) =>
-	  File.includeIn paths file name
+	  Directive d =>
+	  Directive.includeIn paths file d
 	| _ => file
 		       
   end

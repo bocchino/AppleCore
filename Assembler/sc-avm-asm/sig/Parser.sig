@@ -1,7 +1,7 @@
 signature PARSER =
 sig
 
-    type line = (Label.t option) * (Instruction.t option)
+    type line
 
     val nextLine : File.paths -> File.t -> (line option * File.t) option
     val parseLine : string -> line option

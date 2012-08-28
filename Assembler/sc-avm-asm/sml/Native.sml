@@ -1,4 +1,4 @@
-structure Native : NATIVE =
+structure Native : INSTRUCTION =
 struct
 
 open Error
@@ -72,9 +72,8 @@ datatype mnemonic =
        | TXS
        | TYA
 	 
-datatype instruction =
-	 Instruction of mnemonic * operand
-			
+type t = mnemonic * operand
+
 fun getMnemonic substr =
     case (Substring.translate (Char.toString o Char.toUpper) substr) of
 	"ADC" => SOME ADC
@@ -175,11 +174,12 @@ fun parse substr =
 		if ((Substring.string spc) = " ") then
 		    case parseOperand arg of
  			SOME (oper,_) =>
-			SOME (Instruction(mem',oper))
-		      | _  => 
-			SOME (Instruction(mem',None))
-                else SOME (Instruction(mem',None))
+			SOME (mem',oper)
+		      | _  => SOME (mem',None)
+                else SOME (mem',None)
 	    end
     end
+
+fun includeIn paths file inst = file
     
 end

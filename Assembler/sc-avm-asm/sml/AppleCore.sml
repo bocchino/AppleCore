@@ -1,4 +1,4 @@
-structure AppleCore : APPLECORE =
+structure AppleCore : INSTRUCTION =
 struct
 
 open Error
@@ -11,7 +11,7 @@ datatype constant =
 	 Label of Label.t
        | Literal of IntInf.int
 		     
-datatype instruction =
+datatype t =
 	 BRF of Expression.t
        | BRU of Expression.t
        | CFD of Expression.t
@@ -44,7 +44,7 @@ datatype instruction =
        | TGT of size
        | TLE of size
        | TLT of size
-		
+
 fun parseUnsigned substr =
     Numbers.normalize 256 (Numbers.parseArg substr)
     
@@ -126,5 +126,7 @@ fun parse substr =
 	  | "TLT" => SOME (TLT (parseSigned rest))
           | _ => NONE
     end
+
+fun includeIn paths file inst = file
     
 end

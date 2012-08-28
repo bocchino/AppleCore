@@ -7,6 +7,9 @@ open LabelMap
 open Substring
 open Term
 	    
+(* An expression is a single term or a binary operation
+   comprising a term and an expression *)
+
 datatype t =
 	 Term of Term.t
        | Add of Term.t * t
