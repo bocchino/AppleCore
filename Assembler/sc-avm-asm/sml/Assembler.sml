@@ -3,6 +3,8 @@ struct
 
 exception BadArgument
 
+open Error
+
 datatype optResult = IncludeOpt of string
 		   | OutputOpt of string
 

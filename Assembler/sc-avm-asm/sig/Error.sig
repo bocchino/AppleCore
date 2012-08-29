@@ -1,14 +1,18 @@
 signature ERROR =
 sig
 
-    exception BadAddress
-    exception BadLabel
-    exception FileNotFound of string
-    exception InvalidMnemonic of string
-    exception NoLabel
-    exception RangeError
-    exception UndefinedLabel
-    exception UnsupportedDirective of string
+    datatype t =
+	     BadAddress
+	   | BadLabel
+	   | FileNotFound of string
+	   | InvalidMnemonic of string
+	   | NoLabel
+	   | RangeError
+	   | RedefinedLabel of {file:string,line:int}
+	   | UndefinedLabel
+	   | UnsupportedDirective of string
+
+    exception AssemblyError of t
 
     val show : {line:string,
 		name:string,

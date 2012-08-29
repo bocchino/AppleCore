@@ -8,7 +8,7 @@ type paths = string list
 type name = string
 
 fun openIn' [] name =
-    raise FileNotFound name
+    raise AssemblyError (FileNotFound name)
   | openIn' (hd::tl) name =
     (name,0,TextIO.openIn (hd ^ "/" ^ name))
     handle IO.Io {...} => openIn' tl name

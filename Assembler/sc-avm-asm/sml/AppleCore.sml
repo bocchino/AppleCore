@@ -60,7 +60,7 @@ fun parseSigned substr =
 			      else Unsigned num'
               | NONE => Unsigned num'
 	end
-      | _ => raise BadAddress
+      | _ => raise AssemblyError BadAddress
 
 fun parseConstant substr =
     let
@@ -70,7 +70,7 @@ fun parseConstant substr =
 	    SOME (n,_) => Literal n
 	  | NONE => (case Label.parse constant of
 			 SOME (l,_) => Label l
-		       | NONE => raise BadAddress)
+		       | NONE => raise AssemblyError BadAddress)
     end
 		   
 fun parseMV (instr,delim) substr =
@@ -78,13 +78,13 @@ fun parseMV (instr,delim) substr =
 	SOME (var,rest) => 
 	let
 	    val (d,rest') = Substring.splitAt(Substring.dropl Char.isSpace rest,2) 
-		handle Subscript => raise BadAddress
+		handle Subscript => raise AssemblyError BadAddress
         in
 	    if (Substring.string d) = delim
 	    then instr (Numbers.normalize 256 var,Expression.parseArg rest')
-            else raise BadAddress
+            else raise AssemblyError BadAddress
         end
-      | _ => raise BadAddress
+      | _ => raise AssemblyError BadAddress
 		   
 		   
 fun parse substr =

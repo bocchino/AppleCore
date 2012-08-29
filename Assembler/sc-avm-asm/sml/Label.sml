@@ -13,8 +13,9 @@ fun parseDigits substr =
     case Numbers.parseDigits substr StringCvt.DEC of 
 	SOME (n,substr') => 
 	((Numbers.normalize 100 n,substr') 
-	 handle RangeError => raise BadLabel)
-      | _   => raise BadLabel
+	 handle AssemblyError RangeError => 
+		raise AssemblyError BadLabel)
+      | _   => raise AssemblyError BadLabel
 		     
 fun isLabelChar c =
     Char.isAlphaNum c orelse c = #"."
@@ -47,8 +48,6 @@ type globalMap = source GlobalMap.map;
 type localMap = source LocalMap.map;
 type map = {localMap:localMap,globalMap:globalMap}
 
-exception RedefinedLabel of t * source
-
 val fresh = {localMap=LocalMap.empty,globalMap=GlobalMap.empty}
 
 fun lookup' (map,label) =
@@ -70,7 +69,8 @@ fun update (map,label,source) =
 					      
 fun add (map,label,source) =
     case lookup' (map,label) of
-	SOME source => raise RedefinedLabel(label,source)
+	SOME {file,line,address} => 
+	raise AssemblyError (RedefinedLabel {file=file,line=line})
       | NONE => update (map,label,source)
   
 end

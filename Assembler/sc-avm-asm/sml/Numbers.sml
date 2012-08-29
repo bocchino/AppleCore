@@ -7,7 +7,7 @@ val MAX_INT = IntInf.<<(1,Word.fromInt (256*8)) - (IntInf.fromInt 1)
 
 fun checkRange n =
     if (n < ~MAX_INT orelse n > MAX_INT)
-    then raise RangeError
+    then raise AssemblyError RangeError
     else n
 
 fun parseDigits substr radix =
@@ -49,14 +49,14 @@ fun parse substr =
 fun parseArg substr =
     case parse (Substring.dropl Char.isSpace substr) of
 	SOME (n,_) => n
-      | _          => raise BadAddress
+      | _          => raise AssemblyError BadAddress
 			    
 fun normalize bound num =
     let
 	val bound' = IntInf.fromInt bound
     in
     if num <= ~bound' orelse num >= bound' then
-	raise RangeError
+	raise AssemblyError RangeError
     else 
 	let
 	    val num' = IntInf.toInt num

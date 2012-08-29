@@ -142,11 +142,11 @@ fun parseOperand substr =
       | SOME(#"#",substr') => 
 	(case Expression.parse substr' of
 	     SOME (e,substr'') => SOME (ImmediateLow e,substr'')
-	   | _                 => raise BadAddress)
+	   | _                 => raise AssemblyError BadAddress)
       | SOME(#"/",substr') => 
 	(case Expression.parse substr' of
 	     SOME (e,substr'') => SOME (ImmediateHigh e,substr'')
-           | _                 => raise BadAddress)
+           | _                 => raise AssemblyError BadAddress)
       | SOME(#"(",substr') => 
 	(case Expression.parse substr' of
 	     SOME (e,substr'') =>
@@ -156,12 +156,12 @@ fun parseOperand substr =
 		 SOME (IndirectY e,Substring.triml 3 substr'')
 	     else if Substring.isPrefix ")" substr'' then
 		 SOME (Indirect e,Substring.triml 1 substr'')
-	     else raise BadAddress
-	   | _ => raise BadAddress)
+	     else raise AssemblyError BadAddress
+	   | _ => raise AssemblyError BadAddress)
       | _ => 
 	(case Expression.parse substr of
 	     SOME (e,substr'') => SOME (Direct e,substr'')
-	   | _ => raise BadAddress)
+	   | _ => raise AssemblyError BadAddress)
 	     
 fun parse substr =
     let

@@ -17,13 +17,13 @@ datatype t =
 
 fun parseStringArg substr =
     case Substring.string (Substring.dropl Char.isSpace substr) of
-	""  => raise BadAddress
+	""  => raise AssemblyError BadAddress
       | str => str
 	    
 fun parseFileArg substr =
     case Substring.string (Substring.takel (fn c => not (c = #",")) 
 					   (Substring.dropl Char.isSpace substr)) of
-	"" => raise BadAddress
+	"" => raise AssemblyError BadAddress
       | str => str ^ ".avm"
    
 fun parseDelimArg substr =
@@ -34,27 +34,27 @@ fun parseDelimArg substr =
         in
 	    case Substring.getc rest of
 		SOME (c,_) => Substring.string str
-              | _          => raise BadAddress
+              | _          => raise AssemblyError BadAddress
         end
-      | _ => raise BadAddress
+      | _ => raise AssemblyError BadAddress
 		   
 fun parseExprList substr =
     case Expression.parseList Expression.parse substr of
-        SOME ([],_)  => raise BadAddress
+        SOME ([],_)  => raise AssemblyError BadAddress
       | SOME (lst,_) => lst
-      | NONE         => raise BadAddress
+      | NONE         => raise AssemblyError BadAddress
 			      
 fun parseHexString substr =
     let
 	fun getHexNum substr =
 	    let
 		val (digits,_) = Substring.splitAt(substr,2)
-		    handle Subscript => raise BadAddress
+		    handle Subscript => raise AssemblyError BadAddress
             in
 		case StringCvt.scanString(Int.scan StringCvt.HEX) 
 					 (Substring.string digits) of
 		    SOME n => n
-	          | NONE   => raise BadAddress
+	          | NONE   => raise AssemblyError BadAddress
             end
 	fun parseHexString' results substr =
 	    case Substring.first substr of
@@ -70,7 +70,7 @@ fun parseHexString substr =
 		    end
     in
 	case parseHexString' [] (Substring.dropl Char.isSpace substr) of
-	    []      => raise BadAddress
+	    []      => raise AssemblyError BadAddress
 	  | results => results
     end
     
@@ -93,13 +93,13 @@ fun parse substr =
 	  | ".TI" => SOME Ignored
 	  | ".LIST" => SOME Ignored
 	  | ".PG" => SOME Ignored
-	  | ".EN" => raise UnsupportedDirective dir
-	  | ".DO" => raise UnsupportedDirective dir
-	  | ".ELSE" => raise UnsupportedDirective dir
-	  | ".FIN" => raise UnsupportedDirective dir
-	  | ".MA" => raise UnsupportedDirective dir
-	  | ".EM" => raise UnsupportedDirective dir
-	  | ".US" => raise UnsupportedDirective dir
+	  | ".EN" => raise AssemblyError (UnsupportedDirective dir)
+	  | ".DO" => raise AssemblyError (UnsupportedDirective dir)
+	  | ".ELSE" => raise AssemblyError (UnsupportedDirective dir)
+	  | ".FIN" => raise AssemblyError (UnsupportedDirective dir)
+	  | ".MA" => raise AssemblyError (UnsupportedDirective dir)
+	  | ".EM" => raise AssemblyError (UnsupportedDirective dir)
+	  | ".US" => raise AssemblyError (UnsupportedDirective dir)
           | _ => NONE
     end
 
@@ -119,7 +119,7 @@ fun pass1 inst (label,source as {file,line,address},map) =
 	  | (_,AT str) => (address + (size str),map)
 	  | (_,BS expr) => (address + (eval expr),map)
 	  | (_,DA exprs) => (address + 2 * (List.length exprs),map)
-	  | (NONE,EQ _) => raise NoLabel
+	  | (NONE,EQ _) => raise AssemblyError NoLabel
 	  | (SOME label,EQ expr) => (address,
 				     Label.update (map,label,{file=file,
 							      line=line,

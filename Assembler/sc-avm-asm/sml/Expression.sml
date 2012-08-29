@@ -30,7 +30,7 @@ fun parse substr =
 	           SOME(#"'",substr') =>
 		   (case Substring.getc substr' of
 		       SOME (c,substr'') => SOME (Character c,substr'')
-		     | _                 => raise BadAddress)
+		     | _                 => raise AssemblyError BadAddress)
 		 | SOME(#"*",substr') => SOME (Star,substr')
 		 | _ => NONE))
 
@@ -68,7 +68,7 @@ fun parse substr =
     let fun binop oper t substr =
 	    case parse substr of
 		SOME (e,substr'') => SOME (oper(t,e),substr'')
-              | _                 => raise BadAddress
+              | _                 => raise AssemblyError BadAddress
     in
 	case Term.parse (dropl isSpace substr) of
 	    SOME (t,substr') =>
@@ -87,13 +87,13 @@ fun parseListRest parse results substr =
 	(case parse (dropl isSpace substr') of
 	    SOME (result, substr'') => 
 	    parseListRest parse (result :: results) substr''
-          | _ => raise BadAddress)
+          | _ => raise AssemblyError BadAddress)
       | _ => SOME (List.rev results,substr)
 	     
 fun parseArg substr =
     case parse substr of
 	SOME (e,_) => e
-      | _          => raise BadAddress
+      | _          => raise AssemblyError BadAddress
 			    
 fun parseList parse substr =
     case parse (dropl isSpace substr) of
@@ -124,7 +124,7 @@ fun eval (addr,map) expr =
 fun evalAsAddr (addr,map) expr =
     case eval (addr,map) expr of
 	Term (Number n) => n
-      | _ => raise UndefinedLabel
+      | _ => raise AssemblyError UndefinedLabel
 
 fun isZeroPage (expr:t) =
     case expr of
