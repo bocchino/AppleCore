@@ -127,7 +127,7 @@ fun parse substr =
           | _ => NONE
     end
 
-fun includeIn paths file inst = file
+fun includeIn inst (paths,file) = file
 
 local
     fun unsignedSize sz =

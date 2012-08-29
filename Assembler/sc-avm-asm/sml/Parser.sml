@@ -40,7 +40,7 @@ fun nextLine paths file =
 	 in 
 	     case line of
 		 SOME (_,SOME inst) =>
-		 SOME (line, Instruction.includeIn paths file inst)
+		 SOME (line, Instruction.includeIn inst (paths,file))
 	       | _ => SOME (line, file)
 	 end)
 	handle e => (Error.show {line=line,name=(File.name file),

@@ -103,7 +103,7 @@ fun parse substr =
           | _ => NONE
     end
 
-fun includeIn paths file inst =
+fun includeIn inst (paths,file) =
     case inst of
 	IN name =>
 	File.includeIn paths file name

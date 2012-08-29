@@ -33,10 +33,10 @@ fun parse substr =
 			   (Substring.string (Substring.takel (not o Char.isSpace) rest))
 	end
 	
-fun includeIn paths file inst =
+fun includeIn inst (paths,file) =
     case inst of
 	Directive d =>
-	Directive.includeIn paths file d
+	Directive.includeIn d (paths,file)
       | _ => file
 
 fun pass1 (AppleCore inst) (label,source,map) = 
