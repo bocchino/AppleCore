@@ -139,7 +139,7 @@ local
     fun signedSize (Signed sz) = signedSize' sz
       | signedSize (Unsigned sz) = signedSize' sz
     fun constantSize (Label label) = 2
-      | constantSize (Literal n) = 2 (* TODO *)
+      | constantSize (Literal n) = Numbers.sizeOf n
     fun sizeOf (BRF expr) = 3
       | sizeOf (BRU expr) = 3
       | sizeOf (CFD expr) = 3
@@ -178,7 +178,8 @@ local
       | sizeOf (TLE sz) = signedSize sz
       | sizeOf (TLT sz) = signedSize sz
 in
-fun nextAddr (addr,inst) = addr + (sizeOf inst)
+fun pass1 inst (label,{file,line,address},map) = 
+    (address + (sizeOf inst),map)
 end
 
 end

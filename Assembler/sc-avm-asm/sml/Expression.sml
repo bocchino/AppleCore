@@ -35,15 +35,15 @@ fun parse substr =
 		 | _ => NONE))
 
 (* Evaluate a term, given bindings for labels and for * *)
-fun eval (labelMap:map,starAddr:int) (term:t) =
+fun eval (addr,map) term =
     case term of
 	Number n => term
       | Label l => 
-	(case lookup (labelMap,l) of
+	(case lookup (map,l) of
 	     SOME n => Number n
 	   | NONE   => term)
       | Character c => Number (ord c)
-      | Star => Number starAddr
+      | Star => Number addr
 
 (* Report whether a term represents a zero-page address *)
 fun isZeroPage (term:t) =
@@ -100,12 +100,12 @@ fun parseList parse substr =
 	SOME (result,substr') => parseListRest parse [result] substr'
       | _ => SOME ([],substr)
 
-fun eval (labelMap:map,starAddr:int) (expr:t) =
+fun eval (addr,map) expr =
     let 
 	fun evalBinop(lhs,constr,oper,rhs) =
 	    let
-		val lhs = Term.eval (labelMap,starAddr) lhs
-		val rhs = eval (labelMap,starAddr) rhs
+		val lhs = Term.eval (addr,map) lhs
+		val rhs = eval (addr,map) rhs
 	    in
 		case (lhs,rhs) of
 		    (Number n,Term (Number n')) =>
@@ -114,15 +114,15 @@ fun eval (labelMap:map,starAddr:int) (expr:t) =
 	    end
     in
 	case expr of
-	    Term term => Term (Term.eval (labelMap,starAddr) term)
+	    Term term => Term (Term.eval (addr,map) term)
 	  | Add (expr,term) => evalBinop(expr,Add,op+,term)
 	  | Sub (expr,term) => evalBinop(expr,Sub,op-,term)
 	  | Mul (expr,term) => evalBinop(expr,Mul,op*,term)
 	  | Div (expr,term) => evalBinop(expr,Div,op div,term)
     end
 
-fun evalAsAddr (labelMap:map,starAddr:int) (expr:t) =
-    case eval (labelMap,starAddr) expr of
+fun evalAsAddr (addr,map) expr =
+    case eval (addr,map) expr of
 	Term (Number n) => n
       | _ => raise UndefinedLabel
 

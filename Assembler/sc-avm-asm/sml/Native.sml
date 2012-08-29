@@ -184,4 +184,7 @@ fun parse substr =
 
 fun includeIn paths file inst = file
 
+fun pass1 inst (label,{file,line,address},map) = 
+    (address,map) (* TODO *)
+
 end

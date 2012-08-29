@@ -5,6 +5,7 @@ sig
     exception BadLabel
     exception FileNotFound of string
     exception InvalidMnemonic of string
+    exception NoLabel
     exception RangeError
     exception UndefinedLabel
     exception UnsupportedDirective of string

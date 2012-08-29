@@ -109,4 +109,24 @@ fun includeIn paths file inst =
 	File.includeIn paths file name
       | _ => file
 
+fun pass1 inst (label,source as {file,line,address},map) =
+    let
+	fun eval expr =
+	    Expression.evalAsAddr (address,map) expr
+    in
+	case (label,inst) of 
+	    (_,AS str) => (address + (size str),map)
+	  | (_,AT str) => (address + (size str),map)
+	  | (_,BS expr) => (address + (eval expr),map)
+	  | (_,DA exprs) => (address + 2 * (List.length exprs),map)
+	  | (NONE,EQ _) => raise NoLabel
+	  | (SOME label,EQ expr) => (address,
+				     Label.update (map,label,{file=file,
+							      line=line,
+							      address=eval expr}))
+	  | (_,HS args) => (address + (List.length args),map)
+	  | (_,OR expr) => (eval expr,map)
+	  | _ => (address,map)
+    end
+
 end

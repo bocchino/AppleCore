@@ -20,8 +20,12 @@ sig
     (* Create a fresh map *)
     val fresh : map
 
-    (* Add a mapping to the map *)
+    (* Add a fresh mapping to the map.  Throws an exception if
+       the label is already there. *)
     val add : (map * t * source) -> map
+
+    (* Update the source of a mapping. *)
+    val update : (map * t * source) -> map
 
     (* Look up a label and return the associated address *)
     val lookup :(map * t) -> int option

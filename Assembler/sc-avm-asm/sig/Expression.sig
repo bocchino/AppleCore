@@ -18,9 +18,12 @@ sig
 		    -> Substring.substring
 		    -> (t list * Substring.substring) option
 
-    (* Evaluate an expression, given bindings for labels and for * *)
-    val eval : (Label.map * int) -> t -> t
-    val evalAsAddr : (Label.map * int) -> t -> int
+    (* Evaluate an expression, given bindings for * and for labels *)
+    val eval : int * Label.map -> t -> t
+
+    (* Evaluate an expression to an address
+       Raises UndefinedLabel if the expression can't be fully evaluated *)
+    val evalAsAddr : int * Label.map -> t -> int
 
     (* Report whether an expression represents a zero-page address *)
     val isZeroPage : t -> bool

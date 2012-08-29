@@ -38,7 +38,14 @@ fun includeIn paths file inst =
 	Directive d =>
 	Directive.includeIn paths file d
       | _ => file
-	     
+
+fun pass1 (AppleCore inst) (label,source,map) = 
+    AppleCore.pass1 inst (label,source,map)
+  | pass1 (Directive inst) (label,source,map) = 
+    Directive.pass1 inst (label,source,map)
+  | pass1 (Native inst) (label,source,map) = 
+    Native.pass1 inst (label,source,map)
+
 end
 
   

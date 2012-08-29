@@ -70,4 +70,11 @@ fun normalize bound num =
 fun isZeroPage n =
     n >= 0 andalso n <= 255
 
+fun sizeOf 0 = 1
+  | sizeOf n = 
+    if n < 0 then
+	sizeOf ((~n) * 2)
+    else 
+	1 + ((IntInf.log2 n) div 8)
+
 end

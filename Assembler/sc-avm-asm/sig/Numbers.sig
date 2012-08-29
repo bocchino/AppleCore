@@ -10,5 +10,6 @@ sig
     val normalize : int -> IntInf.int -> int				     
     val parseArg : Substring.substring -> IntInf.int
     val isZeroPage : int -> bool
+    val sizeOf : IntInf.int -> int
 
 end

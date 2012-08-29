@@ -5,6 +5,7 @@ exception BadAddress
 exception BadLabel
 exception FileNotFound of string
 exception InvalidMnemonic of string
+exception NoLabel
 exception RangeError
 exception UndefinedLabel
 exception UnsupportedDirective of string
@@ -17,7 +18,9 @@ fun show {line,name,number,exn} =
 	      | BadLabel => "bad label"
 	      | FileNotFound file => "file " ^ file ^ " not found"
 	      | InvalidMnemonic mem => "invalid mnemonic " ^ mem
+	      | NoLabel => "no label"
 	      | RangeError => "range error"
+	      | UndefinedLabel => "undefined label"
 	      | UnsupportedDirective dir => "unsupported directive " ^ dir
 	      | _ => raise exn);
      print "\n");
