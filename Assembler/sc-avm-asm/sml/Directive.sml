@@ -14,7 +14,7 @@ datatype t =
        | OR of Expression.t
        | TF of string
        | Ignored
-	       
+
 fun parseStringArg substr =
     case Substring.string (Substring.dropl Char.isSpace substr) of
 	""  => raise BadAddress
@@ -108,5 +108,5 @@ fun includeIn paths file inst =
 	IN name =>
 	File.includeIn paths file name
       | _ => file
-    
+
 end

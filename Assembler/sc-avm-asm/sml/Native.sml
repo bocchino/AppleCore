@@ -74,6 +74,8 @@ datatype mnemonic =
 	 
 type t = mnemonic * operand
 
+type opcode = int
+
 fun getMnemonic substr =
     case (Substring.translate (Char.toString o Char.toUpper) substr) of
 	"ADC" => SOME ADC
@@ -181,5 +183,5 @@ fun parse substr =
     end
 
 fun includeIn paths file inst = file
-    
+
 end

@@ -88,9 +88,7 @@ Pittsburgh, PA</H3></TD>
 
 AppleCore is a C-like programming language for the Apple II series of
 computers. A cross-compiler from Java (e.g., running on a Mac or PC)
-to the Apple II is under development; eventually I would like to write
-an AppleCore compiler in AppleCore, thereby providing a compiler that
-works on the Apple II.<BR>
+to the Apple II is under development.<BR>
 <BR>
 The idea of AppleCore is to provide a &#8220;core language for programming
 the Apple II.&#8221; The motivation is as follows:
@@ -602,7 +600,7 @@ right-hand-side expression:<BR>
 <DIV CLASS="center"><I>binop-expr</I> ::= <I>expr binop expr</I></DIV>
 <DIV CLASS="center"><I>binop</I> ::= <TT>&gt;</TT> | <TT>&lt;</TT> | <TT>&lt;=</TT> |
  <TT>&gt;=</TT> | <TT>AND</TT> | <TT>OR</TT> | <TT>XOR</TT> | <TT>+</TT> |
- <TT>-</TT> | <TT>*</TT> | <TT>/</TT> | <TT>&lt;&lt;</TT> | <TT>&gt;&gt;</TT> |
+ <TT>-</TT> | <TT>*</TT> | <TT>/</TT> | <TT>&lt;&lt;</TT>&nbsp;| <TT>&gt;&gt;</TT>&nbsp;|
  <TT>=</TT></DIV><BR>
 <BR>
 Parsing of binary operation expressions is disambiguated using the
@@ -1190,7 +1188,7 @@ registers had on exit from the function; the <TT>S</TT> register's value
 will be off by 2.<BR>
 <BR>
 <B>Binary operation expressions.</B> <I>Shift operations
- (<TT>&lt;&lt;</TT> and <TT>&gt;&gt;</TT>).</I> Evaluate the left-hand side, evaluate the
+ (<TT>&lt;&lt;</TT>&nbsp;and <TT>&gt;&gt;</TT>).</I> Evaluate the left-hand side, evaluate the
 right-hand side, pop the right-hand side, and shift the left-hand side
 value (which is the result on the top of the stack) by a number of
 bytes equal to the right-hand side value. In the case of a right

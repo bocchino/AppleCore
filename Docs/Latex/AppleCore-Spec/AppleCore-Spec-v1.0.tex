@@ -17,9 +17,7 @@ Pittsburgh, PA}
 
 AppleCore is a C-like programming language for the Apple II series of
 computers.  A cross-compiler from Java (e.g., running on a Mac or PC)
-to the Apple II is under development; eventually I would like to write
-an AppleCore compiler in AppleCore, thereby providing a compiler that
-works on the Apple II.
+to the Apple II is under development.
 
 The idea of AppleCore is to provide a ``core language for programming
 the Apple II.''  The motivation is as follows:
@@ -214,8 +212,8 @@ which is a separate token.
 \kwd{+}  & Addition \\
 \kwd{-}  & Negation (as unary operator); subtraction (as binary
 operator) \\
-\kwd{<<} & Left shift \\
-\kwd{>>} & Right shift \\
+\shl & Left shift \\
+\shr & Right shift \\
 \kwd{>=} & Greater than or equal to \\
 \kwd{<=} & Less than or equal to \\
 \kwd{>}  & Greater than \\
@@ -485,7 +483,7 @@ $$\nonterm{binop-expr} ::= \mbox{\nonterm{expr} \nonterm{binop} \nonterm{expr}}$
 %
 $$\nonterm{binop} ::= \mbox{\kwd{>} $|$ \kwd{<} $|$ \kwd{<=} $|$
   \kwd{>=} $|$ \kwd{AND} $|$ \kwd{OR} $|$ \kwd{XOR} $|$ \kwd{+} $|$
-  \kwd{-} $|$ \kwd{*} $|$ \kwd{/} $|$ \kwd{<<} $|$ \kwd{>>} $|$
+  \kwd{-} $|$ \kwd{*} $|$ \kwd{/} $|$ \shl~$|$ \shr~$|$
   \kwd{=}}$$
 
 \noindent
@@ -498,7 +496,7 @@ following precedence rules:
   \nonterm{expr-2} \nonterm{binop-2} \nonterm{expr-3}, the implied
   parentheses go around the first operation unless the second
   operation has a strictly higher precedence.  There are five levels
-  of precedence, from highest to lowest: (1) \kwd{<<} and \kwd{>>};
+  of precedence, from highest to lowest: (1) \kwd{<}\kwd{<} and \kwd{>}\kwd{>};
   (2) \kwd{*} and \kwd{\bs}; (3) \kwd{+} and \kwd{-}; (4) \kwd{=},
   \kwd{>}, \kwd{<}, \kwd{<=}, and \kwd{>=}; and (5) \kwd{AND},
   \kwd{OR}, and \kwd{XOR}.
@@ -1115,7 +1113,7 @@ registers had on exit from the function; the \kwd{S} register's value
 will be off by 2.
 
 \bfhead{Binary operation expressions.} \ithead{Shift operations
-  (\kwd{<<} and \kwd{>>}).} Evaluate the left-hand side, evaluate the
+  (\shl~and \shr).} Evaluate the left-hand side, evaluate the
 right-hand side, pop the right-hand side, and shift the left-hand side
 value (which is the result on the top of the stack) by a number of
 bytes equal to the right-hand side value.  In the case of a right

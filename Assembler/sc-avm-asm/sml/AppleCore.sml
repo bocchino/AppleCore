@@ -128,5 +128,57 @@ fun parse substr =
     end
 
 fun includeIn paths file inst = file
-    
+
+local
+    fun unsignedSize sz =
+	if sz >= 1 andalso sz <= 7
+	then 1 else 2
+    fun signedSize' sz =
+	if sz >= 1 andalso sz <= 3
+	then 1 else 2
+    fun signedSize (Signed sz) = signedSize' sz
+      | signedSize (Unsigned sz) = signedSize' sz
+    fun constantSize (Label label) = 2
+      | constantSize (Literal n) = 2 (* TODO *)
+    fun sizeOf (BRF expr) = 3
+      | sizeOf (BRU expr) = 3
+      | sizeOf (CFD expr) = 3
+      | sizeOf (CFI) = 1
+      | sizeOf (ADD sz) = unsignedSize sz
+      | sizeOf (ANL sz) = unsignedSize sz
+      | sizeOf (DCR sz) = unsignedSize sz
+      | sizeOf (DSP sz) = unsignedSize sz
+      | sizeOf (ICR sz) = unsignedSize sz
+      | sizeOf (ISP sz) = unsignedSize sz
+      | sizeOf (MTS sz) = unsignedSize sz
+      | sizeOf (MTV (sz,exp)) = 1 + (unsignedSize sz)
+      | sizeOf (NEG sz) = unsignedSize sz
+      | sizeOf (NOT sz) = unsignedSize sz
+      | sizeOf (ORL sz) = unsignedSize sz
+      | sizeOf (ORX sz) = unsignedSize sz
+      | sizeOf (PHC c) = 
+	let
+	    val sz = constantSize c
+	in 
+	    sz + (unsignedSize sz)
+	end
+      | sizeOf (PVA sz) = unsignedSize sz
+      | sizeOf (RAF sz) = unsignedSize sz
+      | sizeOf (SHL sz) = unsignedSize sz
+      | sizeOf (STM sz) = unsignedSize sz
+      | sizeOf (SUB sz) = unsignedSize sz
+      | sizeOf (TEQ sz) = unsignedSize sz
+      | sizeOf (VTM (sz,exp)) = 1 + (unsignedSize sz)
+      | sizeOf (DIV sz) = signedSize sz
+      | sizeOf (EXT sz) = signedSize sz
+      | sizeOf (MUL sz) = signedSize sz
+      | sizeOf (SHR sz) = signedSize sz
+      | sizeOf (TGE sz) = signedSize sz
+      | sizeOf (TGT sz) = signedSize sz
+      | sizeOf (TLE sz) = signedSize sz
+      | sizeOf (TLT sz) = signedSize sz
+in
+fun nextAddr (addr,inst) = addr + (sizeOf inst)
+end
+
 end
