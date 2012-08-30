@@ -40,12 +40,14 @@ fun assemble (paths,fileName) =
 	fun assemble (file,addr,map) =
 	    case File.nextLine file of
 		NONE => ()
-	      |	SOME (line,file) => (print line; pass1 (file,line,addr,map))
-	
-	and pass1 (file,line,addr,map) =
-	    case Line.pass1 (paths,file,line,addr,map) of
-		SOME (file,addr,map,inst) => assemble (file,addr,map)
+	      |	SOME (line,file) => (print line; parse (file,line,addr,map))
+	and parse (file,line,addr,map) =
+	    case Line.parse (paths,file,line) of
+		SOME (line,file) => pass1 (file,line,addr,map)
 	      | NONE => assemble (file,addr,map)
+	and pass1 (file,line,addr,map) =
+	    case Line.pass1 (file,line,addr,map) of
+		(addr,map,inst) => assemble (file,addr,map)
     in
 	assemble ((File.openIn paths fileName),0x800,Label.fresh)
     end

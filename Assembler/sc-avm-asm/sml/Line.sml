@@ -42,7 +42,7 @@ fun parse (paths,file,line) =
     handle e => (Error.show {line=line,name=(File.name file),
 			     number=(File.line file),exn=e}; NONE)
 
-fun pass1 (paths,file,line,addr,map) = 
+fun pass1 (file,line,addr,map) = 
     let 
 	val source = {file=File.name file,
 		      line=File.line file,
@@ -52,16 +52,16 @@ fun pass1 (paths,file,line,addr,map) =
 		SOME label => Label.add (map,label,source)
 	      | NONE => map
     in
-	case parse (paths,file,line) of
-	    SOME ((SOME label,NONE),file) => SOME (file,addr,Label.add(map,label,source), NONE)
-	  | SOME ((label,SOME inst),file) => 
+	case line of
+	    (SOME label,NONE) => (addr,Label.add(map,label,source), NONE)
+	  | (label,SOME inst) => 
 	    let
 		val map = add (map,label,source)
 		val (inst,addr,map) = Instruction.pass1 (label,inst) (source,map)
 	    in
-		SOME (file,addr,map,SOME inst)
+		(addr,map,SOME inst)
 	    end
-	  | _ => NONE
+	  | _ => (addr,map,NONE)
     end
     
 end
