@@ -3,7 +3,8 @@ sig
 
     type t
 
-    val parse : File.paths -> File.t -> (t option * File.t) option
+    val pass1 : File.paths * File.t * int * Label.map -> 
+		(File.t * int * Label.map * Instruction.t option) option
 
 end
 
