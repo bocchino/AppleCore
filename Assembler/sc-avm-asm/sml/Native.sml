@@ -7,9 +7,12 @@ datatype operand =
 	 None
        | ImmediateLow of Expression.t
        | ImmediateHigh of Expression.t
-       | Direct of Expression.t
-       | DirectX of Expression.t
-       | DirectY of Expression.t
+       | Absolute of Expression.t
+       | AbsoluteX of Expression.t
+       | AbsoluteY of Expression.t
+       | ZeroPage of Expression.t
+       | ZeroPageX of Expression.t
+       | ZeroPageY of Expression.t
        | Indirect of Expression.t
        | IndirectX of Expression.t
        | IndirectY of Expression.t
@@ -160,7 +163,11 @@ fun parseOperand substr =
 	   | _ => raise AssemblyError BadAddress)
       | _ => 
 	(case Expression.parse substr of
-	     SOME (e,substr'') => SOME (Direct e,substr'')
+	     SOME (e,substr'') => if Substring.isPrefix ",X" substr'' then
+				      SOME (AbsoluteX e,Substring.triml 2 substr'')
+				  else if Substring.isPrefix ",Y" substr'' then
+				      SOME (AbsoluteY e,Substring.triml 2 substr'')
+				  else SOME (Absolute e,substr'')
 	   | _ => raise AssemblyError BadAddress)
 	     
 fun parse substr =
@@ -184,7 +191,38 @@ fun parse substr =
 
 fun includeIn inst (paths,file) = file
 
-fun pass1 inst (label,{file,line,address},map) = 
-    (address,map) (* TODO *)
+fun pass1_inst (address,map) operand = 
+    let
+	fun result zp nzp expr =
+	    let
+		val expr = Expression.eval (address,map) expr
+	    in
+		if Expression.isZeroPage expr
+		then zp expr
+		else nzp expr
+	    end
+    in
+    case operand of
+	Absolute expr => result ZeroPage Absolute expr
+      | AbsoluteX expr => result ZeroPageX AbsoluteX expr
+      | AbsoluteY expr => result ZeroPageY AbsoluteY expr
+      | _ => operand
+    end
+
+fun pass1_size operand = case operand of
+			     None => 1
+			   | Absolute _ => 3
+			   | AbsoluteX _ => 3
+			   | AbsoluteY _ => 3
+			   | Indirect _ => 3
+			   | _ => 2
+
+fun pass1 (label,(mnemonic,operand)) ({file,line,address},map) =
+    let
+	val operand = pass1_inst (address,map) operand
+	val size = pass1_size operand
+    in
+	((mnemonic,operand),address + size,map)
+    end
 
 end

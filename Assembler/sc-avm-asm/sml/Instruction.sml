@@ -41,12 +41,20 @@ fun includeIn inst (paths,file) =
 	Directive.includeIn d (paths,file)
       | _ => file
 
-fun pass1 (AppleCore inst) (label,source,map) = 
-    AppleCore.pass1 inst (label,source,map)
-  | pass1 (Directive inst) (label,source,map) = 
-    Directive.pass1 inst (label,source,map)
-  | pass1 (Native inst) (label,source,map) = 
-    Native.pass1 inst (label,source,map)
+fun pass1 (label,inst) (source,map) = 
+    let
+	fun apply constr pass1 inst =
+	    let 
+		val (inst,addr,map) = pass1 (label,inst) (source,map)
+	    in
+		(constr inst,addr,map)
+	    end
+    in
+	case inst of
+	    AppleCore inst => apply AppleCore AppleCore.pass1 inst
+	  | Directive inst => apply Directive Directive.pass1 inst
+	  | Native inst => apply Native Native.pass1 inst
+    end
 
 end
 

@@ -178,8 +178,8 @@ local
       | sizeOf (TLE sz) = signedSize sz
       | sizeOf (TLT sz) = signedSize sz
 in
-fun pass1 inst (label,{file,line,address},map) = 
-    (address + (sizeOf inst),map)
+fun pass1 (label,inst) ({file,line,address},map) = 
+    (inst,address + (sizeOf inst),map)
 end
 
 end
