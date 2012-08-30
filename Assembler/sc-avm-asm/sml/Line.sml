@@ -1,10 +1,10 @@
-structure Parser : PARSER =
+structure Line : LINE =
 struct
 
 open Error
 open TextIO
 
-type line = (Label.t option) * (Instruction.t option)
+type t = (Label.t option) * (Instruction.t option)
 
 fun parseNoLabel substr =
     case Instruction.parse substr of
@@ -30,7 +30,7 @@ fun parseLine line =
 		else parseLabel substr
     end
 
-fun nextLine paths file =
+fun parse paths file =
     case File.nextLine file of
 	NONE => NONE
       |	SOME (line,file) => 
@@ -39,23 +39,12 @@ fun nextLine paths file =
 	     val line = parseLine line
 	 in 
 	     case line of
-		 SOME (_,SOME inst) =>
-		 SOME (line, Instruction.includeIn inst (paths,file))
+		 SOME (_,SOME inst) => SOME (line, Instruction.includeIn inst (paths,file))
 	       | _ => SOME (line, file)
 	 end)
 	handle e => (Error.show {line=line,name=(File.name file),
 				 number=(File.line file),exn=e}; NONE)
 		    
-fun parseFile paths fileName =
-    let
-	fun parseFile' file =
-	    case nextLine paths file of
-		SOME (_,file) => parseFile' file
-	      | NONE => ()
-    in
-	parseFile' (File.openIn paths fileName)
-    end
-
 end
 
   

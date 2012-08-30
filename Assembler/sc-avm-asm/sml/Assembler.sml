@@ -35,6 +35,16 @@ fun processOpts opts  =
 	processOpts' {outFile=NONE,paths=["."]} opts
     end
 
+fun parse paths fileName =
+    let
+	fun parse' file =
+	    case Line.parse paths file of
+		SOME (_,file) => parse' file
+	      | NONE => ()
+    in
+	parse' (File.openIn paths fileName)
+    end
+
 fun main(name,args) =
     ((case GetOpt.getOpt {argOrder=GetOpt.Permute,
 			  options=options,
@@ -44,7 +54,7 @@ fun main(name,args) =
 	  let
 	      val {outFile,paths} = processOpts opts
 	  in 
-	      Parser.parseFile paths inFile
+	      parse paths inFile
 	  end
 	| _ => raise BadArgument)
 	 handle BadArgument => 

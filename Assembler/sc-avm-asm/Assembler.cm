@@ -7,18 +7,18 @@ Library
     structure File
     structure Instruction
     structure Label
+    structure Line
     structure Native
     structure Numbers
-    structure Parser
 is
     sig/Assembler.sig
     sig/Error.sig
     sig/Expression.sig
     sig/File.sig
     sig/Label.sig
+    sig/Line.sig
     sig/Instruction.sig
     sig/Numbers.sig
-    sig/Parser.sig
     sml/AppleCore.sml
     sml/Assembler.sml
     sml/Directive.sml
@@ -26,10 +26,10 @@ is
     sml/Expression.sml
     sml/File.sml
     sml/Label.sml
+    sml/Line.sml
     sml/Instruction.sml
     sml/Native.sml
     sml/Numbers.sml
-    sml/Parser.sml
 
     $/basis.cm
     $/smlnj-lib.cm
