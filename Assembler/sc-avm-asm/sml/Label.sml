@@ -43,7 +43,9 @@ structure LocalMap = SplayMapFn(struct
 				val compare = Int.compare
 				end)
 
-type source = {file:string,line:int,address:int}
+type source = {file:string,
+	       lineNum:int,
+	       address:int}
 type globalMap = source GlobalMap.map;
 type localMap = source LocalMap.map;
 type map = {localMap:localMap,globalMap:globalMap}
@@ -69,8 +71,8 @@ fun update (map,label,source) =
 					      
 fun add (map,label,source) =
     case lookup' (map,label) of
-	SOME {file,line,address} => 
-	raise AssemblyError (RedefinedLabel {file=file,line=line})
+	SOME {file,lineNum,address} => 
+	raise AssemblyError (RedefinedLabel {file=file,lineNum=lineNum})
       | NONE => update (map,label,source)
   
 end

@@ -103,13 +103,13 @@ fun parse substr =
           | _ => NONE
     end
 
-fun includeIn inst (paths,file) =
+fun includeIn inst file =
     case inst of
 	IN name =>
-	File.includeIn paths file name
+	File.includeIn file name
       | _ => file
 
-fun pass1 (label,inst) (source as {file,line,address},map) =
+fun pass1 (label,inst) (source as {file,lineNum,address},map) =
     let
 	fun eval expr =
 	    Expression.evalAsAddr (address,map) expr
@@ -122,7 +122,7 @@ fun pass1 (label,inst) (source as {file,line,address},map) =
 	  | (NONE,EQ _) => raise AssemblyError NoLabel
 	  | (SOME label,EQ expr) => (inst,address,
 				     Label.update (map,label,{file=file,
-							      line=line,
+							      lineNum=lineNum,
 							      address=eval expr}))
 	  | (_,HS args) => (inst,address + (List.length args),map)
 	  | (_,OR expr) => (inst,eval expr,map)

@@ -35,17 +35,17 @@ fun parse (paths,file,line) =
 	val line = parseLine line
     in 
 	case line of
-	    SOME (line as (_,SOME inst)) => SOME (line, Instruction.includeIn inst (paths,file))
+	    SOME (line as (_,SOME inst)) => SOME (line, Instruction.includeIn inst file)
 	  | SOME line => SOME (line,file)
 	  | _ => NONE
     end
     handle e => (Error.show {line=line,name=(File.name file),
-			     number=(File.line file),exn=e}; NONE)
+			     lineNum=(File.lineNum file),exn=e}; NONE)
 
 fun pass1 (file,line,addr,map) = 
     let 
 	val source = {file=File.name file,
-		      line=File.line file,
+		      lineNum=File.lineNum file,
 		      address=addr}
 	fun add (map,label,source) =
 	    case label of

@@ -3,9 +3,9 @@ struct
 
 open Error
 
-type t = (string * int * TextIO.instream) list
-type paths = string list
 type name = string
+type paths = string list
+type t = paths * (name * int * TextIO.instream) list
 
 fun openIn' [] name =
     raise AssemblyError (FileNotFound name)
@@ -14,21 +14,21 @@ fun openIn' [] name =
     handle IO.Io {...} => openIn' tl name
 
 fun openIn paths name = 
-    [openIn' paths name]
+    (paths,[openIn' paths name])
 
-fun includeIn paths file name =
-    (openIn' paths name) :: file
+fun includeIn (paths,files) name =
+    (paths,(openIn' paths name) :: files)
 
-fun nextLine [] = NONE
-  | nextLine ((name,n,stream) :: tl) =
+fun nextLine (paths,[]) = NONE
+  | nextLine (paths,(name,n,stream) :: tl) =
     case TextIO.inputLine stream of
-	SOME line => SOME (line, (name,n+1,stream) :: tl)
-      | NONE => nextLine tl
+	SOME line => SOME (line, (paths,(name,n+1,stream) :: tl))
+      | NONE => nextLine (paths,tl)
     
-fun name [] = "<empty>"
-  | name ((str,_,_)::tl) = str
+fun name (paths,[]) = "<empty>"
+  | name (paths,(str,_,_)::tl) = str
 
-fun line [] = 0
-  | line ((_,n,_)::tl) = n
+fun lineNum (paths,[]) = 0
+  | lineNum (paths,((_,n,_)::tl)) = n
 
 end

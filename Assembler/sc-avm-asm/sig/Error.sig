@@ -8,7 +8,7 @@ sig
 	   | InvalidMnemonic of string
 	   | NoLabel
 	   | RangeError
-	   | RedefinedLabel of {file:string,line:int}
+	   | RedefinedLabel of {file:string,lineNum:int}
 	   | UndefinedLabel
 	   | UnsupportedDirective of string
 
@@ -16,7 +16,7 @@ sig
 
     val show : {line:string,
 		name:string,
-		number:int,
+		lineNum:int,
 		exn:exn} -> unit
 
 end

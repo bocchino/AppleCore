@@ -35,10 +35,9 @@ fun parse substr =
 				  (Substring.takel (not o Char.isSpace) rest)))
 	end
 	
-fun includeIn inst (paths,file) =
+fun includeIn inst file =
     case inst of
-	Directive d =>
-	Directive.includeIn d (paths,file)
+	Directive d => Directive.includeIn d file
       | _ => file
 
 fun pass1 (label,inst) (source,map) = 

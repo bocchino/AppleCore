@@ -189,7 +189,7 @@ fun parse substr =
 	    end
     end
 
-fun includeIn inst (paths,file) = file
+fun includeIn inst file = file
 
 fun pass1_inst (address,map) operand = 
     let
@@ -217,7 +217,7 @@ fun pass1_size operand = case operand of
 			   | Indirect _ => 3
 			   | _ => 2
 
-fun pass1 (label,(mnemonic,operand)) ({file,line,address},map) =
+fun pass1 (label,(mnemonic,operand)) ({file,lineNum,address},map) =
     let
 	val operand = pass1_inst (address,map) operand
 	val size = pass1_size operand

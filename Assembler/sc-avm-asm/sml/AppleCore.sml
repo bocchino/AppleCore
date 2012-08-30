@@ -127,7 +127,7 @@ fun parse substr =
           | _ => NONE
     end
 
-fun includeIn inst (paths,file) = file
+fun includeIn inst file = file
 
 local
     fun unsignedSize sz =
@@ -178,7 +178,7 @@ local
       | sizeOf (TLE sz) = signedSize sz
       | sizeOf (TLT sz) = signedSize sz
 in
-fun pass1 (label,inst) ({file,line,address},map) = 
+fun pass1 (label,inst) ({file,lineNum,address},map) = 
     (inst,address + (sizeOf inst),map)
 end
 

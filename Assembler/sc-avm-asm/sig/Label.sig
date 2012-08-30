@@ -15,7 +15,9 @@ sig
     type map
 
     (* Type of a source line *)
-    type source = {file:string,line:int,address:int}
+    type source = {file:string,
+		   lineNum:int,
+		   address:int}
 
     (* Create a fresh map *)
     val fresh : map
