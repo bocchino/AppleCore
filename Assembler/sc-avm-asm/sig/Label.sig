@@ -14,9 +14,8 @@ sig
     (* Type of a mapping from labels to assembler source lines *)
     type map
 
-    (* Type of a source line *)
-    type source = {file:string,
-		   lineNum:int,
+    (* A source associated with a label *)
+    type source = {sourceLine:File.line,
 		   address:int}
 
     (* Create a fresh map *)

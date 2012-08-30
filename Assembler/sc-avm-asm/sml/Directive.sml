@@ -109,7 +109,7 @@ fun includeIn inst file =
 	File.includeIn file name
       | _ => file
 
-fun pass1 (label,inst) (source as {file,lineNum,address},map) =
+fun pass1 (label,inst) (source as {sourceLine,address},map) =
     let
 	fun eval expr =
 	    Expression.evalAsAddr (address,map) expr
@@ -121,8 +121,7 @@ fun pass1 (label,inst) (source as {file,lineNum,address},map) =
 	  | (_,DA exprs) => (inst,address + 2 * (List.length exprs),map)
 	  | (NONE,EQ _) => raise AssemblyError NoLabel
 	  | (SOME label,EQ expr) => (inst,address,
-				     Label.update (map,label,{file=file,
-							      lineNum=lineNum,
+				     Label.update (map,label,{sourceLine=sourceLine,
 							      address=eval expr}))
 	  | (_,HS args) => (inst,address + (List.length args),map)
 	  | (_,OR expr) => (inst,eval expr,map)

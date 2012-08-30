@@ -4,18 +4,19 @@ struct
 open Error
 
 datatype operand =
-	 None
-       | ImmediateLow of Expression.t
-       | ImmediateHigh of Expression.t
-       | Absolute of Expression.t
+         Absolute of Expression.t
        | AbsoluteX of Expression.t
        | AbsoluteY of Expression.t
-       | ZeroPage of Expression.t
-       | ZeroPageX of Expression.t
-       | ZeroPageY of Expression.t
+       | ImmediateLow of Expression.t
+       | ImmediateHigh of Expression.t
+       | Implied
        | Indirect of Expression.t
        | IndirectX of Expression.t
        | IndirectY of Expression.t
+       | Relative of Expression.t
+       | ZeroPage of Expression.t
+       | ZeroPageX of Expression.t
+       | ZeroPageY of Expression.t
 		      
 datatype mnemonic =
 	 ADC
@@ -138,9 +139,14 @@ fun getMnemonic substr =
       | "TXS" => SOME TXS
       | "TYA" => SOME TYA
       | _     => NONE
-		 
-fun parseOperand substr =
-    case Substring.getc substr of
+
+fun parseRelative operand =
+    case Expression.parse operand of
+	SOME (e,rest) => SOME (Relative e,rest)
+      | _ => raise AssemblyError BadAddress
+
+fun parseNonRelative (mnemonic,operand) =		 
+    case Substring.getc operand of
 	NONE               => NONE
       | SOME(#"#",substr') => 
 	(case Expression.parse substr' of
@@ -162,14 +168,28 @@ fun parseOperand substr =
 	     else raise AssemblyError BadAddress
 	   | _ => raise AssemblyError BadAddress)
       | _ => 
-	(case Expression.parse substr of
+	(case Expression.parse operand of
 	     SOME (e,substr'') => if Substring.isPrefix ",X" substr'' then
 				      SOME (AbsoluteX e,Substring.triml 2 substr'')
 				  else if Substring.isPrefix ",Y" substr'' then
 				      SOME (AbsoluteY e,Substring.triml 2 substr'')
 				  else SOME (Absolute e,substr'')
 	   | _ => raise AssemblyError BadAddress)
-	     
+
+
+
+fun parseOperand (mnemonic,operand) =
+    case mnemonic of
+	BCC => parseRelative operand
+      | BCS => parseRelative operand
+      | BEQ => parseRelative operand
+      | BMI => parseRelative operand
+      | BNE => parseRelative operand
+      | BPL => parseRelative operand
+      | BVC => parseRelative operand
+      | BVS => parseRelative operand
+      | _ => parseNonRelative (mnemonic,operand)
+
 fun parse substr =
     let
 	val (mem,rest) = Substring.splitl (not o Char.isSpace) substr 	  		   
@@ -181,11 +201,11 @@ fun parse substr =
 		val (spc,arg) = Substring.splitl Char.isSpace rest
             in
 		if ((Substring.string spc) = " ") then
-		    case parseOperand arg of
+		    case parseOperand (mem',arg) of
  			SOME (oper,_) =>
 			SOME (mem',oper)
-		      | _  => SOME (mem',None)
-                else SOME (mem',None)
+		      | _  => SOME (mem',Implied)
+                else SOME (mem',Implied)
 	    end
     end
 
@@ -210,14 +230,14 @@ fun pass1_inst (address,map) operand =
     end
 
 fun pass1_size operand = case operand of
-			     None => 1
-			   | Absolute _ => 3
+			     Absolute _ => 3
 			   | AbsoluteX _ => 3
 			   | AbsoluteY _ => 3
+			   | Implied => 1
 			   | Indirect _ => 3
 			   | _ => 2
 
-fun pass1 (label,(mnemonic,operand)) ({file,lineNum,address},map) =
+fun pass1 (label,(mnemonic,operand)) ({sourceLine,address},map) =
     let
 	val operand = pass1_inst (address,map) operand
 	val size = pass1_size operand

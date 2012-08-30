@@ -7,9 +7,13 @@ sig
 
     val openIn : paths -> name -> t
     val includeIn : t -> name -> t
-    val nextLine : t -> (string * t) option
-    val name : t -> string
-    val lineNum : t -> int
+
+    type line
+
+    val fileName : line -> string
+    val lineNumber : line -> int
+    val data : line -> string
+    val nextLine : t -> (line * t) option
 
 end
 

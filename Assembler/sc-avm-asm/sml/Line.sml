@@ -6,46 +6,46 @@ open TextIO
 
 type t = (Label.t option) * (Instruction.t option)
 
+val emptyLine = (NONE,NONE)
+
 fun parseNoLabel substr =
     case Instruction.parse substr of
-	SOME i => SOME (NONE, SOME i)
-      | _      => NONE
+	SOME i => (NONE,SOME i)
+      | _      => emptyLine
 
 fun parseLabel substr =
     case Label.parse substr of
 	NONE => raise AssemblyError BadLabel
-      | SOME (l,rest) => SOME (SOME l,Instruction.parse rest)
+      | SOME (l,rest) => (SOME l,Instruction.parse rest)
 
 fun parseLine line =
     let
 	val substr = Substring.dropr Char.isSpace (Substring.full line)
     in
 	case Substring.getc substr of
-	    NONE => NONE
+	    NONE => emptyLine
 	  | SOME (c,rest) =>
 	    if Char.isSpace c 
 	    then parseNoLabel rest
 	    else 
-		if c = #"*" orelse c = #":" then NONE
+		if c = #"*" orelse c = #":" then emptyLine
 		else parseLabel substr
     end
 
-fun parse (paths,file,line) =
+fun parse (file,line) =
     let
-	val line = parseLine line
+	val line' = parseLine (File.data line)
     in 
-	case line of
-	    SOME (line as (_,SOME inst)) => SOME (line, Instruction.includeIn inst file)
-	  | SOME line => SOME (line,file)
-	  | _ => NONE
+	case line' of
+	    (_,SOME inst) => (line', Instruction.includeIn inst file)
+	  | _ => (line',file)
     end
-    handle e => (Error.show {line=line,name=(File.name file),
-			     lineNum=(File.lineNum file),exn=e}; NONE)
+    handle e => (Error.show {line=(File.data line),name=(File.fileName line),
+			     lineNum=(File.lineNumber line),exn=e}; (emptyLine,file)) 
 
-fun pass1 (file,line,addr,map) = 
+fun pass1 (sourceLine,line,addr,map) = 
     let 
-	val source = {file=File.name file,
-		      lineNum=File.lineNum file,
+	val source = {sourceLine=sourceLine,
 		      address=addr}
 	fun add (map,label,source) =
 	    case label of

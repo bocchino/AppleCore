@@ -40,14 +40,16 @@ fun assemble (paths,fileName) =
 	fun assemble (file,addr,map) =
 	    case File.nextLine file of
 		NONE => ()
-	      |	SOME (line,file) => (print line; parse (file,line,addr,map))
-	and parse (file,line,addr,map) =
-	    case Line.parse (paths,file,line) of
-		SOME (line,file) => pass1 (file,line,addr,map)
-	      | NONE => assemble (file,addr,map)
-	and pass1 (file,line,addr,map) =
-	    case Line.pass1 (file,line,addr,map) of
-		(addr,map,inst) => assemble (file,addr,map)
+	      |	SOME (sourceLine,file) => parse (file,sourceLine,addr,map)
+	and parse (file,sourceLine,addr,map) =
+	    case Line.parse (file,sourceLine) of
+		(line,file) => pass1 (file,sourceLine,line,addr,map)
+	and pass1 (file,sourceLine,line,addr,map) =
+	    case Line.pass1 (sourceLine,line,addr,map) of
+		(addr',map,inst) => (print (Int.fmt StringCvt.HEX addr);
+				     print "\t";
+				     print (File.data sourceLine);
+				     assemble (file,addr',map))
     in
 	assemble ((File.openIn paths fileName),0x800,Label.fresh)
     end
