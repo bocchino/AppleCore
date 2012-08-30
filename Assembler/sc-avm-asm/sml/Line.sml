@@ -30,22 +30,19 @@ fun parseLine line =
 		else parseLabel substr
     end
 
-fun parse paths file =
-    case File.nextLine file of
-	NONE => NONE
-      |	SOME (line,file) => 
-	(print line;
-	 let
-	     val line = parseLine line
-	 in 
-	     case line of
-		 SOME (_,SOME inst) => SOME (line, Instruction.includeIn inst (paths,file))
-	       | _ => SOME (line, file)
-	 end)
-	handle e => (Error.show {line=line,name=(File.name file),
-				 number=(File.line file),exn=e}; NONE)
+fun parse (paths,file,line) =
+    let
+	val line = parseLine line
+    in 
+	case line of
+	    SOME (line as (_,SOME inst)) => SOME (line, Instruction.includeIn inst (paths,file))
+	  | SOME line => SOME (line,file)
+	  | _ => NONE
+    end
+    handle e => (Error.show {line=line,name=(File.name file),
+			     number=(File.line file),exn=e}; NONE)
 
-fun pass1 (paths,file,addr,map) = 
+fun pass1 (paths,file,line,addr,map) = 
     let 
 	val source = {file=File.name file,
 		      line=File.line file,
@@ -55,9 +52,9 @@ fun pass1 (paths,file,addr,map) =
 		SOME label => Label.add (map,label,source)
 	      | NONE => map
     in
-	case parse paths file of
-	    SOME (SOME (SOME label,NONE),file) => SOME (file,addr,Label.add(map,label,source), NONE)
-	  | SOME (SOME (label,SOME inst),file) => 
+	case parse (paths,file,line) of
+	    SOME ((SOME label,NONE),file) => SOME (file,addr,Label.add(map,label,source), NONE)
+	  | SOME ((label,SOME inst),file) => 
 	    let
 		val map = add (map,label,source)
 		val (inst,addr,map) = Instruction.pass1 (label,inst) (source,map)

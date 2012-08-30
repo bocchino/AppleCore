@@ -35,14 +35,19 @@ fun processOpts opts  =
 	processOpts' {outFile=NONE,paths=["."]} opts
     end
 
-fun assemble paths fileName =
+fun assemble (paths,fileName) =
     let
-	fun pass1 file addr map =
-	    case Line.pass1 (paths,file,addr,map) of
-		SOME (file,addr,map,inst) => pass1 file addr map
-	      | NONE => ()
+	fun assemble (file,addr,map) =
+	    case File.nextLine file of
+		NONE => ()
+	      |	SOME (line,file) => (print line; pass1 (file,line,addr,map))
+	
+	and pass1 (file,line,addr,map) =
+	    case Line.pass1 (paths,file,line,addr,map) of
+		SOME (file,addr,map,inst) => assemble (file,addr,map)
+	      | NONE => assemble (file,addr,map)
     in
-	pass1 (File.openIn paths fileName) 0x800 Label.fresh
+	assemble ((File.openIn paths fileName),0x800,Label.fresh)
     end
 
 fun main(name,args) =
@@ -54,7 +59,7 @@ fun main(name,args) =
 	  let
 	      val {outFile,paths} = processOpts opts
 	  in 
-	      assemble paths inFile
+	      assemble (paths,inFile)
 	  end
 	| _ => raise BadArgument)
 	 handle BadArgument => 
