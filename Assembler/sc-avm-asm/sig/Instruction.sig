@@ -12,4 +12,7 @@ sig
     (* Compute a new instruction, address, and label map *)
     val pass1 : Label.t option * t -> Label.source * Label.map -> t * int * Label.map
 
+    (* List the instruction in assembly format *)
+    val list : File.line * t * int -> unit
+
 end

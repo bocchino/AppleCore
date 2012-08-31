@@ -3,6 +3,11 @@ sig
 
     val MAX_INT : IntInf.int
 
+    val formatHexByte : int -> string
+    val formatHexWord : int -> string
+    val formatAddress : int -> string
+    val formatBlankAddress : unit -> string
+
     val parseDigits : Substring.substring -> 
 		      StringCvt.radix -> 
 		      (IntInf.int * Substring.substring) option

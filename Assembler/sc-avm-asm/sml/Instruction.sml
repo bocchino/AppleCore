@@ -55,6 +55,12 @@ fun pass1 (label,inst) (source,map) =
 	  | Native inst => apply Native Native.pass1 inst
     end
 
+fun list (line,inst,addr) =
+    case inst of
+	Native inst => Native.list (line,inst,addr)
+      | Directive inst => Directive.list (line,inst,addr)
+      | AppleCore inst => AppleCore.list (line,inst,addr)
+
 end
 
   

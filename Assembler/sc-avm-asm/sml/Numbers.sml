@@ -77,4 +77,18 @@ fun sizeOf 0 = 1
     else 
 	1 + ((IntInf.log2 n) div 8)
 
+fun formatHexByte byte =
+    (if (byte < 16) then "0" else "") ^
+    (Int.fmt StringCvt.HEX byte)
+
+fun formatHexWord word =
+    (formatHexByte (word div 256)) ^
+    (formatHexByte (word mod 256))
+
+fun formatAddress address =
+    (formatHexWord address) ^ "-\t"
+
+fun formatBlankAddress () =
+    "     \t"
+
 end

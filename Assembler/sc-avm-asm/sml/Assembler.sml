@@ -24,57 +24,65 @@ val options = [{short="i",
 
 fun processOpts opts  =
     let
+	val defaultOpts = {outFile=NONE,paths=["."],list=false}
 	fun isColon c = (c = #":")
-	fun processOpts (outFile,paths,opts) =
+	fun processOpts {outFile,paths,list} opts =
 	    case opts of
-		(IncludeOpt newPaths)::opts =>
-		processOpts (outFile,(String.tokens isColon newPaths) @ paths,opts)
-	      | (DirOpt newOutFile)::opts =>
+		ListOpt :: opts => 
+		processOpts {outFile=outFile,
+			     paths=paths,
+			     list=true} opts
+	      |	(IncludeOpt newPaths) :: opts => 
+		processOpts 
+		    {outFile=outFile,
+		     paths=(String.tokens isColon newPaths) @ paths,
+		     list=list} opts
+	      | (DirOpt newOutFile) :: opts =>
 		(case outFile of
-		     NONE => processOpts (SOME newOutFile,paths,opts)
+		     NONE => processOpts {outFile=SOME newOutFile,
+					  paths=paths,
+					  list=list} opts
 		   | _ => raise BadArgument)
-	      | _ => (outFile,paths)
+	      | _ => {outFile=outFile,
+		      paths=paths,
+		      list=list}
 
     in
-	processOpts (NONE,["."],opts)
+	processOpts defaultOpts opts
     end
 
-fun assemble (paths,fileName) =
+fun assemble ({outFile,paths,list},inFile) =
     let
-	fun assemble (file,addr,map) =
+	fun pass1 (file,addr,map,instList) =
 	    case File.nextLine file of
-		NONE => ()
-	      |	SOME (sourceLine,file) => parse (file,sourceLine,addr,map)
-	and parse (file,sourceLine,addr,map) =
-	    case Line.parse (file,sourceLine) of
-		(line,file) => pass1 (file,sourceLine,line,addr,map)
-	and pass1 (file,sourceLine,line,addr,map) =
-	    case Line.pass1 (sourceLine,line,addr,map) of
-		(addr',map,inst) => (Line.list (sourceLine,line,addr);
-				     assemble (file,addr',map))
+		NONE => (List.rev instList,map)
+	      |	SOME (line,file) => parse (file,line,addr,map,instList)
+	and parse (file,line,addr,map,instList) =
+	    case Line.parse (file,line) of
+		(line,file) => pass1' (file,line,addr,map,instList)
+	and pass1' (file,line,addr,map,instList) =
+	    case Line.pass1 (line,addr,map) of
+		(line,addr',map) => pass1 (file,addr',map,(line,addr) :: instList)
+	fun pass2 ([],map) = ()
+	  | pass2 ((line,addr)::rest,map) = (Line.pass2(line,addr,map,list);
+					     pass2 (rest,map))
+	val file = File.openIn paths inFile
+	    handle e as AssemblyError (FileNotFound file) => 
+		   (Error.report ("file " ^ file ^ " not found");
+		    raise e)
     in
-	(assemble ((File.openIn paths fileName),0x800,Label.fresh);
-	 OS.Process.success)
-	handle AssemblyError (FileNotFound file) => 
-	       (Error.report ("file " ^ file ^ " not found");
-		OS.Process.failure)
+	pass2 (pass1 (file,0x800,Label.fresh,[]))
     end
 
 fun main(name,args) =
-    (case GetOpt.getOpt {argOrder=GetOpt.Permute,
-			 options=options,
-			 errFn= fn s => print s} 
-			args of
-	 (opts,[inFile]) => 
-	 let
-	     val (outFile,paths) = processOpts opts
-	 in 
-	     assemble (paths,inFile)
-	 end
-       | _ => raise BadArgument)
-    handle BadArgument => 
-	   (print (GetOpt.usageInfo
-		      {header = "usage: sc-avm-asm infile [opts]",
-		       options = options}); OS.Process.failure)
-
+    ((case GetOpt.getOpt {argOrder=GetOpt.Permute,
+			  options=options,
+			  errFn= fn s => print s} 
+			 args of
+	  (opts,[inFile]) => assemble (processOpts opts,inFile)
+       | _ => raise BadArgument);
+     OS.Process.success)
+    handle BadArgument => (print (GetOpt.usageInfo
+				      {header = "usage: sc-avm-asm infile [opts]",
+				       options = options}); OS.Process.failure)
 end

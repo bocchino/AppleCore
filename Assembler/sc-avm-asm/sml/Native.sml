@@ -245,4 +245,7 @@ fun pass1 (label,(mnemonic,operand)) ({sourceLine,address},map) =
 	((mnemonic,operand),address + size,map)
     end
 
+fun list (line,inst,addr) =
+    print ((Numbers.formatAddress addr) ^ (File.data line))
+
 end

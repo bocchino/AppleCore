@@ -4,7 +4,7 @@ struct
 open Error
 open TextIO
 
-type t = (Label.t option) * (Instruction.t option)
+type t = File.line * (Label.t option) * (Instruction.t option)
 
 val emptyLine = (NONE,NONE)
 
@@ -17,11 +17,6 @@ fun parseLabel substr =
     case Label.parse substr of
 	NONE => raise AssemblyError BadLabel
       | SOME (l,rest) => (SOME l,Instruction.parse rest)
-
-fun list (sourceLine,line,addr) =
-    (print (Int.fmt StringCvt.HEX addr);
-     print "\t";
-     print (File.data sourceLine))
 
 fun parseLine line =
     let
@@ -39,35 +34,50 @@ fun parseLine line =
 
 fun parse (file,line) =
     let
-	val line' = parseLine (File.data line)
+	val (label,inst) = parseLine (File.data line)
+	val file = case inst of
+		       SOME inst' => Instruction.includeIn inst' file
+		     | _ => file
     in 
-	case line' of
-	    (_,SOME inst) => (line', Instruction.includeIn inst file)
-	  | _ => (line',file)
+	((line,label,inst),file)
     end
     handle e => (Error.show {line=(File.data line),name=(File.fileName line),
 			     lineNum=(File.lineNumber line),exn=e}; raise e)
 
-fun pass1 (sourceLine,line,addr,map) = 
+fun pass1 (line as (sourceLine,label,inst),addr,map) = 
     let 
 	val source = {sourceLine=sourceLine,
 		      address=addr}
-	fun add (map,label,source) =
+	fun add () =
 	    case label of
 		SOME label => Label.add (map,label,source)
 	      | NONE => map
     in
-	case line of
-	    (SOME label,NONE) => (addr,Label.add(map,label,source), NONE)
+	case (label,inst) of
+	    (SOME label,NONE) => (line,addr,Label.add(map,label,source))
 	  | (label,SOME inst) => 
 	    let
-		val map = add (map,label,source)
+		val map = add ()
 		val (inst,addr,map) = Instruction.pass1 (label,inst) (source,map)
 	    in
-		(addr,map,SOME inst)
+		((sourceLine,label,SOME inst),addr,map)
 	    end
-	  | _ => (addr,map,NONE)
+	  | _ => (line,addr,map)
     end
+
+fun list ((sourceLine,label,inst),addr) =
+    case (label,inst) of
+	(_,SOME inst) => Instruction.list (sourceLine,inst,addr)
+      | (SOME label,NONE) => print ((Numbers.formatAddress addr) ^
+				    (File.data sourceLine))
+      | _ => print (Numbers.formatBlankAddress() ^
+		     (File.data sourceLine))
+
+fun pass2 (line as (sourceLine,label,inst),addr,map,listOn) = 
+    (* TODO *)
+    if listOn then
+	list (line,addr)
+    else ()
     
 end
 
