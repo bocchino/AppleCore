@@ -5,3 +5,4 @@ DECLS=ac/COMMANDS.ac:ac/DISK.ac:ac/MAIN.ac:ac/PARSING.ac:ac/MODULES.ac:ac/INVENT
 ACC = ${APPLECORE}/Compiler/bin/acc -decls=${DECLS} -include
 
 include ../../../Makefile.ac.common
+

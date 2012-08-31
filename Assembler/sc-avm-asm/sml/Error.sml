@@ -1,6 +1,8 @@
 structure Error : ERROR =
 struct
 
+val progName = "sc-avm-asm"
+
 datatype t =
 	 BadAddress
        | BadLabel
@@ -14,10 +16,13 @@ datatype t =
 
 exception AssemblyError of t
 
+fun report err =
+    print (progName ^ ": " ^ err ^ "\n")
+    
 fun show {line,name,lineNum,exn as AssemblyError err} = 
-    (print ("at line " ^ (Int.toString lineNum) ^ " of " ^ name ^ ":\n");
-     print line;
-     print (case err of 
+    report("at line " ^ (Int.toString lineNum) ^ " of " ^ 
+	   name ^ ":\n" ^
+	   (case err of 
 		BadAddress => "bad address"
 	      | BadLabel => "bad label"
 	      | FileNotFound file => "file " ^ file ^ " not found"
@@ -28,9 +33,8 @@ fun show {line,name,lineNum,exn as AssemblyError err} =
 		"redefined label; original definition at line " ^
 		(Int.toString lineNum) ^ " of " ^ file
 	      | UndefinedLabel => "undefined label"
-	      | UnsupportedDirective dir => "unsupported directive " ^ dir);
-     print "\n")
-  | show {line,name,lineNum,exn} = raise exn
-    
+	      | UnsupportedDirective dir => "unsupported directive " ^ dir))
+  | show _ = report "exception occurred"
+
 end
 

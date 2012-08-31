@@ -10,6 +10,7 @@ Library
     structure Line
     structure Native
     structure Numbers
+    structure Parsing
 is
     sig/Assembler.sig
     sig/Error.sig
@@ -19,6 +20,7 @@ is
     sig/Line.sig
     sig/Instruction.sig
     sig/Numbers.sig
+    sig/Parsing.sig
     sml/AppleCore.sml
     sml/Assembler.sml
     sml/Directive.sml
@@ -30,6 +32,7 @@ is
     sml/Instruction.sml
     sml/Native.sml
     sml/Numbers.sml
+    sml/Parsing.sml
 
     $/basis.cm
     $/smlnj-lib.cm

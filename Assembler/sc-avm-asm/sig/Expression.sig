@@ -13,11 +13,6 @@ sig
        Throw an exception if no expression found. *)
     val parseArg : Substring.substring -> t
 
-    (* Parse a list of expressions *)
-    val parseList : (Substring.substring -> (t * Substring.substring) option)
-		    -> Substring.substring
-		    -> (t list * Substring.substring) option
-
     (* Evaluate an expression, given bindings for * and for labels *)
     val eval : int * Label.map -> t -> t
 

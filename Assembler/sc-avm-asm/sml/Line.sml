@@ -18,6 +18,11 @@ fun parseLabel substr =
 	NONE => raise AssemblyError BadLabel
       | SOME (l,rest) => (SOME l,Instruction.parse rest)
 
+fun list (sourceLine,line,addr) =
+    (print (Int.fmt StringCvt.HEX addr);
+     print "\t";
+     print (File.data sourceLine))
+
 fun parseLine line =
     let
 	val substr = Substring.dropr Char.isSpace (Substring.full line)
@@ -41,7 +46,7 @@ fun parse (file,line) =
 	  | _ => (line',file)
     end
     handle e => (Error.show {line=(File.data line),name=(File.fileName line),
-			     lineNum=(File.lineNumber line),exn=e}; (emptyLine,file)) 
+			     lineNum=(File.lineNumber line),exn=e}; raise e)
 
 fun pass1 (sourceLine,line,addr,map) = 
     let 

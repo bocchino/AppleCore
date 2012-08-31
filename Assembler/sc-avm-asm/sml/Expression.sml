@@ -90,16 +90,16 @@ fun parseListRest parse results substr =
           | _ => raise AssemblyError BadAddress)
       | _ => SOME (List.rev results,substr)
 	     
-fun parseArg substr =
-    case parse substr of
-	SOME (e,_) => e
-      | _          => raise AssemblyError BadAddress
-			    
 fun parseList parse substr =
     case parse (dropl isSpace substr) of
 	SOME (result,substr') => parseListRest parse [result] substr'
       | _ => SOME ([],substr)
 
+fun parseArg substr =
+    case parse substr of
+	SOME (e,_) => e
+      | _          => raise AssemblyError BadAddress
+			    
 fun eval (addr,map) expr =
     let 
 	fun evalBinop(lhs,constr,oper,rhs) =

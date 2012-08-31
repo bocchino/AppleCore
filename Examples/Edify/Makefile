@@ -11,3 +11,5 @@ clean-include : clean
 	make -C Include clean
 
 include ../../Makefile.ac.common
+
+SC-AVM-ASM += -i Include/avm

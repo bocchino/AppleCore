@@ -3,11 +3,16 @@ struct
 
 open Error
 
+datatype DAExpr =
+	 All of Expression.t
+       | Low of Expression.t
+       | High of Expression.t
+
 datatype t =
 	 AS of string
        | AT of string
        | BS of Expression.t
-       | DA of Expression.t list
+       | DA of DAExpr list
        | EQ of Expression.t
        | HS of int list   
        | IN of string
@@ -37,12 +42,23 @@ fun parseDelimArg substr =
               | _          => raise AssemblyError BadAddress
         end
       | _ => raise AssemblyError BadAddress
-		   
-fun parseExprList substr =
-    case Expression.parseList Expression.parse substr of
-        SOME ([],_)  => raise AssemblyError BadAddress
-      | SOME (lst,_) => lst
-      | NONE         => raise AssemblyError BadAddress
+
+fun parseDAExpr substr =
+    case Substring.getc substr of
+	SOME(#"#",substr) => (case Expression.parse substr of
+				  SOME (expr,substr) => SOME (Low expr,substr)
+				| NONE => raise AssemblyError BadAddress)
+      | SOME(#"/",substr) => (case Expression.parse substr of
+				  SOME (expr,substr) => SOME (High expr,substr)
+				| NONE => raise AssemblyError BadAddress)
+      | _ => (case Expression.parse substr of
+		  SOME (expr,substr) => SOME (All expr,substr)
+		| NONE => raise AssemblyError BadAddress)
+
+fun parseDAExprList substr =
+    case Parsing.parseList parseDAExpr substr of
+	SOME (result as hd::tl,_) => result
+      | _ => raise AssemblyError BadAddress
 			      
 fun parseHexString substr =
     let
@@ -83,7 +99,7 @@ fun parse substr =
 	    ".AS" => SOME (AS (parseDelimArg rest))
 	  | ".AT" => SOME (AT (parseDelimArg rest))
 	  | ".BS" => SOME (BS (Expression.parseArg rest))
-	  | ".DA" => SOME (DA (parseExprList rest))
+	  | ".DA" => SOME (DA (parseDAExprList rest))
           | ".EQ" => SOME (EQ (Expression.parseArg rest))
 	  | ".HS" => SOME (HS (parseHexString rest))
           | ".IN" => SOME (IN (parseFileArg rest))
@@ -113,12 +129,15 @@ fun pass1 (label,inst) (source as {sourceLine,address},map) =
     let
 	fun eval expr =
 	    Expression.evalAsAddr (address,map) expr
+	fun sizeOf [] = 0
+	  | sizeOf ((All _) :: tail) = 2 + (sizeOf tail)
+	  | sizeOf (_ :: tail) = 1 + (sizeOf tail)
     in
 	case (label,inst) of 
 	    (_,AS str) => (inst,address + (size str),map)
 	  | (_,AT str) => (inst,address + (size str),map)
 	  | (_,BS expr) => (inst,address + (eval expr),map)
-	  | (_,DA exprs) => (inst,address + 2 * (List.length exprs),map)
+	  | (_,DA DAexprs) => (inst,address + (sizeOf DAexprs),map)
 	  | (NONE,EQ _) => raise AssemblyError NoLabel
 	  | (SOME label,EQ expr) => (inst,address,
 				     Label.update (map,label,{sourceLine=sourceLine,

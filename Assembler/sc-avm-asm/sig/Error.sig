@@ -19,4 +19,6 @@ sig
 		lineNum:int,
 		exn:exn} -> unit
 
+    val report : string -> unit
+
 end

@@ -6,8 +6,12 @@ AVM-ASM  ?= ${APPLECORE}/Assembler/bin/avm-asm
 ASM2EXEC = ${APPLECORE}/Scripts/asm2exec
 SRCS     ?= ${wildcard ac/*.ac}
 MAKE_ALL ?= perl ${APPLECORE}/Scripts/make-all.pl
+SC-AVM-ASM ?= ${APPLECORE}/Assembler/bin/sc-avm-asm -i ${APPLECORE}/Lib/avm:${APPLECORE}/Lib-AVM/avm:${APPLECORE}/Runtime/avm -d obj
 
 all : all-exec
+
+all-obj : avm/${FILE}.avm obj
+	${SC-AVM-ASM} $<
 
 all-avm : avm ${SRCS}
 	${MAKE_ALL} ac avm
@@ -36,6 +40,9 @@ asm/${FILE}.asm : avm/${FILE}.avm asm
 exec/${FILE}.exec : asm/${FILE}.asm exec
 	${ASM2EXEC} < $< > $@
 
+obj :
+	mkdir $@
+
 exec : 
 	mkdir $@
 
@@ -46,4 +53,4 @@ avm :
 	mkdir $@
 
 clean ::
-	rm -Rf asm avm exec
+	rm -Rf asm avm exec obj
