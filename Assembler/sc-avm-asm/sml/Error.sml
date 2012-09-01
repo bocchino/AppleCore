@@ -8,6 +8,7 @@ datatype t =
        | BadLabel
        | FileNotFound of string
        | InvalidMnemonic of string
+       | NoGlobalLabel
        | NoLabel
        | RangeError
        | RedefinedLabel of {file:string,lineNum:int}
@@ -27,6 +28,7 @@ fun show {line,name,lineNum,exn as AssemblyError err} =
 	      | BadLabel => "bad label"
 	      | FileNotFound file => "file " ^ file ^ " not found"
 	      | InvalidMnemonic mem => "invalid mnemonic " ^ mem
+	      | NoGlobalLabel => "local label with no preceding global label"
 	      | NoLabel => "no label"
 	      | RangeError => "range error"
 	      | RedefinedLabel {file,lineNum} => 

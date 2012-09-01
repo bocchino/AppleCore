@@ -6,6 +6,7 @@ sig
 	   | BadLabel
 	   | FileNotFound of string
 	   | InvalidMnemonic of string
+	   | NoGlobalLabel
 	   | NoLabel
 	   | RangeError
 	   | RedefinedLabel of {file:string,lineNum:int}
