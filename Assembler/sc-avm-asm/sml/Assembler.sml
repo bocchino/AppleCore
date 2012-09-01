@@ -53,6 +53,8 @@ fun processOpts opts  =
 
 fun assemble ({outFile,paths,list},inFile) =
     let
+	val listFn =
+	    if list then fn s => print s else fn s => ()
 	fun pass1 (file,addr,map,instList) =
 	    case File.nextLine file of
 		NONE => (List.rev instList,map)
@@ -64,7 +66,7 @@ fun assemble ({outFile,paths,list},inFile) =
 	    case Line.pass1 (line,addr,map) of
 		(line,addr',map) => pass1 (file,addr',map,(line,addr) :: instList)
 	fun pass2 ([],map) = ()
-	  | pass2 ((line,addr)::rest,map) = (Line.pass2(line,addr,map,list);
+	  | pass2 ((line,addr)::rest,map) = (Line.pass2(line,addr,map,listFn);
 					     pass2 (rest,map))
 	val file = File.openIn paths inFile
 	    handle e as AssemblyError (FileNotFound file) => 

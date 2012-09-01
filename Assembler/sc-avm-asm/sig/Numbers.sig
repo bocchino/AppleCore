@@ -3,11 +3,6 @@ sig
 
     val MAX_INT : IntInf.int
 
-    val formatHexByte : int -> string
-    val formatHexWord : int -> string
-    val formatAddress : int -> string
-    val formatBlankAddress : unit -> string
-
     val parseDigits : Substring.substring -> 
 		      StringCvt.radix -> 
 		      (IntInf.int * Substring.substring) option
@@ -16,5 +11,8 @@ sig
     val parseArg : Substring.substring -> IntInf.int
     val isZeroPage : int -> bool
     val sizeOf : IntInf.int -> int
+    val lowByte : int -> int
+    val highByte : int -> int
+    val bytes : int -> int list
 
 end

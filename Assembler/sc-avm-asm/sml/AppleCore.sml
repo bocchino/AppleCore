@@ -182,7 +182,7 @@ fun pass1 (label,inst) ({sourceLine,address},map) =
     (inst,address + (sizeOf inst),map)
 end
 
-fun list (line,inst,addr) =
-    print ((Numbers.formatAddress addr) ^ (File.data line))
+fun pass2 (sourceLine,inst,addr,map,listFn) =
+    listFn (Printing.formatLine (SOME addr,[],File.data sourceLine))
 
 end

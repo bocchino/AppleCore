@@ -64,21 +64,17 @@ fun pass1 (line as (sourceLine,label,inst),addr,map) =
 	    end
 	  | _ => (line,addr,map)
     end
+    handle e => (Error.show {line=(File.data sourceLine),name=(File.fileName sourceLine),
+			     lineNum=(File.lineNumber sourceLine),exn=e}; raise e)
 
-fun list ((sourceLine,label,inst),addr) =
-    case (label,inst) of
-	(_,SOME inst) => Instruction.list (sourceLine,inst,addr)
-      | (SOME label,NONE) => print ((Numbers.formatAddress addr) ^
-				    (File.data sourceLine))
-      | _ => print (Numbers.formatBlankAddress() ^
-		     (File.data sourceLine))
+fun pass2 (line as (sourceLine,label,inst),addr,map,listFn) = 
+    (case (label,inst) of
+	(_,SOME inst) => Instruction.pass2 (sourceLine,inst,addr,map,listFn)
+      | (SOME label,NONE) => listFn (Printing.formatLine (SOME addr,[],File.data sourceLine))
+      | _ => listFn (Printing.formatLine (NONE,[],File.data sourceLine)))
+    handle e => (Error.show {line=(File.data sourceLine),name=(File.fileName sourceLine),
+			     lineNum=(File.lineNumber sourceLine),exn=e}; raise e)
 
-fun pass2 (line as (sourceLine,label,inst),addr,map,listOn) = 
-    (* TODO *)
-    if listOn then
-	list (line,addr)
-    else ()
-    
 end
 
   

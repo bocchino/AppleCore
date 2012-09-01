@@ -147,20 +147,23 @@ fun pass1 (label,inst) (source as {sourceLine,address},map) =
 	  | _ => (inst,address,map)
     end
 
-fun list (line,inst,addr) =
+fun list (listFn,line,inst,addr) =
     let
-	fun printWithAddr () =
-	    print ((Numbers.formatAddress addr) ^ (File.data line))
-	fun printWithoutAddr () =
-	    print (Numbers.formatBlankAddress() ^ (File.data line))
+	fun listWithAddr () =
+	    listFn (Printing.formatLine (SOME addr,[],File.data line))
+	fun listWithoutAddr () =
+	    listFn (Printing.formatLine (NONE,[],File.data line))
     in
 	case inst of
-	    EQ expr => printWithoutAddr ()
-	  | OR _ => printWithoutAddr ()
-	  | IN _ => printWithoutAddr ()
-	  | TF _ => printWithoutAddr ()
-	  | Ignored => printWithoutAddr() 
-	  | _ => printWithAddr ()
+	    EQ expr => listWithoutAddr ()
+	  | OR _ => listWithoutAddr ()
+	  | IN _ => listWithoutAddr ()
+	  | TF _ => listWithoutAddr ()
+	  | Ignored => listWithoutAddr() 
+	  | _ => listWithAddr ()
     end
+
+fun pass2 (sourceLine,inst,addr,map,listFn) =
+    list (listFn,sourceLine,inst,addr)
 
 end

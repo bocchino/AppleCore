@@ -11,6 +11,7 @@ Library
     structure Native
     structure Numbers
     structure Parsing
+    structure Printing
 is
     sig/Assembler.sig
     sig/Error.sig
@@ -21,6 +22,7 @@ is
     sig/Instruction.sig
     sig/Numbers.sig
     sig/Parsing.sig
+    sig/Printing.sig
     sml/AppleCore.sml
     sml/Assembler.sml
     sml/Directive.sml
@@ -33,6 +35,7 @@ is
     sml/Native.sml
     sml/Numbers.sml
     sml/Parsing.sml
+    sml/Printing.sml
 
     $/basis.cm
     $/smlnj-lib.cm

@@ -3,12 +3,15 @@ struct
 
 open Error
 
+datatype single =
+	 Low of Expression.t
+       | High of Expression.t
+
 datatype operand =
          Absolute of Expression.t
        | AbsoluteX of Expression.t
        | AbsoluteY of Expression.t
-       | ImmediateLow of Expression.t
-       | ImmediateHigh of Expression.t
+       | Immediate of single
        | Implied
        | Indirect of Expression.t
        | IndirectX of Expression.t
@@ -150,11 +153,11 @@ fun parseNonRelative (mnemonic,operand) =
 	NONE               => NONE
       | SOME(#"#",substr') => 
 	(case Expression.parse substr' of
-	     SOME (e,substr'') => SOME (ImmediateLow e,substr'')
+	     SOME (e,substr'') => SOME (Immediate (Low e),substr'')
 	   | _                 => raise AssemblyError BadAddress)
       | SOME(#"/",substr') => 
 	(case Expression.parse substr' of
-	     SOME (e,substr'') => SOME (ImmediateHigh e,substr'')
+	     SOME (e,substr'') => SOME (Immediate (High e),substr'')
            | _                 => raise AssemblyError BadAddress)
       | SOME(#"(",substr') => 
 	(case Expression.parse substr' of
@@ -245,7 +248,87 @@ fun pass1 (label,(mnemonic,operand)) ({sourceLine,address},map) =
 	((mnemonic,operand),address + size,map)
     end
 
-fun list (line,inst,addr) =
-    print ((Numbers.formatAddress addr) ^ (File.data line))
+fun instBytes (inst,addr,map) = 
+    let
+	fun bytes expr =
+	    Numbers.bytes (Expression.evalAsAddr (addr,map) expr)
+	fun lowByte expr =
+	    Numbers.lowByte (Expression.evalAsAddr (addr,map) expr)
+	fun highByte expr =
+	    Numbers.highByte (Expression.evalAsAddr (addr,map) expr)
+	fun singleByte single =
+	    case single of
+		Low expr => lowByte expr
+	      | High expr => highByte expr
+	fun relativeAddress expr =
+	    let
+		val target = Expression.evalAsAddr (addr,map) expr
+		val offset = Numbers.normalize 65536 (IntInf.fromInt (target - addr - 2))
+	    in
+		if offset >= 0x80 andalso offset <= 0xFF80 then
+		    raise AssemblyError RangeError
+		else 
+		    Numbers.lowByte offset
+	    end
+	fun operandBytes opcode operand =
+	    case operand of 
+		Absolute expr => opcode :: (bytes expr)
+	      | AbsoluteX expr => opcode :: (bytes expr)
+	      | AbsoluteY expr => opcode :: (bytes expr)
+	      | Immediate single => [opcode,singleByte single]
+	      | Implied => [opcode]
+	      | Indirect expr => opcode :: (bytes expr)
+	      | IndirectX expr => [opcode,lowByte expr]
+	      | IndirectY expr => [opcode,lowByte expr]
+	      | Relative expr => [opcode,relativeAddress expr]
+	      | ZeroPage expr => [opcode,lowByte expr]
+	      | ZeroPageX expr => [opcode,lowByte expr]
+	      | ZeroPageY expr => [opcode,lowByte expr]
+	fun modes (opcodes:int * int * int * int * int * int * int * int) operand =
+	    let val opcode =
+		case operand of
+		    Immediate _ => #1 opcodes
+		  | ZeroPage expr => #2 opcodes
+		  | ZeroPageX expr => #3 opcodes
+		  | ZeroPageY expr => #4 opcodes
+		  | Absolute expr => #5 opcodes
+		  | AbsoluteX expr => #6 opcodes
+		  | AbsoluteY expr => #7 opcodes
+		  | IndirectX expr => #7 opcodes
+		  | IndirectY expr => #8 opcodes
+		  | _ => raise AssemblyError BadAddress
+	    in
+		operandBytes opcode operand
+	    end
+    in
+	case inst of
+	    (ADC,operand) => modes (0x69,0x65,0x75,0x6D,0x7D,0x79,0x61,0x71) operand
+	  | (AND,operand) => modes (0x29,0x25,0x35,0x2D,0x3D,0x39,0x21,0x31) operand
+	  | (ASL,Implied) => [0x0A]
+	  | (ASL,ZeroPage expr) => operandBytes 0x06 (ZeroPage expr)
+	  | (ASL,ZeroPageX expr) => operandBytes 0x16 (ZeroPageX expr)
+	  | (ASL,Absolute expr) => operandBytes 0x0E (Absolute expr)
+(*	  | (BEQ,Relative expr) => operandBytes 0xF0 (Relative expr) *)
+	  | (CMP,operand) => modes (0xC9,0xC5,0xD5,0xCD,0xDD,0xD9,0xC1,0xD1) operand
+	  | (EOR,operand) => modes (0x49,0x45,0x55,0x4D,0x5D,0x59,0x41,0x51) operand
+	  | (INY,Implied) => [0xC8]
+	  | (LDA,operand) => modes (0xA9,0xA5,0xB5,0xAD,0xBD,0xB9,0xA1,0xB1) operand
+	  | (JMP,Absolute expr) => operandBytes 0x4C (Absolute expr)
+	  | (JMP,Indirect expr) => operandBytes 0x6C (Indirect expr)
+	  | (JSR,Absolute expr) => operandBytes 0x20 (Absolute expr)
+	  | (ORA,operand) => modes (0x09,0x05,0x15,0x0D,0x1D,0x19,0x01,0x11) operand
+	  | (SBC,operand) => modes (0xE9,0xE5,0xF5,0xED,0xFD,0xF9,0xE1,0xF1) operand
+	  | (STA,Immediate expr) => raise AssemblyError BadAddress
+	  | (STA,operand) => modes (0x00,0x85,0x95,0x8D,0x9D,0x99,0x81,0x91) operand
+	  | (RTS,Implied) => [0x60]
+	  | _ => []
+    end
 
+fun pass2 (sourceLine,inst,addr,map,listFn) =
+    let
+	val bytes = instBytes (inst,addr,map)
+		    handle exn => (print (File.data sourceLine); raise exn)
+    in
+	listFn (Printing.formatLine (SOME addr,bytes,File.data sourceLine))
+    end
 end
