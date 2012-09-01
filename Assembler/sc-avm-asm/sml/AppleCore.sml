@@ -68,7 +68,7 @@ fun parseConstant substr =
     in
 	case Numbers.parse constant of
 	    SOME (n,_) => Literal n
-	  | NONE => (case Label.parse constant of
+	  | NONE => (case Label.parseExpr constant of
 			 SOME (l,_) => Label l
 		       | NONE => raise AssemblyError BadAddress)
     end

@@ -14,7 +14,7 @@ fun parseNoLabel substr =
       | _      => emptyLine
 
 fun parseLabel substr =
-    case Label.parse substr of
+    case Label.parseMain substr of
 	NONE => raise AssemblyError BadLabel
       | SOME (l,rest) => (SOME l,Instruction.parse rest)
 

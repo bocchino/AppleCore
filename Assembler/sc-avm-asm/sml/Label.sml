@@ -23,13 +23,13 @@ fun parseDigits substr =
 fun isLabelChar c =
     Char.isAlphaNum c orelse c = #"."
 
-fun parseGlobalLabel (c,substr) =
+fun parseGlobalLabel (c,substr,expr) =
     if Char.isAlpha c then
 	let
 	    val (label,substr) = Substring.splitl isLabelChar substr
 	    val label = Substring.string label
 	in
-	    (globalLabel := SOME label;
+	    (if expr then () else globalLabel := SOME label;
 	     SOME (Global label,substr))
 	end
     else NONE
@@ -43,49 +43,39 @@ fun parseLocalLabel substr =
 	  | NONE => raise AssemblyError NoGlobalLabel
     end
 
-fun parse substr =
+fun parse (substr,expr) =
     case Substring.getc substr of
 	NONE              => NONE
       | SOME(#".",substr) => parseLocalLabel substr
-      | SOME(c,substr')    => parseGlobalLabel (c,substr)
+      | SOME(c,substr')    => parseGlobalLabel (c,substr,expr)
 
-structure GlobalMap = SplayMapFn(struct
-				 type ord_key = string
-				 val compare = String.compare
-				 end)
+fun parseMain substr = parse (substr,false)
+fun parseExpr substr = parse (substr,true)
 
-structure LocalMap = SplayMapFn(struct
-				type ord_key = int
-				val compare = Int.compare
-				end)
+structure Map = SplayMapFn(struct
+			   type ord_key = string
+			   val compare = String.compare
+			   end)
 
 type source = {sourceLine:File.line,
 	       address:int}
-type globalMap = source GlobalMap.map;
-type localMap = source LocalMap.map;
-type map = {localMap:localMap,globalMap:globalMap}
+type map = source Map.map
 
-val fresh = {localMap=LocalMap.empty,globalMap=GlobalMap.empty}
+val fresh = Map.empty
 
-fun lookup' (map,label) =
-    case (map,label) of
-	({localMap,globalMap},Global str) => GlobalMap.find (globalMap,str)
-      | ({localMap,globalMap},Local (str,n))  => LocalMap.find (localMap,n)
+fun labelAsString (Global str) = str
+  | labelAsString (Local (str,n)) = str ^ "$" ^ (Int.toString n) 
 
 fun lookup (map:map,label:t) =
-    case lookup' (map,label) of
+    case Map.find (map,labelAsString label) of
 	SOME {address=a,...} => SOME a
       | NONE => NONE
 
 fun update (map,label,source) =
-    case (map,label) of
-	({localMap,globalMap},Global str) => 
-	{localMap=LocalMap.empty,globalMap=GlobalMap.insert (globalMap,str,source)}
-      | ({localMap,globalMap},Local (str,n)) =>  
-	{localMap=(LocalMap.insert (localMap,n,source)),globalMap=globalMap}
+    Map.insert (map,labelAsString label,source)
 					      
 fun add (map,label,source) =
-    case lookup' (map,label) of
+    case Map.find (map,labelAsString label) of
 	SOME {sourceLine,address} => 
 	raise AssemblyError (RedefinedLabel {file=(File.fileName sourceLine),
 					     lineNum=(File.lineNumber sourceLine)})

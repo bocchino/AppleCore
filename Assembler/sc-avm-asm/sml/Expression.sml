@@ -23,7 +23,7 @@ fun parse substr =
     case Numbers.parse substr of
 	SOME (n,substr') => SOME (Number (Numbers.normalize 65536 n),substr')
       |  _ => 
-	 (case Label.parse substr of
+	 (case Label.parseExpr substr of
 	      SOME (l,substr') => SOME (Label l,substr')
 	    | _ => 
 	      (case Substring.getc substr of

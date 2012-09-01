@@ -9,7 +9,8 @@ sig
     type t
 
     (* Parse a label from a substring *)
-    val parse : Substring.substring -> (t * Substring.substring) option
+    val parseMain : Substring.substring -> (t * Substring.substring) option
+    val parseExpr : Substring.substring -> (t * Substring.substring) option
 
     (* Type of a mapping from labels to assembler source lines *)
     type map
