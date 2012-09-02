@@ -6,7 +6,7 @@ AVM-ASM  ?= ${APPLECORE}/Assembler/bin/avm-asm
 ASM2EXEC = ${APPLECORE}/Scripts/asm2exec
 SRCS     ?= ${wildcard ac/*.ac}
 MAKE_ALL ?= perl ${APPLECORE}/Scripts/make-all.pl
-SC-AVM-ASM ?= ${APPLECORE}/Assembler/bin/sc-avm-asm -i ${APPLECORE}/Lib/avm:${APPLECORE}/Lib-AVM/avm:${APPLECORE}/Runtime/avm -d obj
+SC-AVM-ASM ?= ${APPLECORE}/Assembler/bin/sc-avm-asm -i ${APPLECORE}/Lib/avm:${APPLECORE}/Lib-AVM/avm:${APPLECORE}/Runtime/avm -d obj -l
 
 all : all-exec
 

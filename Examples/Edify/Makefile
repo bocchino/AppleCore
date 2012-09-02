@@ -12,4 +12,4 @@ clean-include : clean
 
 include ../../Makefile.ac.common
 
-SC-AVM-ASM += -i Include/avm -l
+SC-AVM-ASM += -i Include/avm

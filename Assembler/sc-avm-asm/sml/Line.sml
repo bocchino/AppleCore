@@ -70,7 +70,7 @@ fun pass1 (line as (sourceLine,label,inst),addr,map) =
 fun pass2 (line as (sourceLine,label,inst),addr,map,listFn) = 
     (case (label,inst) of
 	(_,SOME inst) => Instruction.pass2 (sourceLine,inst,addr,map,listFn)
-      | (SOME label,NONE) => listFn (Printing.formatLine (SOME addr,[],File.data sourceLine))
+(*      | (SOME label,NONE) => listFn (Printing.formatLine (SOME addr,[],File.data sourceLine)) *)
       | _ => listFn (Printing.formatLine (NONE,[],File.data sourceLine)))
     handle e => (Error.show {line=(File.data sourceLine),name=(File.fileName sourceLine),
 			     lineNum=(File.lineNumber sourceLine),exn=e}; raise e)

@@ -214,22 +214,33 @@ fun parse substr =
 
 fun includeIn inst file = file
 
-fun pass1_inst (address,map) operand = 
+fun pass1_inst (address,map) (mnemonic,operand) = 
     let
-	fun result zp nzp expr =
-	    let
-		val expr = Expression.eval (address,map) expr
-	    in
-		if Expression.isZeroPage expr
-		then zp expr
-		else nzp expr
-	    end
+	fun result zp expr = let
+	    val expr = Expression.eval (address,map) expr
+	in
+	    if Expression.isZeroPage expr
+	    then zp expr
+	    else operand
+	end
     in
-    case operand of
-	Absolute expr => result ZeroPage Absolute expr
-      | AbsoluteX expr => result ZeroPageX AbsoluteX expr
-      | AbsoluteY expr => result ZeroPageY AbsoluteY expr
-      | _ => operand
+	case (mnemonic,operand) of
+	    (* These instructions have an Absolute, Y mode *)
+	    (* but no Zero Page, Y mode.  So don't convert *)
+	    (* them from Absolute,Y to Zero Page, Y. *)
+	    (ADC,AbsoluteY _) => operand
+	  | (AND,AbsoluteY _) => operand
+	  | (CMP,AbsoluteY _) => operand
+	  | (EOR,AbsoluteY _) => operand
+	  | (LDA,AbsoluteY _) => operand
+	  | (ORA,AbsoluteY _) => operand
+	  | (SBC,AbsoluteY _) => operand
+	  | (STA,AbsoluteY _) => operand
+	  (* Otherwise, convert from absolute to zero page if possible. *)
+	  | (_,Absolute expr) => result ZeroPage expr
+	  | (_,AbsoluteX expr) => result ZeroPageX expr
+	  | (_,AbsoluteY expr) => result ZeroPageY expr
+	  | _ => operand
     end
 
 fun pass1_size operand = case operand of
@@ -242,7 +253,7 @@ fun pass1_size operand = case operand of
 
 fun pass1 (label,(mnemonic,operand)) ({sourceLine,address},map) =
     let
-	val operand = pass1_inst (address,map) operand
+	val operand = pass1_inst (address,map) (mnemonic,operand)
 	val size = pass1_size operand
     in
 	((mnemonic,operand),address + size,map)
@@ -285,18 +296,26 @@ fun instBytes (inst,addr,map) =
 	      | ZeroPageX expr => [opcode,lowByte expr]
 	      | ZeroPageY expr => [opcode,lowByte expr]
 	fun modes (opcodes:int * int * int * int * int * int * int * int) operand =
-	    let val opcode =
-		case operand of
-		    Immediate _ => #1 opcodes
-		  | ZeroPage expr => #2 opcodes
-		  | ZeroPageX expr => #3 opcodes
-		  | ZeroPageY expr => #4 opcodes
-		  | Absolute expr => #5 opcodes
-		  | AbsoluteX expr => #6 opcodes
-		  | AbsoluteY expr => #7 opcodes
-		  | IndirectX expr => #7 opcodes
-		  | IndirectY expr => #8 opcodes
-		  | _ => raise AssemblyError BadAddress
+	    case operand of
+		Immediate _ => operandBytes (#1 opcodes) operand
+	      | ZeroPage expr => operandBytes (#2 opcodes) operand
+	      | ZeroPageX expr => operandBytes (#3 opcodes) operand
+	      | Absolute expr => operandBytes (#4 opcodes) operand
+	      | AbsoluteX expr => operandBytes (#5 opcodes) operand
+	      | AbsoluteY expr => operandBytes (#6 opcodes) operand
+	      | IndirectX expr => operandBytes (#7 opcodes) operand
+	      | IndirectY expr => operandBytes (#8 opcodes) operand
+	      | _ => raise AssemblyError BadAddress
+	fun branch opcode expr =
+	    operandBytes opcode (Relative expr)
+	fun rotate (opcodes:int * int * int * int * int) operand =
+	    let val opcode = case operand of
+				 Implied => #1 opcodes
+			       | ZeroPage expr => #2 opcodes
+			       | ZeroPageX expr => #3 opcodes
+			       | Absolute expr => #4 opcodes
+			       | AbsoluteX expr => #5 opcodes
+			       | _ => raise AssemblyError BadAddress
 	    in
 		operandBytes opcode operand
 	    end
@@ -308,26 +327,87 @@ fun instBytes (inst,addr,map) =
 	  | (ASL,expr as ZeroPage _) => operandBytes 0x06 expr
 	  | (ASL,expr as ZeroPageX _) => operandBytes 0x16 expr
 	  | (ASL,expr as Absolute _) => operandBytes 0x0E expr
-	  | (BEQ,Relative expr) => operandBytes 0xF0 (Relative expr)
+	  | (BCC,Relative expr) => branch 0x90 expr
+	  | (BCS,Relative expr) => branch 0xB0 expr
+	  | (BEQ,Relative expr) => branch 0xF0 expr
+	  | (BMI,Relative expr) => branch 0x30 expr
+	  | (BNE,Relative expr) => branch 0xD0 expr
+	  | (BPL,Relative expr) => branch 0x10 expr
+	  | (BRK,Implied) => [0x00]
+	  | (BVC,Relative expr) => branch 0x50 expr
+	  | (BVS,Relative expr) => branch 0x70 expr
+	  | (CLC,Implied) => [0x18]
+	  | (CLD,Implied) => [0xD8]
+	  | (CLI,Implied) => [0x58]
+	  | (CLV,Implied) => [0xB8]
 	  | (CMP,operand) => modes (0xC9,0xC5,0xD5,0xCD,0xDD,0xD9,0xC1,0xD1) operand
+	  | (CPX,operand as Immediate _) => operandBytes 0xE0 operand
+	  | (CPX,operand as ZeroPage _) => operandBytes 0xE4 operand
+	  | (CPX,operand as Absolute _) => operandBytes 0xEC operand
+	  | (CPY,operand as Immediate _) => operandBytes 0xC0 operand
+	  | (CPY,operand as ZeroPage _) => operandBytes 0xC4 operand
+	  | (CPY,operand as Absolute _) => operandBytes 0xCC operand
+	  | (DEC,operand as ZeroPage _) => operandBytes 0xC6 operand
+	  | (DEC,operand as ZeroPageX _) => operandBytes 0xD6 operand
+	  | (DEC,operand as Absolute _) => operandBytes 0xCE operand
+	  | (DEC,operand as AbsoluteX _) => operandBytes 0xDE operand
+	  | (DEX,Implied) => [0xCA]
+	  | (DEY,Implied) => [0x88]
 	  | (EOR,operand) => modes (0x49,0x45,0x55,0x4D,0x5D,0x59,0x41,0x51) operand
+	  | (INC,operand as ZeroPage _) => operandBytes 0xE6 operand
+	  | (INC,operand as ZeroPageX _) => operandBytes 0xF6 operand
+	  | (INC,operand as Absolute _) => operandBytes 0xEE operand
+	  | (INC,operand as AbsoluteX _) => operandBytes 0xFE operand
+	  | (INX,Implied) => [0xE8]
 	  | (INY,Implied) => [0xC8]
+	  | (JMP,operand as Absolute _) => operandBytes 0x4C operand
+	  | (JMP,operand as Indirect _) => operandBytes 0x6C operand
+	  | (JSR,operand as Absolute _) => operandBytes 0x20 operand
 	  | (LDA,operand) => modes (0xA9,0xA5,0xB5,0xAD,0xBD,0xB9,0xA1,0xB1) operand
-	  | (JMP,expr as Absolute _) => operandBytes 0x4C expr
-	  | (JMP,expr as Indirect _) => operandBytes 0x6C expr
-	  | (JSR,expr as Absolute _) => operandBytes 0x20 expr
+	  | (LDX,operand as Immediate _) => operandBytes 0xA2 operand
+	  | (LDX,operand as ZeroPage _) => operandBytes 0xA6 operand
+	  | (LDX,operand as ZeroPageY _) => operandBytes 0xB6 operand
+	  | (LDX,operand as Absolute _) => operandBytes 0xAE operand
+	  | (LDX,operand as AbsoluteY _) => operandBytes 0xBE operand
+	  | (LDY,operand as Immediate _) => operandBytes 0xA0 operand
+	  | (LDY,operand as ZeroPage _) => operandBytes 0xA4 operand
+	  | (LDY,operand as ZeroPageY _) => operandBytes 0xB4 operand
+	  | (LDY,operand as Absolute _) => operandBytes 0xAC operand
+	  | (LDY,operand as AbsoluteY _) => operandBytes 0xBC operand
+	  | (LSR,operand) => rotate (0x4A,0x46,0x56,0x4E,0x5E) operand
+	  | (NOP,Implied) => [0xEA]
 	  | (ORA,operand) => modes (0x09,0x05,0x15,0x0D,0x1D,0x19,0x01,0x11) operand
+	  | (PHA,Implied) => [0x48]
+	  | (PHP,Implied) => [0x08]
+	  | (PLA,Implied) => [0x68]
+	  | (PLP,Implied) => [0x28]
+	  | (ROL,operand) => rotate (0x2A,0x26,0x36,0x2E,0x3E) operand
+	  | (ROR,operand) => rotate (0x6A,0x66,0x76,0x6E,0x7E) operand
+	  | (RTI,Implied) => [0x40]
+	  | (RTS,Implied) => [0x60]
 	  | (SBC,operand) => modes (0xE9,0xE5,0xF5,0xED,0xFD,0xF9,0xE1,0xF1) operand
+	  | (SEC,Implied) => [0x38]
+	  | (SED,Implied) => [0xF8]
 	  | (STA,Immediate _) => raise AssemblyError BadAddress
 	  | (STA,operand) => modes (0x00,0x85,0x95,0x8D,0x9D,0x99,0x81,0x91) operand
-	  | (RTS,Implied) => [0x60]
-	  | _ => []
+	  | (STX,operand as ZeroPage _) => operandBytes 0x86 operand
+	  | (STX,operand as ZeroPageY _) => operandBytes 0x96 operand
+	  | (STX,operand as Absolute _) => operandBytes 0x8E operand
+	  | (STY,operand as ZeroPage _) => operandBytes 0x84 operand
+	  | (STY,operand as ZeroPageY _) => operandBytes 0x94 operand
+	  | (STY,operand as Absolute _) => operandBytes 0x8C operand
+	  | (TAX,Implied) => [0xAA]
+	  | (TAY,Implied) => [0xA8]
+	  | (TSX,Implied) => [0xBA]
+	  | (TXA,Implied) => [0x8A]
+	  | (TXS,Implied) => [0x9A]
+	  | (TYA,Implied) => [0x98]
+	  | _ => raise AssemblyError BadAddress
     end
 
 fun pass2 (sourceLine,inst,addr,map,listFn) =
     let
 	val bytes = instBytes (inst,addr,map)
-		    handle exn => (print (File.data sourceLine); raise exn)
     in
 	listFn (Printing.formatLine (SOME addr,bytes,File.data sourceLine))
     end
