@@ -182,7 +182,94 @@ fun pass1 (label,inst) ({sourceLine,address},map) =
     (inst,address + (sizeOf inst),map)
 end
 
-fun pass2 (sourceLine,inst,addr,map,listFn) =
-    listFn (Printing.formatLine (SOME addr,[],File.data sourceLine))
+fun instBytes (inst,addr,map) = 
+    let
+	fun bytes expr =
+	    Numbers.bytes (Expression.evalAsAddr (addr,map) expr)
+	fun lowByte expr =
+	    Numbers.lowByte (Expression.evalAsAddr (addr,map) expr)
+	fun highByte expr =
+	    Numbers.highByte (Expression.evalAsAddr (addr,map) expr)
+	fun unsigned opcode size =
+	    if size >= 1 andalso size <= 7 then
+		[opcode + size]
+	    else 
+		[opcode,size]
+	fun signed opcode size =
+	    let
+		val (opcode,size) = case size of
+ 					Signed size => (opcode + 1,size)
+				      | Unsigned size => (opcode,size)
+	    in
+		if size >= 1 andalso size <= 3 then
+		    [opcode + size]
+		else
+		    [opcode,size]
+	    end
+	fun MV opcode offset expr =
+	    let
+		val MVaddr = Expression.evalAsAddr (addr,map) expr
+	    in
+		if (Numbers.isZeroPage MVaddr) then
+		    (unsigned opcode offset) @ [Numbers.lowByte MVaddr]
+		else
+		    raise AssemblyError RangeError
+	    end
+	fun pushConstant (Label label) =
+	    let
+		val constVal = case Label.lookup (map,label) of
+				    SOME n => n
+				  | NONE   => raise AssemblyError UndefinedLabel
+	    in
+		0x6A :: (Numbers.bytes constVal)
+	    end
+	  | pushConstant (Literal literal) =
+	    let
+		val constBytes = Numbers.constBytes literal
+		val constSize = Numbers.sizeOf literal
+	    in
+		(unsigned 0x68 constSize) @ constBytes
+	    end
+    in
+	case inst of
+	    BRF expr => 0x01 :: (bytes expr)
+	  | BRU expr => 0x02 :: (bytes expr)
+	  | CFD expr => 0x03 :: (bytes expr)
+	  | CFI => [0x04]
+	  | ADD size => unsigned 0x08 size
+	  | ANL size => unsigned 0x10 size
+	  | DCR size => unsigned 0x18 size
+	  | DSP size => unsigned 0x20 size
+	  | ICR size => unsigned 0x28 size
+	  | ISP size => unsigned 0x30 size
+	  | MTS size => unsigned 0x38 size
+	  | MTV (offset,expr) => MV 0x40 offset expr
+	  | NEG size => unsigned 0x48 size
+	  | NOT size => unsigned 0x50 size
+	  | ORL size => unsigned 0x58 size
+	  | ORX size => unsigned 0x60 size
+	  | PHC constant => pushConstant constant
+	  | PVA size => unsigned 0x70 size
+	  | RAF size => unsigned 0x78 size
+	  | SHL size => unsigned 0x80 size
+	  | STM size => unsigned 0x89 size
+	  | SUB size => unsigned 0x90 size
+	  | TEQ size => unsigned 0x98 size
+	  | VTM (offset,expr) => MV 0xA0 offset expr
+	  | DIV size => signed 0xA8 size
+	  | EXT size => signed 0xB0 size
+	  | MUL size => signed 0xB8 size
+	  | SHR size => signed 0xC0 size
+	  | TGE size => signed 0xC8 size
+	  | TGT size => signed 0xD0 size
+	  | TLE size => signed 0xD8 size
+	  | TLT size => signed 0xE0 size
+    end
 
+fun pass2 (sourceLine,inst,addr,map,listFn) =
+    let
+	val bytes = instBytes (inst,addr,map)
+    in
+	listFn (Printing.formatLine (SOME addr,bytes,File.data sourceLine))
+    end
 end

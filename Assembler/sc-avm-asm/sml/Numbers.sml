@@ -4,6 +4,8 @@ struct
 open Error
 
 val MAX_INT = IntInf.<<(1,Word.fromInt (256*8)) - (IntInf.fromInt 1)
+val ZERO = IntInf.fromInt 0
+val BYTE_SIZE = IntInf.fromInt 256
 
 fun checkRange n =
     if (n < ~MAX_INT orelse n > MAX_INT)
@@ -80,5 +82,17 @@ fun sizeOf 0 = 1
 fun lowByte num = num mod 256
 fun highByte num = num div 256
 fun bytes num = [lowByte num,highByte num]
+fun constBytes const =
+    let fun constBytes bytes const =
+	    if (const < BYTE_SIZE) then
+		List.rev ((IntInf.toInt const) :: bytes)
+	    else
+		constBytes ((IntInf.toInt (const mod BYTE_SIZE)) :: bytes) (const div BYTE_SIZE)
+    in
+	if (const < ZERO) then
+	    constBytes [] (~ const)
+	else 
+	    constBytes [] const
+    end
 
 end

@@ -15,21 +15,39 @@ fun formatAddress address =
 fun formatBlankAddress () =
     "     "
 
+val LINE_LEN = 3
+
+fun splitLine bytes =
+    if (List.length bytes <= LINE_LEN) then
+	(bytes,[])
+    else
+	(List.take (bytes,LINE_LEN),List.drop (bytes,LINE_LEN))
+
 fun formatBytes bytes =
-    let
-	fun formatBytes n bytes =
-	    if n = 0 then "" else case bytes of
-				      byte::rest => (formatHexByte byte) ^ " " ^ (formatBytes (n-1) rest)
-				    | [] => "   " ^ (formatBytes (n-1) [])
+    let fun formatBytes n bytes = if n = 0 
+				  then 
+				      ""
+				  else
+				      case bytes of
+					  [] => "   "
+					| (byte :: rest) => (formatHexByte byte) ^ " " ^ (formatBytes (n-1) rest)
     in
-	formatBytes 3 bytes
+	formatBytes LINE_LEN bytes
     end
 
 fun formatLine (addr,bytes,line) =
-    (case addr of 
-	 SOME addr => formatAddress addr
-       | NONE => formatBlankAddress()) ^
-    formatBytes bytes ^ "\t" ^
-    line
+    let
+	val addrString = case addr of 
+			     SOME addr => formatAddress addr
+			   | NONE => formatBlankAddress()
+	val (first,rest) = splitLine bytes
+	val formatRest = case (addr,rest) of
+			     (_,[]) => ""
+			   | (SOME addr,_) => formatLine (SOME (addr+3),rest,"\n")
+			   | (NONE,_) => formatLine(NONE,rest,"\n")
+    in
+	addrString ^ formatBytes first ^ "\t" ^ line ^ 
+	formatRest
+    end
 
 end

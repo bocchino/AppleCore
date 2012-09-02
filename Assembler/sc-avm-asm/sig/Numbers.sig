@@ -14,5 +14,6 @@ sig
     val lowByte : int -> int
     val highByte : int -> int
     val bytes : int -> int list
+    val constBytes : IntInf.int -> int list
 
 end
