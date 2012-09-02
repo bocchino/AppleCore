@@ -186,10 +186,6 @@ fun instBytes (inst,addr,map) =
     let
 	fun bytes expr =
 	    Numbers.bytes (Expression.evalAsAddr (addr,map) expr)
-	fun lowByte expr =
-	    Numbers.lowByte (Expression.evalAsAddr (addr,map) expr)
-	fun highByte expr =
-	    Numbers.highByte (Expression.evalAsAddr (addr,map) expr)
 	fun unsigned opcode size =
 	    if size >= 1 andalso size <= 7 then
 		[opcode + size]

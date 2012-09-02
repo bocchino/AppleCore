@@ -13,7 +13,7 @@ fun parseListRest parse results substr =
 	    SOME (result, substr'') => 
 	    parseListRest parse (result :: results) substr''
           | _ => raise AssemblyError BadAddress)
-      | _ => SOME (List.rev results,substr)
+      | _ => SOME (results,substr)
 	     
 fun parseList parse substr =
     case parse (dropl isSpace substr) of

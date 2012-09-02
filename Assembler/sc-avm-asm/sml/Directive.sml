@@ -163,7 +163,55 @@ fun list (listFn,line,inst,addr) =
 	  | _ => listWithAddr ()
     end
 
-fun pass2 (sourceLine,inst,addr,map,listFn) =
-    list (listFn,sourceLine,inst,addr)
+fun instBytes (inst,addr,map) = 
+    let
+	fun bytes expr =
+	    Numbers.bytes (Expression.evalAsAddr (addr,map) expr)
+	fun lowByte expr =
+	    Numbers.lowByte (Expression.evalAsAddr (addr,map) expr)
+	fun highByte expr =
+	    Numbers.highByte (Expression.evalAsAddr (addr,map) expr)
+	fun ASBytes str =
+	    List.map Char.ord (String.explode str)
+	fun ATBytes str =
+	    let
+		val bytes = ASBytes str
+	    in
+		case List.rev bytes of
+		    head :: tail => List.rev ( (head + 0x80) :: tail )
+		  | _ => bytes 
+	    end
+	fun BSBytes expr =
+	    let
+		val length = Expression.evalAsAddr (addr,map) expr
+		fun  BSBytes bytes 0 = bytes
+		   | BSBytes bytes n = BSBytes (0 :: bytes) (n-1)
+	    in
+		BSBytes [] length
+	    end
+	fun DABytes exprs =
+	    let
+		fun DAMap (All expr) = bytes expr
+		  | DAMap (Low expr) = [lowByte expr]
+		  | DAMap (High expr) = [highByte expr]
+	    in
+		List.foldl op@ [] (List.map DAMap exprs)
+	    end
+    in
+	case inst of
+	    AS str => ASBytes str
+	  | AT str => ATBytes str
+	  | BS expr => BSBytes expr
+	  | DA exprs => DABytes exprs
+	  | HS bytes => bytes
+	  | _ => []
+    end
 
+
+fun pass2 (sourceLine,inst,addr,map,listFn) =
+    let
+	val bytes = instBytes (inst,addr,map)
+    in
+	listFn (Printing.formatLine (SOME addr,bytes,File.data sourceLine))
+    end
 end
