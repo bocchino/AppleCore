@@ -66,7 +66,7 @@ fun assemble ({outFile,paths,list},inFile) =
 	    case Line.pass1 (line,addr,map) of
 		(line,addr',map) => pass1 (file,addr',map,(line,addr) :: instList)
 	fun pass2 ([],map) = ()
-	  | pass2 ((line,addr)::rest,map) = (Line.pass2(line,addr,map,listFn);
+	  | pass2 ((line,addr)::rest,map) = (listFn (Line.pass2(line,addr,map));
 					     pass2 (rest,map))
 	val file = File.openIn paths inFile
     in

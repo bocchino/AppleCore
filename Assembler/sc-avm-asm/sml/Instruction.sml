@@ -52,11 +52,11 @@ fun pass1 (label,inst) (source,map) =
 	  | Native inst => apply Native Native.pass1 inst
     end
 
-fun pass2 (sourceLine,inst,addr,map,listOn) = 
+fun pass2 (sourceLine,inst,addr,map) = 
     case inst of
-	Native inst => Native.pass2 (sourceLine,inst,addr,map,listOn)
-      | Directive inst => Directive.pass2 (sourceLine,inst,addr,map,listOn)
-      | AppleCore inst => AppleCore.pass2 (sourceLine,inst,addr,map,listOn)
+	Native inst => Native.pass2 (sourceLine,inst,addr,map)
+      | Directive inst => Directive.pass2 (sourceLine,inst,addr,map)
+      | AppleCore inst => AppleCore.pass2 (sourceLine,inst,addr,map)
 
 end
 

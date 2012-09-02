@@ -208,10 +208,10 @@ fun instBytes (inst,addr,map) =
     end
 
 
-fun pass2 (sourceLine,inst,addr,map,listFn) =
+fun pass2 (sourceLine,inst,addr,map) =
     let
 	val bytes = instBytes (inst,addr,map)
     in
-	listFn (Printing.formatLine (SOME addr,bytes,File.data sourceLine))
+	Printing.formatLine (SOME addr,bytes,File.data sourceLine)
     end
 end
