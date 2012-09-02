@@ -5,21 +5,20 @@ sig
 	     BadAddress
 	   | BadLabel
 	   | FileNotFound of string
-	   | InvalidMnemonic of string
+	   | InvalidMnemonic
 	   | NoGlobalLabel
 	   | NoLabel
 	   | RangeError
 	   | RedefinedLabel of {file:string,lineNum:int}
 	   | UndefinedLabel
-	   | UnsupportedDirective of string
+	   | UnsupportedDirective
 
     exception AssemblyError of t
+    exception LineError of {fileName:string,
+			    lineNum:int,
+			    lineData:string,
+			    err:exn}
 
-    val show : {line:string,
-		name:string,
-		lineNum:int,
-		exn:exn} -> unit
-
-    val report : string -> unit
+    val show : exn -> unit
 
 end

@@ -29,10 +29,7 @@ fun parse substr =
 	in
 	    if Substring.isEmpty rest
 	    then NONE
-	    else raise AssemblyError 
-			(InvalidMnemonic 
-			     (Substring.string 
-				  (Substring.takel (not o Char.isSpace) rest)))
+	    else raise AssemblyError InvalidMnemonic
 	end
 	
 fun includeIn inst file =

@@ -69,9 +69,6 @@ fun assemble ({outFile,paths,list},inFile) =
 	  | pass2 ((line,addr)::rest,map) = (Line.pass2(line,addr,map,listFn);
 					     pass2 (rest,map))
 	val file = File.openIn paths inFile
-	    handle e as AssemblyError (FileNotFound file) => 
-		   (Error.report ("file " ^ file ^ " not found");
-		    raise e)
     in
 	pass2 (pass1 (file,0x800,Label.fresh,[]))
     end
@@ -87,4 +84,6 @@ fun main(name,args) =
     handle BadArgument => (print (GetOpt.usageInfo
 				      {header = "usage: sc-avm-asm infile [opts]",
 				       options = options}); OS.Process.failure)
+	 | e => (Error.show e; OS.Process.failure)
+
 end

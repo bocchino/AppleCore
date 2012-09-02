@@ -109,13 +109,13 @@ fun parse substr =
 	  | ".TI" => SOME Ignored
 	  | ".LIST" => SOME Ignored
 	  | ".PG" => SOME Ignored
-	  | ".EN" => raise AssemblyError (UnsupportedDirective dir)
-	  | ".DO" => raise AssemblyError (UnsupportedDirective dir)
-	  | ".ELSE" => raise AssemblyError (UnsupportedDirective dir)
-	  | ".FIN" => raise AssemblyError (UnsupportedDirective dir)
-	  | ".MA" => raise AssemblyError (UnsupportedDirective dir)
-	  | ".EM" => raise AssemblyError (UnsupportedDirective dir)
-	  | ".US" => raise AssemblyError (UnsupportedDirective dir)
+	  | ".EN" => raise AssemblyError UnsupportedDirective
+	  | ".DO" => raise AssemblyError UnsupportedDirective
+	  | ".ELSE" => raise AssemblyError UnsupportedDirective
+	  | ".FIN" => raise AssemblyError UnsupportedDirective
+	  | ".MA" => raise AssemblyError UnsupportedDirective
+	  | ".EM" => raise AssemblyError UnsupportedDirective
+	  | ".US" => raise AssemblyError UnsupportedDirective
           | _ => NONE
     end
 

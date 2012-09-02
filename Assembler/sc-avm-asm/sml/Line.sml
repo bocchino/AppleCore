@@ -32,6 +32,12 @@ fun parseLine line =
 		else parseLabel substr
     end
 
+fun lineError (line,err) =
+    LineError {fileName=(File.fileName line),
+	       lineNum=(File.lineNumber line),
+	       lineData=(File.data line),
+	       err=err}
+
 fun parse (file,line) =
     let
 	val (label,inst) = parseLine (File.data line)
@@ -41,8 +47,7 @@ fun parse (file,line) =
     in 
 	((line,label,inst),file)
     end
-    handle e => (Error.show {line=(File.data line),name=(File.fileName line),
-			     lineNum=(File.lineNumber line),exn=e}; raise e)
+    handle e => raise lineError (line,e)
 
 fun pass1 (line as (sourceLine,label,inst),addr,map) = 
     let 
@@ -64,16 +69,13 @@ fun pass1 (line as (sourceLine,label,inst),addr,map) =
 	    end
 	  | _ => (line,addr,map)
     end
-    handle e => (Error.show {line=(File.data sourceLine),name=(File.fileName sourceLine),
-			     lineNum=(File.lineNumber sourceLine),exn=e}; raise e)
+    handle e => raise lineError (sourceLine,e)
 
 fun pass2 (line as (sourceLine,label,inst),addr,map,listFn) = 
     (case (label,inst) of
 	(_,SOME inst) => Instruction.pass2 (sourceLine,inst,addr,map,listFn)
-(*      | (SOME label,NONE) => listFn (Printing.formatLine (SOME addr,[],File.data sourceLine)) *)
       | _ => listFn (Printing.formatLine (NONE,[],File.data sourceLine)))
-    handle e => (Error.show {line=(File.data sourceLine),name=(File.fileName sourceLine),
-			     lineNum=(File.lineNumber sourceLine),exn=e}; raise e)
+    handle e => raise lineError (sourceLine,e)
 
 end
 
