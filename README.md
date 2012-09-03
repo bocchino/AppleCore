@@ -212,7 +212,12 @@ Assembler format:
 
 1.  Native 6502 instructions
 
-2.  AppleCore virtual machine (AVM) instructions
+2.  AppleCore Virtual Machine (AVM) instructions.  The AppleCore
+    compiler compiles AppleCore source files to AVM assembly language.
+    The assembler translates this assembly language to byte code that
+    is interpreted by the AVM runtime.  For more details on how this
+    works, see the AVM specification
+    (${APPLECORE}/Docs/AVM-Spec-v1.0.pdf).
 
 3.  A subset of the SC Macro Assembler directives.  Most directives
     are supported, except for the ones that don't make sense when
@@ -265,17 +270,8 @@ example, when your whole program won't fit into memory.  See
 ${APPLECORE}/Examples/Chain and ${APPLECORE}/Examples/BelowTheBasement
 for examples of the .TF directive in action.
 
-9\. The AppleCore Virtual Machine
----------------------------------
-
-The AppleCore compiler compiles AppleCore source files to byte code
-for the AppleCore Virtual Machine (AVM).  The AVM code is then
-interpreted by the AVM runtime.  This makes the code very compact.
-For more details on how this works, see the AVM specification
-(${APPLECORE}/Docs/AVM-Spec-v1.0.pdf).
-
-10\. Integration with BASIC and DOS
------------------------------------
+9\. Integration with BASIC and DOS
+----------------------------------
 
 For the most part, loading and running AppleCore programs should work
 seamlessly with BASIC and DOS (except that loading an AppleCore
@@ -306,7 +302,7 @@ sets, auxiliary memories, etc. are nice, but they are also a headache
 to program and destroy the simplicity and elegance of Woz's original
 design.
 
-11\. Shell Editor
+10\. Shell Editor
 -----------------
 
 As part of the AppleCore release, I've included a nifty little shell
