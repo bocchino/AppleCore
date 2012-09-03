@@ -23,15 +23,9 @@ public class SourceFileWriter
     /* Initialization stuff */
     public final NativeCodeEmitter emitter;
 
-    public SourceFileWriter(NativeCodeEmitter emitter,
-			    int avmSlot, int avmDrive) {
+    public SourceFileWriter(NativeCodeEmitter emitter) {
 	this.emitter = emitter;
-	this.avmSlot=avmSlot;
-	this.avmDrive=avmDrive;
     }
-
-    public final int avmSlot;
-    public final int avmDrive;
 
     public void runOn(SourceFile sourceFile) 
 	throws ACCError
@@ -53,7 +47,7 @@ public class SourceFileWriter
 	emitter.emitComment("the AppleCore Compiler, v1.0");
 	emitter.emitSeparatorComment();
 	if (!node.includeMode) {
-	    emitter.emitIncludeDirective("AVM.PROLOGUE",avmSlot,avmDrive);
+	    emitter.emitIncludeDirective("AVM.PROLOGUE");
 	    FunctionDecl firstFunction = null;
 	    for (Declaration decl : node.decls) {
 		if (decl instanceof FunctionDecl) {
@@ -81,7 +75,7 @@ public class SourceFileWriter
 	emitter.emitComment("END OF FILE " + node.name);
 	emitter.emitSeparatorComment();
 	if (!node.includeMode) {
-	    emitter.emitEpilogue(avmSlot,avmDrive);
+	    emitter.emitEpilogue();
 	}
     }
 

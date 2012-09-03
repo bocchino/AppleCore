@@ -171,8 +171,6 @@ public class SCMacroEmitter
     }
 
     public void emitPreamble(SourceFile node) {
-	emit(":NEW\n");
-	emitAbsoluteInstruction(".LIST","OFF");
 	if (node.origin > 0) {
 	    emitAbsoluteInstruction(".OR", node.origin);
         }
@@ -185,17 +183,13 @@ public class SCMacroEmitter
 	}
     }
 
-    public void emitEpilogue(int avmSlot, int avmDrive) {
-	emitIncludeDirective("AVM.1",avmSlot,avmDrive);
-	emitIncludeDirective("AVM.2",avmSlot,avmDrive);
-	emitIncludeDirective("AVM.3.BINOP",avmSlot,avmDrive);
-	emitIncludeDirective("AVM.4.UNOP",avmSlot,avmDrive);
-	emitIncludeDirective("AVM.5.BUILT.IN",avmSlot,avmDrive);
-	// Start of program stack
-	emitLabel("AVM.STACK");
+    public void emitEpilogue() {
+        emitIncludeDirective("AVM");
+         // Start of program stack
+        emitLabel("AVM.STACK");
     }
 
-    public void emitIncludeDirective(String fileName, int slot, int drive) {
-	emitAbsoluteInstruction(".IN", fileName+",S"+slot+",D"+drive);
+    public void emitIncludeDirective(String fileName) {
+	emitAbsoluteInstruction(".IN", fileName);
     }
 }

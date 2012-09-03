@@ -47,7 +47,6 @@ INCLUDE "MA.STATE,D1";
 # -----------------------------------
 # INCLUDE LIB FILES FROM D2
 # -----------------------------------
-INCLUDE "MON.EQ,D2";
 INCLUDE "IO,D2";
 INCLUDE "STRING,D2";
 INCLUDE "CHAR,D2";

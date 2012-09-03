@@ -1,43 +1,39 @@
-:NEW
-       .LIST OFF
 * -------------------------------
 * SIMPLE SHELL EDITOR FOR APPLE //e
-* D1: SHELL.EDITOR
-* D2: LIB
 * -------------------------------
 * MONITOR EQUATES
-       .IN MON.EQ,D2
+       .IN MON.EQ
 * SHELL EDITOR EQUATES
-       .IN EDITOR.EQ,D1
+       .IN EDITOR.EQ
 * -------------------------------
 * INSTALL APPLESOFT IN RAM BANK 2
 * -------------------------------
 	.OR $1000
-	.TF INSTALL.APPLESOFT.OBJ,D1
-	.IN INSTALL.APPLESOFT,D1
+	.TF INSTALL.APPLESOFT.OBJ
+	.IN INSTALL.APPLESOFT
 * -------------------------------
 * INSTALL EDITOR IN RAM BANK 1
 * -------------------------------
        .OR $1000
-       .TF INSTALL.SHELL.EDITOR.OBJ,D1
-       .IN INSTALL.SHELL.EDITOR,D1
-       .IN EDITOR.STRING.FNS,D1
+       .TF INSTALL.SHELL.EDITOR.OBJ
+       .IN INSTALL.SHELL.EDITOR
+       .IN EDITOR.STRING.FNS
 * -------------------------------
 * UNINSTALL EDITOR
 * -------------------------------
        .OR $1000
-       .TF UNINSTALL.SHELL.EDITOR.OBJ,D1
-       .IN UNINSTALL.SHELL.EDITOR,D1
+       .TF UNINSTALL.SHELL.EDITOR.OBJ
+       .IN UNINSTALL.SHELL.EDITOR
 * -------------------------------
 * DRIVER
 * -------------------------------
        .OR $9CDA
-       .TF SHELL.EDITOR.DRIVER.OBJ,D1
+       .TF SHELL.EDITOR.DRIVER.OBJ
 DRIVER
-       .IN DRIVER,D1
+       .IN DRIVER
 * -------------------------------
 * EDITOR
 * -------------------------------
        .OR $D000
-       .TF SHELL.EDITOR.OBJ,D1
-       .IN EDITOR,D1
+       .TF SHELL.EDITOR.OBJ
+       .IN EDITOR

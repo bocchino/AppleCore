@@ -33,7 +33,6 @@ INCLUDE "EDIFY.DISK";
 # -----------------------------------
 # INCLUDE LIB FILES
 # -----------------------------------
-INCLUDE "MON.EQ";
 INCLUDE "IO";
 INCLUDE "STRING";
 INCLUDE "CHAR";

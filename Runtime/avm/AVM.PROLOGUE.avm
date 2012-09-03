@@ -1,9 +1,10 @@
-:NEW
 * -------------------------------
 * THE APPLECORE COMPILER, V1.0
 * PROGRAM PROLOGUE
 * -------------------------------
-* REFERENCE LABELS
+	.IN MON.EQ
+* -------------------------------
+* AVM REFERENCE LABELS
 * -------------------------------
 * STACK POINTER
 AVM.SP	.EQ $00

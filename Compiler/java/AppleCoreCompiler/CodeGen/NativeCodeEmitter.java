@@ -94,8 +94,8 @@ public abstract class NativeCodeEmitter
 
     public abstract void emitPreamble(SourceFile node);
 
-    public abstract void emitEpilogue(int avmSlot, int avmDrive);
+    public abstract void emitEpilogue();
 
-    public abstract void emitIncludeDirective(String fileName, int slot, int drive);
+    public abstract void emitIncludeDirective(String fileName);
 
 }

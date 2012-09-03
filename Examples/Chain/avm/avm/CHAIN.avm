@@ -1,5 +1,3 @@
-:NEW
-       .LIST OFF
 * -------------------------------
 * SIMPLE PROGRAM THAT LOADS
 * PARTS OF ITSELF WHILE RUNNING
@@ -23,7 +21,7 @@ PROGRAM.START .EQ $2000
 * -------------------------------
 * INCLUDE MASTER PROGRAM
 * -------------------------------
-       .IN MASTER,D1
+       .IN MASTER
 * -------------------------------
 * PUT AVM AFTER MASTER
 * -------------------------------
@@ -41,12 +39,12 @@ AVM.STACK
 * PUT PROGRAM 1 AT PROGRAM.START
 * -------------------------------
        .OR PROGRAM.START
-       .TF CHAIN.PROGRAM.1.OBJ,D1
-       .IN CHAIN.PROGRAM.1,D1
+       .TF CHAIN.PROGRAM.1.OBJ
+       .IN CHAIN.PROGRAM.1
 * -------------------------------
 * PUT PROGRAM 2 AT PROGRAM.START
 * -------------------------------
        .OR PROGRAM.START
-       .TF CHAIN.PROGRAM.2.OBJ,D1
-       .IN CHAIN.PROGRAM.2,D1
+       .TF CHAIN.PROGRAM.2.OBJ
+       .IN CHAIN.PROGRAM.2
 

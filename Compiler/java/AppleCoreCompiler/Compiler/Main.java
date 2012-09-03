@@ -34,16 +34,6 @@ public class Main {
     private static int origin = -1;
 
     /**
-     * Slot where AVM files are located
-     */
-    private static int avmSlot=6;
-
-    /**
-     * Drive where AVM files are located
-     */
-    private static int avmDrive=1;
-
-    /**
      * List of file names from which to extract decls
      */
     private static List<String> declFiles = 
@@ -82,12 +72,6 @@ public class Main {
 	    else {
 		throw new OptionError("only one source file allowed");
 	    }
-	}
-	else if (arg.startsWith("-avm-slot=")) {
-	    avmSlot=Integer.parseInt(arg.substring(10));
-	}
-	else if (arg.startsWith("-avm-drive=")) {
-	    avmDrive=Integer.parseInt(arg.substring(11));
 	}
 	else if (arg.startsWith("-decls=")) {
 	    for (String declFile : arg.substring(7).split(":")) {
@@ -151,8 +135,7 @@ public class Main {
 	    translatorPass.runOn(sourceFile);
 	    
 	    SourceFileWriter writer =
-		new SourceFileWriter(new SCMacroEmitter(System.out),
-				     avmSlot,avmDrive);
+		new SourceFileWriter(new SCMacroEmitter(System.out));
 	    writer.runOn(sourceFile);
 	}
 	catch (ACCError e) {

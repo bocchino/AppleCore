@@ -809,9 +809,7 @@ the source file as follows:
 
 \bfhead{Include mode.} In include mode, the compiler just translates
 the declarations in the source file as described in
-Section~\ref{sec:code-gen:global-decls}.  In include mode, the source
-program may not contain any include directives, and it is a
-compile-time error for one to appear.
+Section~\ref{sec:code-gen:global-decls}.
 
 \bfhead{Final assembly and symbol resolution.} A user program consists
 of exactly one file translated in top-level mode and zero or more
@@ -872,11 +870,9 @@ only for checking call expressions that invoke the function.  (2) A
 function declaration with a body causes code to be generated as stated
 in Section~\ref{sec:code-gen:fn-bodies}.
 
-\bfhead{Include declarations.}  In top-level mode (see
-Section~\ref{sec:code-gen:source-files}), the compiler translates an
-include declaration into an assembler directive to include the file
-named in the string constant.  In include mode, the presence of an
-include declaration in the source file causes an error.
+\bfhead{Include declarations.}  The compiler translates an include
+declaration into an assembler directive to include the file named in
+the string constant.
 
 \subsection{Program Stack}
 \label{sec:code-gen:program-stack}

@@ -28,7 +28,7 @@ fun parseLine line =
 	    if Char.isSpace c 
 	    then parseNoLabel rest
 	    else 
-		if c = #"*" orelse c = #":" then emptyLine
+		if c = #"*" then emptyLine
 		else parseLabel substr
     end
 
