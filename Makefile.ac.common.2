@@ -1,0 +1,24 @@
+#
+# Makefile for translating AppleCore source files.
+#
+ACC      ?= ${APPLECORE}/Compiler/bin/acc
+SRCS     ?= ${wildcard ac/*.ac}
+MAKE_ALL ?= perl ${APPLECORE}/Scripts/make-all.pl
+
+all-avm : avm ${SRCS}
+	${MAKE_ALL} ac avm
+
+file-avm : ac/${FILE}.ac
+	make avm/${FILE}.avm
+
+avm/${FILE}.avm : ${SRCS} avm
+	${ACC} ac/${FILE}.ac > $@
+
+obj :
+	mkdir $@
+
+avm :
+	mkdir $@
+
+clean ::
+	rm -Rf avm obj

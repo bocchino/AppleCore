@@ -212,7 +212,7 @@ fun pass2 (output,sourceLine,inst,addr,map) =
     let
 	val bytes = instBytes (inst,addr,map)
 	val output = case inst of
-			 TF str => Output.tf (output,str)
+			 TF str => Output.TF (output,str,addr)
 		       | _ => Output.addBytes (output,bytes)
 	val addr = case bytes of
 		       [] => NONE

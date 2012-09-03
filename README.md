@@ -7,8 +7,8 @@ Copyright (C) 2011-12 by Rob Bocchino
 
 The goal of AppleCore is to provide a "low-level high-level" language
 for writing programs that run on the Apple II series of computers.  A
-cross-compiler that runs on UNIX systems is currently available.  For
-more information on the design and goals of AppleCore, see
+cross-compiler that runs on Mac OS X systems is currently available.
+For more information on the design and goals of AppleCore, see
 Docs/AppleCore-Spec-v1.0.pdf.
 
 2\. License
@@ -28,108 +28,43 @@ particular, other than what it actually does do when you run it.
 3\. System Requirements
 -----------------------
 
-Currently AppleCore works on UNIX-like systems with the git version
-control system, a Java 6 compiler, and a Java 6 VM installed.  It has
-been tested on Mac OS X Lion.  If you are enterprising, you should be
-able to get the tools to work on Windows systems by installing Cygwin
-and writing some simple scripts to translate UNIX class paths to
-Windows class paths.
+To use the AppleCore installation, you need the following:
 
-To run AppleCore programs, you will also need an Apple II emulator
-and/or a way to transfer files to an actual Apple II.  If you are
-running Mac OS X, then I recommend Virtual ][, available at
-http://www.virtualii.com/.
+1.  An Apple Macintosh computer running OS X 10.4 or later.
 
-In addition to providing an amazingly full-featured Apple II emulation
-(including sounds that mimic the real thing), Virtual ][ supports file
-transfer from a Mac to a real Apple II and vice versa.
+2.  The Virtual ][ emulator, available at
+    http://www.virtualii.com/.
 
-Finally, to assemble AppleCore programs on the Apple II, you need the
-S-C Macro Assembler, which is available at http://stjarnhimlen.se/apple2/
-as a disk image that works in the emulator (I use version 2.0 for DOS
-3.3).
+3.  A Standard ML of New Jersey (SML/NJ) installation, available via
+    macports (http://www.macports.org) or via the developers
+    (http://www.smlnj.org/dist/working/110.74/index.html).
 
-Hereafter I'll use the terms "UNIX system" to refer to the system you
-are using to run the AppleCore tools in this repository and "Apple II
-system" to the Apple II environment (either emulated or actual) that
-you are using to run AppleCore programs.
+4\. Mac Setup
+-------------
 
-4\. UNIX System Setup
---------------------
+To set up your Mac to use AppleCore, do the following:
 
-To set up your UNIX system to use AppleCore, do the following:
+1.  If necessary, install Virtual ][ and SML/NJ.
 
-1.  Download the AppleCore distribution from the git repository:
+2.  Download the AppleCore distribution from the git repository:
 
     `git checkout git://github.com/bocchino/AppleCore.git`
 
-2.  Set the environment variable APPLECORE to point to the top-level
+3.  Set the environment variable APPLECORE to point to the top-level
     directory of the AppleCore distribution.
 
-3.  Include ${APPLECORE}/Compiler/bin, ${APPLECORE}/Assembler/bin, and
+4.  Include ${APPLECORE}/Compiler/bin, ${APPLECORE}/Assembler/bin, and
     ${APPLECORE}/Scripts in your UNIX PATH.
 
-Once you've done all that, you can test the implementation:
+5.  Build the assembler, compiler, and examples:
 
-    cd ${APPLECORE}/Examples
-    make
+    `cd ${APPLECORE}`
+    `make`
 
-It should build the examples without any errors.  If not, fix the
-problem and try again until it works.
+It should build the without any errors.  If not, fix the problem and
+try again until it works.
 
-5\. Apple II System Setup
-------------------------
-
-To set up your Apple II system, you need to make a DOS 3.3 disk with
-the AppleCore Virtual Machine (AVM) runtime files on it, as well as
-any library files that you need to include in your programs.  If you
-use Virtual ][ you can just use the disk image
-${APPLECORE}/DOS3.3/LIB.v2d.  If you boot DOS 3,3, drag that image
-into the virtual disk drive, and type CATALOG, you should see the
-files AVM.PROLOGUE, AVM.1, AVM.2, AVM.3.BINOP, AVM.4.UNOP, and
-AVM.5.BUILT.IN already on the disk.  Also, the LIB.v2d disk contains
-library files such as files STRING and IO that are included by some of
-the examples.
-
-If you are not using Virtual ][, or if you wish to make your own disk
-with these files on it, then you will need to build these files and
-transfer them to the Apple II yourself.  First, build the runtime
-files on your UNIX system: go to ${APPLECORE}/Runtime and type 'make'.
-The build will create a directory exec with the AVM runtime files in
-it.  
-
-Next, start up the S-C Macro Assembler on the Apple II system and get
-the exec directory contents onto the Apple II.  In Virtual ][, this
-can be done simply and easily by dragging the OS X folder containing
-the file into a drive on the virtual Apple II.  Virtual ][ will ask
-you to provide a file type for each imported file.  Be sure to specify
-type T (text) for EXEC files; the default type B (binary) won't work.
-You need to do this only the first time you drag the directory to the
-virtual drive; once you do it, Virtual ][ "remembers" the file type
-information by storing it in the UNIX directory.  Another option is to
-use a tool such as Apple Commander
-(http://applecommander.sourceforge.net/) to transfer the files one by
-one, but I find this method to be more awkward.
-
-Once the exec directory contents are on the Apple II, for each FILE in
-the directory, do the following:
-
- - EXEC FILE.EXEC to read the file into the S-C Macro Assembler's
-   memory.  (By convention, DOS 3.3 file names are all uppercase; in
-   particular, FILE.exec becomes FILE.EXEC when you drag a directory
-   into Virtual ][.)
-
- - SAVE FILE to save the file to the disk.
-
-Note that in Virtual ][ this process goes _much_ faster if you select
-"maximum speed" from the speed control knob on the tool bar.
-
-If you want to compile programs that depend on other AppleCore files
-(e.g., the ones in ${APPLECORE}/Lib/ac) or assembly files (e.g., the
-ones in ${APPLECORE}/Lib/avm), then you need to add those files to the
-disk as well.  Section 7 says a bit more about this.
-
-6\. Writing AppleCore Programs
+5\. Writing AppleCore Programs
 ------------------------------
 
 Currently the best documentation for the AppleCore language is the
@@ -141,7 +76,7 @@ general idea of what's going on, you should be able to read the
 examples in ${APPLECORE}/Examples to get a better idea of how to write
 programs in AppleCore.
 
-7\. Compiling AppleCore Programs
+6\. Compiling AppleCore Programs
 --------------------------------
 
 To compile an AppleCore program, you must carry out the following
@@ -151,89 +86,73 @@ steps:
     source files FILE.ac into AppleCore Virtual Machine (AVM) assembly
     files FILE.avm.
 
-2.  Run the AppleCore assembler (avm-asm) to translate each AVM
-    assembly file into a native 6502 assembly file FILE.asm.
+2.  Run the AppleCore assembler (sc-avm-asm) to translate the AVM
+    assembly files into binary files that can be run on the Apple II.
 
-3.  For each AVM file, run the ASM to EXEC translator (asm2exec) to
-    generate a file FILE.exec that can be imported into the S-C Macro
-    Assembler on the Apple II using the EXEC command.
+To see how this is done, go to the directory
+`${APPLECORE}/Examples/HelloWorld`.  First, peek at the source program
+ac/HELLO.WORLD.ac.  That's the program we'll compile.  Next, type
+`make clean` and then `make`.  A directory `obj` should appear
+containing two files:
 
-4.  Get the FILE.EXEC files onto the Apple II system, as described in
-    Section 5.
+1.  `HELLO.WORLD.OBJ` containing the binary code for the
+    compiled program.
 
-5.  For each FILE.EXEC file, issue the command EXEC FILE.EXEC in the
-    S-C Macro Assembler.  This creates an assembly file from the EXEC
-    file.  Save the assembly file FILE to the disk.
+2.  `_AppleDOSMappings.plist` that tells Virtual ][ how to interpret
+    the OS X file as an Apple II DOS file.
 
-6.  Assemble the top-level FILE (see Section 5.1 of the AppleCore
-    spec) by loading it into the assembler and issuing the command ASM
-    to the S-C Macro Assembler.  Any assembly files that FILE depends
-    on (including the AVM runtime, see Section 5 of this document)
-    must be available on the disk, or the assembler will complain that
-    it can't find the files.
+If you would like to see the assembled output listing, then say `make
+OPTS=-l`.  That tells the assembler to list the assembly to the
+standard output (which can be redirected to a file).  
 
-The result of all this should be a file called FILE.OBJ on the Apple
-II disk.  Issue the command BRUN FILE.OBJ to run the program.
+Notice that the assembled program is quite a bit longer than the
+source program!  That's because some library and runtime code has been
+assembled into the final program.
 
-For a simple example, try compiling any of the programs in
-${APPLECORE}/Examples.  Examples/Redbook/RodsColorPattern might be a
-good one to start with:
+Notice also that the compiler and the assembler both require options
+indicating where to find included files.  Those options are specified
+in the file ${APPLECORE}/HelloWorld/Makefile.  See sections 8 and 9
+below for more information about these options.
 
-- In that directory, type `make`.  The build system automatically does
-  steps 1 through 3 for you.
+7\. Running AppleCore Programs
+------------------------------
 
-- With the S-C Macro Assembler running, drag the directory exec into
-  drive 1 (step 4) and say `EXEC RODS.COLOR.PATTERN.EXEC,D1` at the
-  prompt (step 5).  If you want, save the file RODS.COLOR.PATTERN to
-  the exec directory itself or to a different disk image.
+To run a compiled AppleCore program, start up Virtual ][ and boot DOS
+3.3.  Drag the output directory into one of the emulator's virutal
+disk drives and use the directory as a normal DOS 3.3 disk.  
 
-- Put the LIB.v2d disk (or equivalent) in drive 2.
+For example, to run the "hello world" program, drag
+`${APPLECORE}/Examples/HelloWorld/obj` into one of the drives, say
+drive 1.  Then say `BRUN HELLO.WORLD.OBJ` at the BASIC prompt.  The
+Apple II should respond by printing
 
-- Say `ASM`.  After assembly is finished, the file
-  RODS.COLOR.PATTERN.OBJ should be written to drive 1.
+   `HELLO, WORLD!`
 
-For another example, try assembling Examples/Redbook/Mastermind.  This
-one is a bit more complex, because there are three source files you
-need to get onto the drive 1 disk: MASTERMIND, MASTERMIND.1, and
-MASTERMIND.2.
+to the console.
 
-Note that these programs (and all programs in the Examples directory)
-are configured to expect the source files for the program itself on
-the disk in drive 1, and the LIB.v2d disk (or equivalent) in drive 2.
-Unfortunately, when the assembler can't find a file that it needs, it
-just halts and says FILE NOT FOUND; it doesn't specify which file is
-missing.  However, you can figure this out by looking at the generated
-assembly file for the top-level source file: for every directive .IN
-FILE appearing in the assembly file, the file FILE must be present on
-the disk in the specified drive.  For example, if the top-level file
-contains the directive .IN GRAPHICS,D2, then the assembly file
-GRAPHICS must be present on the disk in drive 2 in order to do the
-assembly.  You can also look at the top-level AppleCore source file:
-the needed files are just the AVM runtime files listed in Section 5 of
-this document, together with any files specified in the source file
-via an INCLUDE declaration.  The AVM runtime files must be in the
-drive specified on the compiler command line, as explained in the next
-section.  The INCLUDE declarations specify the drive directly (e.g.,
-INCLUDE "GRAPHICS,D2").
+The nice thing about Virtual ][ is that it lets you treat OS X
+directories (with the proper mappings list) as DOS 3.3 disks.  This
+makes it easy to transfer files between the Mac and the emulator.You
+can also use a utility such as Apple Commander
+(http://applecommander.sourceforge.net/) to construct DOS 3.3 disk
+images, if you like.
 
-8\. ACC Compiler Options
-------------------------
+8\. The AppleCore Compiler (acc)
+-------------------------------
 
-Currently acc accepts exactly one source file name SF (including
-UNIX path info) on the command line, translates that file, and writes
-the results to standard output.  In the future, more flexible options
-(e.g., compiling multiple files in one acc command) may be provided.
+acc accepts exactly one source file name SF (including UNIX path info)
+on the command line, translates that file, and writes the results to
+standard output.  In the future, more flexible options (e.g.,
+compiling multiple files in one acc command) may be provided.
 
-Currently acc accepts the following command-line options.  In the
-future, more options may be provided:
+acc accepts the following command-line options:
 
   - `-decls=DF1:...:DFn`
 
     Before translating SF, parse files DF1 through DFn and get the
     declarations out of them.  This allows SF to refer to functions,
     constants, data, or variables declared in any of the DFi, which is
-    essential for separate compilation.  The Makefile
-    ${APPLECORE}/Examples/Makefile illustrates how this is done.
+    essential for separate compilation.
 
   - `-include`
 
@@ -243,11 +162,11 @@ future, more options may be provided:
 
   - `-tf=TF`
 
-    Instruct the assembler to write the output to file TF.  (TF
-    stands for "text file," which is how the S-C Macro Assembler
-    refers to its file output.)  If no -tf= appears on the command
-    line, then the default name is generated by stripping .AC from the
-    end of SF (if it is there, ignoring case) and adding .OBJ.
+    Instruct the assembler to write the output to file TF.  (TF stands
+    for "text file," which is how the assembler refers to its file
+    output.)  If no -tf= appears on the command line, then the default
+    name is generated by stripping .AC from the end of SF (if it is
+    there, ignoring case) and adding .OBJ.
 
   - `-origin=OR`
 
@@ -261,16 +180,6 @@ future, more options may be provided:
     to use the origin implied by the point in the program where the
     file is included.
 
-  - `-avm-slot=S`
-
-    Instruct the assembler to look for the AVM source files
-    in slot S (default 6).
-
-  - `-avm-drive=D`
-
-    Instruct the assembler to look for the AVM source fiels
-    in drive D (default 1).
-
 These compiler options handle most common cases. Finer control over
 what goes where in memory can be achieved by compiling everything in
 include mode and writing a short assembly language program to glue the
@@ -278,6 +187,80 @@ pieces together.  You might do this if the whole program won't fit in
 memory, or if you need the program to occupy discontinuous parts of
 memory (e.g., to wrap it around the hi-res graphics pages).  See
 ${APPLECORE}/Examples/Chain for an example of how to do this.
+
+9.\ The SC-AVM-ASM Assembler
+----------------------------
+
+The assembler is called sc-avm-asm because its format is based on the
+SC Macro Assembler.  This was my favorite assembler back when I
+actually wrote assembly code on the Apple II.  Also, an earlier
+version of the AppleCore tool chain actually used this assembler (and
+required you to do final assembly on the Apple II).  
+
+The SC Macro Assembler is an impressive piece of engineering, but it
+suffers from the inherent limitations of the Apple II.  The current
+assembler makes it much easier to use AppleCore, because (1) you can
+do everything using UNIX tools and scripts, (2) you aren't constrained
+by the Apple II's memory limitations, and (3) nested .IN directives
+are allowed.
+
+The assembler assembles three kinds of mnemonics, using the SC Macro
+Assembler format:
+
+1.  Native 6502 instructions
+
+2.  AppleCore virtual machine (AVM) instructions
+
+3.  A subset of the SC Macro Assembler directives.  Most directives
+    are supported, except for the ones that don't make sense when
+    cross-assembling (e.g., the .TA directive, which specifies where
+    in memory to put the assembled code).  Macros and private labels
+    are not supported.
+
+You can get documentation on the SC Macro Assembler format and
+directives here: http://stjarnhimlen.se/apple2/.  
+
+acc accepts the following command-line options:
+
+  - `-d outdir`
+
+    Set the output directory to outdir.  All output files are written
+    to that directory, and a new mappings list is created in the
+    directory to describe the files.  Any existing mappings list, and
+    any existing files with the same name as an outpuf file, is
+    destroyed.  If no -d option is specified, the default is the
+    current working directory.
+
+  - `-i p1:...:pn`
+
+    Search paths p1 through pn (in that order) for AVM files to
+    include when encountering an .IN directive.
+
+  - `-l`
+
+    List the assembly file to stdout.
+
+  - `-o outfile`
+
+    Set the output file to outfile.  The file is interpreted relative
+    to the outdir; that is, the output is written to outdir/outfile.
+    The default generated by stripping .AVN from the end of the input
+    file name (if it is there, ignoring case) and adding .OBJ.
+
+Please note the following:
+
+  - The .TF (text file) assembler directive works just like in the SC
+    Macro Assembler, so the initial output file (default or set by -o)
+    is overridden by any .TF directive(s) encountered.
+
+  - Because DOS file names must be upper case, the assembler converts
+    all file names (default or specified by -o or .TF) to upper case.
+
+The neat thing about the .TF directive is that it lets you assemble a
+single logical program into multiple output files.  This is handy, for
+example, when your whole program won't fit into memory.  See
+${APPLECORE}/Examples/Chain and ${APPLECORE}/Examples/BelowTheBasement
+for examples of the .TF directive in action.
 
 9\. The AppleCore Virtual Machine
 ---------------------------------

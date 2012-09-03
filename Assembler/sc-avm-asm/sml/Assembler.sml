@@ -109,8 +109,11 @@ fun assemble {inFile,outDir,outFile,paths,list} =
 		(listFn listing; pass2 output (rest,map))
 	    end
 	val file = File.openIn paths inFile
-	val pass1Result = pass1 (file,0x800,Label.fresh,[]) 
-	val output = pass2 (Output.new {dir=outDir,file=outFile}) pass1Result
+	val defaultOrigin = 0x800
+	val pass1Result = pass1 (file,defaultOrigin,Label.fresh,[]) 
+	val output = pass2 (Output.new {dir=outDir,
+					file=outFile,
+					origin=defaultOrigin}) pass1Result
     in
 	Output.write output
     end
