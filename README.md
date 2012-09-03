@@ -32,10 +32,12 @@ To use the AppleCore installation, you need the following:
 
 1.  An Apple Macintosh computer running OS X 10.4 or later.
 
-2.  The Virtual ][ emulator, available at
+2.  A Java 6 Virtual Machine and javac compiler.
+
+3.  The Virtual ][ emulator, available at
     http://www.virtualii.com/.
 
-3.  A Standard ML of New Jersey (SML/NJ) installation, available via
+4.  A Standard ML of New Jersey (SML/NJ) installation, available via
     macports (http://www.macports.org) or via the developers
     (http://www.smlnj.org/dist/working/110.74/index.html).
 
