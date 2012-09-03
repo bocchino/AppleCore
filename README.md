@@ -188,7 +188,7 @@ memory, or if you need the program to occupy discontinuous parts of
 memory (e.g., to wrap it around the hi-res graphics pages).  See
 ${APPLECORE}/Examples/Chain for an example of how to do this.
 
-9.\ The SC-AVM-ASM Assembler
+9\. The SC-AVM-ASM Assembler
 ----------------------------
 
 The assembler is called sc-avm-asm because its format is based on the
