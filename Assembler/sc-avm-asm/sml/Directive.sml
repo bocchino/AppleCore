@@ -214,8 +214,11 @@ fun pass2 (output,sourceLine,inst,addr,map) =
 	val output = case inst of
 			 TF str => Output.tf (output,str)
 		       | _ => Output.addBytes (output,bytes)
+	val addr = case bytes of
+		       [] => NONE
+		     | _ => SOME addr
     in
 	(output,
-	 Printing.formatLine (SOME addr,bytes,File.data sourceLine))
+	 Printing.formatLine (addr,bytes,File.data sourceLine))
     end
 end
