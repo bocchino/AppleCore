@@ -30,7 +30,8 @@ particular, other than what it actually does do when you run it.
 
 To use the AppleCore installation, you need the following:
 
-1.  An Apple Macintosh computer running OS X 10.4 or later.
+1.  An Apple Macintosh computer running OS X 10.4 or later, with XCode
+    command line tools installed.
 
 2.  A Java 6 Virtual Machine and javac compiler.
 
