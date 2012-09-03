@@ -248,7 +248,7 @@ fun instBytes (inst,addr,map) =
 	  | PVA size => unsigned 0x70 size
 	  | RAF size => unsigned 0x78 size
 	  | SHL size => unsigned 0x80 size
-	  | STM size => unsigned 0x89 size
+	  | STM size => unsigned 0x88 size
 	  | SUB size => unsigned 0x90 size
 	  | TEQ size => unsigned 0x98 size
 	  | VTM (offset,expr) => MV 0xA0 offset expr
@@ -262,10 +262,11 @@ fun instBytes (inst,addr,map) =
 	  | TLT size => signed 0xE0 size
     end
 
-fun pass2 (sourceLine,inst,addr,map) =
+fun pass2 (output,sourceLine,inst,addr,map) =
     let
 	val bytes = instBytes (inst,addr,map)
     in
-	Printing.formatLine (SOME addr,bytes,File.data sourceLine)
+	(Output.addBytes (output,bytes),
+	 Printing.formatLine (SOME addr,bytes,File.data sourceLine))
     end
 end

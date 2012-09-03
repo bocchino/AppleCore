@@ -10,8 +10,8 @@ SC-AVM-ASM ?= ${APPLECORE}/Assembler/bin/sc-avm-asm -i ${APPLECORE}/Lib/avm:${AP
 
 all : all-exec
 
-all-obj : avm/${FILE}.avm obj
-	${SC-AVM-ASM} $<
+all-obj : obj all-avm
+	${SC-AVM-ASM} avm/${FILE}.avm
 
 all-avm : avm ${SRCS}
 	${MAKE_ALL} ac avm

@@ -3,13 +3,13 @@ INCLUDE=./Include
 OBJ=EDIFY.OBJ
 DECLS=${INCLUDE}/ac/EDIFY.1.ac:${INCLUDE}/ac/EDIFY.BUFFER.1.ac:${INCLUDE}/ac/EDIFY.BUFFER.2.ac:${LIB}/ac/IO.ac:${LIB}/ac/STRING.ac:${LIB}/ac/CHAR.ac:${LIB}/ac/COPY.ac:${LIB}/ach/MON.ach:${LIB}/ach/BOOLEAN.ach
 ACC = ${APPLECORE}/Compiler/bin/acc -decls=${DECLS} -tf=${OBJ},D1 -avm-drive=2
+SC-AVM-ASM = ${APPLECORE}/Assembler/bin/sc-avm-asm -i ${APPLECORE}/Lib/avm:${APPLECORE}/Lib-AVM/avm:${APPLECORE}/Runtime/avm:Include/avm -d obj ${OPTS}
 
-all-include : all
+all-include : obj all-avm
 	make -C Include
+	${SC-AVM-ASM} avm/EDIFY.avm
 
 clean-include : clean
 	make -C Include clean
 
-include ../../Makefile.ac.common
-
-SC-AVM-ASM += -i Include/avm
+include ../../Makefile.ac.common.2

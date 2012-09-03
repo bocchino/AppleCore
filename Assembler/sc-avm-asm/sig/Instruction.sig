@@ -13,6 +13,6 @@ sig
     val pass1 : Label.t option * t -> Label.source * Label.map -> t * int * Label.map
 
     (* Do final evaluation and generate code *)
-    val pass2 : File.line * t * int * Label.map -> string
+    val pass2 : Output.t * File.line * t * int * Label.map -> Output.t * string
 
 end

@@ -71,10 +71,10 @@ fun pass1 (line as (sourceLine,label,inst),addr,map) =
     end
     handle e => raise lineError (sourceLine,e)
 
-fun pass2 (line as (sourceLine,label,inst),addr,map) = 
+fun pass2 (output,line as (sourceLine,label,inst),addr,map) = 
     (case (label,inst) of
-	(_,SOME inst) => Instruction.pass2 (sourceLine,inst,addr,map)
-      | _ => Printing.formatLine (NONE,[],File.data sourceLine))
+	(_,SOME inst) => Instruction.pass2 (output,sourceLine,inst,addr,map)
+      | _ => (output,Printing.formatLine (NONE,[],File.data sourceLine)))
     handle e => raise lineError (sourceLine,e)
 
 end

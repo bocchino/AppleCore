@@ -10,6 +10,7 @@ Library
     structure Line
     structure Native
     structure Numbers
+    structure Output
     structure Parsing
     structure Printing
 is
@@ -21,6 +22,7 @@ is
     sig/Line.sig
     sig/Instruction.sig
     sig/Numbers.sig
+    sig/Output.sig
     sig/Parsing.sig
     sig/Printing.sig
     sml/AppleCore.sml
@@ -34,6 +36,7 @@ is
     sml/Instruction.sml
     sml/Native.sml
     sml/Numbers.sml
+    sml/Output.sml
     sml/Parsing.sml
     sml/Printing.sml
 

@@ -405,10 +405,11 @@ fun instBytes (inst,addr,map) =
 	  | _ => raise AssemblyError BadAddress
     end
 
-fun pass2 (sourceLine,inst,addr,map) =
+fun pass2 (output,sourceLine,inst,addr,map) =
     let
 	val bytes = instBytes (inst,addr,map)
     in
-	Printing.formatLine (SOME addr,bytes,File.data sourceLine)
+	(Output.addBytes (output,bytes),
+	 Printing.formatLine (SOME addr,bytes,File.data sourceLine))
     end
 end

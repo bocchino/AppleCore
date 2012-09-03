@@ -29,7 +29,7 @@ fun parseFileArg substr =
     case Substring.string (Substring.takel (fn c => not (c = #",")) 
 					   (Substring.dropl Char.isSpace substr)) of
 	"" => raise AssemblyError BadAddress
-      | str => str ^ ".avm"
+      | str => str
    
 fun parseDelimArg substr =
     case Substring.getc (Substring.dropl Char.isSpace substr) of
@@ -102,9 +102,9 @@ fun parse substr =
 	  | ".DA" => SOME (DA (parseDAExprList rest))
           | ".EQ" => SOME (EQ (Expression.parseArg rest))
 	  | ".HS" => SOME (HS (parseHexString rest))
-          | ".IN" => SOME (IN (parseFileArg rest))
+          | ".IN" => SOME (IN ((parseFileArg rest) ^ ".avm"))
           | ".OR" => SOME (OR (Expression.parseArg rest))
-	  | ".TF" => SOME (TF (parseStringArg rest))
+	  | ".TF" => SOME (TF (parseFileArg rest))
 	  | ".TA" => SOME Ignored
 	  | ".TI" => SOME Ignored
 	  | ".LIST" => SOME Ignored
@@ -208,10 +208,14 @@ fun instBytes (inst,addr,map) =
     end
 
 
-fun pass2 (sourceLine,inst,addr,map) =
+fun pass2 (output,sourceLine,inst,addr,map) =
     let
 	val bytes = instBytes (inst,addr,map)
+	val output = case inst of
+			 TF str => Output.tf (output,str)
+		       | _ => Output.addBytes (output,bytes)
     in
-	Printing.formatLine (SOME addr,bytes,File.data sourceLine)
+	(output,
+	 Printing.formatLine (SOME addr,bytes,File.data sourceLine))
     end
 end
