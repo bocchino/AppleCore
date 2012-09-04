@@ -1,0 +1,59 @@
+# -------------------------------
+# HELLO FILE FOR INT BASIC
+# WITH SHELL EDITOR
+# -------------------------------
+# SOFT SWITCH ADDRESSES
+# -------------------------------
+# READ ROM, WRITE RAM BANK 2
+CONST WRRAM2 $C081;
+# READ AND WRITE RAM BANK 2
+CONST RWRAM2 $C083;
+
+DATA ROM_77	    "ROM.77.EDITOR.OBJ";
+DATA INSTALL_EDITOR "INSTALL.SHELL.EDITOR.OBJ";
+DATA BTB	    "BTB.OBJ";
+
+FN DOS_COLD_START();
+FN AVM_UNPATCH_DOS();
+
+FN MAIN() {
+  # INSTALL ROM IN LANGUAGE CARD
+  SET_SWITCH(WRRAM2);
+  BLOAD(ROM_77);
+  # INSTALL SHELL EDITOR
+  SET_SWITCH(RWRAM2);
+  BLOAD_AND_CALL(INSTALL_EDITOR);
+  # RESTORE AND EXIT
+  AVM_UNPATCH_DOS();
+  DOS_COLD_START();
+}
+# -------------------------------
+# SET SOFT SWITCH
+# -------------------------------
+FN SET_SWITCH(SWITCH:2) {
+  VAR X:1;
+  SET X=SWITCH[0,1];
+  SET X=SWITCH[0,1];
+}
+# -------------------------------
+# BLOAD FILE
+# -------------------------------
+FN BLOAD(FILE:2) {
+  PRINT_STRING(DOS_BLOAD);
+  PRINT_STRING(FILE);
+  MON_CROUT();
+}
+# -------------------------------
+# LOAD AND CALL FILE
+# -------------------------------
+# ADDRESS OF LAST BLOAD
+CONST BLOAD_ADDR $AA72;
+
+FN BLOAD_AND_CALL(FILE:2) {
+  BLOAD(FILE);
+  BLOAD_ADDR[0,2]();
+}
+
+INCLUDE "DOS.AVM";
+INCLUDE "IO.AVM";
+

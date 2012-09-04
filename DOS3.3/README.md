@@ -15,14 +15,20 @@ This directory contains the following Apple II DOS 3.3 disk images:
 4.  BTB.v2d: Object code for the program "Below the Basement" in
     AppleCore/Examples/BelowTheBasement.
 
-5.  SHELL.EDITOR.dsk: A shell editor that's a bit nicer than the
-    native Apple II one, plus older ROM images patched to work with
-    the editor.  The editor resides in $D000 RAM bank 1, so it works
-    seamlessly with whatever is in bank 2 (usually Applesoft or
-    Integer BASIC).  Also, once installed the editor is invoked
-    automatically by AppleCore programs that ask for input via
-    MON.GETLN.
+5.  SHELL.EDITOR.FP.dsk and SHELL.EDITOR.INT.dsk: A shell editor
+    that's a bit nicer than the native Apple II one, plus ROM images
+    patched to work with the editor.  
 
-Please note: Only SHELL.EDITOR disk is bootable.
+    If you boot SHELL.EDITOR.FP.dsk, you'll get Applesoft BASIC with
+    the shell editor.  You then have the option to load the 1977 ROM
+    and/or INT BASIC, if you wish.
+
+    If you boot SHELL.EDITOR.INT.dsk, then you just get INT BASIC with
+    the old ROM.
+
+    The editor resides in $D000 RAM bank 1, so it works seamlessly
+    with whatever is in bank 2 (usually Applesoft or INT BASIC).
+    Also, once installed the editor is invoked automatically by
+    AppleCore programs that ask for input via MON.GETLN.
 
 

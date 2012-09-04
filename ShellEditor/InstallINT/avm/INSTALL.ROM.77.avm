@@ -18,7 +18,7 @@ INSTALL.ROM.77
 	LDA /ROM.STR
 	JSR PRINT.STRING
 * GO TO DOS COLD START
-        JSR DOS.COLD
+        JMP DOS.COLD
 *--------------------------------
 ROM.STR
 	.AS "ROM.77.EDITOR.OBJ"
