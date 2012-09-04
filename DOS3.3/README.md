@@ -13,16 +13,15 @@ This directory contains the following Apple II DOS 3.3 disk images:
 
 Booting from any of the three images provides the shell editor:
 
-  - If you boot SHELL.EDITOR.FP.dsk, you'll get Applesoft BASIC with
-    the shell editor.  You then have the option to load the 1977 ROM
-    and/or INT BASIC, if you wish.
+  - Booting from disks 1 or 2 gives you Integer BASIC with the 1977
+    ROM and the solid flashing cursor.
 
-  - If you boot from either of the other disks, then you just get INT
-    BASIC with the old ROM.
+  - Booting from SHELL.EDITOR.FP.dsk gives you Applesoft BASIC with
+    the Autostart ROM and the shell editor.  You then have the option
+    to load the 1977 ROM and/or Integer BASIC, if you wish.
 
 The editor resides in $D000 RAM bank 1, so it works seamlessly with
-whatever is in bank 2 (usually Applesoft or INT BASIC).  Also, once
-installed the editor is invoked automatically by AppleCore programs
-that ask for input via MON.GETLN.
-
+whatever is in bank 2 (usually Applesoft or Integer BASIC).  Also,
+once installed the editor is invoked automatically by AppleCore
+programs that ask for input via MON.GETLN.
 
