@@ -184,9 +184,9 @@ public class SCMacroEmitter
     }
 
     public void emitEpilogue() {
-        emitIncludeDirective("AVM");
+        emitIncludeDirective("AVM.AVM");
          // Start of program stack
-        emitLabel("AVM.STACK");
+        emitLabel("AVM.STACK\n");
     }
 
     public void emitIncludeDirective(String fileName) {

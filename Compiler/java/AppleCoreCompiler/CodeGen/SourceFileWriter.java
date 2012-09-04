@@ -47,7 +47,7 @@ public class SourceFileWriter
 	emitter.emitComment("the AppleCore Compiler, v1.0");
 	emitter.emitSeparatorComment();
 	if (!node.includeMode) {
-	    emitter.emitIncludeDirective("AVM.PROLOGUE");
+	    emitter.emitIncludeDirective("AVM.PROLOGUE.AVM");
 	    FunctionDecl firstFunction = null;
 	    for (Declaration decl : node.decls) {
 		if (decl instanceof FunctionDecl) {

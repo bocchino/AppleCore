@@ -4,8 +4,8 @@
 *--------------------------------
        .OR $1000
        .TF INSTALL.ROM.77.OBJ
-       .IN MON.EQ
-       .IN EDITOR.EQ
+       .IN MON.EQ.AVM
+       .IN EDITOR.EQ.AVM
 INSTALL.ROM.77
 * READ AND WRITE RAM BANK 2
        LDA RWRAM2
@@ -25,6 +25,6 @@ ROM.STR
 	.HS 0D
 	.HS 00
 *--------------------------------
-	.IN EDITOR.STRING.FNS
+	.IN EDITOR.STRING.FNS.AVM
 
 

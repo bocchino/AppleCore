@@ -1,0 +1,9 @@
+* -------------------------------
+* THE APPLECORE COMPILER, V1.0
+* APPLECORE VIRTUAL MACHINE
+* -------------------------------
+	.IN AVM.1.AVM
+	.IN AVM.2.AVM
+	.IN AVM.3.BINOP.AVM
+	.IN AVM.4.UNOP.AVM
+	.IN AVM.5.BUILT.IN.AVM

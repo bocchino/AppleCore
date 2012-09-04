@@ -2,7 +2,7 @@
 * THE APPLECORE COMPILER, V1.0
 * PROGRAM PROLOGUE
 * -------------------------------
-	.IN MON.EQ
+	.IN MON.EQ.AVM
 * -------------------------------
 * AVM REFERENCE LABELS
 * -------------------------------

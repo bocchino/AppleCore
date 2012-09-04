@@ -9,7 +9,7 @@ PROGRAM.START .EQ $2000
 * PROLOGUE
 * -------------------------------
 * USUAL AVM PROLOGUE
-       .IN AVM.PROLOGUE,D2
+       .IN AVM.PROLOGUE.AVM,D2
 * FIX UP STACK BOUND
        LDA #PROGRAM.START
        STA AVM.SP.BOUND
@@ -21,16 +21,12 @@ PROGRAM.START .EQ $2000
 * -------------------------------
 * INCLUDE MASTER PROGRAM
 * -------------------------------
-       .IN MASTER
+       .IN MASTER.AVM
 * -------------------------------
 * PUT AVM AFTER MASTER
 * -------------------------------
-       .IN AVM.1,D2
-       .IN AVM.2,D2
-       .IN AVM.3.BINOP,D2
-       .IN AVM.4.UNOP,D2
-       .IN AVM.5.BUILT.IN,D2
-       .IN IO,D2
+       .IN AVM.AVM
+       .IN IO.AVM
 * -------------------------------
 * PUT AVM STACK AFTER AVM
 * -------------------------------	
@@ -40,11 +36,11 @@ AVM.STACK
 * -------------------------------
        .OR PROGRAM.START
        .TF CHAIN.PROGRAM.1.OBJ
-       .IN CHAIN.PROGRAM.1
+       .IN CHAIN.PROGRAM.1.AVM
 * -------------------------------
 * PUT PROGRAM 2 AT PROGRAM.START
 * -------------------------------
        .OR PROGRAM.START
        .TF CHAIN.PROGRAM.2.OBJ
-       .IN CHAIN.PROGRAM.2
+       .IN CHAIN.PROGRAM.2.AVM
 

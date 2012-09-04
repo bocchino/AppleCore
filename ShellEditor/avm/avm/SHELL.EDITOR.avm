@@ -2,38 +2,38 @@
 * SIMPLE SHELL EDITOR FOR APPLE //e
 * -------------------------------
 * MONITOR EQUATES
-       .IN MON.EQ
+       .IN MON.EQ.AVM
 * SHELL EDITOR EQUATES
-       .IN EDITOR.EQ
+       .IN EDITOR.EQ.AVM
 * -------------------------------
 * INSTALL APPLESOFT IN RAM BANK 2
 * -------------------------------
 	.OR $1000
 	.TF INSTALL.APPLESOFT.OBJ
-	.IN INSTALL.APPLESOFT
+	.IN INSTALL.APPLESOFT.AVM
 * -------------------------------
 * INSTALL EDITOR IN RAM BANK 1
 * -------------------------------
        .OR $1000
        .TF INSTALL.SHELL.EDITOR.OBJ
-       .IN INSTALL.SHELL.EDITOR
-       .IN EDITOR.STRING.FNS
+       .IN INSTALL.SHELL.EDITOR.AVM
+       .IN EDITOR.STRING.FNS.AVM
 * -------------------------------
 * UNINSTALL EDITOR
 * -------------------------------
        .OR $1000
        .TF UNINSTALL.SHELL.EDITOR.OBJ
-       .IN UNINSTALL.SHELL.EDITOR
+       .IN UNINSTALL.SHELL.EDITOR.AVM
 * -------------------------------
 * DRIVER
 * -------------------------------
        .OR $9CDA
        .TF SHELL.EDITOR.DRIVER.OBJ
 DRIVER
-       .IN DRIVER
+       .IN DRIVER.AVM
 * -------------------------------
 * EDITOR
 * -------------------------------
        .OR $D000
        .TF SHELL.EDITOR.OBJ
-       .IN EDITOR
+       .IN EDITOR.AVM
