@@ -47,7 +47,7 @@ To use the AppleCore installation, you need the following:
 
 To set up your Mac to use AppleCore, do the following:
 
-1.  If necessary, install Virtual ][ and SML/NJ.
+1.  If necessary install Java, XCode, Virtual ][, and/or SML/NJ.
 
 2.  Download the AppleCore distribution from the git repository:
 
@@ -98,11 +98,11 @@ ac/HELLO.WORLD.ac.  That's the program we'll compile.  Next, type
 `make clean` and then `make`.  A directory `obj` should appear
 containing two files:
 
-1.  `HELLO.WORLD.OBJ` containing the binary code for the
-    compiled program.
+1.  `HELLO.WORLD.OBJ`, which contains the binary code for the compiled
+    program.
 
-2.  `_AppleDOSMappings.plist` that tells Virtual ][ how to interpret
-    the OS X file as an Apple II DOS file.
+2.  `_AppleDOSMappings.plist`, an XML file that tells Virtual ][ how
+    to interpret HELLO.WORLD.OBJ as an Apple II DOS file.
 
 If you would like to see the assembled output listing, then say `make
 OPTS=-l`.  That tells the assembler to list the assembly to the
@@ -114,14 +114,14 @@ assembled into the final program.
 
 Notice also that the compiler and the assembler both require options
 indicating where to find included files.  Those options are specified
-in the file ${APPLECORE}/HelloWorld/Makefile.  See sections 8 and 9
+in the file ${APPLECORE}/Examples/HelloWorld/Makefile.  See sections 8 and 9
 below for more information about these options.
 
 7\. Running AppleCore Programs
 ------------------------------
 
 To run a compiled AppleCore program, start up Virtual ][ and boot DOS
-3.3.  Drag the output directory into one of the emulator's virutal
+3.3.  Drag the output directory into one of the emulator's virtual
 disk drives and use the directory as a normal DOS 3.3 disk.  
 
 For example, to run the "hello world" program, drag
@@ -131,14 +131,27 @@ Apple II should respond by printing
 
    `HELLO, WORLD!`
 
-to the console.
+to the screen.
 
 The nice thing about Virtual ][ is that it lets you treat OS X
 directories (with the proper mappings list) as DOS 3.3 disks.  This
-makes it easy to transfer files between the Mac and the emulator.You
-can also use a utility such as Apple Commander
-(http://applecommander.sourceforge.net/) to construct DOS 3.3 disk
-images, if you like.
+makes it easy to transfer files between the Mac and the emulator.
+
+The utility Copy II Plus
+(http://www.vectronicsappleworld.com/appleii/internet.html#copy) is
+also handy for managing files.  For example, let's say you want to
+collect the OBJ files from several output directories onto one disk
+image.  You can put each of the directories into Virtual ][ in turn,
+and use Copy II Plus to copy the OBJ file from each one to the target
+image.
+
+The same thing works for copying DOS 3.3 files from one OS X directory
+to another.  Note that simply using `cp` won't work (unless the target
+directory has only one DOS 3.3 file) because the DOS mapping list in
+the target directory has to contain the information for all the files
+in the directory.  I intend to write a utility `aii-cp` that copies
+files and automatically merges the mapping list; but I haven't done
+that yet.
 
 8\. The AppleCore Compiler (acc)
 -------------------------------
