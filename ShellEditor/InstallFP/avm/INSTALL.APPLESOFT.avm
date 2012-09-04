@@ -1,7 +1,10 @@
 *--------------------------------
 * INSTALL APPLESOFT IN RAM BANK 2
 *--------------------------------
-INSTALL.AS
+	.OR $1000
+	.TF INSTALL.APPLESOFT.OBJ
+       .IN MON.EQ.AVM
+       .IN EDITOR.EQ.AVM
 * READ ROM, WRITE RAM BANK 2
 	LDA WRRAM2
 	LDA WRRAM2

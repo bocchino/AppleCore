@@ -6,12 +6,6 @@
 * SHELL EDITOR EQUATES
        .IN EDITOR.EQ.AVM
 * -------------------------------
-* INSTALL APPLESOFT IN RAM BANK 2
-* -------------------------------
-	.OR $1000
-	.TF INSTALL.APPLESOFT.OBJ
-	.IN INSTALL.APPLESOFT.AVM
-* -------------------------------
 * INSTALL EDITOR IN RAM BANK 1
 * -------------------------------
        .OR $1000
