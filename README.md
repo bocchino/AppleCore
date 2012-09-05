@@ -119,8 +119,10 @@ directories as DOS 3.3 disks.  This makes it easy to transfer files
 between the Mac and the emulator.
 
 To run a compiled AppleCore program, start up Virtual ][ and boot DOS
-3.3.  Drag the output directory into one of the emulator's virtual
-disk drives and use the directory as a normal DOS 3.3 disk.  
+3.3.  Drag the directory containing the file you want to run into one
+of the emulator's virtual disk drives.  Now DOS commands run from
+inside the emulator can "see" the files in the mounted directory as
+Apple II DOS files.
 
 For example, to run the "hello world" program, drag
 `${APPLECORE}/Examples/HelloWorld/obj` into one of the drives, say
@@ -134,13 +136,14 @@ printing
 
 to the screen.
 
-File management on the Mac is easy: Virtual ][ reads in the binary
-files exactly as they are stored on the Mac, so (for example) you can
-make a virtual disk with multiple files in it simply by copying all
-the files to an OS X directory, and mounting it.  If you wish, you can
-(1) use a utility like Copy II Plus
+Using Virtual ][, file management on the Mac is easy: Virtual ][ reads
+in the binary files exactly as they are stored on the Mac, so (for
+example) you can make a virtual disk with multiple files in it simply
+by copying all the files to an OS X directory, and mounting it.  If
+you wish, you can (1) use a utility like Copy II Plus
 (http://www.vectronicsappleworld.com/appleii/internet.html#copy) to
-make DOS 3.3 disk image files and/or (2) send the contents of an OS X
+make DOS 3.3 disk image files (this is particularly handy for creating
+bootable disk images) and/or (2) send the contents of an OS X
 directory or disk image to an actual floppy, using an actual Apple II.
 See the Virtual ][ documentation for more details.
 
