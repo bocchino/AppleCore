@@ -2,6 +2,6 @@ SC-AVM-ASM = ${APPLECORE}/Assembler/bin/sc-avm-asm -i ${APPLECORE}/Lib/avm:${APP
 
 TARGET=SHELL.EDITOR
 
-include ${APPLECORE}/Makefile.avm.common.2
+include ${APPLECORE}/Makefile.avm.common
 
 

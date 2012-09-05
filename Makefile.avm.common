@@ -1,44 +1,13 @@
 #
-# Makefile for translating handwritten .avm files.
+# Makefile for translating AVM files
 #
-ACC      ?= ${APPLECORE}/Compiler/bin/acc
-AVM-ASM  ?= ${APPLECORE}/Assembler/bin/avm-asm
-ASM2EXEC  = ${APPLECORE}/Scripts/asm2exec
-SRCS      = ${wildcard avm/*.avm}
-MAKE_ALL ?= perl ${APPLECORE}/Scripts/make-all.pl
-SC-AVM-ASM ?= ${APPLECORE}/Assembler/bin/sc-avm-asm -i ${APPLECORE}/Lib/avm:${APPLECORE}/Lib-AVM/avm:${APPLECORE}/Runtime/avm -d obj -l
+SC-AVM-ASM ?= ${APPLECORE}/Assembler/bin/sc-avm-asm -i ${APPLECORE}/Lib/avm:${APPLECORE}/Lib-AVM/avm:${APPLECORE}/Runtime/avm -d obj ${OPTS}
 
-all : all-exec
-
-all-obj : avm/${FILE}.avm obj
-	${SC-AVM-ASM} $<
-
-all-asm : asm ${SRCS}
-	${MAKE_ALL} avm asm
-
-all-exec : exec all-asm
-	${MAKE_ALL} asm exec
-
-file-asm : avm/${FILE}.avm
-	make asm/${FILE}.asm
-
-file-exec : asm/${FILE}.asm
-	make exec/${FILE}.exec
-
-asm/${FILE}.asm : avm/${FILE}.avm asm
-	${AVM-ASM} $< > $@
-
-exec/${FILE}.exec : asm/${FILE}.asm exec 
-	${ASM2EXEC} < $< > $@
-
-asm :
-	mkdir $@
+all-obj : obj
+	${SC-AVM-ASM} avm/${TARGET}.avm
 
 obj :
 	mkdir $@
 
-exec :
-	mkdir $@
-
 clean ::
-	rm -Rf asm exec
+	rm -Rf obj

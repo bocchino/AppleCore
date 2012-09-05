@@ -2,7 +2,7 @@ SC-AVM-ASM = ${APPLECORE}/Assembler/bin/sc-avm-asm -i ${APPLECORE}/Lib/avm:${APP
 
 TARGET=BTB
 
-include ${APPLECORE}/Makefile.avm.common.2
+include ${APPLECORE}/Makefile.avm.common
 
 
 
