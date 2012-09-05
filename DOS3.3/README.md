@@ -22,6 +22,9 @@ Booting from any of the three images provides the shell editor:
 
 The editor resides in $D000 RAM bank 1, so it works seamlessly with
 whatever is in bank 2 (usually Applesoft or Integer BASIC).  Also,
-once installed the editor is invoked automatically by AppleCore
-programs that ask for input via MON.GETLN.
+once it is installed, the editor is automatically invoked by AppleCore
+(or BASIC or other) programs that ask for input via MON.GETLN.
+
+I constructed these disk images using the utility Copy II Plus
+(http://www.vectronicsappleworld.com/appleii/internet.html#copy).
 

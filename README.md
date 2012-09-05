@@ -96,13 +96,7 @@ To see how this is done, go to the directory
 `${APPLECORE}/Examples/HelloWorld`.  First, peek at the source program
 ac/HELLO.WORLD.ac.  That's the program we'll compile.  Next, type
 `make clean` and then `make`.  A directory `obj` should appear
-containing two files:
-
-1.  `HELLO.WORLD.OBJ`, which contains the binary code for the compiled
-    program.
-
-2.  `_AppleDOSMappings.plist`, an XML file that tells Virtual ][ how
-    to interpret HELLO.WORLD.OBJ as an Apple II DOS file.
+containing the binary executable file `HELLO.WORLD.OBJ`.
 
 If you would like to see the assembled output listing, then say `make
 OPTS=-l`.  That tells the assembler to list the assembly to the
@@ -136,22 +130,6 @@ to the screen.
 The nice thing about Virtual ][ is that it lets you treat OS X
 directories (with the proper mappings list) as DOS 3.3 disks.  This
 makes it easy to transfer files between the Mac and the emulator.
-
-The utility Copy II Plus
-(http://www.vectronicsappleworld.com/appleii/internet.html#copy) is
-also handy for managing files.  For example, let's say you want to
-collect the OBJ files from several output directories onto one disk
-image.  You can put each of the directories into Virtual ][ in turn,
-and use Copy II Plus to copy the OBJ file from each one to the target
-image.
-
-The same thing works for copying DOS 3.3 files from one OS X directory
-to another.  Note that simply using `cp` won't work (unless the target
-directory has only one DOS 3.3 file) because the DOS mapping list in
-the target directory has to contain the information for all the files
-in the directory.  I intend to write a utility `aii-cp` that copies
-files and automatically merges the mapping list; but I haven't done
-that yet.
 
 8\. The AppleCore Compiler (acc)
 -------------------------------
