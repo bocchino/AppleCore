@@ -25,6 +25,4 @@ whatever is in bank 2 (usually Applesoft or Integer BASIC).  Also,
 once it is installed, the editor is automatically invoked by AppleCore
 (or BASIC or other) programs that ask for input via MON.GETLN.
 
-I constructed these disk images using the utility Copy II Plus
-(http://www.vectronicsappleworld.com/appleii/internet.html#copy).
 

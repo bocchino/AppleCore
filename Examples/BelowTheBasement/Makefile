@@ -1,5 +1,5 @@
 all : BTB
-	make ${APPLECORE}/ShellEditor
+	make -C ${APPLECORE}/ShellEditor
 	cp ${APPLECORE}/ROMs/ROM.77.EDITOR.OBJ BTB
 	cp ${APPLECORE}/ShellEditor/INT/* BTB
 	make -C Boot
