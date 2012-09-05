@@ -114,9 +114,9 @@ below for more information about these options.
 7\. Running AppleCore Programs
 ------------------------------
 
-One nice thing about Virtual ][ is that it lets you treat OS X
-directories as DOS 3.3 disks.  This makes it easy to transfer files
-between the Mac and the emulator.
+One nice thing about Virtual ][ is that it reads and writes OS X
+directories as if they were virtual DOS 3.3 disks.  This feature makes
+it easy to transfer files between the Mac and the emulator.
 
 To run a compiled AppleCore program, start up Virtual ][ and boot DOS
 3.3.  Drag the directory containing the file you want to run into one
