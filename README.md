@@ -64,8 +64,8 @@ To set up your Mac to use AppleCore, do the following:
     `cd ${APPLECORE}`
     `make`
 
-It should build the without any errors.  If not, fix the problem and
-try again until it works.
+The build should succeed without any errors.  If not, fix the problem
+and try again until it works.
 
 5\. Writing AppleCore Programs
 ------------------------------
