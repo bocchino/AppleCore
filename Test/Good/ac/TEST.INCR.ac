@@ -11,4 +11,4 @@ FN MAIN() {
    PRINT_CHAR(A);
 }
 
-INCLUDE "IO";
+INCLUDE "IO.AVM";

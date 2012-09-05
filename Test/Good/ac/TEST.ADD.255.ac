@@ -22,4 +22,4 @@ FN:1 RET_1() {
 }
 
 
-INCLUDE "IO";
+INCLUDE "IO.AVM";

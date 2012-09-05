@@ -12,4 +12,4 @@ all-include : obj all-avm
 clean-include : clean
 	make -C Include clean
 
-include ../../Makefile.ac.common.2
+include ../../Makefile.ac.common

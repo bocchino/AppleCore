@@ -30,4 +30,4 @@ FN MAIN() {
 
 }
 
-INCLUDE "IO";
+INCLUDE "IO.AVM";

@@ -2,55 +2,23 @@
 # Makefile for translating AppleCore source files.
 #
 ACC      ?= ${APPLECORE}/Compiler/bin/acc
-AVM-ASM  ?= ${APPLECORE}/Assembler/bin/avm-asm
-ASM2EXEC = ${APPLECORE}/Scripts/asm2exec
 SRCS     ?= ${wildcard ac/*.ac}
 MAKE_ALL ?= perl ${APPLECORE}/Scripts/make-all.pl
-SC-AVM-ASM ?= ${APPLECORE}/Assembler/bin/sc-avm-asm -i ${APPLECORE}/Lib/avm:${APPLECORE}/Lib-AVM/avm:${APPLECORE}/Runtime/avm -d obj -l
-
-all : all-exec
-
-all-obj : obj all-avm
-	${SC-AVM-ASM} avm/${FILE}.avm
 
 all-avm : avm ${SRCS}
 	${MAKE_ALL} ac avm
 
-all-asm : asm all-avm
-	${MAKE_ALL} avm asm
-
-all-exec : exec all-asm
-	${MAKE_ALL} asm exec
-
 file-avm : ac/${FILE}.ac
 	make avm/${FILE}.avm
-
-file-asm : avm/${FILE}.avm
-	make asm/${FILE}.asm
-
-file-exec : asm/${FILE}.asm
-	make exec/${FILE}.exec
 
 avm/${FILE}.avm : ${SRCS} avm
 	${ACC} ac/${FILE}.ac > $@
 
-asm/${FILE}.asm : avm/${FILE}.avm asm
-	${AVM-ASM} $< > $@
-
-exec/${FILE}.exec : asm/${FILE}.asm exec
-	${ASM2EXEC} < $< > $@
-
 obj :
-	mkdir $@
-
-exec : 
-	mkdir $@
-
-asm :
 	mkdir $@
 
 avm :
 	mkdir $@
 
 clean ::
-	rm -Rf asm avm exec obj
+	rm -Rf avm obj

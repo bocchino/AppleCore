@@ -21,4 +21,4 @@ FN:4 RTN(N:4) {
    RETURN N;
 }
 
-INCLUDE "IO";
+INCLUDE "IO.AVM";

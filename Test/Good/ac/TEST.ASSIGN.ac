@@ -10,4 +10,4 @@ FN MAIN() {
    PRINT_HEX(@N,4);
 }
 
-INCLUDE "IO";
+INCLUDE "IO.AVM";

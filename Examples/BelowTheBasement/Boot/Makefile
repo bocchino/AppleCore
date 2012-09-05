@@ -6,6 +6,6 @@ SC-AVM-ASM = ${APPLECORE}/Assembler/bin/sc-avm-asm -i ${APPLECORE}/Lib/avm:${APP
 all : obj all-avm
 	${SC-AVM-ASM} avm/HELLO.avm
 
-include ${APPLECORE}/Makefile.ac.common.2
+include ${APPLECORE}/Makefile.ac.common
 
 

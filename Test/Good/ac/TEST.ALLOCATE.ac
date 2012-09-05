@@ -28,4 +28,4 @@ FN MAIN() {
    MON_CROUT();
 }
 
-INCLUDE "IO";
+INCLUDE "IO.AVM";
