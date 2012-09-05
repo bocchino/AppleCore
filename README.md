@@ -127,9 +127,9 @@ Apple II should respond by printing
 
 to the screen.
 
-The nice thing about Virtual ][ is that it lets you treat OS X
-directories (with the proper mappings list) as DOS 3.3 disks.  This
-makes it easy to transfer files between the Mac and the emulator.
+One nice thing about Virtual ][ is that it lets you treat OS X
+directories as DOS 3.3 disks.  This makes it easy to transfer files
+between the Mac and the emulator.
 
 8\. The AppleCore Compiler (acc)
 -------------------------------
