@@ -1,3 +1,6 @@
+
+(* Module representing assembler errors *)
+
 signature ERROR =
 sig
 
@@ -13,12 +16,17 @@ sig
 	   | UndefinedLabel
 	   | UnsupportedDirective
 
+    (* An error that occurred during assembly *)
     exception AssemblyError of t
+
+    (* An error that occurred during the processing
+       of a line *)
     exception LineError of {fileName:string,
 			    lineNum:int,
 			    lineData:string,
 			    err:exn}
 
+    (* Print an error message *)
     val show : exn -> unit
 
 end

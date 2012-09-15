@@ -1,3 +1,4 @@
+(* Main program *)
 signature ASSEMBLER =
 sig
 

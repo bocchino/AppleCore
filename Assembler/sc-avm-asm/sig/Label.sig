@@ -22,8 +22,8 @@ sig
     (* Create a fresh map *)
     val fresh : map
 
-    (* Add a fresh mapping to the map.  Throws an exception if
-       the label is already there. *)
+    (* Add a fresh mapping to the map.  
+       Throw an exception if the label is already there. *)
     val add : (map * t * source) -> map
 
     (* Update the source of a mapping. *)
