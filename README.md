@@ -240,11 +240,9 @@ acc accepts the following command-line options:
 
   - `-d outdir`
 
-    Set the output directory to outdir.  All output files are written
-    to that directory, and a new mappings list is created in the
-    directory to describe the files.  Any existing mappings list, and
-    any existing files with the same name as an outpuf file, is
-    destroyed.  If no -d option is specified, the default is the
+    Set the output directory to outdir.  All output files, including
+    any files specified by .TF directives, are written to that
+    directory.  If no -d option is specified, then the default is the
     current working directory.
 
   - `-i p1:...:pn`
