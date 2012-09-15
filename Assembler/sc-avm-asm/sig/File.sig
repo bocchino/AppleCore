@@ -14,7 +14,6 @@ sig
     (* Include file 'name' *)
     val includeIn : t -> name -> t
 
-
     (* A type representing a line of an input file *)
     type line
 

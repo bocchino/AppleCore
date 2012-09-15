@@ -80,20 +80,6 @@ fun parse substr =
 	      | _                    => SOME (Term t,substr'))
           | _ => NONE
     end
-    
-fun parseListRest parse results substr =
-    case getc (dropl isSpace substr) of
-	SOME (#",",substr') =>
-	(case parse (dropl isSpace substr') of
-	    SOME (result, substr'') => 
-	    parseListRest parse (result :: results) substr''
-          | _ => raise AssemblyError BadAddress)
-      | _ => SOME (List.rev results,substr)
-	     
-fun parseList parse substr =
-    case parse (dropl isSpace substr) of
-	SOME (result,substr') => parseListRest parse [result] substr'
-      | _ => SOME ([],substr)
 
 fun parseArg substr =
     case parse substr of
