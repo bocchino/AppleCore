@@ -302,11 +302,11 @@ $$\nonterm{decl} ::= \mbox{\nonterm{const-decl} $|$
     $|$ \nonterm{include-decl}}$$
 
 \bfhead{Constant declarations.} A constant declaration consists of the
-keyword \kwd{CONST}, an identifier, an expression, and a terminating
-semicolon:
+keyword \kwd{CONST}, an identifier, an optional expression, and a
+terminating semicolon:
 
 $$\nonterm{const-decl} ::= \mbox{\kwd{CONST} \nonterm{identifier}
-  \nonterm{expr} \kwd{;}}$$
+  \opt{\nonterm{expr}} \kwd{;}}$$
 
 \bfhead{Data declarations.} A data declaration consists of the keyword
 \kwd{DATA}, an optional identifier representing a label for the data,
@@ -831,13 +831,20 @@ that translation produces actual bytes of machine code, data, or
 reserved storage, the bytes must be laid out in the order in which the
 translated constructs are encountered in the source file.
 
-\bfhead{Constant declarations.} The compiler (1) evaluates the
-expression of the constant declaration to a numeric constant according
-to the rules in Section~\ref{sec:code-gen:expressions} and (2)
-associates this value with the name given in the constant declaration.
-The compilation must support the use of the same identifier for
-different constant declarations in different files that are part of
-the same final assembly (Section~\ref{sec:code-gen:source-files}).
+\bfhead{Constant declarations.} If the constant declaration contains
+an expression, then the compiler (1) evaluates the expression of the
+constant declaration to a numeric constant according to the rules in
+Section~\ref{sec:code-gen:expressions} and (2) associates this value
+with the name given in the constant declaration.  The compilation must
+support the use of the same identifier for different constant
+declarations in different files that are part of the same final
+assembly (Section~\ref{sec:code-gen:source-files}).
+
+If the constant declaration contains no expression, then the name in
+the declaration must refer to the two-byte unsigned value associated
+with an assembler label.  This feature exists so that an AppleCore
+file that is compiled and linked against an assembly file may refer to
+labels defined in the assembly file.
 
 \bfhead{Data declarations.} (1) If an expression appears before the
 semicolon, then the compiler evaluates the expression to a numeric

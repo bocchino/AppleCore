@@ -51,8 +51,8 @@ VAR NUM_STR:6;
 # -----------------------------------
 # INITIALIZE VARIABLES
 # -----------------------------------
-FN AVM_SP_BOUND();
-FN AVM_STACK();
+CONST AVM_SP_BOUND;
+CONST AVM_STACK;
 
 FN INIT_VARS() {
   VAR STACK_ADDR:2=AVM_STACK;

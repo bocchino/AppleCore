@@ -129,18 +129,27 @@ public class SourceFileWriter
     public void visitVarDecl(VarDecl node) 
 	throws ACCError
     {
+	boolean OK = false;
 	emitter.emitLabel(node.name);
 	if (node.init == null) {
 	    emitter.emitBlockStorage(node.size);
+	    OK = true;
 	}
-	else {
-	    // Previous passes must ensure cast will succeed.
-	    if (!(node.init instanceof NumericConstant)) {
-		throw new ACCInternalError("non-constant initializer expr for ", node);
+	else if (node.init instanceof Identifier) {
+	    Identifier id = (Identifier) node.init;
+	    if (id.def instanceof ConstDecl) {
+		emitter.emitAsData(id);
+		OK = true;
 	    }
+	}
+	else if (node.init instanceof NumericConstant) {
 	    NumericConstant constant = 
 		(NumericConstant) node.init;
 	    emitter.emitAsData(constant, node.size);
+	    OK = true;
+	}
+	if (!OK) {
+	    throw new ACCInternalError("non-constant initializer expr for ", node);
 	}
     }
 

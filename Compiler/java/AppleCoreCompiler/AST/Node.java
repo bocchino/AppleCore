@@ -69,7 +69,10 @@ public abstract class Node {
     {
 	public String label;
 	public Expression expr;
-	public int getSize() { return expr.getSize(); }
+	public int getSize() { 
+	    if (expr == null) return 2;
+	    return expr.getSize(); 
+	}
 	public boolean isSigned() { return false; }
 
 	public void accept(Visitor v) throws ACCError {

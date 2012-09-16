@@ -31,7 +31,8 @@ public class ConstantEvaluationPass
 	super.visitIdentifier(node);
 	if (node.def instanceof ConstDecl) {
 	    ConstDecl cd = (ConstDecl) node.def;
-	    result = cd.expr;
+	    if (cd.expr != null)
+		result = cd.expr;
 	}
     }
 

@@ -95,7 +95,10 @@ public class AVMTranslatorPass
 	}
 	else if (def instanceof ConstDecl) {
 	    ConstDecl cd = (ConstDecl) def;
-	    scan(cd.expr);
+	    if (cd.expr == null)
+		emit(new PHCInstruction(new Address(cd.label)));
+	    else
+		scan(cd.expr);
 	}
 	else if (def instanceof DataDecl) {
 	    DataDecl dataDecl = (DataDecl) def;
