@@ -38,12 +38,12 @@ public class SCMacroEmitter
     }
 
     public void emitAbsoluteInstruction(String mnemonic, String label) {
-	emitInstruction(mnemonic + " " + label);
+	emitInstruction(mnemonic + " " + makeLabel(label));
     }
 
     public void emitImmediateInstruction(String mnemonic, String imm, boolean high) {
 	String marker = high ? " /" : " #";
-	emitInstruction(mnemonic + marker + imm);
+	emitInstruction(mnemonic + marker + makeLabel(imm));
     }
 
     public void emitImmediateInstruction(String mnemonic, int imm) {

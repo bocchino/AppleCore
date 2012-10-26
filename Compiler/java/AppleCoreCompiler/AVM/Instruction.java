@@ -14,6 +14,11 @@ public abstract class Instruction {
 	this.mnemonic = mnemonic;
     }
 
+    /**
+     * Generic visitor method
+     */    
+    public abstract void accept(Visitor v);
+
     protected String instructionString(Object suffix) {
 	return mnemonic + " " + suffix.toString();
     }
@@ -41,6 +46,10 @@ public abstract class Instruction {
 	    super("BRK");
 	}
 
+	public void accept(Visitor v) {
+	    v.visitBRKInstruction(this);
+	}
+
     }
 
     /**
@@ -54,6 +63,10 @@ public abstract class Instruction {
 	public BRFInstruction(LabelInstruction target) {
 	    super("BRF");
 	    this.target=target;
+	}
+
+	public void accept(Visitor v) {
+	    v.visitBRFInstruction(this);
 	}
 
 	public String toString() {
@@ -74,6 +87,10 @@ public abstract class Instruction {
 	    this.target=target;
 	}
 
+	public void accept(Visitor v) {
+	    v.visitBRUInstruction(this);
+	}
+
 	public String toString() {
 	    return instructionString(target);
 	}
@@ -92,6 +109,10 @@ public abstract class Instruction {
 	    this.address=address;
 	}
 
+	public void accept(Visitor v) {
+	    v.visitCFDInstruction(this);
+	}
+
 	public String toString() {
 	    return instructionString(address);
 	}
@@ -105,6 +126,10 @@ public abstract class Instruction {
     {
 	public CFIInstruction() {
 	    super("CFI");
+	}
+
+	public void accept(Visitor v) {
+	    v.visitCFIInstruction(this);
 	}
 
     }
@@ -136,6 +161,11 @@ public abstract class Instruction {
 	public ADDInstruction(int size) {
 	    super("ADD",size);
 	}
+
+	public void accept(Visitor v) {
+	    v.visitADDInstruction(this);
+	}
+
     }
 
     /**
@@ -147,6 +177,11 @@ public abstract class Instruction {
 	public ANLInstruction(int size) {
 	    super("ANL",size);
 	}
+
+	public void accept(Visitor v) {
+	    v.visitANLInstruction(this);
+	}
+
     }
 
     /**
@@ -157,6 +192,10 @@ public abstract class Instruction {
     {
 	public DCRInstruction(int size) {
 	    super("DCR",size);
+	}
+
+	public void accept(Visitor v) {
+	    v.visitDCRInstruction(this);
 	}
     }
 
@@ -169,6 +208,10 @@ public abstract class Instruction {
 	public DSPInstruction(int size) {
 	    super("DSP",size);
 	}
+
+	public void accept(Visitor v) {
+	    v.visitDSPInstruction(this);
+	}
     }
 
     /**
@@ -180,6 +223,10 @@ public abstract class Instruction {
 	public ICRInstruction(int size) {
 	    super("ICR",size);
 	}
+
+	public void accept(Visitor v) {
+	    v.visitICRInstruction(this);
+	}
     }
 
     /**
@@ -190,6 +237,10 @@ public abstract class Instruction {
     {
 	public ISPInstruction(int size) {
 	    super("ISP",size);
+	}
+
+	public void accept(Visitor v) {
+	    v.visitISPInstruction(this);
 	}
     }
 
@@ -203,6 +254,10 @@ public abstract class Instruction {
 	public MTVInstruction(int offset, Address address) {
 	    super("MTV",offset);
 	    this.address = address;
+	}
+
+	public void accept(Visitor v) {
+	    v.visitMTVInstruction(this);
 	}
 
 	public String toString() {
@@ -220,6 +275,10 @@ public abstract class Instruction {
 	public MTSInstruction(int size) {
 	    super("MTS",size);
 	}
+
+	public void accept(Visitor v) {
+	    v.visitMTSInstruction(this);
+	}
     }
 
     /**
@@ -230,6 +289,10 @@ public abstract class Instruction {
     {
 	public NEGInstruction(int size) {
 	    super("NEG",size);
+	}
+
+	public void accept(Visitor v) {
+	    v.visitNEGInstruction(this);
 	}
     }
 
@@ -242,6 +305,10 @@ public abstract class Instruction {
 	public NOTInstruction(int size) {
 	    super("NOT",size);
 	}
+
+	public void accept(Visitor v) {
+	    v.visitNOTInstruction(this);
+	}
     }
 	
     /**
@@ -253,6 +320,10 @@ public abstract class Instruction {
 	public ORLInstruction(int size) {
 	    super("ORL",size);
 	}
+
+	public void accept(Visitor v) {
+	    v.visitORLInstruction(this);
+	}
     }
 
     /**
@@ -263,6 +334,10 @@ public abstract class Instruction {
     {
 	public ORXInstruction(int size) {
 	    super("ORX",size);
+	}
+
+	public void accept(Visitor v) {
+	    v.visitORXInstruction(this);
 	}
     }
 
@@ -287,6 +362,10 @@ public abstract class Instruction {
 	    this.address = address;
 	}
 
+	public void accept(Visitor v) {
+	    v.visitPHCInstruction(this);
+	}
+
 	public String toString() {
 	    if (constant != null) {
 		return instructionString(constant.valueAsHexString());
@@ -305,6 +384,10 @@ public abstract class Instruction {
 	public PVAInstruction(int slot) {
 	    super("PVA", slot);
 	}
+
+	public void accept(Visitor v) {
+	    v.visitPVAInstruction(this);
+	}
     }
 
     /**
@@ -316,6 +399,10 @@ public abstract class Instruction {
 	public RAFInstruction(int size) {
 	    super("RAF",size);
 	}
+
+	public void accept(Visitor v) {
+	    v.visitRAFInstruction(this);
+	}
     }
 
     /**
@@ -326,6 +413,10 @@ public abstract class Instruction {
     {
 	public SHLInstruction(int size) {
 	    super("SHL",size);
+	}
+
+	public void accept(Visitor v) {
+	    v.visitSHLInstruction(this);
 	}
     }
 
@@ -339,6 +430,10 @@ public abstract class Instruction {
 	public VTMInstruction(int offset, Address address) {
 	    super("VTM",offset);
 	    this.address = address;
+	}
+
+	public void accept(Visitor v) {
+	    v.visitVTMInstruction(this);
 	}
 
 	public String toString() {
@@ -356,6 +451,10 @@ public abstract class Instruction {
 	public STMInstruction(int size) {
 	    super("STM",size);
 	}
+
+	public void accept(Visitor v) {
+	    v.visitSTMInstruction(this);
+	}
     }
 
     /**
@@ -367,6 +466,10 @@ public abstract class Instruction {
 	public SUBInstruction(int size) {
 	    super("SUB",size);
 	}
+
+	public void accept(Visitor v) {
+	    v.visitSUBInstruction(this);
+	}
     }
 
     /**
@@ -377,6 +480,10 @@ public abstract class Instruction {
     {
 	public TEQInstruction(int size) {
 	    super("TEQ",size);
+	}
+
+	public void accept(Visitor v) {
+	    v.visitTEQInstruction(this);
 	}
     }
 
@@ -409,6 +516,10 @@ public abstract class Instruction {
 	public DIVInstruction(int size, boolean isSigned) {
 	    super("DIV",size,isSigned);
 	}
+
+	public void accept(Visitor v) {
+	    v.visitDIVInstruction(this);
+	}
     }
 
     /**
@@ -419,6 +530,10 @@ public abstract class Instruction {
     {
 	public EXTInstruction(int size, boolean isSigned) {
 	    super("EXT",size,isSigned);
+	}
+
+	public void accept(Visitor v) {
+	    v.visitEXTInstruction(this);
 	}
     }
     
@@ -431,6 +546,10 @@ public abstract class Instruction {
 	public MULInstruction(int size, boolean isSigned) {
 	    super("MUL",size,isSigned);
 	}
+
+	public void accept(Visitor v) {
+	    v.visitMULInstruction(this);
+	}
     }
 
     /**
@@ -441,6 +560,10 @@ public abstract class Instruction {
     {
 	public SHRInstruction(int size, boolean isSigned) {
 	    super("SHR",size,isSigned);
+	}
+
+	public void accept(Visitor v) {
+	    v.visitSHRInstruction(this);
 	}
     }
 
@@ -453,6 +576,10 @@ public abstract class Instruction {
 	public TGEInstruction(int size, boolean isSigned) {
 	    super("TGE",size,isSigned);
 	}
+
+	public void accept(Visitor v) {
+	    v.visitTGEInstruction(this);
+	}
     }
 
     /**
@@ -463,6 +590,10 @@ public abstract class Instruction {
     {
 	public TGTInstruction(int size, boolean isSigned) {
 	    super("TGT",size,isSigned);
+	}
+
+	public void accept(Visitor v) {
+	    v.visitTGTInstruction(this);
 	}
     }
 
@@ -475,6 +606,10 @@ public abstract class Instruction {
 	public TLEInstruction(int size, boolean isSigned) {
 	    super("TLE",size,isSigned);
 	}
+
+	public void accept(Visitor v) {
+	    v.visitTLEInstruction(this);
+	}
     }
 
     /**
@@ -485,6 +620,10 @@ public abstract class Instruction {
     {
 	public TLTInstruction(int size, boolean isSigned) {
 	    super("TLT",size,isSigned);
+	}
+
+	public void accept(Visitor v) {
+	    v.visitTLTInstruction(this);
 	}
     }
 
@@ -506,9 +645,16 @@ public abstract class Instruction {
 	extends Pseudoinstruction
     {
 	public String value;
+
 	public LabelInstruction(String value) {
 	    this.value=value;
 	}
+
+	public void accept(Visitor v) {
+	    v.visitLabelInstruction(this);
+	}
+
+
 	public String toString() {
 	    return value;
 	}
@@ -521,9 +667,15 @@ public abstract class Instruction {
 	extends Pseudoinstruction
     {
 	String value;
+
 	public CommentInstruction(String value) {
 	    this.value=value;
 	}
+
+	public void accept(Visitor v) {
+	    v.visitCommentInstruction(this);
+	}
+
 	public String toString() {
 	    return "* "+value;
 	}
@@ -537,14 +689,64 @@ public abstract class Instruction {
     {
 
 	public final String operand;
+
 	public NativeInstruction(String mnemonic,
 				 String operand) {
 	    super(mnemonic);
 	    this.operand=operand;
 	}
+
+	public void accept(Visitor v) {
+	    v.visitNativeInstruction(this);
+	}
+
 	public String toString() {
 	    return instructionString(operand);
 	}
+    }
+
+    /**
+     * Generic visitor interface.
+     */
+    public interface Visitor {
+
+	public void visitBRKInstruction(BRKInstruction inst);
+	public void visitBRFInstruction(BRFInstruction inst);
+	public void visitBRUInstruction(BRUInstruction inst);
+	public void visitCFDInstruction(CFDInstruction inst);
+	public void visitCFIInstruction(CFIInstruction inst);
+	public void visitADDInstruction(ADDInstruction inst);
+	public void visitANLInstruction(ANLInstruction inst);
+	public void visitDCRInstruction(DCRInstruction inst);
+	public void visitDSPInstruction(DSPInstruction inst);
+	public void visitICRInstruction(ICRInstruction inst);
+	public void visitISPInstruction(ISPInstruction inst);
+	public void visitMTSInstruction(MTSInstruction inst);
+	public void visitMTVInstruction(MTVInstruction inst);
+	public void visitNEGInstruction(NEGInstruction inst);
+	public void visitNOTInstruction(NOTInstruction inst);
+	public void visitORLInstruction(ORLInstruction inst);
+	public void visitORXInstruction(ORXInstruction inst);
+	public void visitPHCInstruction(PHCInstruction inst);
+	public void visitPVAInstruction(PVAInstruction inst);
+	public void visitRAFInstruction(RAFInstruction inst);
+	public void visitSHLInstruction(SHLInstruction inst);
+	public void visitSTMInstruction(STMInstruction inst);
+	public void visitSUBInstruction(SUBInstruction inst);
+	public void visitTEQInstruction(TEQInstruction inst);
+	public void visitVTMInstruction(VTMInstruction inst);
+	public void visitDIVInstruction(DIVInstruction inst);
+	public void visitEXTInstruction(EXTInstruction inst);
+	public void visitMULInstruction(MULInstruction inst);
+	public void visitSHRInstruction(SHRInstruction inst);
+	public void visitTGEInstruction(TGEInstruction inst);
+	public void visitTGTInstruction(TGTInstruction inst);
+	public void visitTLEInstruction(TLEInstruction inst);
+	public void visitTLTInstruction(TLTInstruction inst);
+	public void visitLabelInstruction(LabelInstruction inst);
+	public void visitCommentInstruction(CommentInstruction inst);
+	public void visitNativeInstruction(NativeInstruction inst);
+
     }
 
 

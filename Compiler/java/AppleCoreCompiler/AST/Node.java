@@ -39,6 +39,7 @@ public abstract class Node {
 	public String name;
 	public String targetFile;
 	public boolean includeMode;
+	public boolean nativeMode;
 	public int origin;
 	public List<Declaration> decls = 
 	    new LinkedList<Declaration>();

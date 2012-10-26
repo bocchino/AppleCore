@@ -29,6 +29,11 @@ public class Main {
     private static boolean includeMode = false;
 
     /**
+     * Whether to translate AVM instructions to native code
+     */
+    private static boolean nativeMode = false;
+
+    /**
      * Origin of translated assembly file
      */
     private static int origin = -1;
@@ -81,6 +86,9 @@ public class Main {
 	else if (arg.equals("-include")) {
 	    includeMode = true;
 	}
+	else if (arg.equals("-native")) {
+	    nativeMode = true;
+	}
 	else if (arg.startsWith("-tf=")) {
 	    targetFileName = arg.substring(4);
 	}
@@ -108,6 +116,7 @@ public class Main {
 	    Parser parser = new Parser(sourceFileName);
 	    SourceFile sourceFile = parser.parse();
 	    sourceFile.includeMode = includeMode;
+	    sourceFile.nativeMode = nativeMode;
 	    sourceFile.origin = origin;
 	    sourceFile.targetFile = (targetFileName == null) ?
 		defaultTargetFile(sourceFile.name) :

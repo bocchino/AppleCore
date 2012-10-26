@@ -27,9 +27,12 @@ public class SourceFileWriter
 	this.emitter = emitter;
     }
 
+    private boolean nativeMode;
+
     public void runOn(SourceFile sourceFile) 
 	throws ACCError
     {
+	this.nativeMode = sourceFile.nativeMode;
 	scan(sourceFile);
     }
 
@@ -79,6 +82,24 @@ public class SourceFileWriter
 	}
     }
 
+    private void emitNativeInstructions(FunctionDecl node) {
+	NativeInstructionWriter writer = 
+	    new NativeInstructionWriter(node.name,emitter);
+	for (Instruction inst : node.instructions) {
+	    inst.accept(writer);
+	}
+    }
+    
+    private void emitAVMInstructions(FunctionDecl node) {
+	for (Instruction inst : node.instructions) {
+	    if (!(inst instanceof LabelInstruction) &&
+		!(inst instanceof CommentInstruction)) {
+		emitter.printStream.print("\t");
+	    }
+	    emitter.printStream.println(emitter.makeLabel(inst.toString()));
+	}
+    }
+
     public void visitFunctionDecl(FunctionDecl node) 
 	throws ACCError
     {
@@ -86,13 +107,10 @@ public class SourceFileWriter
 	    emitter.emitSeparatorComment();
 	    emitter.emitComment("function " + node.name);
 	    emitter.emitSeparatorComment();
-	    for (Instruction inst : node.instructions) {
-		if (!(inst instanceof LabelInstruction) &&
-		    !(inst instanceof CommentInstruction)) {
-		    emitter.printStream.print("\t");
-		}
-		emitter.printStream.println(emitter.makeLabel(inst.toString()));
-	    }
+	    if (nativeMode)
+		emitNativeInstructions(node);
+	    else
+		emitAVMInstructions(node);
 	}
     }
 

@@ -41,13 +41,13 @@ public abstract class NativeCodeEmitter
     public abstract void emitInstruction(String s);
 
     public abstract void emitAbsoluteInstruction(String mnemonic, 
-						    int addr);
+						 int addr);
 
     public abstract void emitAbsoluteInstruction(String mnemonic, 
-						    String label);
+						 String label);
 
     public abstract void emitImmediateInstruction(String mnemonic, 
-						     String imm, boolean high);
+						  String imm, boolean high);
 
     public abstract void emitImmediateInstruction(String mnemonic, int imm);
 
@@ -60,7 +60,7 @@ public abstract class NativeCodeEmitter
     public abstract void emitIndirectXInstruction(String mnemonic, int addr);
 
     public abstract void emitIndexedInstruction(String mnemonic, 
-						   int addr, String reg);
+						int addr, String reg);
 
     public abstract void emitAbsoluteXInstruction(String mnemonic, String addr);
 
