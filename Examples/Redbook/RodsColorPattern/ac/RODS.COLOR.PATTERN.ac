@@ -26,7 +26,6 @@ FN DRAW_PATTERN() {
   VAR IW12:1;
   VAR I_40:1;
   VAR K_40:1;
-  VAR CHAR:1;
   WHILE (W<=50) {
     SET I=1;
     WHILE (I<=19) {
@@ -47,8 +46,7 @@ FN DRAW_PATTERN() {
 	SET ^Y=I; SET ^A=K_40; MON_PLOT();
 	SET ^Y=K_40; SET ^A=I; MON_PLOT();
 	INCR J;
-	SET CHAR=KBD_STROBE[0,1];
-        IF (CHAR > $7F) {
+	IF (KBD_STROBE[0,1] > $7F) {
           SET CLEAR_KBD_STROBE[0,1]=0;
 	  SET_SWITCH(TEXT);
   	  MON_HOME();
