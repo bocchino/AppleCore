@@ -158,7 +158,7 @@ public class SCMacroEmitter
     }
 
     public void emitBlockStorage(int nbytes) {
-	emit("\t.BS\t");
+	emit("\t.BS ");
 	emit(addrString(nbytes));
 	emit("\n");
     }
