@@ -9,11 +9,6 @@ CONST WRRAM2              $C081;
 # READ AND WRITE RAM BANK 2
 CONST RWRAM2              $C083;
 # -------------------------------
-# DOS COLD START ENTRY POINTS
-# -------------------------------
-CONST DOS_COLD            $9D84;
-CONST DOS_ENTRY           $9DEA;
-# -------------------------------
 # INT BASIC CALL FOR INPUT
 # -------------------------------
 CONST BASIC_PTR           $E3D0;
@@ -51,7 +46,7 @@ FN MAIN() {
     SET BASIC_PTR[1,2]=HELLO;
     SET PASS=1;
     # DOS COLD START, THEN COME BACK
-    DOS_COLD();
+    DOS_COLD_START();
   }
   ELSE { # PASS 1
     # RESTORE RESETV
@@ -84,12 +79,9 @@ FN BLOAD(FILE:2) {
 # -------------------------------
 # LOAD AND CALL FILE
 # -------------------------------
-# ADDRESS OF LAST BLOAD
-CONST BLOAD_ADDR $AA72;
-
 FN BLOAD_AND_CALL(FILE:2) {
   BLOAD(FILE);
-  BLOAD_ADDR[0,2]();
+  DOS_BLOAD_ADDR[0,2]();
 }
 # -------------------------------
 # BRUN FILE
