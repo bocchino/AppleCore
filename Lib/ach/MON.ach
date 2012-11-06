@@ -46,6 +46,13 @@ CONST MON_STACK			$100;
 # --------------------------------------
 CONST MON_IN			$200;
 # --------------------------------------
+# PAGE 3 VECTORS
+# --------------------------------------
+# WARM START
+CONST MON_SOFTEV	        $3F2;
+# MUST BE (SOFTEV+1) EOR #$A5
+CONST MON_PWREDUP               $3F4;
+# --------------------------------------
 # SUBROUTINE ENTRY POINTS
 # --------------------------------------
 # PRINT LO-RES BLOCK AT (Y,A)

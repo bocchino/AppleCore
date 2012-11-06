@@ -6,20 +6,20 @@
 * COPYRIGHT (C) 2012
 * ROBERT L. BOCCHINO JR.
 * -------------------------------
-       .OR $0803
-       .TF BTB.OBJ
+	.OR $0803
+        .TF BTB.OBJ
 * -------------------------------
 * PROLOGUE
 * -------------------------------
-       .IN AVM.PROLOGUE.AVM
+        .IN AVM.PROLOGUE.AVM
 * FIX UP STACK BOUND
-       LDA #RMS.START
-       STA AVM.SP.BOUND
-       LDA /RMS.START
-       STA AVM.SP.BOUND+1
+        LDA #RMS.START
+        STA AVM.SP.BOUND
+        LDA /RMS.START
+        STA AVM.SP.BOUND+1
 * RUN PROGRAM AND EXIT
-       JSR MAIN
-       JMP EXIT
+        JSR MAIN
+        JMP EXIT
 * -------------------------------
 * PROGRAM FILES
 * -------------------------------
@@ -28,14 +28,11 @@
 	.IN INVENTORY.AVM
 	.IN MAIN.AVM
         .IN MODULES.AVM
-        .IN OBJECTS.COMMON.AVM
-        .IN OBJECTS.COMMON.2.AVM
+        .IN OBJECTS.AVM
 	.IN PARSING.AVM
-	.IN ROOMS.COMMON.AVM
-	.IN ROOMS.COMMON.2.AVM
+	.IN ROOMS.AVM
 	.IN STATE.AVM
 	.IN VERBS.AVM
-	.IN VERBS.2.AVM
 * -------------------------------
 * LIB FILES
 * -------------------------------
@@ -48,7 +45,7 @@
 * -------------------------------
 * AVM
 * -------------------------------
-       .IN AVM.AVM
+	.IN AVM.AVM
 * -------------------------------
 * SPACE FOR STACK
 * -------------------------------	
@@ -58,31 +55,30 @@ AVM.STACK
 * ROOM DATA
 * -------------------------------
 RMS.START
-       .TF ROOMS.0.OBJ
-       .IN ROOMS.0.AVM
+	.TF ROOMS.0.OBJ
+       	.IN ROOMS.0.AVM
 *
-       .OR RMS.START
-       .TF ROOMS.1.OBJ
-       .IN ROOMS.1.1.AVM
-       .IN ROOMS.1.2.AVM
+	.OR RMS.START
+       	.TF ROOMS.1.OBJ
+       	.IN ROOMS.1.AVM
 *
-       .OR RMS.START
-       .TF ROOMS.2.OBJ
-       .IN ROOMS.2.AVM
+	.OR RMS.START
+       	.TF ROOMS.2.OBJ
+       	.IN ROOMS.2.AVM
 *
-       .OR RMS.START
-       .TF ROOMS.3.OBJ
-       .IN ROOMS.3.AVM
+	.OR RMS.START
+       	.TF ROOMS.3.OBJ
+       	.IN ROOMS.3.AVM
 * -------------------------------
 * OBJECT DATA
 * -------------------------------
 OBJS.START .EQ $4000
-       .OR OBJS.START
-       .TF OBJECTS.0.OBJ
-       .IN OBJECTS.0.AVM
+     	.OR OBJS.START
+        .TF OBJECTS.0.OBJ
+        .IN OBJECTS.0.AVM
 *
-       .OR OBJS.START
-       .TF OBJECTS.1.OBJ
+	.OR OBJS.START
+       	.TF OBJECTS.1.OBJ
 	.IN OBJECTS.1.AVM
 *
 	.OR OBJS.START

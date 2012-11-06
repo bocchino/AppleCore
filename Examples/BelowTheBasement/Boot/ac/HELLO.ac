@@ -5,30 +5,26 @@
 # SOFT SWITCH ADDRESSES
 # -------------------------------
 # READ ROM, WRITE RAM BANK 2
-CONST WRRAM2 $C081;
+CONST WRRAM2              $C081;
 # READ AND WRITE RAM BANK 2
-CONST RWRAM2 $C083;
-# -------------------------------
-# POINTER TO RESET VECTOR
-# -------------------------------
-CONST RESETV_PTR $3F2;
+CONST RWRAM2              $C083;
 # -------------------------------
 # DOS COLD START ENTRY POINTS
 # -------------------------------
-CONST DOS_COLD  $9D84;
-CONST DOS_ENTRY $9DEA;
+CONST DOS_COLD            $9D84;
+CONST DOS_ENTRY           $9DEA;
 # -------------------------------
 # INT BASIC CALL FOR INPUT
 # -------------------------------
-CONST BASIC_PTR $E3D0;
+CONST BASIC_PTR           $E3D0;
 # -------------------------------
 # 6502 INSTRUCTIONS
 # -------------------------------
-CONST JMP	$4C;
+CONST JMP	            $4C;
 # -------------------------------
 # MAIN PROGRAM
 # -------------------------------
-CONST HELLO $2000;
+CONST HELLO               $2000;
 
 VAR PASS:1=0;
 VAR RESETV:3;
@@ -47,7 +43,7 @@ FN MAIN() {
     SET_SWITCH(RWRAM2);
     BLOAD_AND_CALL(INSTALL_EDITOR);
     # SAVE RESETV
-    SET RESETV=RESETV_PTR[0,3];
+    SET RESETV=MON_SOFTEV[0,3];
     # SAVE BASIC CODE
     SET BASIC=BASIC_PTR[0,3];
     # SET UP BASIC ENTRY TO COME BACK HERE
@@ -59,7 +55,7 @@ FN MAIN() {
   }
   ELSE { # PASS 1
     # RESTORE RESETV
-    SET RESETV_PTR[0,3]=RESETV;
+    SET MON_SOFTEV[0,3]=RESETV;
     # RESTORE BASIC
     SET BASIC_PTR[0,3]=BASIC;
     # A=0 SIGNALS INT BASIC
