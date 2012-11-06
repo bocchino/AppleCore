@@ -72,6 +72,7 @@ public abstract class NativeCodeEmitter
 
     public void emitLabel(String label) {
 	emit(makeLabel(label));
+	emitLine();
     }
 
     public abstract void emitAsData(Identifier id);

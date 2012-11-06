@@ -23,6 +23,7 @@
 * -------------------------------
 * PROGRAM FILES
 * -------------------------------
+        .IN BEAR.AVM
 	.IN COMMANDS.AVM
 	.IN DISK.AVM
 	.IN INVENTORY.AVM

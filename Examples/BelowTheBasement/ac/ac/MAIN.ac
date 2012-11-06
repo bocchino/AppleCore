@@ -74,41 +74,5 @@ FN PROCESS_INPUT() {
     }
   }
 }
-# -----------------------------------
-# HANDLE BEAR
-# -----------------------------------
-DATA LEAVE_BEAR "\$0DYOU LEAVE THE ROOM JUST IN TIME. "\;
-DATA 		"THE BEAR DOESN'T SEEM INTERESTED IN PURSUING.\$0D";
 
-DATA BEAR_ATTACKS "\$0DWHILE YOU ARE STANDING THERE, THE BEAR ATTACKS! "\;
-DATA 		  "THE BEAR IS QUITE FEROCIOUS, AND IT'S ALL OVER FAIRLY QUICKLY.\$0D";
-
-FN HANDLE_BEAR() {
-  IF (BEAR_ALIVE) {
-    IF (CURRENT_RM=RM_BEAR) {
-      IF (NOT CONFRONTED_BEAR)
-        SET CONFRONTED_BEAR=TRUE;
-      ELSE {
-        IF (NOT ATTACKED_BEAR) {
-          RESPOND(BEAR_ATTACKS);
-	  SET NUM_HITS=MAX_HITS+1;
-        }
-      }
-    }
-    ELSE {
-      IF (CONFRONTED_BEAR)
-        RESPOND(LEAVE_BEAR);
-      SET CONFRONTED_BEAR=FALSE;
-    }
-    SET ATTACKED_BEAR=FALSE;
-  }
-}
-# -----------------------------------
-# TODO...
-# -----------------------------------
-DATA TODO_STR "TODO";
-
-FN TODO() {
-  PRINT_STRING(TODO_STR);
-}
 
