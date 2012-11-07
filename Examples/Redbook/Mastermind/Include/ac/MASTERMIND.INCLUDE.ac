@@ -1,14 +1,11 @@
 # -----------------------------------
-# MASTERMIND
-# ADAPTED FROM THE APPLE II REDBOOK
+# COLOR INFO
 # -----------------------------------
 # NUMBER OF COLORS TO CHOOSE FROM
 CONST NUM_COLORS  8;
 # NUMBER OF COLORS IN CODE
 CONST CODE_SIZE   5;
-# -----------------------------------
-# COLOR INFO
-# -----------------------------------
+
 DATA COLORS DARK_BLUE;
 DATA        LIGHT_GREEN;
 DATA	    RED;
