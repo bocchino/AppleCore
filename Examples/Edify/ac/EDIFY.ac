@@ -22,14 +22,10 @@ FN MAIN() {
 # -----------------------------------
 # INCLUDE EDIFY FILES
 # -----------------------------------
-INCLUDE "EDIFY.1.AVM";
-INCLUDE "EDIFY.2.AVM";
-INCLUDE "EDIFY.HANDLERS.1.AVM";
-INCLUDE "EDIFY.HANDLERS.2.AVM";
-INCLUDE "EDIFY.HANDLERS.3.AVM";
-INCLUDE "EDIFY.BUFFER.1.AVM";
-INCLUDE "EDIFY.BUFFER.2.AVM";
+INCLUDE "EDIFY.BUFFER.AVM";
 INCLUDE "EDIFY.DISK.AVM";
+INCLUDE "EDIFY.HANDLERS.AVM";
+INCLUDE "EDIFY.INPUT.AVM";
 # -----------------------------------
 # INCLUDE LIB FILES
 # -----------------------------------
