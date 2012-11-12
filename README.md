@@ -62,6 +62,7 @@ To set up your Mac to use AppleCore, do the following:
 5.  Build the assembler, compiler, and examples:
 
     `cd ${APPLECORE}`
+
     `make`
 
 The build should succeed without any errors.  If not, fix the problem
