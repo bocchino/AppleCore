@@ -191,7 +191,7 @@ DATA WORD_NULL     0;
 # -----------------------------------
 # EXTERN VARIABLE DECLARATION
 # -----------------------------------
-FN OBJS_START();
+CONST OBJS_START;
 # -----------------------------------
 # LOAD MODULE FOR OBJECTS
 # -----------------------------------
