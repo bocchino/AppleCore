@@ -11,7 +11,7 @@ FN MAIN() {
   PROCESS_INPUT();
 }
 # -----------------------------------
-# MAIN INPUT LOOP
+# INTRO
 # -----------------------------------
 DATA BTB       "BELOW THE BASEMENT";
 DATA BYLINE    "\$0DBY MAURICE LOTMAN\$0D"\;
@@ -74,5 +74,4 @@ FN PROCESS_INPUT() {
     }
   }
 }
-
 
