@@ -189,10 +189,6 @@ DATA WORD_WRITING     "WRITING";
 
 DATA WORD_NULL     0;
 # -----------------------------------
-# EXTERN VARIABLE DECLARATION
-# -----------------------------------
-CONST OBJS_START;
-# -----------------------------------
 # LOAD MODULE FOR OBJECTS
 # -----------------------------------
 DATA OBJS_STR "OBJECTS.";
