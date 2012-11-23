@@ -1,0 +1,74 @@
+# --------------------------------------
+# THE APPLECORE LIBRARY, V1.0
+# BANK SELECT SWITCHES
+# --------------------------------------
+# SWITCH ADDRESS VALUES (BANK 1)
+# --------------------------------------
+# READ RAM, NO WRITE
+CONST RD_RAM_1			$C088;
+# READ ROM, NO WRITE
+CONST RD_ROM_1			$C08A;
+# READ RAM, WRITE RAM
+CONST RD_RAM_WR_RAM_1		$C08B;
+# READ ROM, WRITE RAM
+CONST RD_ROM_WR_RAM_1		$C089;
+# --------------------------------------
+# SWITCH ADDRESS VALUES (BANK 2)
+# --------------------------------------
+# READ RAM, NO WRITE
+CONST RD_RAM_2			$C080;
+# READ ROM, NO WRITE
+CONST RD_ROM_2			$C082;
+# READ RAM, WRITE RAM
+CONST RD_RAM_WR_RAM_2		$C083;
+# READ ROM, WRITE RAM
+CONST RD_ROM_WR_RAM_2		$C081;
+# --------------------------------------
+# TEST ADDRESSES
+# --------------------------------------
+# READING BANK 1 OR 2?
+CONST RDBNK2			$C011;
+# READING RAM OR ROM?
+CONST RDLCRAM			$C012;
+# --------------------------------------
+# SELECT FUNCTIONS
+# --------------------------------------
+FN SELECT_RD_RAM_1() {
+   VAR X:1=RD_RAM_1[0,1];
+}
+FN SELECT_RD_ROM_1() {
+   VAR X:1=RD_ROM_1[0,1];
+}
+FN SELECT_RD_RAM_WR_RAM_1() {
+   VAR X:1=RD_RAM_WR_RAM_1[0,1];
+   SET X=RD_RAM_WR_RAM_1[0,1];
+}
+FN SELECT_RD_ROM_WR_RAM_1() {
+   VAR X:1=RD_ROM_WR_RAM_1[0,1];
+   SET X=RD_ROM_WR_RAM_1[0,1];
+}
+FN SELECT_RD_RAM_2() {
+   VAR X:1=RD_RAM_2[0,1];
+}
+FN SELECT_RD_ROM_2() {
+   VAR X:1=RD_ROM_2[0,1];
+}
+FN SELECT_RD_RAM_WR_RAM_2() {
+   VAR X:1=RD_RAM_WR_RAM_2[0,1];
+   SET X=RD_RAM_WR_RAM_2[0,1];
+}
+FN SELECT_RD_ROM_WR_RAM_2() {
+   VAR X:1=RD_ROM_WR_RAM_2[0,1];
+   SET X=RD_ROM_WR_RAM_2[0,1];
+}
+# --------------------------------------
+# TEST FUNCTIONS
+# --------------------------------------
+FN:1 BANK_1_SELECTED() {
+   RETURN (RDBNK2[0,1] AND $80)=0;
+}
+FN:1 READING_ROM() {
+   RETURN (RDLCRAM[0,1] AND $80)=0;
+}
+
+

@@ -2,13 +2,6 @@
 # HELLO FILE FOR 
 # BELOW THE BASEMENT
 # -------------------------------
-# SOFT SWITCH ADDRESSES
-# -------------------------------
-# READ ROM, WRITE RAM BANK 2
-CONST WRRAM2              $C081;
-# READ AND WRITE RAM BANK 2
-CONST RWRAM2              $C083;
-# -------------------------------
 # INT BASIC CALL FOR INPUT
 # -------------------------------
 CONST BASIC_PTR           $E3D0;
@@ -32,10 +25,10 @@ DATA BTB	    "BTB.OBJ";
 FN MAIN() {
   IF (PASS=0) { # PASS 0
     # INSTALL ROM IN LANGUAGE CARD
-    SET_SWITCH(WRRAM2);
+    SELECT_RD_ROM_WR_RAM_2();
     BLOAD(ROM_77);
     # INSTALL SHELL EDITOR
-    SET_SWITCH(RWRAM2);
+    SELECT_RD_RAM_WR_RAM_2();
     BLOAD_AND_CALL(INSTALL_EDITOR);
     # SAVE RESETV
     SET RESETV=MON_SOFTEV[0,3];
@@ -59,14 +52,6 @@ FN MAIN() {
     DOS_ENTRY();    
     BRUN(BTB);
   }
-}
-# -------------------------------
-# SET SOFT SWITCH
-# -------------------------------
-FN SET_SWITCH(SWITCH:2) {
-  VAR X:1;
-  SET X=SWITCH[0,1];
-  SET X=SWITCH[0,1];
 }
 # -------------------------------
 # BLOAD FILE
@@ -94,4 +79,4 @@ FN BRUN(FILE:2) {
 
 INCLUDE "DOS.AVM";
 INCLUDE "IO.AVM";
-
+INCLUDE "BANK.SELECT.AVM";
