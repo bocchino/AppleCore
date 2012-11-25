@@ -3,11 +3,6 @@
 * AS FORMATTED WORDS ON SCREEN
 * DESTROYS IP, Y
 * -------------------------------
-PW.WNDWDTH .EQ $21
-PW.CH   .EQ $24
-PW.CLREOL .EQ $FC9C
-PW.COUT   .EQ $FDED
-* -------------------------------
 PRINT.WORDS.ASM
 	STX AVM.IP
 	STA AVM.IP+1
@@ -30,16 +25,16 @@ PW.LOOP
 	BNE PW.LOOP
 * -------------------------------
 PW.PRINT
-	LDA PW.CH
+	LDA MON.CH
 	BEQ PW.PRINT.1
 	CLC
 	ADC PW.COUNTER
-	CMP PW.WNDWDTH
+	CMP MON.WNDWDTH
 	BEQ PW.PRINT.1
 	BCC PW.PRINT.1
-	JSR PW.CLREOL
+	JSR MON.CLREOL
 	LDA #$8D
-	JSR PW.COUT
+	JSR MON.COUT
 * -------------------------------
 PW.PRINT.1
 	LDY #0
@@ -47,7 +42,7 @@ PW.PRINT.1
 	BNE .2
 	RTS
 .2	ORA #$80
-	JSR PW.COUT
+	JSR MON.COUT
 	INY
 	CPY PW.COUNTER
 	BNE .1
