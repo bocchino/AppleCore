@@ -113,7 +113,7 @@ DATA	       QUEST_HANDLER;
 # COMMAND HANDLERS
 # -----------------------------------
 FN ESC_HANDLER() {
-  SET_SWITCH(TEXT);
+  SET_TEXT();
   SET MON_WNDTOP[0,1]=0;
   MON_HOME();
   EXIT();

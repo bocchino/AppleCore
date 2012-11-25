@@ -3,15 +3,16 @@
 # ADAPTED FROM THE APPLE II REDBOOK
 # -----------------------------------
 FN MAIN() {
+  SET_TEXT();
+  SET_FULL_SCREEN();
   INTRO();
-  MON_RDKEY();
   WHILE (NOT DONE_GAME) {
     INIT_ROUND();
     PLAY_ROUND();
     IF (NOT DONE_GAME) FINISH_ROUND();
   }
   MON_HOME();
-  SET_SWITCH(TEXT);
+  SET_TEXT();
 }
 
 INCLUDE "MASTERMIND.INCLUDE.AVM";

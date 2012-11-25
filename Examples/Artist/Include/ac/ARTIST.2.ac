@@ -185,13 +185,13 @@ FN PRINT_CATALOG() {
 # -----------------------------------
 FN CLEAR_SCREEN() {
   MOVE($400,$7FF,$2000);
-  SET_SWITCH(TEXT);
+  SET_TEXT();
   SET MON_WNDTOP[0,1]=0;
   MON_HOME();
 }
 
 FN RESTORE_SCREEN() {
-  SET_SWITCH(GRAPHICS);
+  SET_GRAPHICS();
   MOVE($2000,$23FF,$400);
 }
  

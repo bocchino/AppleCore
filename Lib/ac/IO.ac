@@ -35,18 +35,6 @@ FN WAIT_KEYPRESS() {
   WHILE (NOT KEY_PRESSED()) {}
 }
 # --------------------------------------
-# POSITION CURSOR
-# --------------------------------------
-FN POSITION_CURSOR(X:1,Y:1) {
-  IF (X >= MON_WNDWDTH[0,1]) { 
-    SET X=MON_WNDWDTH[0,1]-1; 
-  }
-  IF (Y > 23) SET Y=23;
-  SET MON_CH[0,1]=X;
-  SET MON_CV[0,1]=Y;
-  MON_VTAB();
-}
-# --------------------------------------
 # GET NULL-TERMINATED LINE INTO MON_IN
 # RETURN - NUMBER OF CHARS READ
 # --------------------------------------
@@ -106,4 +94,56 @@ FN NORMAL() {
 # --------------------------------------
 FN:1 PDL_BUTTON_DOWN(PDL:1) {
   RETURN PDL_BUTTON[PDL,1] > $7F;
+}
+# --------------------------------------
+# MANAGE TEXT WINDOW
+# --------------------------------------
+CONST MAX_WIDTH 40;
+CONST MAX_HEIGHT 24;
+
+FN:1 BOUND_WINDOW(VAL:1,MAX:1) {
+  IF (VAL > MAX) SET VAL = MAX;
+  RETURN VAL;
+}
+FN SET_WINDOW_LEFT(LEFT:1) {
+  SET MON_WNDLFT[0,1]=
+   BOUND_WINDOW(LEFT,MAX_WIDTH-1);
+}
+FN SET_WINDOW_WIDTH(WIDTH:1) {
+  SET MON_WNDWDTH[0,1]=
+   BOUND_WINDOW(WIDTH,MAX_WIDTH-MON_WNDLFT[0,1]);
+}
+FN SET_WINDOW_TOP(TOP:1) {
+  SET TOP=BOUND_WINDOW(TOP,MAX_HEIGHT-1);
+  IF (MON_WNDBTM[0,1] < TOP)
+    SET MON_WNDBTM[0,1]=TOP;    
+  SET MON_WNDTOP[0,1]=TOP;
+}
+FN SET_WINDOW_BOTTOM(BOT:1) {
+  SET BOT=BOUND_WINDOW(BOT,MAX_HEIGHT);
+  SET MON_WNDTOP[0,1]=
+   BOUND_WINDOW(MON_WNDTOP[0,1],BOT-1);
+  SET MON_WNDBTM[0,1]=BOT;
+}
+FN SET_FULL_SCREEN() {
+  SET_WINDOW_LEFT(0);
+  SET_WINDOW_WIDTH(MAX_WIDTH);
+  SET_WINDOW_TOP(0);
+  SET_WINDOW_BOTTOM(MAX_HEIGHT);
+}
+# --------------------------------------
+# POSITION CURSOR
+# --------------------------------------
+FN POSITION_CURSOR(X:1,Y:1) {
+  POSITION_CURSOR_X(X);
+  POSITION_CURSOR_Y(Y);
+}
+FN POSITION_CURSOR_X(X:1) {
+  SET X=BOUND_WINDOW(X,MON_WNDWDTH[0,1]-1);
+  SET MON_CH[0,1]=X;
+}
+FN POSITION_CURSOR_Y(Y:1) {
+  SET Y=BOUND_WINDOW(Y,MAX_HEIGHT-1);
+  SET MON_CV[0,1]=Y;
+  MON_VTAB();
 }
