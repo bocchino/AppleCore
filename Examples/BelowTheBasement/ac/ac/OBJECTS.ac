@@ -189,27 +189,6 @@ DATA WORD_WRITING     "WRITING";
 
 DATA WORD_NULL     0;
 # -----------------------------------
-# LOAD MODULE FOR OBJECTS
-# -----------------------------------
-DATA OBJS_STR "OBJECTS.";
-
-FN:1 LOAD_OBJ_MODULE_FOR(OBJ:1) {
-  SET_MODULE_TO(OBJ);
-  IF (NOT (GET_OBJ_MODULE()=MODULE)) {
-    SET (@FILE_NAME)[0,8]=OBJS_STR[0,8];
-    NUM_TO_STR(@MODULE,1,10,@FILE_NAME+8);
-    SET (@FILE_NAME)[9,5]=OBJ_STR[0,5];
-    RETURN ISSUE_DOS_CMD(DOS_BLOAD,@FILE_NAME);
-  }
-  RETURN TRUE;
-}
-# -----------------------------------
-# GET CURRENT OBJECT MODULE
-# -----------------------------------
-FN:1 GET_OBJ_MODULE() {
-  RETURN OBJ_MODULE[0,1];
-}
-# -----------------------------------
 # FIND OBJECT BY NAME
 # -----------------------------------
 FN:1 FIND_OBJ(OBJ:2) {

@@ -22,5 +22,47 @@ FN SET_MODULE_TO(IDX:1) {
   SET OFFSET=IDX-MODULE_SIZE*
     MODULE;
 }
+# -----------------------------------
+# LOAD MODULE FOR ROOM
+# -----------------------------------
+DATA RMS_STR "ROOMS.";
+
+FN:1 LOAD_RM_MODULE_FOR(RM:1) {
+  SET_MODULE_TO(RM);
+  IF (NOT (GET_RM_MODULE()=MODULE)) {
+    SET (@FILE_NAME)[0,6]=RMS_STR[0,6];
+    NUM_TO_STR(@MODULE,1,10,@FILE_NAME+6);
+    SET (@FILE_NAME)[7,5]=OBJ_STR[0,5];
+    RETURN ISSUE_DOS_CMD(DOS_BLOAD,@FILE_NAME);
+  }
+  RETURN TRUE;
+}
+# -----------------------------------
+# GET CURRENT ROOM MODULE
+# -----------------------------------
+FN:1 GET_RM_MODULE() {
+  RETURN RM_MODULE[0,1];
+}
+# -----------------------------------
+# LOAD MODULE FOR OBJECTS
+# -----------------------------------
+DATA OBJS_STR "OBJECTS.";
+
+FN:1 LOAD_OBJ_MODULE_FOR(OBJ:1) {
+  SET_MODULE_TO(OBJ);
+  IF (NOT (GET_OBJ_MODULE()=MODULE)) {
+    SET (@FILE_NAME)[0,8]=OBJS_STR[0,8];
+    NUM_TO_STR(@MODULE,1,10,@FILE_NAME+8);
+    SET (@FILE_NAME)[9,5]=OBJ_STR[0,5];
+    RETURN ISSUE_DOS_CMD(DOS_BLOAD,@FILE_NAME);
+  }
+  RETURN TRUE;
+}
+# -----------------------------------
+# GET CURRENT OBJECT MODULE
+# -----------------------------------
+FN:1 GET_OBJ_MODULE() {
+  RETURN OBJ_MODULE[0,1];
+}
 
 
