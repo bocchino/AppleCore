@@ -2,24 +2,10 @@
 # THE APPLECORE LIBRARY, V1.0
 # GRAPHICS FUNCTIONS
 # --------------------------------------
-# SOFT SWITCHES
-# --------------------------------------
-CONST GRAPHICS		$C050;
-CONST TEXT		$C051;
-CONST NO_TEXT_WINDOW	$C052;
-CONST TEXT_WINDOW	$C053;
-CONST PAGE_1		$C054;
-CONST PAGE_2		$C055;
-CONST LO_RES		$C056;
-CONST HI_RES		$C057;
-# --------------------------------------
-# SWITCH SETTER FUNCTIONS
+# SOFT SWITCH ACCESS FUNCTIONS
 # --------------------------------------
 FN SET_GRAPHICS() {
   SET GRAPHICS[0,1]=0;
-}
-FN SET_TEXT() {
-  SET TEXT[0,1]=0;
 }
 FN SET_TEXT_WINDOW() {
   SET TEXT_WINDOW[0,1]=0;
@@ -34,6 +20,7 @@ FN SET_PAGE_2() {
   SET PAGE_2[0,1]=0;
 }
 FN SET_LO_RES() {
+  SET PAGE_1[0,1]=0;
   SET LO_RES[0,1]=0;
 }
 FN SET_HI_RES() {

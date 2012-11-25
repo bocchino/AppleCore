@@ -2,17 +2,6 @@
 # THE APPLECORE LIBRARY, V1.0
 # IO FUNCTIONS
 # --------------------------------------
-# I/O HARDWARE INTERFACE
-# --------------------------------------
-# TOGGLE SPEAKER
-CONST SPEAKER			$C030;
-# READ KEYBOARD
-CONST KBD_STROBE		$C000;
-# CLEAR KEYBOARD STROBE
-CONST CLEAR_KBD_STROBE		$C010;
-# READ PADDLE BUTTON
-CONST PDL_BUTTON		$C061;
-# --------------------------------------
 # READ KEYBOARD AND CLEAR STROBE
 # --------------------------------------
 FN:1 READ_KBD() {
@@ -96,6 +85,13 @@ FN:1 PDL_BUTTON_DOWN(PDL:1) {
   RETURN PDL_BUTTON[PDL,1] > $7F;
 }
 # --------------------------------------
+# SET TEXT MODE
+# --------------------------------------
+FN SET_TEXT() {
+  SET PAGE_1[0,1]=0;
+  SET TEXT[0,1]=0;
+}
+# --------------------------------------
 # MANAGE TEXT WINDOW
 # --------------------------------------
 CONST MAX_WIDTH 40;
@@ -111,10 +107,12 @@ FN SET_WINDOW_LEFT(LEFT:1) {
 }
 FN SET_WINDOW_WIDTH(WIDTH:1) {
   SET MON_WNDWDTH[0,1]=
-   BOUND_WINDOW(WIDTH,MAX_WIDTH-MON_WNDLFT[0,1]);
+   BOUND_WINDOW(WIDTH,
+    MAX_WIDTH-MON_WNDLFT[0,1]);
 }
 FN SET_WINDOW_TOP(TOP:1) {
-  SET TOP=BOUND_WINDOW(TOP,MAX_HEIGHT-1);
+  SET TOP=BOUND_WINDOW(TOP,
+   MAX_HEIGHT-1);
   IF (MON_WNDBTM[0,1] < TOP)
     SET MON_WNDBTM[0,1]=TOP;    
   SET MON_WNDTOP[0,1]=TOP;
@@ -139,7 +137,8 @@ FN POSITION_CURSOR(X:1,Y:1) {
   POSITION_CURSOR_Y(Y);
 }
 FN POSITION_CURSOR_X(X:1) {
-  SET X=BOUND_WINDOW(X,MON_WNDWDTH[0,1]-1);
+  SET X=BOUND_WINDOW(X,
+   MON_WNDWDTH[0,1]-1);
   SET MON_CH[0,1]=X;
 }
 FN POSITION_CURSOR_Y(Y:1) {
