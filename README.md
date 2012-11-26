@@ -175,8 +175,8 @@ acc accepts the following command-line options:
   - `-native`
 
     Generate 6502 code that calls into the AVM runtime, instead of
-    interpreted AVM code.  The result should be to increase execution
-    speed about 2x, and increase code size about 3x.
+    interpreted AVM code.  This should increase execution speed about
+    2x, and increase code size about 3x.
 
   - `-origin=OR`
 
