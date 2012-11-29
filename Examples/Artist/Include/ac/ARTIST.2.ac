@@ -11,10 +11,26 @@ DATA 0;
 DATA LOAD     "LOAD ";
 DATA BLOAD    "\$04BLOAD ";
 
+VAR TMP:49;
+
+CONST BASE $478;
+
 FN LOAD_SCREEN() {
+  VAR I:2=0;
+  # SAVE PR CARD SCRATCHPAD ADDRS
+  WHILE (I < 7) {
+    SET (@TMP)[I*7,7]=BASE[I*$80,7];
+    INCR I;
+  }
   PRINT_STRING(BLOAD);
   PRINT_STRING(@FILE_NAME);
   MON_CROUT();
+  # RESTORE SCRATCHPAD ADDRS
+  SET I=0;
+  WHILE (I < 7) {
+    SET BASE[I*$80,7]=(@TMP)[I*7,7];
+    INCR I;
+  }
   SET_SCRN_COLOR();
 }
 # -----------------------------------
@@ -22,7 +38,7 @@ FN LOAD_SCREEN() {
 # -----------------------------------
 DATA SAVE     "SAVE ";
 DATA BSAVE    "\$04BSAVE ";
-DATA ADDR_LEN ",A$400,L$400\$0D";
+DATA ADDR_LEN ",A$400,L$3F8\$0D";
 
 FN SAVE_SCREEN() {
   HIDE_CURSOR();
