@@ -194,7 +194,7 @@ fun instBytes (inst,addr,map) =
 	fun signed opcode size =
 	    let
 		val (opcode,size) = case size of
- 					Signed size => (opcode + 1,size)
+ 					Signed size => (opcode + 4,size)
 				      | Unsigned size => (opcode,size)
 	    in
 		if size >= 1 andalso size <= 3 then
