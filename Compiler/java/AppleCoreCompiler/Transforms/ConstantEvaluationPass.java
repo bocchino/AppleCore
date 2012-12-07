@@ -36,6 +36,17 @@ public class ConstantEvaluationPass
 	}
     }
 
+    public void visitSizedExpression(SizedExpression node)
+	throws ACCError
+    {
+	super.visitSizedExpression(node);
+	if (node.expr instanceof NumericConstant) {
+	    node.expr.size = node.size;
+	    node.expr.isSigned = node.isSigned;
+	    result = node.expr;
+	}
+    }
+
     public void visitIndexedExpression(IndexedExpression node) 
 	throws ACCError
     {

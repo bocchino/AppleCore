@@ -499,6 +499,15 @@ public class AVMTranslatorPass
 	super.visitParensExpression(node);
     }
 
+    public void visitSizedExpression(SizedExpression node)
+	throws ACCError
+    {
+	// Scan the component expression
+	scan(node.expr);
+	// Adjust the size
+	adjustSize(node.size,node.expr.size,node.expr.isSigned);
+    }
+
     /* Helper methods */
 
     private String mangle(String s) {

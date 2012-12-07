@@ -163,6 +163,14 @@ public class ExpressionTransformer
 	visitAfterScan(node);
 	result = node;
     }
+    public void visitSizedExpression(SizedExpression node) 
+	throws ACCError 
+    {
+	visitBeforeScan(node);
+	node.expr = transform(node.expr);
+	visitAfterScan(node);
+	result = node;
+    }
     public void visitNode(Node node) 
 	throws ACCError
     {
@@ -171,25 +179,5 @@ public class ExpressionTransformer
 	    result = (Expression) node;
 	}
     }
-    /*
-    public void visitIdentifier(Identifier node) 
-	throws ACCError
-    {
-	super.visitIdentifier(node);
-	result = node;	
-    }
-    public void visitIntegerConstant(IntegerConstant node) 
-	throws ACCError
-    {
-	super.visitIntegerConstant(node);
-	result = node;
-    }
-    public void visitCharConstant(CharConstant node) 
-	throws ACCError
-    {
-	super.visitCharConstant(node);
-	result = node;
-    }
-    */
 
 }

@@ -182,6 +182,13 @@ public class ASTScanner extends NodeVisitor {
 	scan(node.expr);
 	visitAfterScan(node);
     }
+    public void visitSizedExpression(SizedExpression node)
+	throws ACCError
+    {
+	visitBeforeScan(node);
+	scan(node.expr);
+	visitAfterScan(node);
+    }
     public void visitNode(Node node) 
 	throws ACCError
     {

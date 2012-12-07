@@ -30,6 +30,7 @@ public class NodeVisitor implements Visitor {
     public void visitBinopExpression(BinopExpression node) throws ACCError { visitNode(node); }
     public void visitUnopExpression(UnopExpression node) throws ACCError { visitNode(node); }
     public void visitParensExpression(ParensExpression node) throws ACCError { visitNode(node); }
+    public void visitSizedExpression(SizedExpression node) throws ACCError { visitNode(node); }
     public void visitIdentifier(Identifier node) throws ACCError { visitNode(node); }
     public void visitCharConstant(CharConstant node) throws ACCError { visitNode(node); }
     public void visitStringConstant(StringConstant node) throws ACCError { visitNode(node); }

@@ -543,7 +543,9 @@ public abstract class Node {
     {
 	public Expression expr;
 
-	public void accept(Visitor v) throws ACCError {
+	public void accept(Visitor v) 
+	    throws ACCError 
+	{
 	    v.visitParensExpression(this);
 	}
 
@@ -553,6 +555,27 @@ public abstract class Node {
 
 	public String toString() {
 	    return "parens expr";
+	}
+    }
+
+    public static class SizedExpression
+	extends Expression
+    {
+	public Expression expr;
+
+	public void accept(Visitor v) 
+	    throws ACCError 
+	{
+	    v.visitSizedExpression(this);
+	}
+
+	public boolean isConstValExpr() {
+	    return expr.isConstValExpr();
+	}
+
+	public String toString() {
+	    return "sized expr: " + 
+		sizeAsString(size,isSigned);
 	}
     }
 
@@ -626,7 +649,7 @@ public abstract class Node {
 	    if (value.compareTo(Token.MAX_INT.negate().shiftRight(1))<=0) {
 		value = Token.MAX_INT.add(BigInteger.ONE).subtract(value.negate().and(Token.MAX_INT));
 	    }
-	    this.size = getSize();
+	    this.size = setSize();
 	    this.isSigned = (value.compareTo(BigInteger.ZERO) < 0);
 	}
 
@@ -634,7 +657,7 @@ public abstract class Node {
 	 * Compute the smallest number of bytes required to hold this
 	 * integer in two's complement notation.
 	 */
-	public int getSize() { 
+	private int setSize() { 
 	    BigInteger unsignedValue = 
 		(value.compareTo(BigInteger.ZERO) >= 0)
 		? value : value.negate().shiftLeft(1);
@@ -807,6 +830,9 @@ public abstract class Node {
 	    throws ACCError;
 	public abstract void 
 	    visitParensExpression(ParensExpression node) 
+	    throws ACCError;
+	public abstract void
+	    visitSizedExpression(SizedExpression node)
 	    throws ACCError;
 	public abstract void 
 	    visitIdentifier(Identifier node) 

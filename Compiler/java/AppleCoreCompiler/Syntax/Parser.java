@@ -494,7 +494,7 @@ public class Parser {
     }
 
     /**
-     * Expr ::= LValueExpr | Binop-Expr | Term 
+     * Expr ::= LValue-Expr | Binop-Expr | Sized-Expr | Term 
      */
     private Expression parseExpression() 
 	throws SyntaxError, IOException
@@ -563,6 +563,11 @@ public class Parser {
 		     == Token.LBRACKET) {
 		result = parseIndexedExpression(result);
 	    }
+	    // Check for sized expr
+	    else if (scanner.getCurrentToken()
+		     == Token.COLON && !lvalue) {
+		result = parseSizedExpression(result);
+	    }
 	    else return result;
 	}
     }
@@ -582,6 +587,21 @@ public class Parser {
 	indexedExp.size = parseSize();
 	expectAndConsume(Token.RBRACKET);
 	return indexedExp;
+    }
+
+    /**
+     * SizedExpr ::= Expr ':' Size ['S']
+     */
+    private SizedExpression parseSizedExpression(Expression expr)
+	throws SyntaxError, IOException
+    {
+	SizedExpression sizedExp = new SizedExpression();
+	setLineNumberOf(sizedExp);
+	sizedExp.expr = expr;
+	expectAndConsume(Token.COLON);
+	sizedExp.size = parseSize();
+	sizedExp.isSigned = parseIsSigned();
+	return sizedExp;
     }
 
     /**
