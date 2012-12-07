@@ -27,6 +27,11 @@ FN SET_HI_RES() {
   SET HI_RES[0,1]=0;
 }
 # --------------------------------------
+# ADDRESSES
+# --------------------------------------
+CONST HI_RES_PAGE_1 $2000;
+CONST HI_RES_PAGE_2 $4000;
+# --------------------------------------
 # COLORS
 # --------------------------------------
 CONST BLACK		0;
@@ -87,4 +92,79 @@ FN:1 SCRN(X:1,Y:1) {
   MON_SCRN();
   RETURN ^A;
 }
-
+# --------------------------------------
+# COMPUTE ADDRESS OF HI-RES ROW
+# --------------------------------------
+FN:2 HI_RES_Y_ADDR(Y:1,PAGE:1) {
+  VAR Y_EXT:2=Y;
+  VAR MASK_1:2=(Y_EXT>>3) AND 7;
+  VAR MASK_2:2=(Y_EXT>>6) AND 3;
+  VAR OFFSET:2=$80*MASK_1+40*MASK_2;
+  SET OFFSET=OFFSET+(Y_EXT AND 7)*$400;
+  RETURN HI_RES_PAGE_ADDR(PAGE)+OFFSET;
+}
+# --------------------------------------
+# COMPUTE OFFSET OF HI-RES COLUMN
+# - LOW BYTE: BIT OF OFFSET
+# - HIGH BYTE: BYTE OF OFFSET
+# --------------------------------------
+FN:2 HI_RES_X_OFFSET(X:2) {
+  VAR OFFSET:2;
+  VAR BYTE:2=X / 7;
+  SET (@OFFSET)[1,1]=BYTE;
+  SET (@OFFSET)[0,1]=X-7*BYTE;
+  RETURN OFFSET;
+}
+# --------------------------------------
+# SET OR CLEAR A HI-RES DOT
+# --------------------------------------
+VAR Y_ADDR:2;
+VAR X_OFFSET:2;
+VAR DOT_ADDR:2;
+VAR DOT_MASK:1;
+FN HI_RES_POS(X:2,Y:1,PAGE:1) {
+  SET Y_ADDR=HI_RES_Y_ADDR(Y,PAGE);
+  SET X_OFFSET=HI_RES_X_OFFSET(X);
+  SET DOT_ADDR=Y_ADDR+(@X_OFFSET)[1,1];
+  SET DOT_MASK=1<<((@X_OFFSET)[0,1]);
+}
+FN SET_DOT(X:2,Y:1,PAGE:1) {
+  HI_RES_POS(X,Y,PAGE);
+  SET DOT_ADDR[0,1]=
+   DOT_ADDR[0,1] OR DOT_MASK;  
+}
+FN CLEAR_DOT(X:2,Y:1,PAGE:1) {
+  HI_RES_POS(X,Y,PAGE);
+  SET DOT_ADDR[0,1]=
+   DOT_ADDR[0,1] AND NOT DOT_MASK;
+}
+# --------------------------------------
+# SET OR CLEAR A HI-RES COLOR BIT
+# --------------------------------------
+FN SET_COLOR_BIT(X:2,Y:1,PAGE:1) {
+  HI_RES_POS(X,Y,PAGE);
+  SET DOT_ADDR[0,1]=DOT_ADDR[0,1] OR $80;
+}
+FN CLEAR_COLOR_BIT(X:2,Y:1,PAGE:1) {
+  HI_RES_POS(X,Y,PAGE);
+  SET DOT_ADDR[0,1]=DOT_ADDR[0,1] AND $7F;
+}
+# --------------------------------------
+# CLEAR A HI-RES PAGE
+# --------------------------------------
+FN CLEAR_HI_RES_PAGE(PAGE:1) {
+  SET MON_A1[0,2]=HI_RES_PAGE_ADDR(PAGE);
+  SET MON_A4[0,2]=MON_A1[0,2]+1;
+  SET MON_A2[0,2]=MON_A1[0,2]+$1FFE;
+  SET MON_A1[0,2][0,1]=0;
+  SET ^Y=0;
+  MON_MOVE();
+}
+# --------------------------------------
+# COMPUTE BASE ADDRESS OF PAGE
+# --------------------------------------
+FN:2 HI_RES_PAGE_ADDR(PAGE:1) {
+  IF (PAGE AND 1)
+    RETURN HI_RES_PAGE_1;
+  RETURN HI_RES_PAGE_2;
+}

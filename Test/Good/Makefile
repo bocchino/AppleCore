@@ -1,6 +1,6 @@
 LIB=../../Lib
-DECLS=${LIB}/ac/IO.ac:${LIB}/ach/MON.ach:${LIB}/ach/BOOLEAN.ach
-ACC = ${APPLECORE}/Compiler/bin/acc -decls=${DECLS} -native
+DECLS=${LIB}/ac/IO.ac:${LIB}/ach/MON.ach:${LIB}/ach/BOOLEAN.ach:${LIB}/ac/GRAPHICS.ac:${LIB}/ac/STRING.ac
+ACC = ${APPLECORE}/Compiler/bin/acc -decls=${DECLS}
 
 SC-AVM-ASM = ${APPLECORE}/Assembler/bin/sc-avm-asm -i ${APPLECORE}/Lib/avm:${APPLECORE}/Lib-AVM/avm:${APPLECORE}/Runtime/avm -d obj ${OPTS}
 
