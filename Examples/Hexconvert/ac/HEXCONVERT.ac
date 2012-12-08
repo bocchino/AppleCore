@@ -86,7 +86,7 @@ FN:1 SET_SIZE() {
 # -----------------------------------
 FN:1 HEX_TO_DEC() {
   VAR OK:1;
-  VAR VAL:2=ALLOCATE(SIZE);
+  VAR VAL:@=ALLOCATE(SIZE);
   SET OK=STR_TO_NUM(MON_IN+1,16,VAL,SIZE);
   IF (OK) {
     PRINT_CHAR('=');
@@ -101,7 +101,7 @@ FN:1 HEX_TO_DEC() {
 # -----------------------------------
 FN:1 DEC_TO_HEX() {
   VAR OK:1;
-  VAR VAL:2=ALLOCATE(SIZE);
+  VAR VAL:@=ALLOCATE(SIZE);
   SET OK=STR_TO_NUM(MON_IN,10,VAL,SIZE);
   IF (OK) {
     PRINT_CHAR('=');
