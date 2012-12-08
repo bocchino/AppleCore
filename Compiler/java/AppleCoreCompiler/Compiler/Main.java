@@ -126,6 +126,9 @@ public class Main {
 		new AttributionPass(declFiles);
 	    attributionPass.runOn(sourceFile);
 	    
+	    FunctionCallPass functionCallPass = new FunctionCallPass();
+	    functionCallPass.runOn(sourceFile);
+	    
 	    ConstantEvaluationPass cePass = 
 		new ConstantEvaluationPass();
 	    cePass.runOn(sourceFile);
@@ -135,9 +138,6 @@ public class Main {
 	    
 	    LValuePass lvaluePass = new LValuePass();
 	    lvaluePass.runOn(sourceFile);
-	    
-	    FunctionCallPass functionCallPass = new FunctionCallPass();
-	    functionCallPass.runOn(sourceFile);
 	    
 	    AVMTranslatorPass translatorPass =
 		new AVMTranslatorPass();

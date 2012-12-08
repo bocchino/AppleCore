@@ -3,5 +3,5 @@ all :
 	make -C RodsColorPattern/ac
 
 clean :
-	make -C Mastermind clean-include
+	make -C Mastermind clean
 	make -C RodsColorPattern/ac clean

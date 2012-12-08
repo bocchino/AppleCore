@@ -56,8 +56,8 @@ DATA VB_READ_NAME    "READ";
 DATA NOTHING_SPECIAL "THERE IS NOTHING SPECIAL ABOUT THE ";
 DATA CANT_DO         "YOU CAN'T DO THAT RIGHT NOW.";
 
-VAR VB:2;
-VAR OBJ:2;
+VAR VB:@;
+VAR OBJ:@;
 
 VAR VB_ID:1;
 VAR OBJ_ID:1;
@@ -113,7 +113,7 @@ FN VB_SAY_FN() {
     RESPOND(NOTHING);
 }
 
-FN RESPOND(STR:2) {
+FN RESPOND(STR:@) {
   SET RESPONDED=TRUE;
   PRINT_WORDS(STR);
 }
@@ -121,7 +121,7 @@ FN RESPOND(STR:2) {
 # PERFORM OBJECT ACTION
 # -----------------------------------
 FN DO_ACTION_ON(OBJ:1) {
-  VAR ACTION_FN:2;
+  VAR ACTION_FN:@;
   IF (VB_ID=VB_DROP)
     DROP_ACTION();
   ELSE IF (LOAD_OBJ_MODULE_FOR(OBJ)) {
@@ -155,7 +155,7 @@ FN TAKE_ACTION() {
 DATA TOO_HEAVY "IT IS TOO HEAVY.";
 DATA FIXED     "IT IS FIXED IN PLACE.";
 
-FN CANT_TAKE(MSG:2) {
+FN CANT_TAKE(MSG:@) {
   IF (VB_ID=VB_TAKE) RESPOND(MSG);
 }
 # -----------------------------------
@@ -180,6 +180,6 @@ FN DROP_ACTION() {
 # -----------------------------------
 # PRINT MSG IF OBJECT LOOKED AT
 # -----------------------------------
-FN LOOK(MSG:2) {
+FN LOOK(MSG:@) {
   IF (VB_ID=VB_LOOK) RESPOND(MSG);
 }

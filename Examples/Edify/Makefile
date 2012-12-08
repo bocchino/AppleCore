@@ -1,4 +1,4 @@
-LIB=../../Lib
+LIB=${APPLECORE}/Lib
 INCLUDE=./Include
 OBJ=EDIFY.OBJ
 DECLS=${INCLUDE}/ac/EDIFY.INPUT.ac:${INCLUDE}/ac/EDIFY.BUFFER.ac:${LIB}/ac/IO.ac:${LIB}/ac/STRING.ac:${LIB}/ac/CHAR.ac:${LIB}/ac/COPY.ac:${LIB}/ach/MON.ach:${LIB}/ach/BOOLEAN.ach
@@ -9,7 +9,7 @@ all-include : obj all-avm
 	make -C Include
 	${SC-AVM-ASM} avm/EDIFY.avm
 
-clean-include : clean
-	make -C Include clean
+include ${APPLECORE}/Makefile.ac.common
 
-include ../../Makefile.ac.common
+CLEAN=make -C Include clean
+

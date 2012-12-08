@@ -40,8 +40,8 @@ DATA SEPARATOR "\$0D----------------------------------------\$08";
 DATA JEWELS_GLOWING "\$0D\$0DTHE JEWELS ON TOP OF THE SCEPTRE ARE GLOWING.";
 
 FN PRINT_RM(RM:1) {
-  VAR RM_NAME:2;
-  VAR RM_DESC:2;
+  VAR RM_NAME:@;
+  VAR RM_DESC:@;
   IF (LOAD_RM_MODULE_FOR(RM)) {
     SET RM_NAME=RM_NAMES[2*OFFSET,2];
     SET RM_DESC=RM_DESCS[2*OFFSET,2];
@@ -103,7 +103,7 @@ FN PRINT_RM_OBJS(RM:1) {
 # PRINT ROOM HELP
 # -----------------------------------
 FN PRINT_HELP(RM:1) {
-  VAR HELP:2;
+  VAR HELP:@;
   IF (LOAD_RM_MODULE_FOR(RM)) {
     SET HELP=RM_HELP[2*OFFSET,2];
     PRINT_WORDS(HELP);
@@ -113,7 +113,7 @@ FN PRINT_HELP(RM:1) {
 # SET POINTER TO ROOM LIST
 # -----------------------------------
 VAR RM_LIST_LEN:1;
-VAR RM_LIST_PTR:2;
+VAR RM_LIST_PTR:@;
 VAR RM_LIST_IDX:1;
 
 FN SET_RM_LIST_PTR() {
@@ -139,7 +139,7 @@ FN:1 RM_OBJ_VISIBLE() {
 # -----------------------------------
 # FIND OBJECT IN ROOM BY NAME
 # -----------------------------------
-FN:1 FIND_OBJ_IN_RM(NAME:2) {
+FN:1 FIND_OBJ_IN_RM(NAME:@) {
   VAR ID:1;
   SET_RM_LIST_PTR();
   WHILE (RM_LIST_IDX < RM_LIST_LEN) {

@@ -13,6 +13,9 @@ clean:
 		rm -f *.aux *.bbl *.log *.toc *.blg *~
 		rm -Rf *.dvi *.ps *.pdf *.out
 
+publish: ${TARGET}.pdf
+	cp $< ../../
+
 .PRECIOUS: $(TARGET).pdf
 
 .phony: clean 

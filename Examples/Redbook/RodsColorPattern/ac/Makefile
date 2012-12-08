@@ -1,4 +1,4 @@
-LIB=../../../../Lib
+LIB=${APPLECORE}/Lib
 TF=RODS.COLOR.PATTERN.OBJ
 DECLS=${LIB}/ac/IO.ac:${LIB}/ac/STRING.ac:${LIB}/ac/CHAR.ac:${LIB}/ach/MON.ach:${LIB}/ach/BOOLEAN.ach:${LIB}/ac/GRAPHICS.ac:${LIB}/ac/PRINT.WORDS.ac:${LIB}/ach/SOFT.SWITCHES.ach
 ACC = ${APPLECORE}/Compiler/bin/acc -decls=${DECLS} -tf=${TF}
@@ -7,4 +7,4 @@ SC-AVM-ASM = ${APPLECORE}/Assembler/bin/sc-avm-asm -i ${APPLECORE}/Lib/avm:${APP
 all : obj all-avm
 	${SC-AVM-ASM} avm/RODS.COLOR.PATTERN.avm
 
-include ../../../../Makefile.ac.common
+include ${APPLECORE}/Makefile.ac.common

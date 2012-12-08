@@ -113,7 +113,7 @@ FN SET_SCRN_COLOR() {
 # -----------------------------------
 # NORMALIZE COORDS TO BOUND
 # -----------------------------------
-FN NORMALIZE(PTR:2,BOUND:1) {
+FN NORMALIZE(PTR:@,BOUND:1) {
   VAR COORD:1S=PTR[0,1];
   IF (COORD < 0)
     SET PTR[0,1]=BOUND;

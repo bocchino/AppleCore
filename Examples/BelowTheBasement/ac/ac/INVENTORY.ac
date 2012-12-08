@@ -25,7 +25,7 @@ FN REMOVE_FROM_INV() {
 # -----------------------------------
 VAR INV_IDX:1;
 
-FN:1 FIND_OBJ_IN_INV(NAME:2) {
+FN:1 FIND_OBJ_IN_INV(NAME:@) {
   VAR ID:1;
   SET INV_IDX=0;
   WHILE (INV_IDX < NUM_CARRIED) {

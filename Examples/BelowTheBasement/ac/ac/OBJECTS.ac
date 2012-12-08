@@ -191,7 +191,7 @@ DATA WORD_NULL     0;
 # -----------------------------------
 # FIND OBJECT BY NAME
 # -----------------------------------
-FN:1 FIND_OBJ(OBJ:2) {
+FN:1 FIND_OBJ(OBJ:@) {
   VAR OBJ_ID:1;
   # LOOK IN ROOM
   SET OBJ_ID=
@@ -231,8 +231,8 @@ FN:1 REMOVE_OBJ_ID(OBJ_ID:1) {
 # PRINT OBJECT NAME
 # -----------------------------------
 FN PRINT_OBJ_NAME(OBJ:1) {
-  VAR NAME_1:2=OBJ_NAMES[4*OBJ,2];
-  VAR NAME_2:2=OBJ_NAMES[4*OBJ+2,2];
+  VAR NAME_1:@=OBJ_NAMES[4*OBJ,2];
+  VAR NAME_2:@=OBJ_NAMES[4*OBJ+2,2];
   IF (NAME_1[0,1]>0) {
     PRINT_STRING(NAME_1);
     PRINT_CHAR(' ');
@@ -246,8 +246,8 @@ FN PRINT_OBJ_NAME(OBJ:1) {
 # -----------------------------------
 # TEST OBJECT NAME AGAINST ID
 # -----------------------------------
-FN:1 TEST_OBJ_NAME(STR:2,ID:1) {
-  VAR NAME_PTR:2=OBJ_NAMES+4*ID;
+FN:1 TEST_OBJ_NAME(STR:@,ID:1) {
+  VAR NAME_PTR:@=OBJ_NAMES+4*ID;
   RETURN (NOT CMP_STRING(STR,NAME_PTR[0,2]))
     OR (NOT CMP_STRING(STR,NAME_PTR[2,2]));    
 }

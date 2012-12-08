@@ -1,4 +1,4 @@
-LIB=../../../Lib
+LIB=${APPLECORE}/Lib
 TF=MASTERMIND.OBJ
 DECLS=${LIB}/ac/IO.ac:${LIB}/ac/STRING.ac:${LIB}/ac/CHAR.ac:${LIB}/ach/MON.ach:${LIB}/ach/BOOLEAN.ach:${LIB}/ac/GRAPHICS.ac:${LIB}/ac/PRINT.WORDS.ac:Include/ac/MASTERMIND.INCLUDE.ac:
 ACC = ${APPLECORE}/Compiler/bin/acc -decls=${DECLS} -tf=${TF}
@@ -8,7 +8,6 @@ all-include : obj all-avm
 	make -C Include
 	${SC-AVM-ASM} avm/MASTERMIND.avm
 
-clean-include : clean
-	make -C Include clean
+CLEAN= make -C Include clean
 
-include ../../../Makefile.ac.common
+include ${APPLECORE}/Makefile.ac.common

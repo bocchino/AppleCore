@@ -8,8 +8,7 @@ all-include : obj all-avm
 	make -C Include
 	${SC-AVM-ASM} avm/MINI.ADVENTURE.avm
 
-clean-include : clean
-	make -C Include clean
+CLEAN=make -C Include clean
 
 include ../../Makefile.ac.common
 

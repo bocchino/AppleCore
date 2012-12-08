@@ -22,3 +22,4 @@ avm :
 
 clean ::
 	rm -Rf avm obj
+	${CLEAN}

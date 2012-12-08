@@ -224,8 +224,14 @@ public class Parser {
 	varDecl.isLocalVariable = isLocalVariable;
 	varDecl.name = parseName();
 	expectAndConsume(Token.COLON);
-	varDecl.size = parseSize();
-	varDecl.isSigned = parseIsSigned();
+	if (parsePossibleToken(Token.AT)) {
+	    varDecl.size = 2;
+	    varDecl.isPointer = true;
+	} 
+	else {
+	    varDecl.size = parseSize();
+	    varDecl.isSigned = parseIsSigned();
+	}
 	if (scanner.getCurrentToken() == Token.EQUALS) {
 	    scanner.getNextToken();
 	    varDecl.init = parseExpression();
@@ -245,8 +251,14 @@ public class Parser {
 	setLineNumberOf(functionDecl);
 	if (scanner.getCurrentToken() == Token.COLON) {
 	    scanner.getNextToken();
-	    functionDecl.size = parseSize();
-	    functionDecl.isSigned = parseIsSigned();
+	    if (parsePossibleToken(Token.AT)) {
+		functionDecl.size = 2;
+		functionDecl.isPointer = true;
+	    }
+	    else {
+		functionDecl.size = parseSize();
+		functionDecl.isSigned = parseIsSigned();
+	    }
 	}
 	functionDecl.name = parseName();
 	expectAndConsume(Token.LPAREN);
@@ -281,8 +293,14 @@ public class Parser {
 	    setLineNumberOf(param);
 	    param.name = name;
 	    expectAndConsume(Token.COLON);
-	    param.size = parseSize();
-	    param.isSigned = parseIsSigned();
+	    if (parsePossibleToken(Token.AT)) {
+		param.size = 2;
+		param.isPointer = true;
+	    }
+	    else {
+		param.size = parseSize();
+		param.isSigned = parseIsSigned();
+	    }
 	    params.add(param);
 	    name = null;
 	    if (scanner.getCurrentToken() == Token.COMMA) {
@@ -586,6 +604,7 @@ public class Parser {
 	expectAndConsume(Token.COMMA);
 	indexedExp.size = parseSize();
 	expectAndConsume(Token.RBRACKET);
+	indexedExp.isPointer = (indexedExp.size == 2);
 	return indexedExp;
     }
 
@@ -599,8 +618,14 @@ public class Parser {
 	setLineNumberOf(sizedExp);
 	sizedExp.expr = expr;
 	expectAndConsume(Token.COLON);
-	sizedExp.size = parseSize();
-	sizedExp.isSigned = parseIsSigned();
+	if (parsePossibleToken(Token.AT)) {
+	    sizedExp.size = 2;
+	    sizedExp.isPointer = true;
+	}
+	else {
+	    sizedExp.size = parseSize();
+	    sizedExp.isSigned = parseIsSigned();
+	}
 	return sizedExp;
     }
 
@@ -735,6 +760,20 @@ public class Parser {
 		return op;
 	}
 	return null;
+    }
+
+    /**
+     * If token is there, consume it and return true.  Otherwise
+     * return false.
+     */
+    private boolean parsePossibleToken(Token token) 
+	throws SyntaxError, IOException
+    {
+	if (scanner.getCurrentToken() == token) {
+	    scanner.getNextToken();
+	    return true;
+	}
+	return false;	
     }
 
     /**

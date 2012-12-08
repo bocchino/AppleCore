@@ -52,7 +52,7 @@ FN PRINT_STRING(STR_PTR:2) {
 # --------------------------------------
 # PRINT A NUMBER AS HEX DIGITS
 # --------------------------------------
-FN PRINT_HEX(N_PTR:2,SIZE:1) {
+FN PRINT_HEX(N_PTR:@,SIZE:1) {
    VAR I:1=SIZE;
    WHILE (I > 0) {
      SET ^A=N_PTR[I-1,1];

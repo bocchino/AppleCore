@@ -30,22 +30,22 @@ CONST RM_DATA_SIZE   12;
 # -----------------------------------
 # ROOM DATA ACCESS FNS
 # -----------------------------------
-FN:2 RM_NAME(RM:1) {
+FN:@ RM_NAME(RM:1) {
   RETURN RM_BASE(RM)[RM_NAME_IDX,2];
 }
-FN:2 RM_PRINTER(RM:1) {
+FN:@ RM_PRINTER(RM:1) {
   RETURN RM_BASE(RM)[RM_PRINTER_IDX,2];
 }
-FN:2 RM_HELP(RM:1) {
+FN:@ RM_HELP(RM:1) {
   RETURN RM_BASE(RM)[RM_HELP_IDX,2];
 }
-FN:2 RM_EXIT_PTR(RM:1,EXIT:1) {
+FN:@ RM_EXIT_PTR(RM:1,EXIT:1) {
   RETURN RM_BASE(RM)+RM_EXITS_IDX+EXIT;
 }
 FN:1 RM_EXIT(RM:1,EXIT:1) {
   RETURN RM_BASE(RM)[RM_EXITS_IDX+EXIT,1];
 }
-FN:2 RM_BASE(RM:1) {
+FN:@ RM_BASE(RM:1) {
   RETURN RM_DATA+RM*RM_DATA_SIZE;
 }
 # -----------------------------------

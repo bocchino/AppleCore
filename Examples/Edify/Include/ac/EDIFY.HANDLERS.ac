@@ -47,7 +47,7 @@ FN A_HANDLER() {
 # PRINT CLIP(B)OARD
 # -----------------------------------
 FN B_HANDLER() {
-  VAR CB_PTR:2=CB_START;
+  VAR CB_PTR:@=CB_START;
   WHILE (CB_PTR < CB_END) {
     PRINT_STRING(CB_PTR+1);
     MON_CROUT();
@@ -212,10 +212,10 @@ FN K_HANDLER() {
 # (M)ATCH
 # -----------------------------------
 VAR SEARCH_NUM:2;
-VAR SEARCH_PTR:2;
+VAR SEARCH_PTR:@;
 
 FN M_HANDLER() {
-  VAR MATCH_PTR:2;
+  VAR MATCH_PTR:@;
   IF (BUF_SIZE=0) {
     ERROR(BUFFER_EMPTY);
     RETURN;
@@ -314,7 +314,7 @@ FN S_HANDLER() {
 # -----------------------------------
 FN V_HANDLER() {
   VAR I:2=0;
-  VAR LINE_PTR:2=N_PTR;
+  VAR LINE_PTR:@=N_PTR;
   IF (BUF_SIZE=0) {
     ERROR(BUFFER_EMPTY);
     RETURN;
@@ -352,7 +352,7 @@ FN W_HANDLER() {
 # E(X)TRACT
 # -----------------------------------
 FN X_HANDLER() {
-  VAR X_START:2;
+  VAR X_START:@;
   VAR X_LEN:2;
   Y_HANDLER();
   IF (NOT ERR_FLAG) {
@@ -365,8 +365,8 @@ FN X_HANDLER() {
 # -----------------------------------
 # COP(Y)
 # -----------------------------------
-VAR Y_LOW_PTR:2;
-VAR Y_HI_PTR:2;
+VAR Y_LOW_PTR:@;
+VAR Y_HI_PTR:@;
 VAR Y_LEN:2;
 
 FN Y_HANDLER() {

@@ -95,7 +95,7 @@ FN:1 SCRN(X:1,Y:1) {
 # --------------------------------------
 # COMPUTE ADDRESS OF HI-RES ROW
 # --------------------------------------
-FN:2 HI_RES_Y_ADDR(Y:1,PAGE:1) {
+FN:@ HI_RES_Y_ADDR(Y:1,PAGE:1) {
   VAR Y_EXT:2=Y;
   VAR MASK_1:2=(Y_EXT>>3) AND 7;
   VAR MASK_2:2=(Y_EXT>>6) AND 3;
@@ -118,9 +118,9 @@ FN:2 HI_RES_X_OFFSET(X:2) {
 # --------------------------------------
 # SET OR CLEAR A HI-RES DOT
 # --------------------------------------
-VAR Y_ADDR:2;
+VAR Y_ADDR:@;
 VAR X_OFFSET:2;
-VAR DOT_ADDR:2;
+VAR DOT_ADDR:@;
 VAR DOT_MASK:1;
 FN HI_RES_POS(X:2,Y:1,PAGE:1) {
   SET Y_ADDR=HI_RES_Y_ADDR(Y,PAGE);
@@ -139,7 +139,7 @@ FN CLEAR_DOT(X:2,Y:1,PAGE:1) {
    DOT_ADDR[0,1] AND NOT DOT_MASK;
 }
 # --------------------------------------
-# SET OR CLEAR A HI-RES COLOR BIT
+# SET, CLEAR, OR FLIP A HI-RES COLOR BIT
 # --------------------------------------
 FN SET_COLOR_BIT(X:2,Y:1,PAGE:1) {
   HI_RES_POS(X,Y,PAGE);
@@ -148,6 +148,10 @@ FN SET_COLOR_BIT(X:2,Y:1,PAGE:1) {
 FN CLEAR_COLOR_BIT(X:2,Y:1,PAGE:1) {
   HI_RES_POS(X,Y,PAGE);
   SET DOT_ADDR[0,1]=DOT_ADDR[0,1] AND $7F;
+}
+FN FLIP_COLOR_BIT(X:2,Y:1,PAGE:1) {
+  HI_RES_POS(X,Y,PAGE);
+  SET DOT_ADDR[0,1]=DOT_ADDR[0,1] XOR $80;
 }
 # --------------------------------------
 # CLEAR A HI-RES PAGE
@@ -163,7 +167,7 @@ FN CLEAR_HI_RES_PAGE(PAGE:1) {
 # --------------------------------------
 # COMPUTE BASE ADDRESS OF PAGE
 # --------------------------------------
-FN:2 HI_RES_PAGE_ADDR(PAGE:1) {
+FN:@ HI_RES_PAGE_ADDR(PAGE:1) {
   IF (PAGE AND 1)
     RETURN HI_RES_PAGE_1;
   RETURN HI_RES_PAGE_2;

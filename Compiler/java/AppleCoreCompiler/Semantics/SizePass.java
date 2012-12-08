@@ -1,6 +1,7 @@
 /**
  * Scan the AST and fill in the size and signedness of each expression
- * node.  Also do semantic checking relating to size and signedness.
+ * node, and whether each node can function as a pointer.  Also do
+ * semantic checking relating to size, signedness, and pointers.
  */
 package AppleCoreCompiler.Semantics;
 
@@ -20,9 +21,12 @@ public class SizePass
 
     public void printStatus(Expression node) {
 	if (debug) {
-	    System.out.println("line " + node.lineNumber + ": size of " 
-			       + node + " is " + node.size + " " + 
-			       (node.isSigned ? "signed" : "unsigned"));
+	    System.out.print("line " + node.lineNumber + ": size of " 
+			     + node + " is " + node.size + " " + 
+			     (node.isSigned ? "signed" : "unsigned"));
+	    if (node.isPointer)
+		System.out.print(" (pointer)");
+	    System.out.println();
 	}
     }
     
@@ -44,7 +48,8 @@ public class SizePass
 		if (node.statements.size() == 0 || 
 		    !(node.statements.get(node.statements.size()-1) 
 		      instanceof ReturnStatement)) {
-		    throw new SemanticError("function requires return value",node);
+		    throw new SemanticError("function requires return value",
+					    node);
 		}
 	    }
 	}
@@ -92,7 +97,7 @@ public class SizePass
     /**
      * The size of an indexed expression comes from the expression
      * itself.  It is always unsigned.  The expression being indexed
-     * must be a 1- or 2- byte expression.
+     * must be a pointer.
      */
     public void visitIndexedExpression(IndexedExpression node) 
 	throws ACCError
@@ -116,12 +121,17 @@ public class SizePass
     {
 	super.visitCallExpression(node);
 	boolean hasDecl = false;
+	if (!node.fn.isPointer()) {
+	    throw new SemanticError("called expression must be address",
+				    node);
+	}
 	if (node.fn instanceof Identifier) {
 	    Identifier id = (Identifier) node.fn;
 	    Node def = id.def;
 	    if (def instanceof FunctionDecl) {
 		hasDecl = true;
 		node.size = def.getSize();
+		node.isPointer = def.isPointer();
 		node.isSigned = def.isSigned();
 	    }
 	}
@@ -129,6 +139,7 @@ public class SizePass
 	    // We're calling a label with no prototype info
 	    requirePointer(node.fn);
 	    node.size = 0;
+	    node.isPointer = true;
 	    node.isSigned = false;
 	}
 	printStatus(node);
@@ -139,6 +150,7 @@ public class SizePass
      */
     public void visitRegisterExpression(RegisterExpression node) {
 	node.size = 1;
+	node.isPointer = false;
 	node.isSigned = false;
 	printStatus(node);
     }
@@ -151,10 +163,12 @@ public class SizePass
 	if (node.def instanceof FunctionDecl ||
 	    node.def instanceof DataDecl) {
 	    node.size=2;
+	    node.isPointer = true;
 	    node.isSigned=false;
 	}
 	else {
 	    node.size = node.def.getSize();
+	    node.isPointer = node.def.isPointer();
 	    node.isSigned = node.def.isSigned();
 	}
 	printStatus(node);
@@ -172,6 +186,14 @@ public class SizePass
      * 3. For all other operations, the size is the maximum of the
      *    sizes of its operands.  If either of the operands is signed,
      *    the result is signed.  Otherwise, the result is unsigned.
+     *
+     * A binop expression represents an address if
+     *
+     * 1. It is a shift or divide operation, and the
+     *    left-hand operand represents an address; or
+     *
+     * 2. It is not a shift, comparison, or divide operation, and
+     *    either operand represents an address.
      */
     public void visitBinopExpression(BinopExpression node) 
 	throws ACCError
@@ -180,15 +202,25 @@ public class SizePass
 	switch (node.operator) {
 	case EQUALS: case GT: case LT: case GEQ: case LEQ:
 	    node.size = 1;
+	    node.isPointer = false;
 	    node.isSigned = false;
 	    break;
 	case SHL: case SHR:
 	    node.size = node.left.size;
+	    node.isPointer = node.left.isPointer;
 	    node.isSigned = node.left.isSigned;
 	    checkShift(node);
 	    break;
 	default:
 	    node.size = Math.max(node.left.size,node.right.size);
+	    if (node.operator == BinopExpression.Operator.DIVIDE) {
+		node.isPointer = node.left.isPointer &&
+		    !node.right.isPointer;
+	    }
+	    else {
+		node.isPointer = node.left.isPointer ?
+		    !node.right.isPointer : node.right.isPointer;
+	    }
 	    node.isSigned = (node.left.isSigned || 
 			     node.right.isSigned);
 	    break;
@@ -204,6 +236,7 @@ public class SizePass
 	throws ACCError
     {
 	if (node.right.isSigned ||
+	    node.right.isPointer ||
 	    node.right.size != 1) {
 	    throw new SemanticError("shift amount must be 1 byte unsigned",
 				    node);
@@ -225,14 +258,17 @@ public class SizePass
 	switch (node.operator) {
 	case DEREF:
 	    node.size = 2;
+	    node.isPointer = true;
 	    node.isSigned = false;
 	    break;
 	case NEG:
 	    node.size = node.expr.size;
+	    node.isPointer = false;
 	    node.isSigned = true;
 	    break;
 	default:
 	    node.size = node.expr.size;
+	    node.isPointer = false;
 	    node.isSigned = node.expr.isSigned;
 	}
     }
@@ -246,11 +282,13 @@ public class SizePass
     {
 	super.visitParensExpression(node);
 	node.size = node.expr.size;
+	node.isPointer = node.expr.isPointer();
 	node.isSigned = node.expr.isSigned;
     }
 
     public void visitCharConstant(CharConstant node) {
 	node.size = 1;
+	node.isPointer = false;
 	node.isSigned = false;
     }
 
@@ -260,11 +298,10 @@ public class SizePass
     private void requirePointer(Node node) 
 	throws ACCError
     {
-	if (node.getSize() > 2) {
-	    throw new SemanticError(node + " must be 16-bit value",
+	if (!node.isPointer()) {
+	    throw new SemanticError(node + " must be a pointer",
 				    node);
 	}
     }
-
 
 }

@@ -8,11 +8,11 @@
 # RADIX - RADIX
 # STR   - POINTER TO STRING
 # --------------------------------------
-FN NUM_TO_STR(N:2,SIZE:1,RADIX:1,STR:2) {
-  VAR ZERO:2   =ALLOCATE(SIZE);
-  VAR RDX_ADJ:2=ALLOCATE(SIZE);
-  VAR QUOT:2   =ALLOCATE(SIZE);
-  VAR REM:2    =ALLOCATE(SIZE);
+FN NUM_TO_STR(N:@,SIZE:1,RADIX:1,STR:@) {
+  VAR ZERO:@   =ALLOCATE(SIZE);
+  VAR RDX_ADJ:@=ALLOCATE(SIZE);
+  VAR QUOT:@   =ALLOCATE(SIZE);
+  VAR REM:@    =ALLOCATE(SIZE);
   VAR IDX:2=0;
   SET RDX_ADJ[0,1]=RADIX;
   WHILE (TRUE) {
@@ -36,11 +36,11 @@ FN NUM_TO_STR(N:2,SIZE:1,RADIX:1,STR:2) {
 # N     - POINTER TO NUMBER
 # SIZE  - SIZE OF NUMBER
 # --------------------------------------
-FN:1 STR_TO_NUM(STR:2,RADIX:1,N:2,SIZE:1) {
+FN:1 STR_TO_NUM(STR:@,RADIX:1,N:@,SIZE:1) {
   VAR I:1=0;
-  VAR DIGIT:2=ALLOCATE(SIZE);
-  VAR RDX_ADJ:2=ALLOCATE(SIZE);
-  VAR PROD:2=ALLOCATE(SIZE);
+  VAR DIGIT:@=ALLOCATE(SIZE);
+  VAR RDX_ADJ:@=ALLOCATE(SIZE);
+  VAR PROD:@=ALLOCATE(SIZE);
   WHILE (I < SIZE) {
     SET N[I,1]=0;
     INCR I;
@@ -61,8 +61,8 @@ FN:1 STR_TO_NUM(STR:2,RADIX:1,N:2,SIZE:1) {
 # STR   - POINTER TO STRING
 # RIGHT - LAST INDEX OF STRING
 # --------------------------------------
-FN REVERSE_STRING(STR:2,RIGHT:2) {
-  VAR LEFT:2=0;
+FN REVERSE_STRING(STR:@,RIGHT:@) {
+  VAR LEFT:@=0;
   VAR DIGIT:1;
   WHILE (LEFT < RIGHT) {
     SET DIGIT=STR[LEFT,1];
@@ -75,7 +75,7 @@ FN REVERSE_STRING(STR:2,RIGHT:2) {
 # --------------------------------------
 # COMPARE STRINGS
 # --------------------------------------
-FN:1S CMP_STRING(STR1:2,STR2:2) {
+FN:1S CMP_STRING(STR1:@,STR2:@) {
   VAR CHAR1:1;
   VAR CHAR2:1;
   WHILE (TRUE) {
@@ -98,7 +98,7 @@ FN:1S CMP_STRING(STR1:2,STR2:2) {
 # --------------------------------------
 # COMPUTE STRING LENGTH
 # --------------------------------------
-FN:2 STRING_LEN(STR:2) {
+FN:2 STRING_LEN(STR:@) {
   VAR LEN:2=0;
   WHILE (NOT (STR[LEN,1]=0)) {
     INCR LEN;
@@ -114,7 +114,7 @@ FN:2 STRING_LEN(STR:2) {
 # --------------------------------------
 FN MATCH_ASM();
 
-FN:2 MATCH(STR:2,PAT:2) {
+FN:@ MATCH(STR:@,PAT:@) {
   SET MON_A1[0,2]=STR;
   SET MON_A2[0,2]=PAT;
   MATCH_ASM();

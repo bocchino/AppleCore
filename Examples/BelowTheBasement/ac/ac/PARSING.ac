@@ -18,8 +18,8 @@ FN PARSE_INPUT() {
 # FIND THE WORDS IN THE INPUT LINE
 # -----------------------------------
 FN FIND_WORDS() {
-  VAR WORD:2=MON_IN;
-  VAR PTR:2=MON_IN;
+  VAR WORD:@=MON_IN;
+  VAR PTR:@=MON_IN;
   VAR CHAR:1;
   SET WORDS=0;
   SET NUM_WORDS=0;
@@ -61,7 +61,7 @@ DATA WORD_A        "A";
 DATA WORD_TO       "TO";
 DATA WORD_OF       "OF";
 
-FN:1S IS_SKIP_WORD(STR:2) {
+FN:1S IS_SKIP_WORD(STR:@) {
   VAR IDX:1=FIND_WORD(STR,
     WORD_PTRS,NUM_SKIP_WORDS);
   RETURN NOT (IDX=-1);
@@ -69,8 +69,8 @@ FN:1S IS_SKIP_WORD(STR:2) {
 # -----------------------------------
 # FIND WORD IN LIST
 # -----------------------------------
-FN:1 FIND_WORD(WORD_PTR:2,
- LIST_PTR:2,MAX:1) {
+FN:1 FIND_WORD(WORD_PTR:@,
+ LIST_PTR:@,MAX:1) {
   VAR IDX:1=0;
   IF (WORD_PTR=0) RETURN -1;
   WHILE (IDX < MAX) {
@@ -85,7 +85,7 @@ FN:1 FIND_WORD(WORD_PTR:2,
 # -----------------------------------
 # GET INPUT FOR 'USE' ACTION
 # -----------------------------------
-FN GET_USE_INPUT(PROMPT:2) {
+FN GET_USE_INPUT(PROMPT:@) {
   VAR LEN:1;
   SET WORDS=0;
   PRINT_WORDS(PROMPT);

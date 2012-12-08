@@ -28,6 +28,11 @@ public abstract class Node {
     public int getSize() { return 0; }
 
     /**
+     * Whether the node represents a pointer value.
+     */
+    public boolean isPointer() { return false; }
+
+    /**
      * The signedness of the node.
      */
     public boolean isSigned() { return false; }
@@ -73,6 +78,9 @@ public abstract class Node {
 	public int getSize() { 
 	    if (expr == null) return 2;
 	    return expr.getSize(); 
+	}
+	public boolean isPointer() {
+	    return (getSize()==2);
 	}
 	public boolean isSigned() { return false; }
 
@@ -135,6 +143,7 @@ public abstract class Node {
     {
 	public String name;
 	public int size;
+	public boolean isPointer;
 	public boolean isSigned;
 	public Expression init;
 
@@ -147,6 +156,7 @@ public abstract class Node {
 	}
 
 	public int getSize() { return size; }
+	public boolean isPointer() { return this.isPointer; }
 	public boolean isSigned() { return this.isSigned; }
 	public int getOffset() { return offset; }
 	public void setOffset(int offset) {
@@ -167,6 +177,7 @@ public abstract class Node {
     {
 	public int size;
 	public boolean isSigned;
+	public boolean isPointer;
 	public String name;
 	public final List<VarDecl> params = 
 	    new LinkedList<VarDecl>();
@@ -192,6 +203,7 @@ public abstract class Node {
 
 	public int getSize() { return size; }
 	public boolean isSigned() { return this.isSigned; }
+	public boolean isPointer() { return this.isPointer; }
 
 	public boolean endsInReturnStatement() {
 	    return (statements.size() > 0 && 
@@ -364,11 +376,10 @@ public abstract class Node {
 	 */
 	public int size;
 
-	public int getSize() { return size; }
-	public boolean isSigned() { return this.isSigned; }
-	public boolean isZero() { return false; }
-	public boolean isTrue() { return false; }
-	public boolean isFalse() { return false; }
+	/**
+	 * Whether this expression represents a pointer value.
+	 */
+	public boolean isPointer;
 
 	/**
 	 * Whether the value represented by this expression is signed.
@@ -379,6 +390,14 @@ public abstract class Node {
 	 * Whether this is a constant-value expression
 	 */
 	public boolean isConstValExpr() { return false; }
+
+	public int getSize() { return size; }
+	public boolean isSigned() { return this.isSigned; }
+	public boolean isPointer() { return this.isPointer; }
+	public boolean isZero() { return false; }
+	public boolean isTrue() { return false; }
+	public boolean isFalse() { return false; }
+
     }
 
     public static class IndexedExpression
@@ -631,6 +650,9 @@ public abstract class Node {
 	private BigInteger value;
 	public boolean wasHexInSource;
 	public boolean isZero() { return value.equals(BigInteger.ZERO); }
+	public boolean isPointer() {
+	    return this.size > 0 && this.size <= 2 && !this.isSigned;
+	}
 
 	/**
 	 * Set the value of this integer constant.  Setting the value
