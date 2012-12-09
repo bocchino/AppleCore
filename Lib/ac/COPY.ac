@@ -15,9 +15,9 @@ FN COPY(FROM:@,LEN:2,TO:@) {
 # --------------------------------------
 FN COPY_DOWN(FROM:@,LEN:2,TO:@) {
   SET ^Y=0;
-  SET MON_A1[0,2]=FROM;
-  SET MON_A2[0,2]=FROM+LEN-1;
-  SET MON_A4[0,2]=TO;
+  SET MON_A1[0,@]=FROM;
+  SET MON_A2[0,@]=FROM+LEN-1;
+  SET MON_A4[0,@]=TO;
   MON_MOVE();
 }
 # --------------------------------------

@@ -80,6 +80,9 @@ public class SizePass
 	if (exprSize == 0 && currentFunction.size > 0) {
 	    throw new SemanticError("function requires return value",node);
 	}
+	if (exprSize > 0) {
+	    checkAssignment(currentFunction,node.expr,node);
+	}
     }
 
     /**
@@ -169,21 +172,17 @@ public class SizePass
 				 Node parent) 
 	throws ACCError
     {
-	VarDecl lhsDecl = lhs.asVarDecl();
-	if (lhsDecl != null) {
-	    if (lhs.representsAddress() && !rhs.representsAddress())
-		throw new SemanticError("cannot assign " + rhs +
-					" to address variable " + lhs,
+	if (lhs.representsAddress() && !rhs.representsAddress())
+	    throw new SemanticError("cannot assign " + rhs +
+				    " to address variable " + lhs,
+				    parent);
+	if (rhs.asVarDecl() != null ||
+	    rhs instanceof CallExpression || 
+	    rhs instanceof TypedExpression) {
+	    if (rhs.representsAddress() && !lhs.representsAddress())
+		throw new SemanticError("cannot assign address variable " + rhs +
+					" to " + lhs,
 					parent);
-	    VarDecl rhsDecl = rhs.asVarDecl();
-	    if (rhsDecl != null || 
-		rhs instanceof CallExpression || 
-		rhs instanceof TypedExpression) {
-		if (rhs.representsAddress() && !lhs.representsAddress())
-		    throw new SemanticError("cannot assign address variable " + rhs +
-					    " to " + lhs,
-					    parent);
-	    }
 	}
     }
 

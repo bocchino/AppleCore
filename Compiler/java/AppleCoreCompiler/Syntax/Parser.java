@@ -602,9 +602,15 @@ public class Parser {
 	expectAndConsume(Token.LBRACKET);
 	indexedExp.index = parseExpression();
 	expectAndConsume(Token.COMMA);
-	indexedExp.size = parseSize();
+	if (parsePossibleToken(Token.AT)) {
+	    indexedExp.size = 2;
+	    indexedExp.representsAddress = true;
+	}
+	else {
+	    indexedExp.size = parseSize();
+	    indexedExp.isSigned = parseIsSigned();
+	}
 	expectAndConsume(Token.RBRACKET);
-	indexedExp.representsAddress = (indexedExp.size == 2);
 	return indexedExp;
     }
 

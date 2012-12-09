@@ -154,21 +154,21 @@ sequences of characters are available for use as identifiers.
 There are three types of constants: integer constants, string
 constants, and character constants.  
 
-\bfhead{Integer constants.}  Integer constants may be written in
-decimal or hexadecimal form.  A decimal integer constant consists of
-one or more decimal digits \kwd{0} through \kwd{9}.  For example,
-\kwd{1} and \kwd{123} are valid integer constants in decimal form.  A
-hexadecimal integer constant consists of a dollar sign \kwd{\$}
-followed by by one or more hexadecimal digits \kwd{0} through \kwd{9}
-or \kwd{A} through \kwd{F}.  For example, \kwd{\$1}, \kwd{\$A}, and
-\kwd{\$00FF} are valid integer constants in hexadecimal form.
+\bfhead{Integer constants} Integer constants may be written in decimal
+or hexadecimal form.  A decimal integer constant consists of one or
+more decimal digits \kwd{0} through \kwd{9}.  For example, \kwd{1} and
+\kwd{123} are valid integer constants in decimal form.  A hexadecimal
+integer constant consists of a dollar sign \kwd{\$} followed by by one
+or more hexadecimal digits \kwd{0} through \kwd{9} or \kwd{A} through
+\kwd{F}.  For example, \kwd{\$1}, \kwd{\$A}, and \kwd{\$00FF} are
+valid integer constants in hexadecimal form.
 
 Integer constants represent values with up to 255 bytes of precision
 (i.e., in the range $0$ through $2^{255 \cdot 8}-1$, inclusive).  It
 is a compile-time error to write an integer constant with a value
 larger than that.
 
-\bfhead{String constants.} A string constant is a sequence of
+\bfhead{String constants} A string constant is a sequence of
 characters enclosed in double quotes (\kwd{"..."}).  A string constant
 represents a sequence of ASCII characters, one for each character
 appearing in the double-quotes, except that the character sequence
@@ -189,7 +189,7 @@ represents a string consisting of the characters \kwd{Hello, world!}
 followed by a CR character.  Similarly, the quote character \kwd{"}
 can be embedded in a string constant with the sequence \kwd{\bs\$22}.
 
-\bfhead{Character constants.} A character constant consists of a
+\bfhead{Character constants} A character constant consists of a
 single-quote character \kwd{'}, followed by a printable ASCII
 character, followed by another single-quote character.  It represents
 the ASCII value associated with the character.  For example, the
@@ -302,14 +302,14 @@ $$\nonterm{decl} ::= \mbox{\nonterm{const-decl} $|$
   \nonterm{data-decl} $|$ \nonterm{var-decl} $|$ \nonterm{fn-decl}
     $|$ \nonterm{include-decl}}$$
 
-\bfhead{Constant declarations.} A constant declaration consists of the
+\bfhead{Constant declarations} A constant declaration consists of the
 keyword \kwd{CONST}, an identifier, an optional expression, and a
 terminating semicolon:
 
 $$\nonterm{const-decl} ::= \mbox{\kwd{CONST} \nonterm{identifier}
   \opt{\nonterm{expr}} \kwd{;}}$$
 
-\bfhead{Data declarations.} A data declaration consists of the keyword
+\bfhead{Data declarations} A data declaration consists of the keyword
 \kwd{DATA}, an optional identifier representing a label for the data,
 an expression or a string constant, and a terminating semicolon.  A
 backslash may optionally follow the string constant, indicating that
@@ -320,14 +320,14 @@ $$\nonterm{data-decl} ::= \mbox{\kwd{DATA} \opt{\nonterm{identifier}}
   \group{\nonterm{expr} $|$ \group{\nonterm{string-const} \opt{\bs}}}
   \kwd{;}}$$
 
-\bfhead{Variable declarations.} A variable declaration consists of the
+\bfhead{Variable declarations} A variable declaration consists of the
 keyword \kwd{VAR}, an identifier representing the variable name, a
 type, an optional initializer expression, and a terminating semicolon:
 
 $$\nonterm{var-decl} ::= \mbox{\kwd{VAR} \nonterm{identifier} \kwd{:}
   \nonterm{type} \opt{\kwd{=} \nonterm{expr}} \kwd{;}}$$
 
-\bfhead{Function declarations.} A function declaration consists of the
+\bfhead{Function declarations} A function declaration consists of the
 keyword \kwd{FN}, an optional return type, an identifier representing
 the function name, the function parameters enclosed in parentheses,
 and the function body:
@@ -358,7 +358,7 @@ defined function:
 $$\nonterm{fn-body} ::= \mbox{\kwd{\{} \nonterm{var-decl}$^*$
   \nonterm{stmt}$^*$ \kwd{\}} $|$ \kwd{;}}$$
 
-\bfhead{Include declarations.} An include declaration consists of the
+\bfhead{Include declarations} An include declaration consists of the
 keyword \kwd{INCLUDE}, a string constant, and a terminating semicolon:
 
 $$\nonterm{include-decl} ::= \mbox{\kwd{INCLUDE}
@@ -376,7 +376,7 @@ $$\nonterm{stmt} ::= \mbox{\nonterm{if-stmt} $|$ \nonterm{while-stmt}
   \nonterm{incr-stmt} $|$ \nonterm{decr-stmt} $|$
   \nonterm{return-stmt} $|$ \nonterm{block-stmt} }$$
 
-\bfhead{If statements.} An if statement consists of the keyword
+\bfhead{If statements} An if statement consists of the keyword
 \kwd{IF}, a conditional expression enclosed in parentheses, a
 statement to execute if the condition is true, and optionally the
 keyword \kwd{ELSE} followed by a statement to execute if the condition
@@ -385,14 +385,14 @@ is false:
 $$\nonterm{if-stmt} ::= \mbox{\kwd{IF} \kwd{(} \nonterm{expr} \kwd{)}
   \nonterm{stmt} \opt{\kwd{ELSE} \nonterm{stmt}}}$$
 
-\bfhead{While statements.} A while statement consists of the keyword
+\bfhead{While statements} A while statement consists of the keyword
 \kwd{WHILE}, a test expression enclosed in parentheses, and a
 statement to execute as long as the condition is true:
 
 $$\nonterm{while-stmt} ::= \mbox{\kwd{WHILE} \kwd{(} \nonterm{expr}
   \kwd{)} \nonterm{stmt}}$$
 
-\bfhead{Set statements.} A set statement consists of the keyword
+\bfhead{Set statements} A set statement consists of the keyword
 \kwd{SET}, an expression, an equals sign, a right-hand-side
 expression, and a terminating semicolon:
 
@@ -402,28 +402,28 @@ $$\nonterm{set-stmt} ::= \mbox{\kwd{SET} \nonterm{expr} \kwd{=}
 \noindent
 The left-hand side expression may not be a binary operation \kwd{=}.
 
-\bfhead{Call statements.} A call statement consists of a call
+\bfhead{Call statements} A call statement consists of a call
 expression followed by a terminating semicolon:
 
 $$\nonterm{call-stmt} ::= \mbox{\nonterm{call-expr} \kwd{;}}$$
 
-\bfhead{Increment statements.} An increment statement consists of the
+\bfhead{Increment statements} An increment statement consists of the
 keyword \kwd{INCR}, an expression, and a terminating semicolon:
 
 $$\nonterm{incr-stmt} ::= \mbox{\kwd{INCR} \nonterm{expr} \kwd{;}}$$
 
-\bfhead{Decrement statements.} n decrement statement consists of the
+\bfhead{Decrement statements} n decrement statement consists of the
 keyword \kwd{DECR}, an expression, and a terminating semicolon:
 
 $$\nonterm{decr-stmt} ::= \mbox{\kwd{DECR} \nonterm{expr} \kwd{;}}$$
 
-\bfhead{Return statements.} A return statement consists of the keyword
+\bfhead{Return statements} A return statement consists of the keyword
 \kwd{RETURN}, an optional expression, and a terminating semicolon:
 
 $$\nonterm{return-stmt} ::= \mbox{\kwd{RETURN} \opt{\nonterm{expr}}
     \kwd{;}}$$
 
-\bfhead{Block statements.} A block statement consists of zero or more
+\bfhead{Block statements} A block statement consists of zero or more
 statements enclosed in braces:
 
 $$\nonterm{block-stmt} ::= \mbox{\kwd{\{} \nonterm{stmt}$^*$
@@ -455,31 +455,31 @@ Except for binary expressions as specified below, any ambiguity in
 parsing is resolved using right recursion.  For example, \kwd{@F()} is
 parsed as \kwd{@(F())} and not \kwd{(@F)()}.
 
-\bfhead{Numeric constants.}  A numeric constant is an integer or
+\bfhead{Numeric constants}  A numeric constant is an integer or
 character constant:
 
 $$\nonterm{numeric-const} ::= \mbox{\nonterm{integer-const} $|$
   \nonterm{char-const}}$$
 
-\bfhead{Call expressions.} A call expression consists of an expression
+\bfhead{Call expressions} A call expression consists of an expression
 followed by an argument list enclosed in parentheses:
 
 $$\nonterm{call-expr} ::= \mbox{\nonterm{expr} \kwd{(}
   \opt{\nonterm{expr} \group{\kwd{,} \nonterm{expr}}$^*$} \kwd{)}}$$
 
-\bfhead{Indexed expressions.} An indexed expression consists of a
-base expression, an offset expression, and a size:
+\bfhead{Indexed expressions} An indexed expression consists of a
+base expression, an offset expression, and an unsigned type:
 
 $$\nonterm{indexed-expr} ::= \mbox{\nonterm{expr} \kwd{[}
-    \nonterm{expr} \kwd{,} \nonterm{size} \kwd{]}}$$
+    \nonterm{expr} \kwd{,} \nonterm{unsigned-type} \kwd{]}}$$
 
-\bfhead{Register expressions.} A register expression consists of a
+\bfhead{Register expressions} A register expression consists of a
 caret character followed by a 6502 register name:
 
 $$\nonterm{register-expr} ::= \mbox{\kwd{\textasciicircum} \group{\kwd{A} $|$
     \kwd{X} $|$ \kwd{Y} $|$ \kwd{P} $|$ \kwd{S}}}$$
 
-\bfhead{Binary operation expressions.} A binary operation expression
+\bfhead{Binary operation expressions} A binary operation expression
 consists of a left-hand-side expression, a binary operator, and a
 right-hand-side expression:
 
@@ -512,19 +512,19 @@ following precedence rules:
 %
 \end{enumerate}
 
-\bfhead{Unary operation expressions.} A unary operation expression
+\bfhead{Unary operation expressions} A unary operation expression
 consists of a unary operator followed by an expression:
 
 $$\nonterm{unop-expr} ::= \mbox{\nonterm{unop} \nonterm{expr}}$$
 
 $$\nonterm{unop} ::= \mbox{\kwd{@} $|$ \kwd{NOT} $|$ \kwd{-}}$$
 
-\bfhead{Parentheses expressions.} A parentheses expression is an
+\bfhead{Parentheses expressions} A parentheses expression is an
 expression surrounded by parentheses:
 
 $$\nonterm{parens-expr} ::= \mbox{\kwd{(} \nonterm{expr} \kwd{)}}$$
 
-\bfhead{Typed expressions.} A typed expression is an expression with
+\bfhead{Typed expressions} A typed expression is an expression with
 an explicit type:
 
 $$\nonterm{typed-expr} ::= \mbox{\nonterm{expr} \kwd{:}
@@ -536,6 +536,10 @@ A type is an unsigned size, a signed size, or an address type:
 
 $$\nonterm{type} ::= \mbox{\nonterm{size} \opt{\kwd{S}} $|$ \kwd{@}}$$
 
+\bfhead{Unsigned types} An unsigned type is an unsigned size or an
+address type:
+
+$$\nonterm{unsigned-type} ::= \mbox{\nonterm{size} $|$ \kwd{@}}$$
 
 
 \section{Semantic Checking}
@@ -553,7 +557,7 @@ generation as described in Section~\ref{sec:code-gen}.
 The AppleCore language supports two types of values: integer values
 and Boolean values.
 
-\bfhead{Integer values.} Integer values are represented in AppleCore
+\bfhead{Integer values} Integer values are represented in AppleCore
 in the ordinary way for the Apple II:
 %
 \begin{enumerate}
@@ -569,7 +573,7 @@ in the ordinary way for the Apple II:
 %
 \end{enumerate}
 
-\bfhead{Boolean values.} The AppleCore language has no special Boolean
+\bfhead{Boolean values} The AppleCore language has no special Boolean
 type; as in C, ordinary integers serve as Boolean values.  However,
 AppleCore differs from C in what values it treats as ``true'' and
 ``false.''  In AppleCore, only the lowest-order bit is relevant in
@@ -673,14 +677,18 @@ assembly (Section~\ref{sec:code-gen:source-files}).
 
 Every expression appearing in the source file is given a \emph{size}
 and a \emph{signedness}.  An expression may (or may not)
-\emph{represent an address}.
+\emph{represent an address}.  The address representation rules are
+designed to exclude a class of easy-to-make yet potentially disastrous
+errors such as dereferencing a variable's contents instead of its
+address (for example, writing \kwd{X[0,1]} instead of
+\kwd{(@X)[0,1]}).
 
-\bfhead{Size and signedness associated with type.} The type
+\bfhead{Size and signedness associated with type} The type
 \nonterm{size} with no trailing \kwd{S} has size \nonterm{size} and is
 unsigned.  The type \nonterm{size} \kwd{S} has size \nonterm{size} and
 is signed.  The type \kwd{@} has size 2 and is unsigned.
 
-\bfhead{Computing the size and signedness of an expression.}  For a
+\bfhead{Computing the size and signedness of an expression}  For a
 constant-value typed expression
 (Section~\ref{sec:semantics:constant-value-expr}), the size and
 signedness come from the type.  For any other constant-value
@@ -697,21 +705,21 @@ signedness are computed as follows:
 %
 \begin{itemize}
 %
-\item \ithead{Identifiers.} The size and signedness of an identifier
+\item \ithead{Identifiers} The size and signedness of an identifier
   come from its definition (Section~\ref{sec:semantics:attr}).  (1) If
   the definition is a variable declaration or function parameter
   declaration, then the size and signedness come from the type.  (2)
   If the definition is a data declaration or function declaration,
   then the size is 2, and the signedness is unsigned.
 %
-\item \ithead{Indexed expressions.} The size of an indexed expression
-  is given by the \nonterm{size} component of the expression.  It is
-  always unsigned.  
+\item \ithead{Indexed expressions} The size of an indexed expression
+  is given by the \nonterm{unsigned-type} component of the
+  expression.  It is always unsigned.
 %
-\item \ithead{Register expressions.} The size of a register expression
+\item \ithead{Register expressions} The size of a register expression
   is 1.  It is unsigned.
 %
-\item \ithead{Call expressions.} If the called expression (i.e., the
+\item \ithead{Call expressions} If the called expression (i.e., the
   expression before the first parenthesis) is anything other than an
   identifier corresponding to a function declaration, then the size is
   0 and the signedness is unsigned.  Otherwise the size and signedness
@@ -720,107 +728,116 @@ signedness are computed as follows:
   from the type; otherwise the size is 0 and the signedness is
   undefined.
 %
-\item \ithead{Binary operation expressions.}  For comparison
+\item \ithead{Binary operation expressions}  For comparison
   operations, the size is 1 byte unsigned.  For shift operations, the
   size and signedness come from the left operand.  For all other
   operations, the size is the maximum of the sizes of its operands.
   If either of the operands is signed, then the result is signed.
   Otherwise, the result is unsigned.
 %
-\item \ithead{Unary operation expressions.} The size and signedness of
+\item \ithead{Unary operation expressions} The size and signedness of
   a unary operation expression come from the operand, except that (1)
   an address operation \kwd{@} is two bytes unsigned; and (2) a
   negation operation is signed.
 %
-\item \ithead{Parentheses expressions.} The size and signedness of a
+\item \ithead{Parentheses expressions} The size and signedness of a
   parentheses expression come from the enclosed expression.
 %
-\item \ithead{Typed expressions.} The size and signedness of a typed
+\item \ithead{Typed expressions} The size and signedness of a typed
   expression come from its type.
 %
 \end{itemize}
 
-\bfhead{Address expressions.} The following expressions each represent
+\bfhead{Address expressions} The following expressions each represent
 an address:
 %
 \begin{itemize}
 %
-\item \ithead{Identifiers.} An identifier represents an address if its
+\item \ithead{Identifiers} An identifier represents an address if its
   associated definition (1) is a constant declaration of size 1 or 2
   unsigned; or (2) is a data declaration; or (3) is a function
   declaration; or (4) is a variable or function parameter declaration
   whose type is \kwd{@}.
 %
-\item \ithead{Indexed expressions.} An indexed expression represents
-  an address.
+\item \ithead{Indexed expressions} An indexed expression represents
+  an address if and only if its \nonterm{unsigned-type} component is
+  \kwd{@}.
 %
-\item \ithead{Call expressions.}  A call expression represents an
+\item \ithead{Call expressions}  A call expression represents an
   address if the called expression is an identifier whose associated
   definition is a function with return type \kwd{@}.
 %
-\item \ithead{Binary expressions.} A shift or divide operation
+\item \ithead{Binary expressions} A shift or divide operation
   represents an address if its left operand does.  A binary operation
   that is not a shift, divide, or compare represents an address if
   exactly one of its operands does.
 %
-\item \ithead{Unary operation expressions.} An address operation
+\item \ithead{Unary operation expressions} An address operation
   \kwd{@} represents an address.  Otherwise, a unary operation
   represents an address if its operand does.
 %
-\item \ithead{Parentheses expressions.} A parentheses expression
+\item \ithead{Parentheses expressions} A parentheses expression
   represents an address if its subexpression does.
 %
-\item \ithead{Typed expressions.} A typed expression represents an
+\item \ithead{Typed expressions} A typed expression represents an
   address if the type is \kwd{@}.
 %
 \end{itemize}
+%
+No other expression represents an address.
 
-\bfhead{Size, signedness, and address requirements for expressions.}
+\bfhead{Size, signedness, and address requirements for expressions}
 The following requirements apply to all expressions, whether or not
 they are constant-value expressions:
 %
 \begin{itemize}
 %
-\item \ithead{Indexed expressions.} The base expression (before the
+\item \ithead{Indexed expressions} The base expression (before the
   first bracket) of an indexed expression must represent an address.
   The index expression (immediately after the first bracket) must have
   size 1 or 2 and be unsigned.
 %
-\item \ithead{Call expressions.} (1) The called expression must
+\item \ithead{Call expressions} (1) The called expression must
   represent an address.  (2) Each argument expression must have
-  nonzero size. (3) For each argument expression that is (a) an
-  identifier corresponding to a variable or function parameter or (b)
-  a call expression or (c) a typed expression, either the expression
-  and the corresponding parameter of the called function must both
-  represent an address, or neither may.
+  nonzero size. (3) Each argument must satisfy the requirements for a
+  valid address assignment (see below), treating the argument
+  expression as the right-hand side of the assignment, and the
+  corresponding function parameter as the left-hand side.
 %
-\item \ithead{Binary operation expressions.}  For shift operations,
+\item \ithead{Binary operation expressions}  For shift operations,
   the right-hand expression must be 1 byte unsigned.
 %
 \end{itemize}
 
-\bfhead{Set statements.} (1) The right-hand expression of a set
-statement must have nonzero size.  (2) If the left-hand side of a set
-statement is an identifier corresponding to a variable or function
-parameter, and the right-hand side is (a) an identifier corresponding
-to a variable or function parameter or (b) a call expression or (c) a
-typed expression, then either the left- and right-hand sides must both
-represent an address, or neither may.
+\bfhead{Set statements} (1) The right-hand expression of a set
+statement must have nonzero size.  (2) The assignment represented by
+the statement must satisfy the requirements for a valid address
+assignment.
 
-\bfhead{Return statements.} (1) No return statement may contain an
+\bfhead{Return statements} (1) No return statement may contain an
 expression of zero size.  (2) If a function has nonzero return size,
 and the function has a body, then (a) the body must end with a return
 statement containing an expression, and (b) every return statement
 appearing in the body must contain an expression.  (3) If a function
 has return size 0, then no return statement in the function body may
-contain an expression.
+contain an expression. (4) A return statement that contains an
+expression must satisfy the requirements for a valid address
+assignment, treating the contained expression as the right-hand side,
+and treating the left-hand side as a fresh variable whose type is the
+return type of the enclosing function.
 
-\bfhead{Function frame sizes.} The \emph{frame size} of a function
+\bfhead{Valid address assignments} (1) If the left-hand side of an
+assignment represents an address, then the right-hand side must also
+represent an address. (2) If the right-hand side of an assignment is
+(a) an identifier corresponding to a variable declaration or function
+parameter or (b) a call expression or (c) a typed expression, and the
+right-hand side represents an address, then the left-hand side must
+also represent an address.
+
+\bfhead{Function frame sizes} The \emph{frame size} of a function
 declaration that contains a body equals the sum of the sizes of all
 the function parameters and local variables.  No function may have a
 frame size of greater than 255 bytes.
-
-
 
 \subsection{Number of Function Arguments}
 \label{sec:semantics:fn-args}
@@ -832,12 +849,12 @@ match the number of parameters given in the declaration.
 \subsection{Semantic LValues}
 \label{sec:semantics:lvalues}
 
-\bfhead{Definition of semantic lvalue.}  A \emph{semantic lvalue} is
+\bfhead{Definition of semantic lvalue}  A \emph{semantic lvalue} is
 an expression that (1) is an identifier, register expression, or
 indexed expression; and (2) if it is an identifier, then it
 corresponds to a variable or function parameter declaration.
 
-\bfhead{Requirement of semantic lvalues.}  (1) A semantic lvalue is
+\bfhead{Requirement of semantic lvalues}  (1) A semantic lvalue is
 required in the following places: (a) on the left-hand side of a set
 statement; (b) as the expression of an increment or decrement
 statement; and (c) as the operand of an address (\kwd{@}) unary
@@ -859,7 +876,7 @@ one of two modes: \emph{top-level mode} and \emph{include mode}.  The
 mode must be specified at the time the source file is translated to
 assembly, usually as a compiler option.
 
-\bfhead{Top-level mode.}  In top-level mode, the compiler translates
+\bfhead{Top-level mode}  In top-level mode, the compiler translates
 the source file as follows:
 %
 \begin{enumerate}
@@ -884,11 +901,11 @@ the source file as follows:
 \end{enumerate}
 %
 
-\bfhead{Include mode.} In include mode, the compiler just translates
+\bfhead{Include mode} In include mode, the compiler just translates
 the declarations in the source file as described in
 Section~\ref{sec:code-gen:global-decls}.
 
-\bfhead{Final assembly and symbol resolution.} A user program consists
+\bfhead{Final assembly and symbol resolution} A user program consists
 of exactly one file translated in top-level mode and zero or more
 files translated in include mode.  The final step in compilation is to
 ask the assembler to assemble the file translated in top-level mode,
@@ -908,7 +925,7 @@ that translation produces actual bytes of machine code, data, or
 reserved storage, the bytes must be laid out in the order in which the
 translated constructs are encountered in the source file.
 
-\bfhead{Constant declarations.} If the constant declaration contains
+\bfhead{Constant declarations} If the constant declaration contains
 an expression \nonterm{expr}, then the compiler (1) evaluates
 \nonterm{expr} to a numeric constant according to the rules in
 Section~\ref{sec:code-gen:expressions} and (2) associates this value
@@ -922,7 +939,7 @@ the declaration must refer to the two-byte unsigned value associated
 with an assembler label during final assembly
 (Section~\ref{sec:code-gen:source-files}).
 
-\bfhead{Data declarations.} (1) If an expression appears before the
+\bfhead{Data declarations} (1) If an expression appears before the
 semicolon, then the compiler evaluates the expression to a numeric
 constant according to the rules in
 Section~\ref{sec:code-gen:expressions} and generates code to store the
@@ -936,7 +953,7 @@ string constant, then no NUL character is added.  (3) In any case, if
 an identifier appears after the keyword \kwd{DATA}, then the compiler
 associates the name with the lowest address in which data is stored.
 
-\bfhead{Global variable declarations.} The compiler sets aside a
+\bfhead{Global variable declarations} The compiler sets aside a
 number of bytes of storage equal to the declared size of the variable
 and associates the identifier appearing after \kwd{VAR} with the
 lowest address of this storage.  If an expression appears before the
@@ -947,13 +964,13 @@ fill in the storage set aside for the variable with the bytes of the
 numeric constant, in little-endian order, using size adjustment (if
 necessary) as stated in Section~\ref{sec:code-gen:size-adjustment}.
 
-\bfhead{Function declarations.} (1) A function declaration with no
+\bfhead{Function declarations} (1) A function declaration with no
 body does not correspond to any generated code; its signature is used
 only for checking call expressions that invoke the function.  (2) A
 function declaration with a body causes code to be generated as stated
 in Section~\ref{sec:code-gen:fn-bodies}.
 
-\bfhead{Include declarations.}  The compiler translates an include
+\bfhead{Include declarations}  The compiler translates an include
 declaration into an assembler directive to include the file named in
 the string constant.
 
@@ -1060,7 +1077,7 @@ for managing the stack.
 The compiler generates code to do the following for each program
 statement.
 
-\bfhead{If statements.} Evaluate the conditional expression
+\bfhead{If statements} Evaluate the conditional expression
 (Section~\ref{sec:code-gen:expressions}), pop the result off the
 expression stack, and mask off all but the lowest bit of the result to
 get the corresponding Boolean value
@@ -1070,7 +1087,7 @@ of the result is 0 (false), then either do nothing (if there is no
 optional \kwd{ELSE} clause) or execute the statement in the \kwd{ELSE}
 clause (if one is provided).
 
-\bfhead{While statements.} Evaluate the conditional expression
+\bfhead{While statements} Evaluate the conditional expression
 (Section~\ref{sec:code-gen:expressions}), pop the result off the
 expression stack, and mask off all but the lowest bit of the result to
 get the corresponding Boolean value
@@ -1079,7 +1096,7 @@ result is 1 (true), then execute the body of the loop and repeat the
 whole process.  If the Boolean value of the result is 0 (false), then
 do nothing.
 
-\bfhead{Set statements.}  (1) Evaluate the right-hand side expression,
+\bfhead{Set statements}  (1) Evaluate the right-hand side expression,
 adjusting the size if necessary
 (Section~\ref{sec:code-gen:size-adjustment}) to conform to the size of
 the left-hand side expression.  (2) The left-hand side expression must
@@ -1088,28 +1105,28 @@ its address as specified in Section~\ref{sec:code-gen:lvalues}.  (3)
 Copy the result of step (1) into memory starting at the address
 computed in step (2).
 
-\bfhead{Call statements.} Evaluate the expression contained in the
+\bfhead{Call statements} Evaluate the expression contained in the
 statement (Section~\ref{sec:code-gen:expressions}).  If it produces a
 result of nonzero size, pop the result off the stack.
 
-\bfhead{Increment statements.} The operand expression must be a
+\bfhead{Increment statements} The operand expression must be a
 semantic lvalue. (Section~\ref{sec:semantics:lvalues}).  Compute its
 address as stated in Section~\ref{sec:code-gen:lvalues}.  Add one to
 the value stored at the address and store the result in place.
 
-\bfhead{Decrement statements.} The operand expression must be a
+\bfhead{Decrement statements} The operand expression must be a
 semantic lvalue. (Section~\ref{sec:semantics:lvalues}).  Compute its
 address as stated in Section~\ref{sec:code-gen:lvalues}.  Subtract one
 from the value stored at the address and store the result in place.
 
-\bfhead{Return statements.} (1) If the statement contains an
+\bfhead{Return statements} (1) If the statement contains an
 expression, then evaluate the expression
 (Section~\ref{sec:code-gen:expressions}) and ensure that it appears at
 the top of the expression stack
 (Section~\ref{sec:code-gen:program-stack}) on function return.  (2)
 Pop the current frame off the call stack and restore the parent frame.
 
-\bfhead{Block statements.} Execute each statement of the block in the
+\bfhead{Block statements} Execute each statement of the block in the
 order in which it appears in the program text.
 
 \subsection{Expressions}
@@ -1119,7 +1136,7 @@ We define the semantics of expressions using an expression stack, as
 specified in Section~\ref{sec:code-gen:program-stack}.  The compiler
 generates code to do the following for each program expression.
 
-\bfhead{Identifiers.} (1) If the identifier is a semantic lvalue
+\bfhead{Identifiers} (1) If the identifier is a semantic lvalue
 (Section~\ref{sec:semantics:lvalues}), then compute its address as
 specified in Section~\ref{sec:code-gen:lvalues} and get a number of
 bytes equal to the size of the right-hand side
@@ -1141,20 +1158,20 @@ a different file, this can be done by using the label associated with
 the function body; at assembly time, the label definition will be
 available.)
 
-\bfhead{Numeric constants.} Push the bytes of the value associated
+\bfhead{Numeric constants} Push the bytes of the value associated
 with the declaration (Section~\ref{sec:code-gen:global-decls}) on the
 stack in little-endian order.
 
-\bfhead{Indexed expressions.} (1) Compute the address of the indexed
+\bfhead{Indexed expressions} (1) Compute the address of the indexed
 expression as stated in Section~\ref{sec:code-gen:lvalues}.  (2) Get a
 number of bytes equal to the size specified in the expression,
 starting at that address, and push them on the stack.
 
-\bfhead{Register expressions.} Push the one-byte value stored in the
+\bfhead{Register expressions} Push the one-byte value stored in the
 function call stack slot for that register
 (Section~\ref{sec:code-gen:fn-bodies}) on the expression stack.
 
-\bfhead{Call expressions.} The procedure depends on the kind of the
+\bfhead{Call expressions} The procedure depends on the kind of the
 called expression.
 
 \ithead{(1) Declared functions:} If the called expression is an
@@ -1191,16 +1208,17 @@ the \kwd{S} register will contain the values that the corresponding
 registers had on exit from the function; the \kwd{S} register's value
 will be off by 2.
 
-\bfhead{Binary operation expressions.} \ithead{Shift operations
-  (\shl~and \shr).} Evaluate the left-hand side, evaluate the
-right-hand side, pop the right-hand side, and shift the left-hand side
-value (which is the result on the top of the stack) by a number of
-bytes equal to the right-hand side value.  In the case of a right
-shift, the shift is signed (arithmetic) if the left-hand side
+\bfhead{Binary operation expressions} 
+%
+\ithead{Shift operations (\shl~and \shr)} Evaluate the left-hand side,
+evaluate the right-hand side, pop the right-hand side, and shift the
+left-hand side value (which is the result on the top of the stack) by
+a number of bytes equal to the right-hand side value.  In the case of
+a right shift, the shift is signed (arithmetic) if the left-hand side
 expression is signed; otherwise it is unsigned (logical).
 
 \ithead{Arithmetic operations (\kwd{*}, \kwd{/}, \kwd{+}, and
-  \kwd{-}).} Evaluate the left and right expressions, adjust their
+  \kwd{-})} Evaluate the left and right expressions, adjust their
 size if necessary (Section~\ref{sec:code-gen:size-adjustment}) to make
 their sizes equal to the size of the entire expression, pop the
 results, perform the operation, and push the result.  In the case of
@@ -1214,7 +1232,7 @@ to overflow (i.e., if overflow occurs, they produce the low-order
 bits, up to the size of the expression).
 
 \ithead{Comparison operations (\kwd{=}, \kwd{>}, \kwd{<}, \kwd{>=},
-  and \kwd{<=}).} Evaluate the left and right expressions, adjust
+  and \kwd{<=})} Evaluate the left and right expressions, adjust
 their size if necessary (Section~\ref{sec:code-gen:size-adjustment})
 to make their sizes equal to the size of the entire expression, pop
 the results, perform the operation, and push the result.  The result
@@ -1222,25 +1240,26 @@ is a single-byte value such that 1 represents true and 0 represents
 false.  In the case of comparisons other than equality, the operation
 is signed if the entire expression is signed, otherwise unsigned.
 
-\ithead{Bitwise operations (\kwd{AND}, \kwd{OR}, and \kwd{XOR}).}
+\ithead{Bitwise operations (\kwd{AND}, \kwd{OR}, and \kwd{XOR})}
 Evaluate the left and right expressions, adjust their size if
 necessary (Section~\ref{sec:code-gen:size-adjustment}) to make their
 sizes equal to the size of the entire expression, pop the results,
 perform the operation, and push the result.
 
-\bfhead{Unary operation expressions.} \ithead{Dereference (\kwd{@}).}
-The operand expression must be a semantic lvalue
-(Section~\ref{sec:semantics:lvalues}).  Compute and push its address
-as stated in Section~\ref{sec:code-gen:lvalues}.
+\bfhead{Unary operation expressions} 
+%
+\ithead{Dereference (\kwd{@})} The operand expression must be a
+semantic lvalue (Section~\ref{sec:semantics:lvalues}).  Compute and
+push its address as stated in Section~\ref{sec:code-gen:lvalues}.
 
-\ithead{Arithmetic negation (\kwd{-}) and bitwise not (\kwd{NOT}).}
+\ithead{Arithmetic negation (\kwd{-}) and bitwise not (\kwd{NOT})}
 Evaluate the operand expression and perform the operation on it.
 Negation is two's complement negation (i.e., \kwd{NOT} plus 1).
 
-\bfhead{Parentheses expressions.} Evaluate the expression inside the
+\bfhead{Parentheses expressions} Evaluate the expression inside the
 parentheses.
 
-\bfhead{Typed expressions.} Evaluate the subexpression.  Adjust the
+\bfhead{Typed expressions} Evaluate the subexpression.  Adjust the
 size to generate a new value of the correct size for the given type.
 
 \subsection{Address Computation for Semantic LValues}

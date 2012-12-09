@@ -157,10 +157,10 @@ FN FLIP_COLOR_BIT(X:2,Y:1,PAGE:1) {
 # CLEAR A HI-RES PAGE
 # --------------------------------------
 FN CLEAR_HI_RES_PAGE(PAGE:1) {
-  SET MON_A1[0,2]=HI_RES_PAGE_ADDR(PAGE);
-  SET MON_A4[0,2]=MON_A1[0,2]+1;
+  SET MON_A1[0,@]=HI_RES_PAGE_ADDR(PAGE);
+  SET MON_A4[0,@]=MON_A1[0,@]+1;
   SET MON_A2[0,2]=MON_A1[0,2]+$1FFE;
-  SET MON_A1[0,2][0,1]=0;
+  SET MON_A1[0,@][0,1]=0;
   SET ^Y=0;
   MON_MOVE();
 }

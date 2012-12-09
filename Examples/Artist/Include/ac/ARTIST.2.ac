@@ -69,7 +69,7 @@ FN PROCESS_CHAR(CHAR:1) {
   }
   WHILE (CMD_CHARS[I,1]>0) {
     IF (EQ_CHAR(CHAR,CMD_CHARS[I,1])) {
-      CMD_HANDLERS[I<<1,2]();
+      CMD_HANDLERS[I<<1,@]();
     }
     INCR I;
   }	
@@ -174,11 +174,11 @@ FN SHOW_HELP_SCREEN() {
       MON_HOME();
     }
     INVERSE();
-    PRINT_STRING(HELP_CMDS[I<<1,2]);
+    PRINT_STRING(HELP_CMDS[I<<1,@]);
     NORMAL();
     SET MON_WNDLFT[0,1]=13;
     POSITION_CURSOR(0,MON_CV[0,1]);
-    PRINT_STRING(HELP_DSCRS[I<<1,2]);
+    PRINT_STRING(HELP_DSCRS[I<<1,@]);
     SET MON_WNDLFT[0,1]=0;
     MON_CROUT();
     MON_CROUT();

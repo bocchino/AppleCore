@@ -68,7 +68,7 @@ FN DO_COMMAND(WORD:@) {
   IF (CMD_NUM=-1)
     SHOW_CMDS();
   ELSE {
-    SET CMD_FN=CMD_FNS[CMD_NUM*2,2];
+    SET CMD_FN=CMD_FNS[CMD_NUM*2,@];
     CMD_FN();
   }
 }

@@ -248,8 +248,8 @@ FN PRINT_OBJ_NAME(OBJ:1) {
 # -----------------------------------
 FN:1 TEST_OBJ_NAME(STR:@,ID:1) {
   VAR NAME_PTR:@=OBJ_NAMES+4*ID;
-  RETURN (NOT CMP_STRING(STR,NAME_PTR[0,2]))
-    OR (NOT CMP_STRING(STR,NAME_PTR[2,2]));    
+  RETURN (NOT CMP_STRING(STR,NAME_PTR[0,@]))
+    OR (NOT CMP_STRING(STR,NAME_PTR[2,@]));    
 }
 # -----------------------------------
 # IS THERE A WEAPON?

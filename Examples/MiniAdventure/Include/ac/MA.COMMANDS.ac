@@ -63,7 +63,7 @@ FN DO_COMMAND(WORD:@) {
     MON_CROUT();
   }
   ELSE {
-    SET CMD_FN=CMD_FNS[CMD_NUM*2,2];
+    SET CMD_FN=CMD_FNS[CMD_NUM*2,@];
     CMD_FN();
   }
 }

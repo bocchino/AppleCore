@@ -33,7 +33,7 @@ FN BLOAD(FILE:@) {
 # -------------------------------
 FN BLOAD_AND_CALL(FILE:@) {
   BLOAD(FILE);
-  DOS_BLOAD_ADDR[0,2]();
+  DOS_BLOAD_ADDR[0,@]();
 }
 
 INCLUDE "DOS.AVM";

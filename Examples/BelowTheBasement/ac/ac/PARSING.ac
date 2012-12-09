@@ -10,7 +10,7 @@ FN PARSE_INPUT() {
   FIND_WORDS();
   IF (NUM_WORDS=0) RETURN;
   ELSE IF (NUM_WORDS=1)
-    DO_COMMAND((@WORDS)[0,2]);
+    DO_COMMAND((@WORDS)[0,@]);
   ELSE
     DO_VERB_PHRASE();
 }
@@ -28,7 +28,7 @@ FN FIND_WORDS() {
     IF (EQ_CHAR(CHAR,' ') OR (CHAR=0)) {
       SET PTR[0,1]=0;
       IF (NOT IS_SKIP_WORD(WORD)) {
-        SET (@WORDS)[NUM_WORDS*2,2]=WORD;
+        SET (@WORDS)[NUM_WORDS*2,@]=WORD;
         INCR NUM_WORDS;
       }
       IF (CHAR=0) RETURN;
@@ -75,7 +75,7 @@ FN:1 FIND_WORD(WORD_PTR:@,
   IF (WORD_PTR=0) RETURN -1;
   WHILE (IDX < MAX) {
     IF (NOT CMP_STRING(WORD_PTR,
-     LIST_PTR[IDX*2,2])) {
+     LIST_PTR[IDX*2,@])) {
       RETURN IDX;
     }
     INCR IDX;
@@ -92,7 +92,7 @@ FN GET_USE_INPUT(PROMPT:@) {
   SET LEN=GET_LINE();
   FIND_WORDS();
   IF (NUM_WORDS > 0) {
-    SET OBJ=(@WORDS)[0,2];
+    SET OBJ=(@WORDS)[0,@];
     SET OBJ_ID=FIND_OBJ(OBJ);
   }
   ELSE SET OBJ_ID=OBJ_NONE;

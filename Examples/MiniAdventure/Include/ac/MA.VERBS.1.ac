@@ -77,16 +77,16 @@ VAR O2_STR:@;
 
 FN DO_VERB_PHRASE() {
   VAR VB:1;  
-  SET VB_STR=(@WORDS)[0,2];
-  SET O1_STR=(@WORDS)[2,2];
-  SET O2_STR=(@WORDS)[4,2];
+  SET VB_STR=(@WORDS)[0,@];
+  SET O1_STR=(@WORDS)[2,@];
+  SET O2_STR=(@WORDS)[4,@];
   MON_CROUT();
   IF (NOT CMP_STRING(VB_STR,STR_USE)) {
     # "USE X TO Y Z"=>"Y Z WITH X"
     IF (NUM_WORDS=4) {
-      SET VB_STR=(@WORDS)[4,2];
-      SET O1_STR=(@WORDS)[6,2];
-      SET O2_STR=(@WORDS)[2,2];
+      SET VB_STR=(@WORDS)[4,@];
+      SET O1_STR=(@WORDS)[6,@];
+      SET O2_STR=(@WORDS)[2,@];
     }
     ELSE {
       PRINT_WORDS(MORE_SPECIFIC);
@@ -120,7 +120,7 @@ FN DO_VERB_PHRASE() {
     PRINT_WORDS(HERE);
   }
   ELSE {
-    VB_FNS[VB*2,2]();
+    VB_FNS[VB*2,@]();
   }
   MON_CROUT();
 }
