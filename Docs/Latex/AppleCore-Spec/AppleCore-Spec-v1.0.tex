@@ -759,9 +759,8 @@ an address:
   declaration; or (4) is a variable or function parameter declaration
   whose type is \kwd{@}.
 %
-\item \ithead{Indexed expressions} An indexed expression represents
-  an address if and only if its \nonterm{unsigned-type} component is
-  \kwd{@}.
+\item \ithead{Indexed expressions} An indexed expression represents an
+  address if its \nonterm{unsigned-type} component is \kwd{@}.
 %
 \item \ithead{Call expressions}  A call expression represents an
   address if the called expression is an identifier whose associated
@@ -808,6 +807,12 @@ they are constant-value expressions:
   the right-hand expression must be 1 byte unsigned.
 %
 \end{itemize}
+
+\bfhead{Variable declarations} If an initializer expression is
+present, then (1) the expression must have non-zero size; and (2) the
+expression must satisfy the requirements for a a valid address
+assignment, treating the variable declaration itself as the left-hand
+side, and the initializer expression as the right-hand side.
 
 \bfhead{Set statements} (1) The right-hand expression of a set
 statement must have nonzero size.  (2) The assignment represented by

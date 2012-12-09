@@ -230,14 +230,14 @@ FN SET_K(NEW_K:2) {
 # NEXT LINE PTR
 # -----------------------------------
 FN NEXT_LINE_PTR(LINE_PTR_PTR:@) {
-  VAR LINE_PTR:@=LINE_PTR_PTR[0,2];
-  SET LINE_PTR_PTR[0,2]=LINE_PTR+LINE_PTR[0,1]+3;
+  VAR LINE_PTR:@=LINE_PTR_PTR[0,@];
+  SET LINE_PTR_PTR[0,@]=LINE_PTR+LINE_PTR[0,1]+3;
 }
 # -----------------------------------
 # PREV LINE PTR
 # -----------------------------------
 FN PREV_LINE_PTR(LINE_PTR_PTR:@) {
-  VAR LINE_PTR:@=LINE_PTR_PTR[0,2]-1;
-  SET LINE_PTR_PTR[0,2]=LINE_PTR-LINE_PTR[0,1]-2;
+  VAR LINE_PTR:@=LINE_PTR_PTR[0,@]-1;
+  SET LINE_PTR_PTR[0,@]=LINE_PTR-LINE_PTR[0,1]-2;
 }
 

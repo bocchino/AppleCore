@@ -231,8 +231,8 @@ FN:1 REMOVE_OBJ_ID(OBJ_ID:1) {
 # PRINT OBJECT NAME
 # -----------------------------------
 FN PRINT_OBJ_NAME(OBJ:1) {
-  VAR NAME_1:@=OBJ_NAMES[4*OBJ,2];
-  VAR NAME_2:@=OBJ_NAMES[4*OBJ+2,2];
+  VAR NAME_1:@=OBJ_NAMES[4*OBJ,@];
+  VAR NAME_2:@=OBJ_NAMES[4*OBJ+2,@];
   IF (NAME_1[0,1]>0) {
     PRINT_STRING(NAME_1);
     PRINT_CHAR(' ');

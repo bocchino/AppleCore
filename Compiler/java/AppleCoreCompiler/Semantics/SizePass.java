@@ -95,6 +95,8 @@ public class SizePass
 	if (node.size == 0) {
 	    throw new SemanticError(node.name + " has zero size", node);
 	}
+	if (node.init != null)
+	    checkAssignment(node,node.init,node);
     }
 
     /**

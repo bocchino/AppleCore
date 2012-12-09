@@ -181,9 +181,9 @@ public abstract class Node {
 	public String toString() {
 	    if (isFunctionParam)
 		return "fn param " + name + ":" + 
-		    sizeAsString(size,isSigned);
+		    typeAsString(size,isSigned,representsAddress);
 	    return "var decl " + name + ":" + 
-		sizeAsString(size,isSigned);
+		typeAsString(size,isSigned,representsAddress);
 	}
     }
 
@@ -231,7 +231,7 @@ public abstract class Node {
 		new StringBuffer("FN");
 	    if (size > 0) {
 		sb.append(':');
-		sb.append(sizeAsString(size,isSigned));
+		sb.append(typeAsString(size,isSigned,representsAddress));
 	    }
 	    sb.append(" ");
 	    sb.append(name);
@@ -608,8 +608,8 @@ public abstract class Node {
 	}
 
 	public String toString() {
-	    return "sized expr: " + 
-		sizeAsString(size,isSigned);
+	    return "typed expr: " + 
+		typeAsString(size,isSigned,representsAddress);
 	}
     }
 
@@ -805,7 +805,10 @@ public abstract class Node {
 	}
     }
 
-    public static String sizeAsString(int size, boolean isSigned) {
+    public static String typeAsString(int size, boolean isSigned, 
+				      boolean representsAddress) {
+	if (representsAddress)
+	    return "@";
 	if (isSigned)
 	    return String.valueOf(size) + "S";
 	return String.valueOf(size);
