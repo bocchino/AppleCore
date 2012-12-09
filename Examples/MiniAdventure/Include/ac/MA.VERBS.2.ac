@@ -60,9 +60,9 @@ FN VB_UNBOLT_FN() {
      }
      ELSE {     
        PRINT_WORDS(UNBOLT);
-       SET (OBJ_TAKE_PTR(OBJ_GRATE))[0,2]=
+       SET (OBJ_TAKE_PTR(OBJ_GRATE))[0,@]=
         OBJ_TAKE_TOO_HEAVY;
-       SET (OBJ_TAKE_PTR(OBJ_BOLTS))[0,2]=
+       SET (OBJ_TAKE_PTR(OBJ_BOLTS))[0,@]=
         OBJ_TAKE_OK;
        SET (OBJ_RM_PTR(OBJ_BOLTS))[0,1]=
         (RM_ENTER OR DROPPED_FLAG);

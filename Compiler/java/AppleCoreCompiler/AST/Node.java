@@ -38,8 +38,8 @@ public abstract class Node {
     public boolean isSigned() { return false; }
 
     /**
-     * Look up the definition of an identifier as a variable
-     * declaration.
+     * If node is a var decl or an identifier representing a var decl,
+     * then return the corresponding decl; otherwise return null.
      */
     public VarDecl asVarDecl() { return null; }
 

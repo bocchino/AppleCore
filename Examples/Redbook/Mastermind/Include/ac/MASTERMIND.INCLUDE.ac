@@ -15,8 +15,8 @@ DATA	    ORANGE;
 DATA	    WHITE;
 DATA	    DARK_GREY;
 
-DATA NO_GUESS -1;
-DATA NO_CODE  -2;
+CONST NO_GUESS -1;
+CONST NO_CODE  -2;
 
 DATA COLOR_NAMES "BGRYVOWX"\;
 # -----------------------------------

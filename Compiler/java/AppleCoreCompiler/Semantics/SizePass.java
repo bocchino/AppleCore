@@ -178,9 +178,7 @@ public class SizePass
 	    throw new SemanticError("cannot assign " + rhs +
 				    " to address variable " + lhs,
 				    parent);
-	if (rhs.asVarDecl() != null ||
-	    rhs instanceof CallExpression || 
-	    rhs instanceof TypedExpression) {
+	if (!rhs.isConstValExpr()) {
 	    if (rhs.representsAddress() && !lhs.representsAddress())
 		throw new SemanticError("cannot assign address variable " + rhs +
 					" to " + lhs,

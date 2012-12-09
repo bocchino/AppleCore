@@ -833,11 +833,9 @@ return type of the enclosing function.
 
 \bfhead{Valid address assignments} (1) If the left-hand side of an
 assignment represents an address, then the right-hand side must also
-represent an address. (2) If the right-hand side of an assignment is
-(a) an identifier corresponding to a variable declaration or function
-parameter or (b) a call expression or (c) a typed expression, and the
-right-hand side represents an address, then the left-hand side must
-also represent an address.
+represent an address. (2) If the right-hand side of an assignment
+represents and address and is not a constant-value expression, then
+the left-hand side must also represent an address.
 
 \bfhead{Function frame sizes} The \emph{frame size} of a function
 declaration that contains a body equals the sum of the sizes of all
