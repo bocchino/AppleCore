@@ -86,9 +86,14 @@ public abstract class Node {
 	    return expr.getSize(); 
 	}
 	public boolean representsAddress() {
-	    return (getSize()==2);
+	    int size = this.getSize();
+	    return (size==1 || size==2) &&
+		!this.isSigned();
 	}
-	public boolean isSigned() { return false; }
+	public boolean isSigned() { 
+	    if (expr == null) return false;
+	    return expr.isSigned(); 
+	}
 
 	public void accept(Visitor v) throws ACCError {
 	    v.visitConstDecl(this);
