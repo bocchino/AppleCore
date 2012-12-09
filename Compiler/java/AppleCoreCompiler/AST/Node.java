@@ -28,9 +28,9 @@ public abstract class Node {
     public int getSize() { return 0; }
 
     /**
-     * Whether the node represents a pointer value.
+     * Whether the node represents an address value.
      */
-    public boolean isPointer() { return false; }
+    public boolean representsAddress() { return false; }
 
     /**
      * The signedness of the node.
@@ -85,7 +85,7 @@ public abstract class Node {
 	    if (expr == null) return 2;
 	    return expr.getSize(); 
 	}
-	public boolean isPointer() {
+	public boolean representsAddress() {
 	    return (getSize()==2);
 	}
 	public boolean isSigned() { return false; }
@@ -149,7 +149,7 @@ public abstract class Node {
     {
 	public String name;
 	public int size;
-	public boolean isPointer;
+	public boolean representsAddress;
 	public boolean isSigned;
 	public Expression init;
 
@@ -162,7 +162,7 @@ public abstract class Node {
 	}
 
 	public int getSize() { return size; }
-	public boolean isPointer() { return this.isPointer; }
+	public boolean representsAddress() { return this.representsAddress; }
 	public boolean isSigned() { return this.isSigned; }
 	public int getOffset() { return offset; }
 	public void setOffset(int offset) {
@@ -187,7 +187,7 @@ public abstract class Node {
     {
 	public int size;
 	public boolean isSigned;
-	public boolean isPointer;
+	public boolean representsAddress;
 	public String name;
 	public final List<VarDecl> params = 
 	    new LinkedList<VarDecl>();
@@ -213,7 +213,7 @@ public abstract class Node {
 
 	public int getSize() { return size; }
 	public boolean isSigned() { return this.isSigned; }
-	public boolean isPointer() { return this.isPointer; }
+	public boolean representsAddress() { return this.representsAddress; }
 
 	public boolean endsInReturnStatement() {
 	    return (statements.size() > 0 && 
@@ -389,7 +389,7 @@ public abstract class Node {
 	/**
 	 * Whether this expression represents a pointer value.
 	 */
-	public boolean isPointer;
+	public boolean representsAddress;
 
 	/**
 	 * Whether the value represented by this expression is signed.
@@ -403,7 +403,7 @@ public abstract class Node {
 
 	public int getSize() { return size; }
 	public boolean isSigned() { return this.isSigned; }
-	public boolean isPointer() { return this.isPointer; }
+	public boolean representsAddress() { return this.representsAddress; }
 	public boolean isZero() { return false; }
 	public boolean isTrue() { return false; }
 	public boolean isFalse() { return false; }
@@ -587,7 +587,7 @@ public abstract class Node {
 	}
     }
 
-    public static class SizedExpression
+    public static class TypedExpression
 	extends Expression
     {
 	public Expression expr;
@@ -595,7 +595,7 @@ public abstract class Node {
 	public void accept(Visitor v) 
 	    throws ACCError 
 	{
-	    v.visitSizedExpression(this);
+	    v.visitTypedExpression(this);
 	}
 
 	public boolean isConstValExpr() {
@@ -669,7 +669,7 @@ public abstract class Node {
 	private BigInteger value;
 	public boolean wasHexInSource;
 	public boolean isZero() { return value.equals(BigInteger.ZERO); }
-	public boolean isPointer() {
+	public boolean representsAddress() {
 	    return this.size > 0 && this.size <= 2 && !this.isSigned;
 	}
 
@@ -873,7 +873,7 @@ public abstract class Node {
 	    visitParensExpression(ParensExpression node) 
 	    throws ACCError;
 	public abstract void
-	    visitSizedExpression(SizedExpression node)
+	    visitTypedExpression(TypedExpression node)
 	    throws ACCError;
 	public abstract void 
 	    visitIdentifier(Identifier node) 

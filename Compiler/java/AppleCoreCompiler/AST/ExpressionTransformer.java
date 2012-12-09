@@ -163,7 +163,7 @@ public class ExpressionTransformer
 	visitAfterScan(node);
 	result = node;
     }
-    public void visitSizedExpression(SizedExpression node) 
+    public void visitTypedExpression(TypedExpression node) 
 	throws ACCError 
     {
 	visitBeforeScan(node);

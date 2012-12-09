@@ -226,7 +226,7 @@ public class Parser {
 	expectAndConsume(Token.COLON);
 	if (parsePossibleToken(Token.AT)) {
 	    varDecl.size = 2;
-	    varDecl.isPointer = true;
+	    varDecl.representsAddress = true;
 	} 
 	else {
 	    varDecl.size = parseSize();
@@ -253,7 +253,7 @@ public class Parser {
 	    scanner.getNextToken();
 	    if (parsePossibleToken(Token.AT)) {
 		functionDecl.size = 2;
-		functionDecl.isPointer = true;
+		functionDecl.representsAddress = true;
 	    }
 	    else {
 		functionDecl.size = parseSize();
@@ -295,7 +295,7 @@ public class Parser {
 	    expectAndConsume(Token.COLON);
 	    if (parsePossibleToken(Token.AT)) {
 		param.size = 2;
-		param.isPointer = true;
+		param.representsAddress = true;
 	    }
 	    else {
 		param.size = parseSize();
@@ -584,7 +584,7 @@ public class Parser {
 	    // Check for sized expr
 	    else if (scanner.getCurrentToken()
 		     == Token.COLON && !lvalue) {
-		result = parseSizedExpression(result);
+		result = parseTypedExpression(result);
 	    }
 	    else return result;
 	}
@@ -604,23 +604,23 @@ public class Parser {
 	expectAndConsume(Token.COMMA);
 	indexedExp.size = parseSize();
 	expectAndConsume(Token.RBRACKET);
-	indexedExp.isPointer = (indexedExp.size == 2);
+	indexedExp.representsAddress = (indexedExp.size == 2);
 	return indexedExp;
     }
 
     /**
-     * SizedExpr ::= Expr ':' Size ['S']
+     * TypedExpr ::= Expr ':' Size ['S']
      */
-    private SizedExpression parseSizedExpression(Expression expr)
+    private TypedExpression parseTypedExpression(Expression expr)
 	throws SyntaxError, IOException
     {
-	SizedExpression sizedExp = new SizedExpression();
+	TypedExpression sizedExp = new TypedExpression();
 	setLineNumberOf(sizedExp);
 	sizedExp.expr = expr;
 	expectAndConsume(Token.COLON);
 	if (parsePossibleToken(Token.AT)) {
 	    sizedExp.size = 2;
-	    sizedExp.isPointer = true;
+	    sizedExp.representsAddress = true;
 	}
 	else {
 	    sizedExp.size = parseSize();

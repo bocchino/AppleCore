@@ -499,7 +499,7 @@ public class AVMTranslatorPass
 	super.visitParensExpression(node);
     }
 
-    public void visitSizedExpression(SizedExpression node)
+    public void visitTypedExpression(TypedExpression node)
 	throws ACCError
     {
 	// Scan the component expression

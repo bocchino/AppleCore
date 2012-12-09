@@ -1,7 +1,7 @@
 /**
  * Scan the AST and fill in the size and signedness of each expression
- * node, and whether each node can function as a pointer.  Also do
- * semantic checking relating to size, signedness, and pointers.
+ * node, and whether each node represents an address.  Also do
+ * semantic checking relating to size, signedness, and addresses.
  */
 package AppleCoreCompiler.Semantics;
 
@@ -24,8 +24,8 @@ public class SizePass
 	    System.out.print("line " + node.lineNumber + ": size of " 
 			     + node + " is " + node.size + " " + 
 			     (node.isSigned ? "signed" : "unsigned"));
-	    if (node.isPointer)
-		System.out.print(" (pointer)");
+	    if (node.representsAddress)
+		System.out.print(", represents address");
 	    System.out.println();
 	}
     }
@@ -97,13 +97,13 @@ public class SizePass
     /**
      * The size of an indexed expression comes from the expression
      * itself.  It is always unsigned.  The expression being indexed
-     * must be a pointer.
+     * must represent an address.
      */
     public void visitIndexedExpression(IndexedExpression node) 
 	throws ACCError
     {
 	super.visitIndexedExpression(node);
-	requirePointer(node.indexed);
+	requireAddress(node.indexed);
 	if (node.size < 1 || node.size > 256) {
 	    throw new SemanticError("index size " + node.size + 
 				    " out of range", node);
@@ -121,7 +121,7 @@ public class SizePass
     {
 	super.visitCallExpression(node);
 	boolean hasDecl = false;
-	if (!node.fn.isPointer()) {
+	if (!node.fn.representsAddress()) {
 	    throw new SemanticError("called expression must be address",
 				    node);
 	}
@@ -131,7 +131,7 @@ public class SizePass
 	    if (def instanceof FunctionDecl) {
 		hasDecl = true;
 		node.size = def.getSize();
-		node.isPointer = def.isPointer();
+		node.representsAddress = def.representsAddress();
 		node.isSigned = def.isSigned();
 		// Check address assignment rules
 		FunctionDecl functionDecl = (FunctionDecl) def;
@@ -144,9 +144,9 @@ public class SizePass
 	}
 	if (!hasDecl) {
 	    // We're calling a label with no prototype info
-	    requirePointer(node.fn);
+	    requireAddress(node.fn);
 	    node.size = 0;
-	    node.isPointer = true;
+	    node.representsAddress = true;
 	    node.isSigned = false;
 	}
 	printStatus(node);
@@ -171,15 +171,15 @@ public class SizePass
     {
 	VarDecl lhsDecl = lhs.asVarDecl();
 	if (lhsDecl != null) {
-	    if (lhs.isPointer() && !rhs.isPointer())
+	    if (lhs.representsAddress() && !rhs.representsAddress())
 		throw new SemanticError("cannot assign " + rhs +
 					" to address variable " + lhs,
 					parent);
 	    VarDecl rhsDecl = rhs.asVarDecl();
 	    if (rhsDecl != null || 
 		rhs instanceof CallExpression || 
-		rhs instanceof SizedExpression) {
-		if (rhs.isPointer() && !lhs.isPointer())
+		rhs instanceof TypedExpression) {
+		if (rhs.representsAddress() && !lhs.representsAddress())
 		    throw new SemanticError("cannot assign address variable " + rhs +
 					    " to " + lhs,
 					    parent);
@@ -192,7 +192,7 @@ public class SizePass
      */
     public void visitRegisterExpression(RegisterExpression node) {
 	node.size = 1;
-	node.isPointer = false;
+	node.representsAddress = false;
 	node.isSigned = false;
 	printStatus(node);
     }
@@ -205,12 +205,12 @@ public class SizePass
 	if (node.def instanceof FunctionDecl ||
 	    node.def instanceof DataDecl) {
 	    node.size=2;
-	    node.isPointer = true;
+	    node.representsAddress = true;
 	    node.isSigned=false;
 	}
 	else {
 	    node.size = node.def.getSize();
-	    node.isPointer = node.def.isPointer();
+	    node.representsAddress = node.def.representsAddress();
 	    node.isSigned = node.def.isSigned();
 	}
 	printStatus(node);
@@ -244,24 +244,24 @@ public class SizePass
 	switch (node.operator) {
 	case EQUALS: case GT: case LT: case GEQ: case LEQ:
 	    node.size = 1;
-	    node.isPointer = false;
+	    node.representsAddress = false;
 	    node.isSigned = false;
 	    break;
 	case SHL: case SHR:
 	    node.size = node.left.size;
-	    node.isPointer = node.left.isPointer;
+	    node.representsAddress = node.left.representsAddress;
 	    node.isSigned = node.left.isSigned;
 	    checkShift(node);
 	    break;
 	default:
 	    node.size = Math.max(node.left.size,node.right.size);
 	    if (node.operator == BinopExpression.Operator.DIVIDE) {
-		node.isPointer = node.left.isPointer &&
-		    !node.right.isPointer;
+		node.representsAddress = node.left.representsAddress &&
+		    !node.right.representsAddress;
 	    }
 	    else {
-		node.isPointer = node.left.isPointer ?
-		    !node.right.isPointer : node.right.isPointer;
+		node.representsAddress = node.left.representsAddress ?
+		    !node.right.representsAddress : node.right.representsAddress;
 	    }
 	    node.isSigned = (node.left.isSigned || 
 			     node.right.isSigned);
@@ -278,7 +278,7 @@ public class SizePass
 	throws ACCError
     {
 	if (node.right.isSigned ||
-	    node.right.isPointer ||
+	    node.right.representsAddress ||
 	    node.right.size != 1) {
 	    throw new SemanticError("shift amount must be 1 byte unsigned",
 				    node);
@@ -300,17 +300,17 @@ public class SizePass
 	switch (node.operator) {
 	case DEREF:
 	    node.size = 2;
-	    node.isPointer = true;
+	    node.representsAddress = true;
 	    node.isSigned = false;
 	    break;
 	case NEG:
 	    node.size = node.expr.size;
-	    node.isPointer = false;
+	    node.representsAddress = false;
 	    node.isSigned = true;
 	    break;
 	default:
 	    node.size = node.expr.size;
-	    node.isPointer = false;
+	    node.representsAddress = false;
 	    node.isSigned = node.expr.isSigned;
 	}
     }
@@ -324,24 +324,24 @@ public class SizePass
     {
 	super.visitParensExpression(node);
 	node.size = node.expr.size;
-	node.isPointer = node.expr.isPointer();
+	node.representsAddress = node.expr.representsAddress();
 	node.isSigned = node.expr.isSigned;
     }
 
     public void visitCharConstant(CharConstant node) {
 	node.size = 1;
-	node.isPointer = false;
+	node.representsAddress = false;
 	node.isSigned = false;
     }
 
     /**
-     * Require a pointer, i.e., 1- or 2-byte value.
+     * Require an address
      */
-    private void requirePointer(Node node) 
+    private void requireAddress(Node node) 
 	throws ACCError
     {
-	if (!node.isPointer()) {
-	    throw new SemanticError(node + " must be a pointer",
+	if (!node.representsAddress()) {
+	    throw new SemanticError(node + " must represent an address",
 				    node);
 	}
     }
