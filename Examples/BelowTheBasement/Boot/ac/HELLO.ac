@@ -56,7 +56,7 @@ FN MAIN() {
 # -------------------------------
 # BLOAD FILE
 # -------------------------------
-FN BLOAD(FILE:2) {
+FN BLOAD(FILE:@) {
   PRINT_STRING(DOS_BLOAD);
   PRINT_STRING(FILE);
   MON_CROUT();
@@ -64,14 +64,14 @@ FN BLOAD(FILE:2) {
 # -------------------------------
 # LOAD AND CALL FILE
 # -------------------------------
-FN BLOAD_AND_CALL(FILE:2) {
+FN BLOAD_AND_CALL(FILE:@) {
   BLOAD(FILE);
   DOS_BLOAD_ADDR[0,2]();
 }
 # -------------------------------
 # BRUN FILE
 # -------------------------------
-FN BRUN(FILE:2) {
+FN BRUN(FILE:@) {
   PRINT_STRING(DOS_BRUN);
   PRINT_STRING(FILE);
   MON_CROUT();

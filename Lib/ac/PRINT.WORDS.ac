@@ -4,7 +4,7 @@
 # --------------------------------------
 FN PRINT_WORDS_ASM();
 
-FN PRINT_WORDS(STR_PTR:2) {
+FN PRINT_WORDS(STR_PTR:@) {
   SET ^X=(@STR_PTR)[0,1];
   SET ^A=(@STR_PTR)[1,1];
   PRINT_WORDS_ASM();

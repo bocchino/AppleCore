@@ -64,7 +64,7 @@ DATA BLOAD "\$04BLOAD ";
 # -------------------------------
 # LOAD AND RUN FILE
 # -------------------------------
-FN RUN(FILE:2) {
+FN RUN(FILE:@) {
   # LOAD THE FILE
   PRINT_STRING(BLOAD);
   PRINT_STRING(FILE);

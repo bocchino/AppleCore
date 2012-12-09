@@ -788,15 +788,24 @@ they are constant-value expressions:
 %
 \item \ithead{Call expressions.} (1) The called expression must
   represent an address.  (2) Each argument expression must have
-  nonzero size.
+  nonzero size. (3) For each argument expression that is (a) an
+  identifier corresponding to a variable or function parameter or (b)
+  a call expression or (c) a typed expression, either the expression
+  and the corresponding parameter of the called function must both
+  represent an address, or neither may.
 %
 \item \ithead{Binary operation expressions.}  For shift operations,
   the right-hand expression must be 1 byte unsigned.
 %
 \end{itemize}
 
-\bfhead{Set statements.} The right-hand expression of a set statement
-must have nonzero size.
+\bfhead{Set statements.} (1) The right-hand expression of a set
+statement must have nonzero size.  (2) If the left-hand side of a set
+statement is an identifier corresponding to a variable or function
+parameter, and the right-hand side is (a) an identifier corresponding
+to a variable or function parameter or (b) a call expression or (c) a
+typed expression, then either the left- and right-hand sides must both
+represent an address, or neither may.
 
 \bfhead{Return statements.} (1) No return statement may contain an
 expression of zero size.  (2) If a function has nonzero return size,

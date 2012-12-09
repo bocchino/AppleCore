@@ -91,7 +91,7 @@ FN EXIT_EDIFY() {
         GET_INPUT(FNAME_PROMPT);
 	SET (@FILE_NAME)[0,32]=MON_IN[0,32];
       }
-      IF (STRING_LEN(FILE_NAME)>0)
+      IF (STRING_LEN(@FILE_NAME)>0)
         S_HANDLER();
     }   
   }

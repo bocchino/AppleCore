@@ -38,6 +38,12 @@ public abstract class Node {
     public boolean isSigned() { return false; }
 
     /**
+     * Look up the definition of an identifier as a variable
+     * declaration.
+     */
+    public VarDecl asVarDecl() { return null; }
+
+    /**
      * Source files
      */
     public static class SourceFile extends Node {
@@ -161,6 +167,10 @@ public abstract class Node {
 	public int getOffset() { return offset; }
 	public void setOffset(int offset) {
 	    this.offset = offset;
+	}
+
+	public VarDecl asVarDecl() {
+	    return this;
 	}
 	
 	public String toString() {
@@ -618,9 +628,18 @@ public abstract class Node {
 	}
 
 	public String toString() {
-	    return "identifier " + name;
+	    return name;
 	}
+
+	public VarDecl asVarDecl() {
+	    if (def instanceof VarDecl) {
+		return (VarDecl) def;
+	    }
+	    return null;
+	}
+
     }
+
 
     /**
      * Numeric constant literals

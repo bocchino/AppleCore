@@ -133,6 +133,13 @@ public class SizePass
 		node.size = def.getSize();
 		node.isPointer = def.isPointer();
 		node.isSigned = def.isSigned();
+		// Check address assignment rules
+		FunctionDecl functionDecl = (FunctionDecl) def;
+		Iterator<VarDecl> I = functionDecl.params.iterator();
+		for (Expression arg : node.args) {
+		    VarDecl param = I.next();
+		    checkAssignment(param,arg,node);
+		}
 	    }
 	}
 	if (!hasDecl) {
@@ -143,6 +150,41 @@ public class SizePass
 	    node.isSigned = false;
 	}
 	printStatus(node);
+    }
+
+    /**
+     * For a set statement, check validity of assignment to a variable
+     * representing an address.
+     */
+    public void visitSetStatement(SetStatement node) 
+	throws ACCError
+    {
+	super.visitSetStatement(node);
+	checkAssignment(node.lhs,node.rhs,node);
+    }
+
+
+    private void checkAssignment(Node lhs, 
+				 Expression rhs,
+				 Node parent) 
+	throws ACCError
+    {
+	VarDecl lhsDecl = lhs.asVarDecl();
+	if (lhsDecl != null) {
+	    if (lhs.isPointer() && !rhs.isPointer())
+		throw new SemanticError("cannot assign " + rhs +
+					" to address variable " + lhs,
+					parent);
+	    VarDecl rhsDecl = rhs.asVarDecl();
+	    if (rhsDecl != null || 
+		rhs instanceof CallExpression || 
+		rhs instanceof SizedExpression) {
+		if (rhs.isPointer() && !lhs.isPointer())
+		    throw new SemanticError("cannot assign address variable " + rhs +
+					    " to " + lhs,
+					    parent);
+	    }
+	}
     }
 
     /**

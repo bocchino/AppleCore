@@ -44,7 +44,7 @@ FN PRINT_CHAR(CHAR:1) {
 # --------------------------------------
 FN AVM_PRINT_STRING();
 
-FN PRINT_STRING(STR_PTR:2) {
+FN PRINT_STRING(STR_PTR:@) {
   SET ^X=(@STR_PTR)[0,1];
   SET ^A=(@STR_PTR)[1,1];
   AVM_PRINT_STRING();
