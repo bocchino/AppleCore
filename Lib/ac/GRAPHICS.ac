@@ -116,7 +116,7 @@ FN:2 HI_RES_X_OFFSET(X:2) {
   RETURN OFFSET;
 }
 # --------------------------------------
-# SET OR CLEAR A HI-RES DOT
+# SET, CLEAR, OR READ A HI-RES DOT
 # --------------------------------------
 VAR Y_ADDR:@;
 VAR X_OFFSET:2;
@@ -137,6 +137,10 @@ FN CLEAR_DOT(X:2,Y:1,PAGE:1) {
   HI_RES_POS(X,Y,PAGE);
   SET DOT_ADDR[0,1]=
    DOT_ADDR[0,1] AND NOT DOT_MASK;
+}
+FN:1 READ_DOT(X:2,Y:1,PAGE:1) {
+   HI_RES_POS(X,Y,PAGE);
+   RETURN (DOT_ADDR[0,1] AND DOT_MASK) > 0;
 }
 # --------------------------------------
 # SET, CLEAR, OR FLIP A HI-RES COLOR BIT

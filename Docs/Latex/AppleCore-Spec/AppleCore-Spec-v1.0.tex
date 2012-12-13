@@ -667,10 +667,10 @@ must be one of the following:
 These rules are designed so that the compiler can do a single pass
 over all the expressions \nonterm{expr} appearing at global scope, in
 the order in which they appear in the source file, and either compute
-the value of \nonterm{expr} (in case 1) or generate an assembler label
-for \nonterm{expr} (in cases 2 and 3). In case 3, the actual address
-associated with the assembler label may not be known until final
-assembly (Section~\ref{sec:code-gen:source-files}).
+the value of \nonterm{expr} or generate an assembler label for
+\nonterm{expr}.  In the second case, the value associated with the
+assembler label may not be known until final assembly
+(Section~\ref{sec:code-gen:source-files}).
 
 \subsection{Size, Signedness, and Addresses}
 \label{sec:semantics:size}
