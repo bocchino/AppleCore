@@ -468,10 +468,10 @@ $$\nonterm{call-expr} ::= \mbox{\nonterm{expr} \kwd{(}
   \opt{\nonterm{expr} \group{\kwd{,} \nonterm{expr}}$^*$} \kwd{)}}$$
 
 \bfhead{Indexed expressions} An indexed expression consists of a
-base expression, an offset expression, and an unsigned type:
+base expression, an offset expression, and a type:
 
 $$\nonterm{indexed-expr} ::= \mbox{\nonterm{expr} \kwd{[}
-    \nonterm{expr} \kwd{,} \nonterm{unsigned-type} \kwd{]}}$$
+    \nonterm{expr} \kwd{,} \nonterm{type} \kwd{]}}$$
 
 \bfhead{Register expressions} A register expression consists of a
 caret character followed by a 6502 register name:
@@ -535,11 +535,6 @@ $$\nonterm{typed-expr} ::= \mbox{\nonterm{expr} \kwd{:}
 A type is an unsigned size, a signed size, or an address type:
 
 $$\nonterm{type} ::= \mbox{\nonterm{size} \opt{\kwd{S}} $|$ \kwd{@}}$$
-
-\bfhead{Unsigned types} An unsigned type is an unsigned size or an
-address type:
-
-$$\nonterm{unsigned-type} ::= \mbox{\nonterm{size} $|$ \kwd{@}}$$
 
 
 \section{Semantic Checking}
@@ -712,9 +707,9 @@ signedness are computed as follows:
   If the definition is a data declaration or function declaration,
   then the size is 2, and the signedness is unsigned.
 %
-\item \ithead{Indexed expressions} The size of an indexed expression
-  is given by the \nonterm{unsigned-type} component of the
-  expression.  It is always unsigned.
+\item \ithead{Indexed expressions} The size and signedness of an
+  indexed expression come from the \nonterm{type} component of the
+  expression.
 %
 \item \ithead{Register expressions} The size of a register expression
   is 1.  It is unsigned.
@@ -760,7 +755,7 @@ an address:
   whose type is \kwd{@}.
 %
 \item \ithead{Indexed expressions} An indexed expression represents an
-  address if its \nonterm{unsigned-type} component is \kwd{@}.
+  address if its \nonterm{type} component is \kwd{@}.
 %
 \item \ithead{Call expressions}  A call expression represents an
   address if the called expression is an identifier whose associated
@@ -913,8 +908,8 @@ of exactly one file translated in top-level mode and zero or more
 files translated in include mode.  The final step in compilation is to
 ask the assembler to assemble the file translated in top-level mode,
 which includes all the other files for assembly.  This assembly also
-causes name resolution for externally defined functions.  It is the
-user's responsibility to ensure that externally-defined names are both
+causes name resolution for externally defined names.  It is the user's
+responsibility to ensure that externally-defined names are both
 available and uniquely defined; the compiler cannot check this.  If a
 symbol used in one of the assembled files is not defined in any of the
 files (or if any symbol is multiply defined), then an assembler error
@@ -924,8 +919,8 @@ will result.
 \label{sec:code-gen:global-decls}
 
 Global declarations are translated as stated below.  To the extent
-that translation produces actual bytes of machine code, data, or
-reserved storage, the bytes must be laid out in the order in which the
+that translation produces actual bytes of code, data, or reserved
+storage, the bytes must be laid out in the order in which the
 translated constructs are encountered in the source file.
 
 \bfhead{Constant declarations} If the constant declaration contains
