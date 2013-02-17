@@ -322,6 +322,6 @@ As part of the AppleCore release, I've included a nifty little shell
 editor that's fun to use from the monitor or BASIC prompt and is
 automatically invoked by any program that does a JSR to $FD6F (GETLN1)
 to get line input.  It works quite nicely with the old monitor and the
-flashing cursor!  For more details, see the documentation in
-${APPLECORE}/DOS3.3/README.txt and the source code in
+solid flashing cursor!  For more details, see the documentation in
+${APPLECORE}/DOS3.3/README.md and the source code in
 ${APPLECORE}/ShellEditor.
