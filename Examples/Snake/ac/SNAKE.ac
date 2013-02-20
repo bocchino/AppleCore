@@ -1,0 +1,219 @@
+# -----------------------------------
+# SNAKE
+# COPYRIGHT (C) 2013
+# ROBERT L. BOCCHINO JR.
+# -----------------------------------
+CONST SNAKE_COLOR DARK_GREEN;
+CONST APPLE_COLOR RED;
+
+FN MAIN() {
+  INIT();
+  WHILE (TRUE) {
+    GET_INPUT();
+    MOVE_SNAKE();
+    UPDATE_APPLE();
+  }
+}
+
+FN INIT() {
+  SET_FULL_SCREEN();
+  MON_HOME();
+  SET_GRAPHICS();
+  SET_LO_RES();
+  SET_TEXT_WINDOW();
+  MON_CLRTOP();
+  INIT_APPLE();
+  DRAW_SNAKE(SNAKE_COLOR);
+  POSITION_CURSOR(0,21);
+  PRINT_STRING(SCORE_STR);
+  PRINT_SCORE();  
+}
+# -------------------------------------
+# SCORE MANAGEMENT
+# -------------------------------------
+VAR SCORE:1=0;
+
+DATA SCORE_STR "SCORE=";
+
+FN PRINT_SCORE() {
+  VAR STR:3;
+  NUM_TO_STR(@SCORE,1,10,@STR);
+  POSITION_CURSOR(6,21);
+  PRINT_STRING(@STR);
+}
+# -------------------------------------
+# 256-BYTE BUFFER FOR SNAKE POSITIONS
+# -------------------------------------
+DATA POS_BUF 19; # TAIL X
+DATA         20; # TAIL Y
+DATA	     20; # HEAD X
+DATA	     20; # HEAD Y
+DATA	     (0:252);
+# -------------------------------------
+# POINTER TO HEAD AND TAIL
+# -------------------------------------
+VAR HEAD:1=2;
+VAR TAIL:1=0;
+# -------------------------------------
+# APPLE COORDINATES
+# -------------------------------------
+VAR APPLE_X:1;
+VAR APPLE_Y:1;
+# -------------------------------------
+# PSEUDO-RANDOM COORDS FOR NEXT APPLE
+# -------------------------------------
+VAR NEXT_APPLE_X:1;
+VAR NEXT_APPLE_Y:1;
+# -------------------------------------
+# APPLE MANAGEMENT FUNCTIONS
+# -------------------------------------
+FN INIT_APPLE() {
+  VAR BITS_X:1=MON_RNDL[0,1];
+  VAR BITS_Y:1=MON_RNDH[0,1];
+  SET APPLE_X=NORMALIZE(BITS_X);
+  SET APPLE_Y=NORMALIZE(BITS_Y);
+  SET (@NEXT_APPLE_X)[0,2]=(@APPLE_X)[0,2];
+  PLACE_APPLE();
+  DRAW_APPLE();
+}
+
+FN PLACE_APPLE() {
+  SET APPLE_X=NORMALIZE(NEXT_APPLE_X);
+  SET APPLE_Y=NORMALIZE(NEXT_APPLE_Y);
+}
+
+FN UPDATE_SCORE() {
+  INCR SCORE;
+  PRINT_SCORE();
+  IF (SCORE > 127) GAME_OVER();
+}
+
+FN DRAW_APPLE() {
+  SET_COLOR(APPLE_COLOR);
+  PLOT(APPLE_X,APPLE_Y);
+}
+
+FN UPDATE_APPLE() {
+   SET NEXT_APPLE_X=NEXT_APPLE_X+10;
+   SET NEXT_APPLE_Y=NEXT_APPLE_Y+10;
+}
+
+FN DRAW_SNAKE(COLOR:1) {
+  VAR PTR:1=TAIL;
+  WHILE (NOT (PTR = HEAD+2)) {
+    PLOT_POS(PTR,COLOR);
+    SET PTR=PTR+2;
+  }
+}
+
+FN PLOT_POS(PTR:1,COLOR:1) {
+  VAR X:1;
+  VAR Y:1;
+  SET_COLOR(COLOR);
+  SET X=POS_BUF[PTR,1];
+  SET Y=POS_BUF[PTR+1,1];
+  PLOT(X,Y);
+}
+
+CONST LEFT 	$08;
+CONST RIGHT	$15;
+CONST UP	$0B;
+CONST DOWN	$0A;
+CONST ESC	27;
+
+VAR DELTA_X:1=1;
+VAR DELTA_Y:1=0;
+VAR DIR:1=RIGHT;
+
+FN GET_INPUT() {
+  VAR CH:1;
+  IF (KEY_PRESSED()) {
+    SET CH=READ_KBD();
+    IF (CH=ESC) {
+      EXIT_SNAKE();
+    }
+    IF (CH=LEFT AND NOT (DIR=RIGHT)) {
+      SET DIR=LEFT;
+      SET DELTA_X=-1;
+      SET DELTA_Y=0;
+    }
+    IF (CH=UP AND NOT (DIR=DOWN)) {
+      SET DIR=UP;
+      SET DELTA_X=0;
+      SET DELTA_Y=-1;
+    }
+    IF (CH=RIGHT AND NOT (DIR=LEFT)) {
+      SET DIR=RIGHT;
+      SET DELTA_X=1;
+      SET DELTA_Y=0;
+    }
+    IF (CH=DOWN AND NOT (DIR=UP)) {
+      SET DIR=DOWN;
+      SET DELTA_X=0;
+      SET DELTA_Y=1;
+    }
+  }
+}
+
+VAR NEW_X:1;
+VAR NEW_Y:1;
+
+FN MOVE_SNAKE() {
+  SET HEAD=HEAD+2;
+  SET NEW_X=POS_BUF[HEAD-2,1]+DELTA_X;
+  SET NEW_Y=POS_BUF[HEAD-1,1]+DELTA_Y;
+  CHECK_BOUNDS();
+  IF (SCRN(NEW_X,NEW_Y)=SNAKE_COLOR)
+    GAME_OVER();
+  SET POS_BUF[HEAD,1]=NEW_X;
+  SET POS_BUF[HEAD+1,1]=NEW_Y;
+    PLOT_POS(HEAD,SNAKE_COLOR);
+  IF (ATE_APPLE()) {
+    PLACE_APPLE();
+    UPDATE_SCORE();
+  }
+  ELSE {
+    SET TAIL=TAIL+2;
+    PLOT_POS(TAIL-2,BLACK);
+    DRAW_APPLE();
+  }
+}
+
+FN:1 ATE_APPLE() {
+  RETURN POS_BUF[HEAD,2]=(@APPLE_X)[0,2];
+}
+
+FN CHECK_BOUNDS() {
+  IF ((NOT IN_BOUNDS(NEW_X)) OR 
+   (NOT IN_BOUNDS(NEW_Y))) {
+    GAME_OVER();
+  } 
+}
+
+FN GAME_OVER() {
+  WAIT_KEYPRESS();
+  WAIT_KEYPRESS();
+  EXIT_SNAKE();    
+}
+
+FN:1 IN_BOUNDS(COORD:1) {
+  RETURN COORD < 40;
+}
+
+FN:1 NORMALIZE(N:1S) {
+  IF (N < 0) {
+    RETURN NORMALIZE(40+N);
+  }
+  RETURN N-40*(N/40);
+}
+
+FN EXIT_SNAKE() {
+  SET_TEXT();
+  MON_HOME();
+  EXIT();
+}
+
+INCLUDE "GRAPHICS.AVM";
+INCLUDE "IO.AVM";
+INCLUDE "STRING.AVM";
+INCLUDE "CHAR.AVM";
