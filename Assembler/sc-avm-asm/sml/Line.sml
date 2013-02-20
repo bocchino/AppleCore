@@ -20,7 +20,9 @@ fun parseLabel substr =
 
 fun parseLine line =
     let
-	val substr = Substring.dropr Char.isSpace (Substring.full line)
+	val line = String.map Char.toUpper line
+	val substr = Substring.dropr Char.isSpace 
+				     (Substring.full line)
     in
 	case Substring.getc substr of
 	    NONE => emptyLine
