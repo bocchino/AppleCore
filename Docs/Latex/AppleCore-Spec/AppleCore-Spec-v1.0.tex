@@ -617,7 +617,12 @@ Otherwise, declarations need not precede their uses.
 \subsection{Constant-Value Expressions}
 \label{sec:semantics:constant-value-expr}
 
-A constant-value expression is one of the following:
+The term ``constant value expression'' refers to either a compile-time
+constant value expression or an assembly-time constant value
+expression.
+
+\bfhead{Compile-time constant value expressions} A compile-time
+constant-value expression is one of the following:
 %
 \begin{enumerate}
 %
@@ -626,46 +631,70 @@ A constant-value expression is one of the following:
 \item An identifier corresponding to a constant declaration.
 %
 \item A binary operation expression, where each operand is a
-  constant-value expression.
+  compile-time constant-value expression.
 %
 \item A negation (\kwd{-}) or \kwd{NOT} unary operation expression,
-  where the operand is a constant-value expression.
+  where the operand is a compile-time constant-value expression.
 %
 \item A parentheses expression, where the expression inside the
-  parentheses is a constant-value expression.
+  parentheses is a compile-time constant-value expression.
 %
-\item A typed expression, where the subexpression is a constant-value
-  expression.
+\item A typed expression, where the subexpression is a compile-time
+  constant-value expression.
+%
+\end{enumerate}
+
+\bfhead{Assembly-time constant value expressions} An assembly-time
+constant value expression is one of the following:
+%
+\begin{enumerate}
+%
+\item A compile-time constant-value expression.
+%
+\item An identifier corresponding to a data declaration (useful for
+  data tables).
+%
+\item An address expression \kwd{@}\nonterm{identifier}, where
+  \nonterm{identifier} is an identifier corresponding to a global
+  variable declaration (useful for creating a separate global symbol
+  for the address of a global variable).
+%
+\item An identifier corresponding to a function declaration (useful
+  for jump tables).
+%
+\item A binary operation expression, where each operand is an
+  assembly-time constant-value expression.
+%
+\item A negation (\kwd{-}) or \kwd{NOT} unary operation expression,
+  where the operand is an assembly-time constant value expression.
+%
+\item A parentheses expression, where the expression inside the
+  parentheses is an assembly-time constant-value expression.
 %
 \end{enumerate}
 
 \subsection{Expressions Appearing at Global Scope}
 \label{sec:semantic:global-expr}
 
-An expression appearing at global scope (i.e., in a constant or data
-declaration, or as the initializer of a global variable declaration)
-must be one of the following:
+The following rules pertain to expressions appearing at global scope:
 %
 \begin{enumerate}
 %
-\item A constant-value expression
+\item Any expression appearing in a constant declaration must be a
+  compile-time constant-value expression
   (Section~\ref{sec:semantics:constant-value-expr}).
 %
-\item An identifier corresponding to a data declaration (useful for
-  data tables).
-%
-\item An identifier corresponding to a function declaration (useful
-  for jump tables).
+\item Any expression appearing in a data declaration or as the
+  initializer of a global variable declaration must be an
+  assembly-time constant-value expression
+  (Section~\ref{sec:semantics:constant-value-expr}).
 %
 \end{enumerate}
-
+%
 These rules are designed so that the compiler can do a single pass
 over all the expressions \nonterm{expr} appearing at global scope, in
-the order in which they appear in the source file, and either compute
-the value of \nonterm{expr} or generate an assembler label for
-\nonterm{expr}.  In the second case, the value associated with the
-assembler label may not be known until final assembly
-(Section~\ref{sec:code-gen:source-files}).
+the order in which they appear in the source file, and generate code
+as described in Section~\ref{sec:code-gen:global-decls}.
 
 \subsection{Size, Signedness, and Addresses}
 \label{sec:semantics:size}
@@ -683,20 +712,29 @@ address (for example, writing \kwd{X[0,1]} instead of
 unsigned.  The type \nonterm{size} \kwd{S} has size \nonterm{size} and
 is signed.  The type \kwd{@} has size 2 and is unsigned.
 
-\bfhead{Computing the size and signedness of an expression}  For a
+\bfhead{Computing the size and signedness of an expression} For a
 constant-value typed expression
 (Section~\ref{sec:semantics:constant-value-expr}), the size and
 signedness come from the type.  For any other constant-value
-expression, the size and signedness come from the value produced by
-evaluating the expression as specified in
-Section~\ref{sec:code-gen:expressions}, assuming that the operands to
-any binary expression have the maximum allowed size of 255.  The size
-is the minimum number of bytes required to represent the value.  The
-expression is signed if the value is less than zero, otherwise
-unsigned.
-
-For an expression that is not a constant-value expression, size and
-signedness are computed as follows:
+expression, the size and signedness are computed as follows:
+%
+\begin{itemize}
+%
+\item If the expression is a compile-time constant-value expression,
+  then the size and signedness come from the value produced by
+  evaluating the expression as specified in
+  Section~\ref{sec:code-gen:expressions}, assuming that the operands
+  to any binary expression have the maximum allowed size of 255.  The
+  size is the minimum number of bytes required to represent the value.
+  The expression is signed if the value is less than zero, otherwise
+  unsigned.
+%
+\item Otherwise, the size is 2 and the signedness is unsigned.
+%
+\end{itemize}
+%
+For an expression that is not a constant-value expression, the size
+and signedness are computed as follows:
 %
 \begin{itemize}
 %
@@ -923,14 +961,17 @@ that translation produces actual bytes of code, data, or reserved
 storage, the bytes must be laid out in the order in which the
 translated constructs are encountered in the source file.
 
-\bfhead{Constant declarations} If the constant declaration contains
-an expression \nonterm{expr}, then the compiler (1) evaluates
-\nonterm{expr} to a numeric constant according to the rules in
-Section~\ref{sec:code-gen:expressions} and (2) associates this value
-with the name given in the constant declaration.  The compilation must
-support the use of the same identifier for different constant
-declarations in different files that are part of the same final
-assembly (Section~\ref{sec:code-gen:source-files}).
+\bfhead{Constant declarations} If the constant declaration
+\nonterm{const-decl} contains an expression \nonterm{expr}, then the
+compiler evaluates \nonterm{expr} to a numeric constant according to
+the rules in Section~\ref{sec:code-gen:expressions}.  In the rest of
+the source file where \nonterm{const-decl} appears, the compiler
+replaces each instance of the identifier given in \nonterm{const-decl}
+expression with the value so computed.  The compiler does \emph{not}
+generate a label or other assembly artifact associated with
+\nonterm{const-decl}.  In particular, the same identifier may appear
+in different constant declarations in different files that are part of
+the same final assembly (Section~\ref{sec:code-gen:source-files}).
 
 If the constant declaration contains no expression, then the name in
 the declaration must refer to the two-byte unsigned value associated
@@ -938,8 +979,8 @@ with an assembler label during final assembly
 (Section~\ref{sec:code-gen:source-files}).
 
 \bfhead{Data declarations} (1) If an expression appears before the
-semicolon, then the compiler evaluates the expression to a numeric
-constant according to the rules in
+semicolon, then the compiler evaluates the expression to an assembler
+expression according to the rules in
 Section~\ref{sec:code-gen:expressions} and generates code to store the
 bytes of the constant in little-endian order.  (2) If a string
 constant appears before the semicolon, then the compiler generates
@@ -951,12 +992,12 @@ string constant, then no NUL character is added.  (3) In any case, if
 an identifier appears after the keyword \kwd{DATA}, then the compiler
 associates the name with the lowest address in which data is stored.
 
-\bfhead{Global variable declarations} The compiler sets aside a
-number of bytes of storage equal to the declared size of the variable
-and associates the identifier appearing after \kwd{VAR} with the
-lowest address of this storage.  If an expression appears before the
-semicolon, then the compiler evaluates the expression to a numeric
-constant according to the rules stated in
+\bfhead{Global variable declarations} The compiler sets aside a number
+of bytes of storage equal to the declared size of the variable and
+associates the identifier appearing after \kwd{VAR} with the lowest
+address of this storage.  If an expression appears before the
+semicolon, then the compiler evaluates the expression to an assembler
+expression according to the rules stated in
 Section~\ref{sec:code-gen:expressions} and issues assembly code to
 fill in the storage set aside for the variable with the bytes of the
 numeric constant, in little-endian order, using size adjustment (if
