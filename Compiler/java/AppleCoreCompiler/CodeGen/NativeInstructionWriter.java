@@ -35,7 +35,6 @@ public class NativeInstructionWriter extends InstructionVisitor {
 	emitter.emitAbsoluteInstruction("BNE",label);
 	emitter.emitAbsoluteInstruction("JMP",inst.target.value);
 	emitter.emitLabel(label);
-	emitter.printStream.println();
     }
 
     public void visitBRUInstruction(BRUInstruction inst) {
