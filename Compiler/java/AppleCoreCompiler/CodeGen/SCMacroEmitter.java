@@ -154,14 +154,45 @@ public class SCMacroEmitter
 	new ExpressionEmitter(expr).emitExpression();
     }
 
+    public void emitSizedExpression(Expression expr, int size) 
+	throws ACCError
+    {
+	new ExpressionEmitter(expr, size).emitExpression();
+    }
+
+    /**
+     * Visitor class for emitting an expression as SCMASM data
+     */
     private class ExpressionEmitter
 	extends NodeVisitor
     {
 
-	private Expression expr;
+	/**
+	 * The expression to emit
+	 */
+	private final Expression expr;
+
+	/**
+	 * The size of the emitted data before any padding
+	 */
+	private final int dataSize;
+
+	/**
+	 * Size of padding
+	 */
+	private final int paddingSize;
+
+	public ExpressionEmitter(Expression expr, 
+				 int targetSize) {
+	    this.expr = expr;
+	    this.dataSize = (expr.size > targetSize) ?
+		targetSize : expr.size;
+	    this.paddingSize = (expr.size < targetSize) ?
+		targetSize - expr.size : 0;
+	}
 
 	public ExpressionEmitter(Expression expr) {
-	    this.expr = expr;
+	    this(expr,expr.size);
 	}
 
 	public void emitExpression()
@@ -169,6 +200,13 @@ public class SCMacroEmitter
 	{
 	    if (expr == null) throw new ACCInternalError();
 	    expr.accept(this);
+	    if (paddingSize > 0) {
+		emit("\t.HS ");
+		for (int i = 0; i < paddingSize; ++i) {
+		    emit("00");
+		}
+		emit("\n");
+	    }
 	}
 
 	@Override
@@ -176,8 +214,7 @@ public class SCMacroEmitter
 	    throws ACCError
 	{
 	    emit("\t.HS ");
-	    int size = expr.getSize();
-	    for (int i = 0; i < size; ++i) {
+	    for (int i = 0; i < dataSize; ++i) {
 		emit(byteAsHexString(expr.valueAtIndex(i)).toUpperCase());
 	    }
 	    emit("\n");
@@ -194,7 +231,12 @@ public class SCMacroEmitter
 	public void visitIdentifier(Identifier expr)
 	    throws ACCError
 	{
-	    emitAbsoluteInstruction(".DA",makeLabel(expr.name));
+	    if (dataSize == 1) {
+		emitAbsoluteInstruction(".DA","#"+makeLabel(expr.name));
+	    }
+	    else {
+		emitAbsoluteInstruction(".DA",makeLabel(expr.name));
+	    }
 	}
 
 	@Override
@@ -224,43 +266,6 @@ public class SCMacroEmitter
 
     }
 
-    public void emitSizedExpression(Expression expr, int size) 
-	throws ACCError
-    {
-	new SizedExpressionEmitter(expr, size).emitExpression();
-    }
 
-    private class SizedExpressionEmitter
-	extends ExpressionEmitter
-    {
-	private int size;
-
-	public SizedExpressionEmitter(Expression expr, int size) {
-	    super(expr);
-	    this.size = size;
-	}
-
-	@Override
-	public void visitIntegerConstant(IntegerConstant expr)
-	    throws ACCError
-	{
-	    int constSize = expr.getSize();
-	    int dataSize = constSize <= size ? 
-		constSize : size;
-	    emit("\t.HS ");
-	    for (int i = 0; i < dataSize; ++i) {
-		emit(byteAsHexString(expr.valueAtIndex(i)).toUpperCase());
-	    }
-	    emit("\n");
-	    if (size > constSize) {
-		emit("\t.HS ");
-		for (int i = constSize; i < size; ++i) {
-		    emit("00");
-		}
-		emit("\n");
-	    }
-	}
-
-    }
 
 }
