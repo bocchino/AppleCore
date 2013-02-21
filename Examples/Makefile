@@ -6,8 +6,8 @@ all:
 	make -C HelloWorld
 	make -C Hexconvert
 	make -C MiniAdventure
-	make -C PixelEditor
 	make -C Redbook
+	make -C Snake
 	make -C Tone
 
 clean:
@@ -18,6 +18,6 @@ clean:
 	make -C HelloWorld clean
 	make -C Hexconvert clean
 	make -C MiniAdventure clean
-	make -C PixelEditor clean
 	make -C Redbook clean
+	make -C Snake clean
 	make -C Tone clean
