@@ -198,6 +198,24 @@ public class SCMacroEmitter
 	}
 
 	@Override
+	public void visitUnopExpression(UnopExpression unop) 
+	    throws ACCError
+	{
+	    switch (unop.operator) {
+	    case ADDRESS:
+		if (unop.expr instanceof Identifier) {
+		    unop.expr.accept(this);
+		}
+		else {
+		    throw new ACCInternalError();
+		}
+		break;
+	    default:
+		throw new ACCInternalError();
+	    }
+	}
+
+	@Override
 	public void visitNode(Node node) 
 	    throws ACCError
 	{
