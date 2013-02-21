@@ -102,8 +102,8 @@ FN MOVE_SNAKE() {
   ELSE {
     SET TAIL=TAIL+2;
     PLOT_SEG(TAIL-2,BLACK);
-    DRAW_APPLE();
   }
+  DRAW_APPLE();
 }
 
 FN CHECK_BOUNDS() {
