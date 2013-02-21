@@ -129,45 +129,30 @@ public class SourceFileWriter
 		emitter.emitStringTerminator();
 	    }
 	}
-	else if (node.expr instanceof NumericConstant) {
-	    NumericConstant nc = 
-		(NumericConstant) node.expr;
-	    emitter.emitAsData(nc);
-	}
-	else if (node.expr instanceof Identifier) {
-	    Identifier id =
-		(Identifier) node.expr;
-	    emitter.emitAsData(id);
-	}
 	else {
-	    throw new ACCInternalError("invalid data for "+node, node);
+	    try {
+		emitter.emitExpression(node.expr);
+	    }
+	    catch (ACCError e) {
+		throw new ACCInternalError("invalid data for "+node, node);
+	    }
 	}
     }
 
     public void visitVarDecl(VarDecl node) 
 	throws ACCError
     {
-	boolean OK = false;
 	emitter.emitLabel(node.name);
 	if (node.init == null) {
 	    emitter.emitBlockStorage(node.size);
-	    OK = true;
 	}
-	else if (node.init instanceof Identifier) {
-	    Identifier id = (Identifier) node.init;
-	    if (id.def instanceof ConstDecl) {
-		emitter.emitAsData(id);
-		OK = true;
+	else {
+	    try {
+		emitter.emitSizedExpression(node.init, node.size);
 	    }
-	}
-	else if (node.init instanceof NumericConstant) {
-	    NumericConstant constant = 
-		(NumericConstant) node.init;
-	    emitter.emitAsData(constant, node.size);
-	    OK = true;
-	}
-	if (!OK) {
-	    throw new ACCInternalError("non-constant initializer expr for ", node);
+	    catch (ACCError e) {
+		throw new ACCInternalError("illegal initializer for ", node);
+	    }
 	}
     }
 

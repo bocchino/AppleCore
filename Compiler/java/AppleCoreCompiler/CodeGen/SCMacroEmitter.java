@@ -112,51 +112,6 @@ public class SCMacroEmitter
 	emitAbsoluteInstruction(".HS","00");
     }
 
-    public void emitAsData(Identifier id) {
-	emitAbsoluteInstruction(".DA",makeLabel(id.name));
-    }
-
-    public void emitAsData(NumericConstant c) {
-	if (c instanceof IntegerConstant) {
-	    IntegerConstant intConst = (IntegerConstant) c;
-	    emit("\t.HS ");
-	    int size = intConst.getSize();
-	    for (int i = 0; i < size; ++i) {
-		emit(byteAsHexString(intConst.valueAtIndex(i)).toUpperCase());
-	    }
-	    emit("\n");
-	}
-	else {
-	    CharConstant charConst = (CharConstant) c;
-	    emitAbsoluteInstruction(".DA","#'"+charConst.value+"'");
-	}
-
-    }
-
-    public void emitAsData(NumericConstant c, int sizeBound) {
-	if (c instanceof IntegerConstant) {
-	    IntegerConstant intConst = (IntegerConstant) c;
-	    int constSize = intConst.getSize();
-	    int dataSize = constSize <= sizeBound ? 
-		constSize : sizeBound;
-	    emit("\t.HS ");
-	    for (int i = 0; i < dataSize; ++i) {
-		emit(byteAsHexString(intConst.valueAtIndex(i)).toUpperCase());
-	    }
-	    emit("\n");
-	    if (sizeBound > constSize) {
-		emit("\t.HS ");
-		for (int i = constSize; i < sizeBound; ++i) {
-		    emit("00");
-		}
-		emit("\n");
-	    }
-	}
-	else {
-	    emitAsData(c);
-	}
-    }
-
     public void emitBlockStorage(int nbytes) {
 	emit("\t.BS ");
 	emit(addrString(nbytes));
@@ -192,4 +147,104 @@ public class SCMacroEmitter
     public void emitIncludeDirective(String fileName) {
 	emitAbsoluteInstruction(".IN", fileName);
     }
+
+    public void emitExpression(Expression expr) 
+	throws ACCError
+    {
+	new ExpressionEmitter(expr).emitExpression();
+    }
+
+    private class ExpressionEmitter
+	extends NodeVisitor
+    {
+
+	private Expression expr;
+
+	public ExpressionEmitter(Expression expr) {
+	    this.expr = expr;
+	}
+
+	protected boolean succeeded;
+
+	public void emitExpression()
+	    throws ACCError
+	{
+	    if (expr == null) throw new ACCInternalError();
+	    expr.accept(this);
+	}
+
+	@Override
+	public void visitIntegerConstant(IntegerConstant expr)
+	    throws ACCError
+	{
+	    emit("\t.HS ");
+	    int size = expr.getSize();
+	    for (int i = 0; i < size; ++i) {
+		emit(byteAsHexString(expr.valueAtIndex(i)).toUpperCase());
+	    }
+	    emit("\n");
+	}
+
+	@Override
+	public void visitCharConstant(CharConstant expr)
+	    throws ACCError
+	{
+	    emitAbsoluteInstruction(".DA","#'"+expr.value+"'");
+	}
+
+	@Override
+	public void visitIdentifier(Identifier id)
+	    throws ACCError
+	{
+	    emitAbsoluteInstruction(".DA",makeLabel(id.name));
+	}
+
+	@Override
+	public void visitNode(Node node) 
+	    throws ACCError
+	{
+	    throw new ACCInternalError();
+	}
+
+    }
+
+    public void emitSizedExpression(Expression expr, int size) 
+	throws ACCError
+    {
+	new SizedExpressionEmitter(expr, size).emitExpression();
+    }
+
+    private class SizedExpressionEmitter
+	extends ExpressionEmitter
+    {
+	private int size;
+
+	public SizedExpressionEmitter(Expression expr, int size) {
+	    super(expr);
+	    this.size = size;
+	}
+
+	@Override
+	public void visitIntegerConstant(IntegerConstant expr)
+	    throws ACCError
+	{
+	    int constSize = expr.getSize();
+	    int dataSize = constSize <= size ? 
+		constSize : size;
+	    emit("\t.HS ");
+	    for (int i = 0; i < dataSize; ++i) {
+		emit(byteAsHexString(expr.valueAtIndex(i)).toUpperCase());
+	    }
+	    emit("\n");
+	    if (size > constSize) {
+		emit("\t.HS ");
+		for (int i = constSize; i < size; ++i) {
+		    emit("00");
+		}
+		emit("\n");
+	    }
+	}
+
+    }
+
 }

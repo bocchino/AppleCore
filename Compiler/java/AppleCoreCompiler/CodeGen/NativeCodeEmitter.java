@@ -75,17 +75,8 @@ public abstract class NativeCodeEmitter
 	emitLine();
     }
 
-    public abstract void emitAsData(Identifier id);
-
-    public abstract void emitAsData(NumericConstant c);
 
     public abstract void emitStringTerminator();
-
-    /**
-     * Emit data with a size bound, for initializing constant
-     * variables and data.
-     */
-    public abstract void emitAsData(NumericConstant c, int sizeBound);
 
     public abstract void emitBlockStorage(int nbytes);
 
@@ -98,5 +89,14 @@ public abstract class NativeCodeEmitter
     public abstract void emitEpilogue();
 
     public abstract void emitIncludeDirective(String fileName);
+
+    public abstract void emitExpression(Expression expr) throws ACCError;
+
+    /**
+     * Emit expression with a size bound, for initializing global
+     * variables.
+     */
+    public abstract void emitSizedExpression(Expression expr,
+					     int size) throws ACCError;
 
 }

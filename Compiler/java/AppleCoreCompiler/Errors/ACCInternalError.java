@@ -7,6 +7,10 @@ import AppleCoreCompiler.AST.*;
 
 public class ACCInternalError extends ACCError {
 
+    public ACCInternalError() {
+	super("internal compiler error");
+    }
+
     public ACCInternalError(String message) {
 	super("internal compiler error: " + message);
     }
