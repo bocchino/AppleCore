@@ -84,7 +84,7 @@ DATA	     20; # HEAD X
 DATA	     20; # HEAD Y
 DATA	     (0:252);
 # -------------------------------------
-# POINTER TO HEAD AND TAIL
+# POINTERS TO HEAD AND TAIL
 # -------------------------------------
 VAR HEAD:1=2;
 VAR TAIL:1=0;
