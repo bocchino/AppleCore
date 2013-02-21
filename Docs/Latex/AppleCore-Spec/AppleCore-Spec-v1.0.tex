@@ -654,19 +654,20 @@ constant value expression is one of the following:
 \item An identifier corresponding to a data declaration (useful for
   data tables).
 %
+\item An identifier corresponding to a function declaration (useful
+  for jump tables).
+%
 \item An address expression \kwd{@}\nonterm{identifier}, where
   \nonterm{identifier} is an identifier corresponding to a global
   variable declaration (useful for creating a separate global symbol
   for the address of a global variable).
 %
-\item An identifier corresponding to a function declaration (useful
-  for jump tables).
-%
-\item A binary operation expression, where each operand is an
-  assembly-time constant-value expression.
-%
-\item A negation (\kwd{-}) or \kwd{NOT} unary operation expression,
+\item A negation (\kwd{-}) unary operation expression,
   where the operand is an assembly-time constant value expression.
+%
+\item An aritmetic binary operation expression (\kwd{+}, \kwd{-},
+  \kwd{*}, or \kwd{/}), where each operand is an assembly-time
+  constant-value expression.
 %
 \item A parentheses expression, where the expression inside the
   parentheses is an assembly-time constant-value expression.
