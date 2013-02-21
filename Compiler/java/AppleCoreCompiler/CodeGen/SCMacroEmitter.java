@@ -164,8 +164,6 @@ public class SCMacroEmitter
 	    this.expr = expr;
 	}
 
-	protected boolean succeeded;
-
 	public void emitExpression()
 	    throws ACCError
 	{
