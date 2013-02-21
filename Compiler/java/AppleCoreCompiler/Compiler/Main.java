@@ -132,6 +132,10 @@ public class Main {
 	    ConstantEvaluationPass cePass = 
 		new ConstantEvaluationPass();
 	    cePass.runOn(sourceFile);
+
+	    GlobalExpressionPass globalExpressionPass =
+		new GlobalExpressionPass();
+	    globalExpressionPass.runOn(sourceFile);
 	    
 	    SizePass sizePass = new SizePass();
 	    sizePass.runOn(sourceFile);

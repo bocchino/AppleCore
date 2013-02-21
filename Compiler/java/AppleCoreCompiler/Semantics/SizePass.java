@@ -95,8 +95,27 @@ public class SizePass
 	if (node.size == 0) {
 	    throw new SemanticError(node.name + " has zero size", node);
 	}
-	if (node.init != null)
+	if (node.init != null) {
+	    // See comment in visitDataDecl
+	    if (!node.isLocalVariable && !node.init.isCompileConst()) {
+		node.init.size = 2;
+		node.init.isSigned = false;
+	    }
 	    checkAssignment(node,node.init,node);
+	}
+    }
+
+    public void visitDataDecl(DataDecl node) 
+	throws ACCError
+    {
+	super.visitDataDecl(node);
+	// Non-constant expressions at global position are resolved by
+	// the assembler, so the compiler gives them size 2 unsigned.
+	// See AppleCore spec s.4.5
+	if (node.expr != null && !node.expr.isCompileConst()) {
+	    node.expr.size = 2;
+	    node.expr.isSigned = false;
+	}
     }
 
     /**
