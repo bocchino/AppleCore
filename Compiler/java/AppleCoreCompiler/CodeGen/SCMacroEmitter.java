@@ -191,10 +191,10 @@ public class SCMacroEmitter
 	}
 
 	@Override
-	public void visitIdentifier(Identifier id)
+	public void visitIdentifier(Identifier expr)
 	    throws ACCError
 	{
-	    emitAbsoluteInstruction(".DA",makeLabel(id.name));
+	    emitAbsoluteInstruction(".DA",makeLabel(expr.name));
 	}
 
 	@Override
