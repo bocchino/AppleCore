@@ -178,7 +178,7 @@ public class SizePass
 	    throw new SemanticError("cannot assign " + rhs +
 				    " to address variable " + lhs,
 				    parent);
-	if (!rhs.isConstValExpr()) {
+	if (!rhs.isConst()) {
 	    if (rhs.representsAddress() && !lhs.representsAddress())
 		throw new SemanticError("cannot assign address variable " + rhs +
 					" to " + lhs,
@@ -297,7 +297,7 @@ public class SizePass
     {
 	super.visitUnopExpression(node);
 	switch (node.operator) {
-	case DEREF:
+	case ADDRESS:
 	    node.size = 2;
 	    node.representsAddress = true;
 	    node.isSigned = false;

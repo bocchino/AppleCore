@@ -402,9 +402,23 @@ public abstract class Node {
 	public boolean isSigned;
 
 	/**
-	 * Whether this is a constant-value expression
+	 * Whether this is a compile-time constant-value expression
 	 */
-	public boolean isConstValExpr() { return false; }
+	public boolean isCompileConst() { return false; }
+
+	/**
+	 * Whether this is an assemble-time constant-value expression
+	 */
+	public boolean isAssembleConst() { 
+	    return isCompileConst();
+	}
+
+	/**
+	 * Whether this is a constant value expression
+	 */
+	public final boolean isConst() { 
+	    return isCompileConst() || isAssembleConst();
+	}
 
 	public int getSize() { return size; }
 	public boolean isSigned() { return this.isSigned; }
@@ -525,9 +539,14 @@ public abstract class Node {
 	    v.visitBinopExpression(this);
 	}
 
-	public boolean isConstValExpr() {
-	    return left.isConstValExpr() &&
-		right.isConstValExpr();
+	public boolean isCompileConst() {
+	    return left.isCompileConst() &&
+		right.isCompileConst();
+	}
+
+	public boolean isAssembleConst() {
+	    return left.isAssembleConst() &&
+		right.isAssembleConst();
 	}
 
 	public String toString() {
@@ -542,7 +561,7 @@ public abstract class Node {
 	public Expression expr;
 
 	public enum Operator {
-	    DEREF("DEREF","@"),NOT("NOT","NOT"),
+	    ADDRESS("ADDRESS","@"),NOT("NOT","NOT"),
 	    NEG("NEG","-");
 	    public final String name;
 	    public final String symbol;
@@ -559,10 +578,26 @@ public abstract class Node {
 	    v.visitUnopExpression(this);
 	}
 
-	public boolean isConstValExpr() {
+	public boolean isCompileConst() {
 	    switch (operator) {
 	    case NEG: case NOT:
-		return expr.isConstValExpr();
+		return expr.isCompileConst();
+	    }
+	    return false;
+	}
+
+	public boolean isAssembleConst() {
+	    switch (operator) {
+	    case NEG: case NOT:
+		return expr.isAssembleConst();
+	    case ADDRESS:
+		if (expr instanceof Identifier) {
+		    Identifier id = (Identifier) expr;
+		    VarDecl varDecl = id.def.asVarDecl();
+		    return (varDecl == null) ? false :
+			!varDecl.isLocalVariable;
+		}
+		return false;
 	    }
 	    return false;
 	}
@@ -583,8 +618,12 @@ public abstract class Node {
 	    v.visitParensExpression(this);
 	}
 
-	public boolean isConstValExpr() {
-	    return expr.isConstValExpr();
+	public boolean isCompileConst() {
+	    return expr.isCompileConst();
+	}
+
+	public boolean isAssembleConst() {
+	    return expr.isAssembleConst();
 	}
 
 	public String toString() {
@@ -603,8 +642,8 @@ public abstract class Node {
 	    v.visitTypedExpression(this);
 	}
 
-	public boolean isConstValExpr() {
-	    return expr.isConstValExpr();
+	public boolean isCompileConst() {
+	    return expr.isCompileConst();
 	}
 
 	public String toString() {
@@ -628,8 +667,13 @@ public abstract class Node {
 	    v.visitIdentifier(this);
 	}
 
-	public boolean isConstValExpr() {
+	public boolean isCompileConst() {
 	    return (def instanceof ConstDecl);
+	}
+
+	public boolean isAssembleConst() {
+	    return (def instanceof DataDecl) ||
+		(def instanceof FunctionDecl);
 	}
 
 	public String toString() {
@@ -656,7 +700,7 @@ public abstract class Node {
 	public abstract String valueAsDecString();
 	public abstract BigInteger valueAsBigInteger();
 	public abstract BigInteger unsignedValue();
-	public boolean isConstValExpr() { return true; }
+	public boolean isCompileConst() { return true; }
 	public boolean isTrue() {
 	    return valueAsBigInteger().and(BigInteger.ONE).equals(BigInteger.ONE);
 	}

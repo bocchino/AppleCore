@@ -715,26 +715,19 @@ is signed.  The type \kwd{@} has size 2 and is unsigned.
 \bfhead{Computing the size and signedness of an expression} For a
 constant-value typed expression
 (Section~\ref{sec:semantics:constant-value-expr}), the size and
-signedness come from the type.  For any other constant-value
-expression, the size and signedness are computed as follows:
-%
-\begin{itemize}
-%
-\item If the expression is a compile-time constant-value expression,
-  then the size and signedness come from the value produced by
-  evaluating the expression as specified in
-  Section~\ref{sec:code-gen:expressions}, assuming that the operands
-  to any binary expression have the maximum allowed size of 255.  The
-  size is the minimum number of bytes required to represent the value.
-  The expression is signed if the value is less than zero, otherwise
-  unsigned.
-%
-\item Otherwise, the size is 2 and the signedness is unsigned.
-%
-\end{itemize}
-%
-For an expression that is not a constant-value expression, the size
-and signedness are computed as follows:
+signedness come from the type.  For any other compile-time
+constant-value expression, the size and signedness come from the value
+produced by evaluating the expression as specified in
+Section~\ref{sec:code-gen:expressions}, assuming that the operands to
+any binary expression have the maximum allowed size of 255.  The size
+is the minimum number of bytes required to represent the value.  The
+expression is signed if the value is less than zero, otherwise
+unsigned.
+
+For any other expression, if the expression appears in a data
+declaration or global variable declaration, then size is 2 and the
+signedness is unsigned.  Otherwise the size and signedness are
+computed as follows:
 %
 \begin{itemize}
 %

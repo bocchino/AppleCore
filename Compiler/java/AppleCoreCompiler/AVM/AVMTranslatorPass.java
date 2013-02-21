@@ -473,7 +473,7 @@ public class AVMTranslatorPass
 	throws ACCError
     {
 	switch(node.operator) {
-	case DEREF:
+	case ADDRESS:
 	    needAddress = true;
 	    scan(node.expr);
 	    break;

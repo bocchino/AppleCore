@@ -64,7 +64,7 @@ public class LValuePass
     {
 	super.visitUnopExpression(node);
 	switch (node.operator) {
-	case DEREF:
+	case ADDRESS:
 	    if (!isLValue(node.expr)) {
 		throw new SemanticError("deref of non-lvalue",
 					node);
