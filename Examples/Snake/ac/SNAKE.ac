@@ -118,8 +118,8 @@ FN MOVE_SNAKE() {
     UPDATE_SCORE();
   }
   ELSE {
+    PLOT_SEG(TAIL,BLACK);
     SET TAIL=TAIL+2;
-    PLOT_SEG(TAIL-2,BLACK);
   }
   DRAW_APPLE();
 }
