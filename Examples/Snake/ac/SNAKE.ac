@@ -5,16 +5,20 @@
 # -----------------------------------
 CONST SNAKE_COLOR DARK_GREEN;
 CONST APPLE_COLOR RED;
-
+# -------------------------------------
+# MAIN LOOP
+# -------------------------------------
 FN MAIN() {
   INIT();
   WHILE (TRUE) {
     GET_INPUT();
     MOVE_SNAKE();
-    UPDATE_APPLE();
+    UPDATE_NEXT_APPLE();
   }
 }
-
+# -------------------------------------
+# INITIALIZE GAME STATE
+# -------------------------------------
 FN INIT() {
   SET_FULL_SCREEN();
   MON_HOME();
@@ -41,10 +45,22 @@ FN PRINT_SCORE() {
   POSITION_CURSOR(6,21);
   PRINT_STRING(@STR);
 }
+FN UPDATE_SCORE() {
+  INCR SCORE;
+  PRINT_SCORE();
+  IF (SCORE > 127) GAME_OVER();
+}
 # -------------------------------------
-# 256-BYTE BUFFER FOR SNAKE POSITIONS
+# 256-BYTE CIRCULAR BUFFER FOR 
+# POSITIONS OF SNAKE SEGMENTS
+#
+# FOR SEGMENT S, COUNTING TAIL=0:
+# - SEG_BUF[TAIL+2*S,1] STORES X COORD
+# - SEG_BUF[TAIL+2*S+1,1] STORES Y COORD
+#
+# INITIALLY THERE ARE TWO SEGMENTS
 # -------------------------------------
-DATA POS_BUF 19; # TAIL X
+DATA SEG_BUF 19; # TAIL X
 DATA         20; # TAIL Y
 DATA	     20; # HEAD X
 DATA	     20; # HEAD Y
@@ -54,6 +70,60 @@ DATA	     (0:252);
 # -------------------------------------
 VAR HEAD:1=2;
 VAR TAIL:1=0;
+# -------------------------------------
+# SNAKE MANAGEMENT
+# -------------------------------------
+FN DRAW_SNAKE(COLOR:1) {
+  VAR PTR:1=TAIL;
+  WHILE (NOT (PTR = HEAD+2)) {
+    PLOT_SEG(PTR,COLOR);
+    SET PTR=PTR+2;
+  }
+}
+
+VAR NEW_X:1;
+VAR NEW_Y:1;
+
+FN MOVE_SNAKE() {
+  SET HEAD=HEAD+2;
+  SET NEW_X=SEG_BUF[HEAD-2,1]+DELTA_X;
+  SET NEW_Y=SEG_BUF[HEAD-1,1]+DELTA_Y;
+  CHECK_BOUNDS();
+  IF (SCRN(NEW_X,NEW_Y)=SNAKE_COLOR)
+    GAME_OVER();
+  SET SEG_BUF[HEAD,1]=NEW_X;
+  SET SEG_BUF[HEAD+1,1]=NEW_Y;
+    PLOT_SEG(HEAD,SNAKE_COLOR);
+  IF (ATE_APPLE()) {
+    PLACE_APPLE();
+    UPDATE_SCORE();
+  }
+  ELSE {
+    SET TAIL=TAIL+2;
+    PLOT_SEG(TAIL-2,BLACK);
+    DRAW_APPLE();
+  }
+}
+
+FN CHECK_BOUNDS() {
+  IF ((NOT IN_BOUNDS(NEW_X)) OR 
+   (NOT IN_BOUNDS(NEW_Y))) {
+    GAME_OVER();
+  } 
+}
+
+FN:1 ATE_APPLE() {
+  RETURN SEG_BUF[HEAD,2]=(@APPLE_X)[0,2];
+}
+
+FN PLOT_SEG(PTR:1,COLOR:1) {
+  VAR X:1;
+  VAR Y:1;
+  SET_COLOR(COLOR);
+  SET X=SEG_BUF[PTR,1];
+  SET Y=SEG_BUF[PTR+1,1];
+  PLOT(X,Y);
+}
 # -------------------------------------
 # APPLE COORDINATES
 # -------------------------------------
@@ -65,7 +135,7 @@ VAR APPLE_Y:1;
 VAR NEXT_APPLE_X:1;
 VAR NEXT_APPLE_Y:1;
 # -------------------------------------
-# APPLE MANAGEMENT FUNCTIONS
+# APPLE MANAGEMENT
 # -------------------------------------
 FN INIT_APPLE() {
   VAR BITS_X:1=MON_RNDL[0,1];
@@ -82,39 +152,22 @@ FN PLACE_APPLE() {
   SET APPLE_Y=NORMALIZE(NEXT_APPLE_Y);
 }
 
-FN UPDATE_SCORE() {
-  INCR SCORE;
-  PRINT_SCORE();
-  IF (SCORE > 127) GAME_OVER();
-}
-
 FN DRAW_APPLE() {
   SET_COLOR(APPLE_COLOR);
   PLOT(APPLE_X,APPLE_Y);
 }
 
-FN UPDATE_APPLE() {
-   SET NEXT_APPLE_X=NEXT_APPLE_X+10;
-   SET NEXT_APPLE_Y=NEXT_APPLE_Y+10;
-}
+CONST NEXT_APPLE_OFFSET 7;
 
-FN DRAW_SNAKE(COLOR:1) {
-  VAR PTR:1=TAIL;
-  WHILE (NOT (PTR = HEAD+2)) {
-    PLOT_POS(PTR,COLOR);
-    SET PTR=PTR+2;
-  }
+FN UPDATE_NEXT_APPLE() {
+   SET NEXT_APPLE_X=NEXT_APPLE_X+
+    NEXT_APPLE_OFFSET;
+   SET NEXT_APPLE_Y=NEXT_APPLE_Y+
+    NEXT_APPLE_OFFSET;
 }
-
-FN PLOT_POS(PTR:1,COLOR:1) {
-  VAR X:1;
-  VAR Y:1;
-  SET_COLOR(COLOR);
-  SET X=POS_BUF[PTR,1];
-  SET Y=POS_BUF[PTR+1,1];
-  PLOT(X,Y);
-}
-
+# -------------------------------------
+# INPUT
+# -------------------------------------
 CONST LEFT 	$08;
 CONST RIGHT	$15;
 CONST UP	$0B;
@@ -130,7 +183,7 @@ FN GET_INPUT() {
   IF (KEY_PRESSED()) {
     SET CH=READ_KBD();
     IF (CH=ESC) {
-      EXIT_SNAKE();
+      EXIT_GAME();
     }
     IF (CH=LEFT AND NOT (DIR=RIGHT)) {
       SET DIR=LEFT;
@@ -154,46 +207,13 @@ FN GET_INPUT() {
     }
   }
 }
-
-VAR NEW_X:1;
-VAR NEW_Y:1;
-
-FN MOVE_SNAKE() {
-  SET HEAD=HEAD+2;
-  SET NEW_X=POS_BUF[HEAD-2,1]+DELTA_X;
-  SET NEW_Y=POS_BUF[HEAD-1,1]+DELTA_Y;
-  CHECK_BOUNDS();
-  IF (SCRN(NEW_X,NEW_Y)=SNAKE_COLOR)
-    GAME_OVER();
-  SET POS_BUF[HEAD,1]=NEW_X;
-  SET POS_BUF[HEAD+1,1]=NEW_Y;
-    PLOT_POS(HEAD,SNAKE_COLOR);
-  IF (ATE_APPLE()) {
-    PLACE_APPLE();
-    UPDATE_SCORE();
-  }
-  ELSE {
-    SET TAIL=TAIL+2;
-    PLOT_POS(TAIL-2,BLACK);
-    DRAW_APPLE();
-  }
-}
-
-FN:1 ATE_APPLE() {
-  RETURN POS_BUF[HEAD,2]=(@APPLE_X)[0,2];
-}
-
-FN CHECK_BOUNDS() {
-  IF ((NOT IN_BOUNDS(NEW_X)) OR 
-   (NOT IN_BOUNDS(NEW_Y))) {
-    GAME_OVER();
-  } 
-}
-
+# -------------------------------------
+# HELPER FUNCTIONS
+# -------------------------------------
 FN GAME_OVER() {
   WAIT_KEYPRESS();
   WAIT_KEYPRESS();
-  EXIT_SNAKE();    
+  EXIT_GAME();    
 }
 
 FN:1 IN_BOUNDS(COORD:1) {
@@ -207,7 +227,7 @@ FN:1 NORMALIZE(N:1S) {
   RETURN N-40*(N/40);
 }
 
-FN EXIT_SNAKE() {
+FN EXIT_GAME() {
   SET_TEXT();
   MON_HOME();
   EXIT();
