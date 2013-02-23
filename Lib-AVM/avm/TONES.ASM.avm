@@ -1,0 +1,30 @@
+* -------------------------------
+* TONE AVM FN
+* -------------------------------
+TONE.ASM
+	LDX #$FF
+	LDA $C030
+	LDA DELAY
+	STA COUNTER
+	LDA DELAY+1
+	STA COUNTER+1
+.1	LDA COUNTER
+	ORA COUNTER+1
+	BEQ .2
+	DEC COUNTER
+	CPX COUNTER
+	BNE .1
+	DEC COUNTER+1
+	JMP .1
+.2	LDA REPS
+	ORA REPS+1
+	BEQ .3
+	DEC REPS
+	CPX REPS
+	BNE TONE.ASM
+	DEC REPS+1
+	JMP TONE.ASM
+.3	RTS
+		
+
+	
