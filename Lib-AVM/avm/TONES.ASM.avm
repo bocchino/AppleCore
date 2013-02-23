@@ -2,8 +2,9 @@
 * TONE AVM FN
 * -------------------------------
 TONE.ASM
-	LDX #$FF
-	LDA $C030
+	LDX #0
+	LDA ($44,X)
+	DEX
 	LDA DELAY
 	STA COUNTER
 	LDA DELAY+1
