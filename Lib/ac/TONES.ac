@@ -1,0 +1,17 @@
+# --------------------------------------
+# THE APPLECORE LIBRARY, V1.0
+# TONE GENERATION
+# --------------------------------------
+VAR DELAY:2;
+VAR REPS:2;
+VAR COUNTER:2;
+
+FN TONE_ASM();
+
+FN TONE(PITCH:2,DURATION:2) {
+  SET DELAY=PITCH;
+  SET REPS =DURATION/DELAY;
+  TONE_ASM();
+}
+
+INCLUDE "TONES.ASM.AVM";
