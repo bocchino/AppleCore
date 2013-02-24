@@ -3,10 +3,6 @@
 # COPYRIGHT (C) 2013
 # ROBERT L. BOCCHINO JR.
 # -----------------------------------
-CONST SEG_COLOR_1 BROWN;
-CONST SEG_COLOR_2 DARK_GREEN;
-CONST APPLE_COLOR RED;
-# -------------------------------------
 # MAIN LOOP
 # -------------------------------------
 FN MAIN() {
@@ -54,20 +50,34 @@ FN RIGHT_JUSTIFY(STR:@,VPOS:1) {
 # -------------------------------------
 # SCORE MANAGEMENT
 # -------------------------------------
-VAR SCORE:1=0;
+VAR SCORE:4=0;
 
 DATA SCORE_STR "SCORE=";
 
 FN PRINT_SCORE() {
-  VAR STR:4;
-  NUM_TO_STR(@SCORE,1,10,@STR);
+  VAR STR:11;
+  NUM_TO_STR(@SCORE,4,10,@STR);
   POSITION_CURSOR(6,20);
   PRINT_STRING(@STR);
 }
+
+CONST TURNOVER_SCORE 12500;
+
 FN UPDATE_SCORE() {
-  INCR SCORE;
+  SET SCORE=SCORE+100;
   PRINT_SCORE();
-  IF (SCORE > 127) GAME_OVER();
+  IF (SCORE = TURNOVER_SCORE * 
+   (SCORE/TURNOVER_SCORE)) {
+    TURN_OVER();
+  }
+}
+
+FN TURN_OVER() {
+  TURNOVER_SONG();
+  WHILE (NOT (TAIL=HEAD-2)) {
+    PLOT_SEG(TAIL,BLACK);
+    SET TAIL=TAIL+2;
+  }  
 }
 # -------------------------------------
 # 256-BYTE CIRCULAR BUFFER FOR 
@@ -92,6 +102,9 @@ VAR TAIL:1=0;
 # -------------------------------------
 # SNAKE MANAGEMENT
 # -------------------------------------
+CONST SEG_COLOR_1 BROWN;
+CONST SEG_COLOR_2 DARK_GREEN;
+
 FN INIT_SNAKE() {
   PLOT_SEG(HEAD,SEG_COLOR_1);
   PLOT_SEG(TAIL,SEG_COLOR_2);
@@ -117,11 +130,7 @@ FN MOVE_SNAKE() {
   SET SEG_BUF[HEAD+1,1]=NEW_Y;
   PLOT_SEG(HEAD,SEG_COLOR_1);
   IF (ATE_APPLE()) {
-    TONE(PITCH_C_4,$800);
-    TONE(PITCH_B_FLAT_3,$800);
-    TONE(PITCH_A_3,$800);
-    TONE(PITCH_G_SHARP_3,$800);
-    TONE(PITCH_A_3,$800);
+    APPLE_SONG();
     PLACE_APPLE();
     UPDATE_SCORE();
   }
@@ -171,6 +180,8 @@ VAR NEXT_APPLE_Y:1;
 # -------------------------------------
 # APPLE MANAGEMENT
 # -------------------------------------
+CONST APPLE_COLOR RED;
+
 FN INIT_APPLE() {
   SET NEXT_APPLE_X=MON_RNDL[0,1];
   SET NEXT_APPLE_Y=MON_RNDH[0,1];
@@ -240,14 +251,37 @@ FN GET_INPUT() {
   }
 }
 # -------------------------------------
-# HELPER FUNCTIONS
+# MUSIC
 # -------------------------------------
-FN GAME_OVER() {
+FN APPLE_SONG() {
+  TONE(PITCH_C_4,$800);
+  TONE(PITCH_B_FLAT_3,$800);
+  TONE(PITCH_A_3,$800);
+  TONE(PITCH_G_SHARP_3,$800);
+  TONE(PITCH_A_3,$800);
+}
+
+FN TURNOVER_SONG() {
+  TONE(PITCH_C_4,$1000);
+  REST($1000);
+  TONE(PITCH_C_4,$1000);
+  TONE(PITCH_C_4,$1000);
+  TONE(PITCH_F_4,$4000);
+  TONE(PITCH_F_2,$4000);
+}
+
+FN GAME_OVER_SONG() {
   TONE(PITCH_C_3,$2000);
   TONE(PITCH_B_FLAT_2,$2000);
   TONE(PITCH_A_FLAT_2,$2000);
   TONE(PITCH_G_2,$2000);
   TONE(PITCH_F_2,$2000);
+}
+# -------------------------------------
+# HELPER FUNCTIONS
+# -------------------------------------
+FN GAME_OVER() {
+  GAME_OVER_SONG();
   WHILE (TRUE) {
     WAIT_KEYPRESS();
     IF (READ_KBD()=ESC)
