@@ -8,14 +8,14 @@
 * -------------------------------
 * INSTALL EDITOR IN RAM BANK 1
 * -------------------------------
-       .OR $1000
+       .OR $2000
        .TF INSTALL.SHELL.EDITOR.OBJ
        .IN INSTALL.SHELL.EDITOR.AVM
        .IN EDITOR.STRING.FNS.AVM
 * -------------------------------
 * UNINSTALL EDITOR
 * -------------------------------
-       .OR $1000
+       .OR $2000
        .TF UNINSTALL.SHELL.EDITOR.OBJ
        .IN UNINSTALL.SHELL.EDITOR.AVM
 * -------------------------------

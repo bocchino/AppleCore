@@ -1,148 +1,161 @@
-*--------------------------------
+* -------------------------------
 * SIMPLE SHELL EDITOR FOR APPLE //e
-*--------------------------------
+* -------------------------------
 * ASCII CONSTANTS
-*--------------------------------
-LF     .EQ $8A      LINE FEED (DOWN ARROW)
-VT     .EQ $8B      VERTICAL TAB (UP ARROW)
-BS     .EQ $88      BACKSPACE (LEFT ARROW)
-CR     .EQ $8D      CARRIAGE RETURN (RETURN)
-FS     .EQ $95      FORWARD SPACE (RIGHT ARROW)
-ESC    .EQ $9B      ESCAPE
-SPC    .EQ $A0      SPACE
-DEL    .EQ $FF      DELETE
-*--------------------------------
-* OFFSETS INTO HISTORY BUFFER
-*--------------------------------
-HISLEN .EQ $40
-HIS0   .EQ 0
-HIS1   .EQ HISLEN
-HIS2   .EQ HISLEN*2
-HIS3   .EQ HISLEN*3
-*--------------------------------
-* INITIALIZATION
-*--------------------------------
-INIT   LDA #CR
-       STA HISBUFS
-       STA HISBUFS+HIS1
-       STA HISBUFS+HIS2
-       STA HISBUFS+HIS3
-       RTS
-*--------------------------------
-* ESCAPE
-*--------------------------------
+* -------------------------------
+LF      .EQ $8A      LINE FEED (DOWN ARROW)
+VT      .EQ $8B      VERTICAL TAB (UP ARROW)
+BS      .EQ $88      BACKSPACE (LEFT ARROW)
+CR      .EQ $8D      CARRIAGE RETURN (RETURN)
+FS      .EQ $95      FORWARD SPACE (RIGHT ARROW)
+ESC     .EQ $9B      ESCAPE
+SPC     .EQ $A0      SPACE
+DEL     .EQ $FF      DELETE
+* -------------------------------
+* LENGTH OF HISTORY BUFFER
+* -------------------------------
+HISTORY.LEN .EQ $20
+* -------------------------------
+* COMMAND HANDLERS
+* -------------------------------
 ESCAPE
-       LDY BUFFER.POS
-       LDA #0
-       STA BUFFER.POS
-       JSR RESTORE.SCREEN.POS
-       LDA #CR
-       STA MON.IN
-       LDY #0
-       JSR CLEAR.Y.TO.END
-       LDA #0
-       STA LENGTH
-       JMP INPUT
-*--------------------------------
-* DOWN ARROW
-*--------------------------------
-DOWN.ARROW
-       LDA HISPTR
-       BNE .1
-       JSR MON.IN.TO.HISTORY.0
-       LDA HISPTR
-.1     SEC
-       SBC #HISLEN
-       STA HISPTR
-       JSR UP.DOWN
-       JMP INPUT
-*--------------------------------
-* UP ARROW
-*--------------------------------
-UP.ARROW
-       LDA HISPTR
-       BNE .1
-       JSR MON.IN.TO.HISTORY.0
-       LDA HISPTR
-.1     CLC
-       ADC #HISLEN
-       STA HISPTR
-       JSR UP.DOWN
-       JMP INPUT
-*--------------------------------
-* BACKSPACE
-*--------------------------------
+        LDY BUFFER.POS
+        LDA #0
+        STA BUFFER.POS
+        JSR RESTORE.SCREEN.POS
+        LDA #CR
+        STA MON.IN
+        LDY #0
+        JSR CLEAR.Y.TO.END
+        LDA #0
+        STA LENGTH
+        RTS
+* -------------------------------
+UP
+* IF ALREADY AT TOP DO NOTHING
+        JSR DEC.INPUT.HISTORY.PTR
+        LDA INPUT.HISTORY.PTR
+        CMP HISTORY.PTR
+        BNE .1
+	JMP INC.INPUT.HISTORY.PTR
+* OTHERWISE DECREMENT HISTORY POINTER
+.1      JMP DOWN.1
+* -------------------------------
+DOWN
+* IF ALREADY AT BOTTOM DO NOTHING
+	LDA INPUT.HISTORY.PTR
+	CMP HISTORY.PTR
+	BNE .1
+	RTS
+* OTHERWISE ADVANCE INPUT HISTORY POINTER
+.1	JSR INC.INPUT.HISTORY.PTR
+DOWN.1
+        JSR HISTORY.TO.MON.IN
+        LDY BUFFER.POS
+        LDA #0
+        STA BUFFER.POS
+        JSR RESTORE.SCREEN.POS
+        JSR ECHO.MON.IN
+* Y-REG HAS NEW LENGTH
+        STY BUFFER.POS
+        JSR CLEAR.Y.TO.END
+        LDA BUFFER.POS
+        STA LENGTH
+        RTS
+* -------------------------------
 BACKSPACE
-       LDY BUFFER.POS    IGNORE IF AT START OF BUFFER
-       BEQ .1
-       DEC BUFFER.POS    MOVE BUFFER POSITION ONE TO LEFT
-       LDA #BS           LET MONITOR HANDLE SCREEN POSITION
-       JSR MON.COUT
-       LDA #1            SIGNAL THAT SOMETHING HAPPENED
-.1     RTS
-*--------------------------------
-* CARRIAGE RETURN
-*--------------------------------
-CARRIAGE.RETURN
-       JSR ECHO.MON.IN   ADVANCE TO END OF BUFFER
-       JSR MON.IN.TO.HISTORY.0
-       LDX LENGTH        MON.COUT STORES CR AT MON.IN,X
-       JMP MON.CROUT
-*--------------------------------
-* FORWARD SPACE
-*--------------------------------
+* IGNORE IF AT START OF BUFFER
+        LDY BUFFER.POS
+        BEQ .1
+* MOVE BUFFER ONE POSITION TO LEFT
+        DEC BUFFER.POS
+* LET MONITOR HANDLE SCREEN POSITION
+        LDA #BS 
+        JSR MON.COUT
+* SIGNAL THAT SOMETHING HAPPENED
+        LDA #1
+.1      RTS
+* -------------------------------
 FORWARD.SPACE
-       LDY BUFFER.POS
-       LDA MON.IN,Y
-       CMP #CR
-       BEQ .1            DON'T RUN OFF END
-       JSR COUT          ADVANCE SCREEN POSITION
-       INC BUFFER.POS    AND BUFFER POSITION
-.1     JMP INPUT
-*--------------------------------
-* DELETE
-*--------------------------------
+        LDY BUFFER.POS
+        LDA MON.IN,Y
+        CMP #CR
+* IF AT END DO NOTHING
+        BEQ .1
+* OTHERWISE ADVANCE SCREEN POSITION
+        JSR EDITOR.COUT
+* AND BUFFER POSITION
+        INC BUFFER.POS
+.1      RTS
+* -------------------------------
+RETURN
+* ADVANCE TO END OF BUFFER
+        JSR ECHO.MON.IN
+        JSR MON.IN.TO.HISTORY
+* MON.COUT STORES CR AT MON.IN,X
+        LDX LENGTH
+* PULL RETURN ADDRESS FROM
+* BRANCH HANDLER
+        PLA
+        PLA
+* AND RETURN TO CALLER
+        JMP MON.CROUT
+* -------------------------------
 DELETE
-       JSR BACKSPACE     DO BACKSPACE FIRST
-       BEQ .1            ABORT IF AT START OF LINE
-       JSR DELETE.AT.POS DELETE CHAR AND MOVE MON.IN OVER
-       JSR ECHO.MON.IN   ECHO NEW INPUT
-       LDA #SPC          KILL LAST CHARACTER ON THE SCREEN
-       JSR MON.COUT
-       INY
-       JSR RESTORE.SCREEN.POS
-       DEC LENGTH        DECREMENT LENGTH
-.1     JMP INPUT         BACK FOR MORE
-*--------------------------------
-* CODE COMMON TO UP AND DOWN
-*--------------------------------
-UP.DOWN
-       JSR HISTORY.TO.MON.IN
-       LDY BUFFER.POS
-       LDA #0
-       STA BUFFER.POS
-       JSR RESTORE.SCREEN.POS
-       JSR ECHO.MON.IN
-       STY BUFFER.POS    Y-REG HAS NEW LENGTH
-       JSR CLEAR.Y.TO.END
-       LDA BUFFER.POS
-       STA LENGTH
-       RTS
-*--------------------------------
+* DO BACKSPACE FIRST
+     	JSR BACKSPACE
+* ABORT IF AT START OF LINE
+        BEQ .1
+* DELETE CHAR AND MOVE MON.IN OVER
+        JSR DELETE.AT.POS
+* ECHO NEW INPUT
+        JSR ECHO.MON.IN
+* KILL LAST CHARACTER ON SCREEN
+        LDA #SPC
+        JSR MON.COUT
+        INY
+        JSR RESTORE.SCREEN.POS
+* DECREMENT LENGTH AND GO BACK
+        DEC LENGTH
+.1      RTS
+* -------------------------------
+* INCREMENT LOCAL HISTORY PTR
+* -------------------------------
+INC.INPUT.HISTORY.PTR
+	LDA INPUT.HISTORY.PTR
+	CLC
+	ADC #HISTORY.LEN
+	STA INPUT.HISTORY.PTR
+	RTS
+* -------------------------------
+* DECREMENT INPUT HISTORY PTR
+* -------------------------------
+DEC.INPUT.HISTORY.PTR
+	LDA INPUT.HISTORY.PTR
+	SEC
+	SBC #HISTORY.LEN
+	STA INPUT.HISTORY.PTR
+	RTS
+* -------------------------------
 * ENTRY POINT FOR INPUT
-*--------------------------------
+* -------------------------------
 GET.INPUT
        LDA #0
        STA BUFFER.POS
        STA LENGTH
-       STA HISPTR
-       JSR SHIFT.HISTORY.BUFFER
+       LDA #HISTORY.LEN
+       CLC
+       ADC HISTORY.PTR
+       STA HISTORY.PTR
+       TAY
        LDA #CR
        STA MON.IN
-       STA HISBUFS
-*--------------------------------
+       STA HISTORY.BUFS,Y
+       LDA HISTORY.PTR
+       STA INPUT.HISTORY.PTR
+* -------------------------------
 * INPUT LOOP
-*--------------------------------
+* -------------------------------
 INPUT  JSR MON.RDKEY
        LDY #0
 * LOOK FOR CONTROL CODE
@@ -151,71 +164,89 @@ INPUT  JSR MON.RDKEY
        INY
        CPY #ENTRY.TABLE-CODE.TABLE
        BLT .2
-       CMP #BS           BACKSPACE (LEFT ARROW)
-       BNE .3
-       JSR BACKSPACE
-       JMP INPUT
 * GOT A PRINTABLE CHARACTER
 .3     LDY LENGTH
-       CPY #$FF          IGNORE IF BUFFER WOULD OVERFLOW
+* IGNORE IT IF BUFFER WOULD OVERFLOW
+       CPY #$FF
        BEQ INPUT
-       JSR INSERT.A.REG  INSERT IT
-       JSR ECHO.MON.IN   ECHO NEW SCREEN INFO
-       JSR RESTORE.SCREEN.POS RESTORE SCREEN POSITION BEFORE ECHO
-       JSR ADVANCE       ADVANCE SCREEN POSITION
-       INC BUFFER.POS    ADVANCE BUFFER POSITION
-       INC LENGTH        INCREMENT LENGTH
-       BNE INPUT         GO BACK FOR MORE
-*--------------------------------
+* INSERT IT
+       JSR INSERT.A.REG
+* ECHO NEW SCREEN INFO
+       JSR ECHO.MON.IN
+* RESTORE SCREEN POSITION BEFORE ECHO
+       JSR RESTORE.SCREEN.POS
+* ADVANCE SCREEN POSITION
+       JSR ADVANCE.SCREEN.POS
+* ADVANCE BUFFER POSITION
+       INC BUFFER.POS
+* INCREMENT LENGTH AND GO BACK
+       INC LENGTH 
+       BNE INPUT	...ALWAYS
+* -------------------------------
 * BRANCH TO HANDLER GIVEN IN Y-REG
-*--------------------------------
+* -------------------------------
 BRANCH.TO.Y
-       LDA /ESCAPE
-       PHA
-       LDA ENTRY.TABLE,Y
-       PHA
-       RTS
-*--------------------------------
+	JSR .1
+	JMP INPUT
+*
+.1	TYA
+	ASL
+	TAY
+	LDA ENTRY.TABLE+1,Y
+       	PHA
+       	LDA ENTRY.TABLE,Y
+       	PHA
+       	RTS
+* -------------------------------
 * TABLE OF HANDLER CODES
-*--------------------------------
+* -------------------------------
 CODE.TABLE
        .DA #ESC
-       .DA #LF
        .DA #VT
-       .DA #CR
+       .DA #LF
+       .DA #BS
        .DA #FS
+       .DA #CR
        .DA #DEL
-*--------------------------------
+* -------------------------------
 * TABLE OF HANDLER ENTRY POINTS
-*--------------------------------
+* -------------------------------
 ENTRY.TABLE
-       .DA #ESCAPE-1
-       .DA #DOWN.ARROW-1
-       .DA #UP.ARROW-1
-       .DA #CARRIAGE.RETURN-1
-       .DA #FORWARD.SPACE-1
-       .DA #DELETE-1
-*--------------------------------
+       .DA ESCAPE-1
+       .DA UP-1
+       .DA DOWN-1
+       .DA BACKSPACE-1
+       .DA FORWARD.SPACE-1
+       .DA RETURN-1
+       .DA DELETE-1
+* -------------------------------
 * INSERT A-REG INTO MON.IN AT BUFFER.POS
-* SHIFT ALL CHARS RIGHT OF BUFFER.POS
-*--------------------------------
+* RIGHT-SHIFT CHARS RIGHT OF BUFFER.POS
+* -------------------------------
 INSERT.A.REG
        LDY BUFFER.POS
-.1     PHA          SAVE CURRENT CHAR
-       LDA MON.IN,Y GET NEXT CHAR
-       TAX          SAVE IT
-       PLA          STORE CURRENT CHARACTER
+* SAVE CURRENT CHAR
+.1     PHA
+* GET NEXT CHAR
+       LDA MON.IN,Y
+* SAVE IT
+       TAX
+* STORE CURRENT CHAR
+       PLA
        STA MON.IN,Y
        CMP #CR
-       BEQ .2       IF WE SAW CR, WE ARE DONE
-       TXA          NEXT CHAR BECOMES CURRENT CHAR
-       INY          INCREMENT AND GO BACK FOR MORE
+* IF WE SAW CR, WE ARE DONE
+       BEQ .2
+* NEXT CHAR BECOMES CURRENT CHAR
+       TXA
+* INCREMENT AND GO BACK FOR MORE
+       INY
        BNE .1       ...ALWAYS
 .2     RTS
-*--------------------------------
-* DELETE CHAR AT POS AND SHIFT
-* OVER ALL CHARS TO RIGHT
-*--------------------------------
+* -------------------------------
+* DELETE CHAR AT BUFFER.POS
+* LEFT-SHIFT CHARS RIGHT OF BUFFER.POS
+* -------------------------------
 DELETE.AT.POS
        LDY BUFFER.POS
 .1     INY
@@ -224,21 +255,21 @@ DELETE.AT.POS
        CMP #CR
        BNE .1
        RTS
-*--------------------------------
+* -------------------------------
 * ECHO MON.IN FROM BUFFER.POS
-*--------------------------------
+* -------------------------------
 ECHO.MON.IN
        LDY BUFFER.POS
 .1     LDA MON.IN,Y
        CMP #CR
        BEQ .2
-       JSR COUT
+       JSR EDITOR.COUT
        INY
        BNE .1
 .2     RTS
-*--------------------------------
+* -------------------------------
 * RESTORE SCREEN POS TO BUFFER POS
-*--------------------------------
+* -------------------------------
 RESTORE.SCREEN.POS
        CPY BUFFER.POS
        BEQ .1
@@ -247,54 +278,46 @@ RESTORE.SCREEN.POS
        DEY
        BNE RESTORE.SCREEN.POS
 .1     RTS
-*--------------------------------
+* -------------------------------
 * ADVANCE SCREEN POSITION
-*--------------------------------
-ADVANCE
+* -------------------------------
+ADVANCE.SCREEN.POS
        STY MON.YSAV
        LDY BUFFER.POS
        LDA MON.IN,Y
        LDY MON.YSAV
-       JMP COUT
-*--------------------------------
-* SHIFT HISTORY BUFFER
-*--------------------------------
-SHIFT.HISTORY.BUFFER
-       LDY #$FF
-.1     LDA HISBUFS-HISLEN,Y
-       STA HISBUFS,Y
-       DEY
-       CPY #HISLEN
-       BCS .1
-       RTS
-*--------------------------------
-* COPY MON.IN TO HISTORY BUFFER 0
-*--------------------------------
-MON.IN.TO.HISTORY.0
-       LDA #CR
-       STA HISBUFS+HISLEN-1
-       LDY #HISLEN-2
-.2     LDA MON.IN,Y
-       STA HISBUFS,Y
-       DEY
-       BPL .2
-       RTS
-*--------------------------------
-* COPY HISTORY BUFFER TO MON.IN
-*--------------------------------
-HISTORY.TO.MON.IN
-       LDY HISPTR
+       JMP EDITOR.COUT
+* -------------------------------
+* COPY MON.IN TO HISTORY BUFFER
+* -------------------------------
+MON.IN.TO.HISTORY
+       LDY HISTORY.PTR
        LDX #0
-.1     LDA HISBUFS,Y
+.1     LDA MON.IN,X
+       STA HISTORY.BUFS,Y
+       INY
+       INX
+       CPX #HISTORY.LEN-1
+       BLT .1
+       LDA #$8D
+       STA HISTORY.BUFS,Y
+       RTS
+* -------------------------------
+* COPY HISTORY BUFFER TO MON.IN
+* -------------------------------
+HISTORY.TO.MON.IN
+       LDY INPUT.HISTORY.PTR
+       LDX #0
+.1     LDA HISTORY.BUFS,Y
        STA MON.IN,X
        INY
        INX
-       CPX #HISLEN
+       CPX #HISTORY.LEN
        BLT .1
        RTS
-*--------------------------------
+* -------------------------------
 * CLEAR FROM Y-REG TO END
-*--------------------------------
+* -------------------------------
 CLEAR.Y.TO.END
        CPY LENGTH
        BGE .1
@@ -303,19 +326,52 @@ CLEAR.Y.TO.END
        INY
        BNE CLEAR.Y.TO.END
 .1     JMP RESTORE.SCREEN.POS
-*--------------------------------
+* -------------------------------
 * PRINT CONTROL CHAR AS INVERSE
-*--------------------------------
-COUT
+* -------------------------------
+EDITOR.COUT
 	CMP #SPC
 	BCS .1
 	SBC #$7F
 .1	JMP MON.COUT
-*--------------------------------
+* -------------------------------
 * STORAGE
-*--------------------------------
-LENGTH .BS 1        BUFFER LENGTH
-BUFFER.POS .BS 1    BUFFER POSITION
-HISPTR .BS 1        CURRENT HISTORY BUFFER
-HISBUFS .BS 256     HISTORY BUFFERS
+* -------------------------------
+* LENGTH OF INPUT BUFFER
+LENGTH 
+        .HS 00
+* OFFSET INTO INPUT BUFFER
+BUFFER.POS 
+	.HS 00
+* POINTER TO GLOBAL CURRENT HISTORY BUFFER.
+* THIS IS INCREMENTED EACH TIME THE EDITOR
+* IS INVOKED.
+HISTORY.PTR 
+	.HS 00
+* POINTER TO THE CURRENT HISTORY BUFFER FOR 
+* THE INPUT SESSION. THIS IS SET TO 
+* HISTORY.PTR WHEN THE EDITOR IS INVOKED 
+* AND ADJUSTED UP OR DOWN WHEN THE USER 
+* PRESSES THE UP OR DOWN ARROW KEYS.
+INPUT.HISTORY.PTR
+	.HS 00
+* STORAGE FOR HISTORY BUFFERS
+HISTORY.BUFS 
+	.DA #CR
+	.BS HISTORY.LEN-1
+	.DA #CR
+	.BS HISTORY.LEN-1
+	.DA #CR
+	.BS HISTORY.LEN-1
+	.DA #CR
+	.BS HISTORY.LEN-1
+	.DA #CR
+	.BS HISTORY.LEN-1
+	.DA #CR
+	.BS HISTORY.LEN-1
+	.DA #CR
+	.BS HISTORY.LEN-1
+	.DA #CR
+	.BS HISTORY.LEN-1
+
 	

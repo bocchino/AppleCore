@@ -1,7 +1,7 @@
 *--------------------------------
 * INSTALL APPLESOFT IN RAM BANK 2
 *--------------------------------
-	.OR $1000
+	.OR $2000
 	.TF INSTALL.APPLESOFT.OBJ
        .IN MON.EQ.AVM
        .IN EDITOR.EQ.AVM

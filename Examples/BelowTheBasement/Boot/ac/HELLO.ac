@@ -12,7 +12,7 @@ CONST JMP	            $4C;
 # -------------------------------
 # MAIN PROGRAM
 # -------------------------------
-CONST HELLO               $2000;
+CONST HELLO                $803;
 
 VAR PASS:1=0;
 VAR RESETV:3;
