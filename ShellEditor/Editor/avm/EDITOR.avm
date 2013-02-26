@@ -27,20 +27,19 @@ MAX.HISTORY.SIZE .EQ 7
 * ENTRY POINT FOR INPUT
 * -------------------------------
 GET.INPUT
+* INITIALIZE VARIABLES
         LDA #0
         STA BUFFER.POS
         STA LENGTH
 	STA HISTORY.INDEX
+* INITIALIZE MON.IN
         LDA #CR
         STA MON.IN
-* SAVE OLD CONTENTS OF EDITOR REG
+* SAVE EDITOR REG
         LDA EDITOR.REG+1
 	PHA
 	LDA EDITOR.REG
 	PHA
-* SET UP HISTORY PTR
-        LDA HISTORY.START
-	STA HISTORY.PTR
 * -------------------------------
 * INPUT LOOP
 * -------------------------------
@@ -141,7 +140,7 @@ UP
 * YES, SAVE MON.IN TO HISTORY
         JSR MON.IN.TO.HISTORY
 * NEXT HISTORY BUFFER
-.2	JSR NEXT.HISTORY.BUFFER
+.2	INC HISTORY.INDEX
 	JMP DOWN.1
 * -------------------------------
 * DOWN ARROW
@@ -153,7 +152,7 @@ DOWN
 * YES, ABORT
 	RTS
 * NO, PREVIOUS HISTORY BUFFER
-.1	JSR PREV.HISTORY.BUFFER
+.1	DEC HISTORY.INDEX
 DOWN.1
         JSR HISTORY.TO.MON.IN
         LDY BUFFER.POS
@@ -216,7 +215,7 @@ RETURN
 * BRANCH HANDLER
         PLA
         PLA
-* RESTORE CONTENTS OF EDITOR REG
+* RESTORE EDITOR REG
   	PLA
 	STA EDITOR.REG
 	PLA
@@ -243,26 +242,6 @@ DELETE
 * DECREMENT LENGTH AND GO BACK
         DEC LENGTH
 .1      RTS
-* -------------------------------
-* NEXT HISTORY BUFFER
-* -------------------------------
-NEXT.HISTORY.BUFFER
-	INC HISTORY.INDEX
-	LDA HISTORY.PTR
-	CLC
-	ADC #HISTORY.LEN
-	STA HISTORY.PTR
-	RTS
-* -------------------------------
-* PREVIOUS HISTORY BUFFER
-* -------------------------------
-PREV.HISTORY.BUFFER
-	DEC HISTORY.INDEX
-	LDA HISTORY.PTR
-	SEC
-	SBC #HISTORY.LEN
-	STA HISTORY.PTR
-	RTS
 * -------------------------------
 * INCREMENT HISTORY SIZE, UP TO
 * MAX SIZE
@@ -359,7 +338,7 @@ MON.IN.TO.HISTORY
 * COPY HISTORY BUFFER TO MON.IN
 * -------------------------------
 HISTORY.TO.MON.IN
-	LDA HISTORY.PTR
+	JSR LOAD.HISTORY.PTR
 	JSR INIT.EDITOR.REG
 .1	LDA (EDITOR.REG),Y
         STA MON.IN,Y
@@ -367,6 +346,18 @@ HISTORY.TO.MON.IN
         CPY #HISTORY.LEN
         BLT .1
         RTS
+* -------------------------------
+* GET HISTORY PTR INTO A-REG
+* -------------------------------
+LOAD.HISTORY.PTR
+	LDA HISTORY.START
+	LDX HISTORY.INDEX
+	BEQ .2
+.1	CLC
+	ADC #HISTORY.LEN
+	DEX
+	BNE .1
+.2	RTS
 * -------------------------------
 * STORE HISTORY.BUFFERS+A IN EDITOR REG
 * SET Y=0
@@ -425,16 +416,6 @@ HISTORY.START
 *   UP TO MAX SIZE
 * -------------------------------
 HISTORY.SIZE
-	.HS 00
-* -------------------------------
-* POINTER TO THE CURRENT HISTORY 
-* BUFFER
-* - SET TO HISTORY.START ON ENTRY
-*   TO EDITOR
-* - ADJUSTED AS USER SCROLLS 
-*   THROUGH HISTORY
-* -------------------------------
-HISTORY.PTR
 	.HS 00
 * -------------------------------
 * INDEX OF ACTIVE HISTORY BUFFER
