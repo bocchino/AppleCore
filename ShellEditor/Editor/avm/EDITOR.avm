@@ -12,6 +12,10 @@ ESC     .EQ $9B      ESCAPE
 SPC     .EQ $A0      SPACE
 DEL     .EQ $FF      DELETE
 * -------------------------------
+* ZERO PAGE REGISTER FOR EDITOR
+* -------------------------------
+EDITOR.REG .EQ MON.A5L
+* -------------------------------
 * LENGTH OF HISTORY BUFFER
 * -------------------------------
 HISTORY.LEN .EQ $20
@@ -26,11 +30,17 @@ GET.INPUT
         LDA #0
         STA BUFFER.POS
         STA LENGTH
-	STA HISTORY.NUM
+	STA HISTORY.INDEX
         LDA #CR
         STA MON.IN
+* SAVE OLD CONTENTS OF EDITOR REG
+        LDA EDITOR.REG+1
+	PHA
+	LDA EDITOR.REG
+	PHA
+* SET UP HISTORY PTR
         LDA HISTORY.START
-        STA HISTORY.PTR
+	STA HISTORY.PTR
 * -------------------------------
 * INPUT LOOP
 * -------------------------------
@@ -38,13 +48,13 @@ INPUT.LOOP
         JSR MON.RDKEY
         LDY #0
 * LOOK FOR CONTROL CODE
-.2      CMP CODE.TABLE,Y
+.1      CMP CODE.TABLE,Y
         BEQ BRANCH.TO.Y   FOUND IT
         INY
         CPY #ENTRY.TABLE-CODE.TABLE
-        BLT .2
+        BLT .1
 * GOT A PRINTABLE CHARACTER
-.3      LDY LENGTH
+        LDY LENGTH
 * IGNORE IT IF BUFFER WOULD OVERFLOW
         CPY #$FF
         BEQ INPUT.LOOP
@@ -120,7 +130,7 @@ ESCAPE
 * -------------------------------
 UP
 * ARE WE AT TOP?
-        LDA HISTORY.NUM
+        LDA HISTORY.INDEX
 	CMP HISTORY.SIZE
  	BNE .1
 * YES, ABORT
@@ -138,7 +148,7 @@ UP
 * -------------------------------
 DOWN
 * ARE WE AT BOTTOM?
-	LDA HISTORY.NUM
+	LDA HISTORY.INDEX
 	BNE .1
 * YES, ABORT
 	RTS
@@ -206,7 +216,12 @@ RETURN
 * BRANCH HANDLER
         PLA
         PLA
-* AND RETURN TO CALLER
+* RESTORE CONTENTS OF EDITOR REG
+  	PLA
+	STA EDITOR.REG
+	PLA
+	STA EDITOR.REG+1
+* RETURN TO CALLER
         JMP MON.CROUT
 * -------------------------------
 * DELETE
@@ -232,7 +247,7 @@ DELETE
 * NEXT HISTORY BUFFER
 * -------------------------------
 NEXT.HISTORY.BUFFER
-	INC HISTORY.NUM
+	INC HISTORY.INDEX
 	LDA HISTORY.PTR
 	CLC
 	ADC #HISTORY.LEN
@@ -242,7 +257,7 @@ NEXT.HISTORY.BUFFER
 * PREVIOUS HISTORY BUFFER
 * -------------------------------
 PREV.HISTORY.BUFFER
-	DEC HISTORY.NUM
+	DEC HISTORY.INDEX
 	LDA HISTORY.PTR
 	SEC
 	SBC #HISTORY.LEN
@@ -330,30 +345,41 @@ ADVANCE.SCREEN.POS
 * COPY MON.IN TO HISTORY BUFFER
 * -------------------------------
 MON.IN.TO.HISTORY
-        LDY HISTORY.START
-        LDX #0
-.1      LDA MON.IN,X
-        STA HISTORY.BUFS,Y
+	LDA HISTORY.START
+	JSR INIT.EDITOR.REG
+.1      LDA MON.IN,Y
+        STA (EDITOR.REG),Y
         INY
-        INX
-        CPX #HISTORY.LEN-1
+        CPY #HISTORY.LEN-1
         BLT .1
         LDA #$8D
-        STA HISTORY.BUFS,Y
+        STA (EDITOR.REG),Y
         RTS
 * -------------------------------
 * COPY HISTORY BUFFER TO MON.IN
 * -------------------------------
 HISTORY.TO.MON.IN
-        LDY HISTORY.PTR
-        LDX #0
-.1      LDA HISTORY.BUFS,Y
-        STA MON.IN,X
+	LDA HISTORY.PTR
+	JSR INIT.EDITOR.REG
+.1	LDA (EDITOR.REG),Y
+        STA MON.IN,Y
         INY
-        INX
-        CPX #HISTORY.LEN
+        CPY #HISTORY.LEN
         BLT .1
         RTS
+* -------------------------------
+* STORE HISTORY.BUFFERS+A IN EDITOR REG
+* SET Y=0
+* -------------------------------
+INIT.EDITOR.REG
+	CLC
+	ADC #HISTORY.BUFFERS
+	STA EDITOR.REG
+	LDA /HISTORY.BUFFERS
+	ADC #0
+	STA EDITOR.REG+1
+	LDY #0
+	RTS
 * -------------------------------
 * CLEAR FROM Y-REG TO END
 * -------------------------------
@@ -411,15 +437,14 @@ HISTORY.SIZE
 HISTORY.PTR
 	.HS 00
 * -------------------------------
-* NUMBER OF CURRENT ACTIVE HISTORY 
-* BUFFER
+* INDEX OF ACTIVE HISTORY BUFFER
 * - SET TO 0 ON ENTRY TO EDITOR
 * - ADJUSTED AS USER SCROLLS
 *   THROUGH HISTORY
 * -------------------------------
-HISTORY.NUM
+HISTORY.INDEX
 	.HS 00
 * -------------------------------
 * STORAGE FOR HISTORY BUFFERS
 * -------------------------------
-HISTORY.BUFS 
+HISTORY.BUFFERS 
