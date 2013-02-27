@@ -16,13 +16,10 @@ DEL     .EQ $FF      DELETE
 * -------------------------------
 EDITOR.REG .EQ MON.A5L
 * -------------------------------
-* LENGTH OF HISTORY BUFFER
-* -------------------------------
-HISTORY.LEN .EQ $20
-* -------------------------------
 * NUMBER OF AVAILABLE HISTORY BUFFERS
 * -------------------------------
-MAX.HISTORY.SIZE .EQ 7
+NUM.HISTORY.BUFFERS .EQ 14
+MAX.HISTORY.SIZE    .EQ NUM.HISTORY.BUFFERS-1
 * -------------------------------
 * ENTRY POINT FOR INPUT
 * -------------------------------
@@ -31,7 +28,7 @@ GET.INPUT
         LDA #0
         STA BUFFER.POS
         STA LENGTH
-	STA HISTORY.INDEX
+	STA HISTORY.OFFSET
 * INITIALIZE MON.IN
         LDA #CR
         STA MON.IN
@@ -129,7 +126,7 @@ ESCAPE
 * -------------------------------
 UP
 * ARE WE AT TOP?
-        LDA HISTORY.INDEX
+        LDA HISTORY.OFFSET
 	CMP HISTORY.SIZE
  	BNE .1
 * YES, ABORT
@@ -140,19 +137,19 @@ UP
 * YES, SAVE MON.IN TO HISTORY
         JSR MON.IN.TO.HISTORY
 * NEXT HISTORY BUFFER
-.2	INC HISTORY.INDEX
+.2	INC HISTORY.OFFSET
 	JMP DOWN.1
 * -------------------------------
 * DOWN ARROW
 * -------------------------------
 DOWN
 * ARE WE AT BOTTOM?
-	LDA HISTORY.INDEX
+	LDA HISTORY.OFFSET
 	BNE .1
 * YES, ABORT
 	RTS
 * NO, PREVIOUS HISTORY BUFFER
-.1	DEC HISTORY.INDEX
+.1	DEC HISTORY.OFFSET
 DOWN.1
         JSR HISTORY.TO.MON.IN
         LDY BUFFER.POS
@@ -207,10 +204,10 @@ RETURN
 * INC HISTORY ISZE
       	JSR INC.HISTORY.SIZE
 * ADJUST HISTORY START
-        LDA HISTORY.START
-	SEC
-        SBC #HISTORY.LEN
-        STA HISTORY.START
+	DEC HISTORY.START
+	LDA HISTORY.START
+	JSR REDUCE.A
+	STA HISTORY.START
 * PULL RETURN ADDRESS FROM
 * BRANCH HANDLER
         PLA
@@ -329,48 +326,54 @@ MON.IN.TO.HISTORY
 .1      LDA MON.IN,Y
         STA (EDITOR.REG),Y
         INY
-        CPY #HISTORY.LEN-1
-        BLT .1
-        LDA #$8D
-        STA (EDITOR.REG),Y
+        BNE .1
         RTS
 * -------------------------------
 * COPY HISTORY BUFFER TO MON.IN
 * -------------------------------
 HISTORY.TO.MON.IN
-	JSR LOAD.HISTORY.PTR
+	LDA HISTORY.START
+	CLC
+	ADC HISTORY.OFFSET
+	JSR REDUCE.A
 	JSR INIT.EDITOR.REG
 .1	LDA (EDITOR.REG),Y
         STA MON.IN,Y
         INY
-        CPY #HISTORY.LEN
-        BLT .1
+        BNE .1
         RTS
 * -------------------------------
-* GET HISTORY PTR INTO A-REG
-* -------------------------------
-LOAD.HISTORY.PTR
-	LDA HISTORY.START
-	LDX HISTORY.INDEX
-	BEQ .2
-.1	CLC
-	ADC #HISTORY.LEN
-	DEX
-	BNE .1
-.2	RTS
-* -------------------------------
-* STORE HISTORY.BUFFERS+A IN EDITOR REG
+* SET EDITOR.REG = 
+*  HISTORY.BUFFERS + A*256
 * SET Y=0
 * -------------------------------
 INIT.EDITOR.REG
 	CLC
-	ADC #HISTORY.BUFFERS
-	STA EDITOR.REG
-	LDA /HISTORY.BUFFERS
-	ADC #0
+	ADC /HISTORY.BUFFERS
 	STA EDITOR.REG+1
+	LDA #HISTORY.BUFFERS
+	STA EDITOR.REG
 	LDY #0
 	RTS
+* -------------------------------
+* SET A = A MOD NUM.HISTORY.BUFFERS
+* RESPECTS SIGN OF A
+* ASSUMES A > -NUM.HISTORY.BUFFERS
+* ASSUMES A < 2 * NUM.HISTORY.BUFFERS
+* -------------------------------
+REDUCE.A
+	TAY
+	BPL .1
+* < 0, RETURN A+NUM.HISTORY.BUFFERS
+	CLC
+	ADC #NUM.HISTORY.BUFFERS
+	RTS
+.1	CMP #NUM.HISTORY.BUFFERS
+	BCC .2
+* >= NUM.HISTORY.BUFFERS, RETURN
+* A-NUM.HISTORY.BUFFERS
+	SBC #NUM.HISTORY.BUFFERS
+.2	RTS
 * -------------------------------
 * CLEAR FROM Y-REG TO END
 * -------------------------------
@@ -403,7 +406,7 @@ LENGTH
 BUFFER.POS 
 	.HS 00
 * -------------------------------
-* POINTER TO START OF HISTORY BUFFERS
+* INDEX OF FIRST HISTORY BUFFER
 * - SET TO 0 WHEN EDITOR INSTALLED
 * - ADJUSTED ON EXIT FROM EDITOR
 * -------------------------------
@@ -418,12 +421,13 @@ HISTORY.START
 HISTORY.SIZE
 	.HS 00
 * -------------------------------
-* INDEX OF ACTIVE HISTORY BUFFER
+* OFFSET FROM HISTORY.START OF
+* ACTIVE HISTORY BUFFER
 * - SET TO 0 ON ENTRY TO EDITOR
 * - ADJUSTED AS USER SCROLLS
 *   THROUGH HISTORY
 * -------------------------------
-HISTORY.INDEX
+HISTORY.OFFSET
 	.HS 00
 * -------------------------------
 * STORAGE FOR HISTORY BUFFERS
