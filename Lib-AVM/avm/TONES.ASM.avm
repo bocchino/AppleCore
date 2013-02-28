@@ -1,5 +1,5 @@
 * -------------------------------
-* TONE AVM FN
+* SIMPLE TONE GENERATOR
 * -------------------------------
 TONE.ASM
 	LDX #0
