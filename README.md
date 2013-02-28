@@ -77,7 +77,7 @@ language specs it's a bit dry and conveys all the details without
 enough worked examples.  Unfortunately there's no tutorial
 documentation yet.  However, after browsing the spec to get the
 general idea of what's going on, you should be able to read the
-examples in ${APPLECORE}/Examples to get a better idea of how to write
+examples in ${APPLECORE}/Programs to get a better idea of how to write
 programs in AppleCore.
 
 6\. Compiling AppleCore Programs
@@ -94,10 +94,10 @@ steps:
     assembly files into binary files that can be run on the Apple II.
 
 To see how this is done, go to the directory
-`${APPLECORE}/Examples/HelloWorld`.  First, peek at the source program
-ac/HELLO.WORLD.ac.  That's the program we'll compile.  Next, type
-`make clean` and then `make`.  A directory `obj` should appear
-containing the binary executable file `HELLO.WORLD.OBJ`.
+`${APPLECORE}/Programs/Examples/HelloWorld`.  First, peek at the
+source program ac/HELLO.WORLD.ac.  That's the program we'll compile.
+Next, type `make clean` and then `make`.  A directory `obj` should
+appear containing the binary executable file `HELLO.WORLD.OBJ`.
 
 If you would like to see the assembled output listing, then say `make
 OPTS=-l`.  That tells the assembler to list the assembly to the
@@ -109,8 +109,8 @@ assembled into the final program.
 
 Notice also that the compiler and the assembler both require options
 indicating where to find included files.  Those options are specified
-in the file ${APPLECORE}/Examples/HelloWorld/Makefile.  See sections 8 and 9
-below for more information about these options.
+in the file ${APPLECORE}/Programs/Examples/HelloWorld/Makefile.  See
+sections 8 and 9 below for more information about these options.
 
 7\. Running AppleCore Programs
 ------------------------------
@@ -126,10 +126,10 @@ inside the emulator can "see" the files in the mounted directory as
 Apple II DOS files.
 
 For example, to run the "hello world" program, drag
-`${APPLECORE}/Examples/HelloWorld/obj` into one of the drives, say
-drive 1.  Virtual ][ will display a dialog box asking you about the
-file format.  You want "No Conversion" (the default), so just click
-OK.  The disk should mount in the drive.  Next say `BRUN
+`${APPLECORE}/Programs/Examples/HelloWorld/obj` into one of the
+drives, say drive 1.  Virtual ][ will display a dialog box asking you
+about the file format.  You want "No Conversion" (the default), so
+just click OK.  The disk should mount in the drive.  Next say `BRUN
 HELLO.WORLD.OBJ` at the BASIC prompt.  The Apple II should respond by
 printing
 
@@ -204,7 +204,7 @@ include mode and writing a short assembly language program to glue the
 pieces together.  You might do this if the whole program won't fit in
 memory, or if you need the program to occupy discontinuous parts of
 memory (e.g., to wrap it around the hi-res graphics pages).  See
-${APPLECORE}/Examples/Chain for an example of how to do this.
+${APPLECORE}/Programs/Examples/Chain for an example of how to do this.
 
 9\. The SC-AVM-ASM Assembler
 ----------------------------
@@ -280,8 +280,9 @@ Please note the following:
 The neat thing about the .TF directive is that it lets you assemble a
 single logical program into multiple output files.  This is handy, for
 example, when your whole program won't fit into memory.  See
-${APPLECORE}/Examples/Chain and ${APPLECORE}/Examples/BelowTheBasement
-for examples of the .TF directive in action.
+${APPLECORE}/Programs/Examples/Chain and
+${APPLECORE}/Programs/Games/BelowTheBasement for examples of the .TF
+directive in action.
 
 9\. Integration with BASIC and DOS
 ----------------------------------
