@@ -1,5 +1,5 @@
 all :
-	make -C Lib-AC
+	make -C AppleCore
 
 clean :
-	make -C Lib-AC clean
+	make -C AppleCore clean

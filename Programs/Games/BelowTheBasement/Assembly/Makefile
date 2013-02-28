@@ -1,6 +1,6 @@
 include ${APPLECORE}/Defs.common
 
-SC-AVM-ASM += -i ../BTB-AC/avm
+SC-AVM-ASM += -i ../AppleCore/avm
 
 TARGET=BTB
 

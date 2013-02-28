@@ -1,5 +1,5 @@
 all :
-	make -C ac
+	make -C AppleCore
 
 clean :
-	make -C ac clean
+	make -C AppleCore clean

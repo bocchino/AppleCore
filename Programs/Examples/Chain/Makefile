@@ -1,7 +1,7 @@
 all :
-	make -C Chain-AC
-	make -C Chain-AVM
+	make -C AppleCore
+	make -C Assembly
 
 clean :
-	make -C Chain-AC clean
-	make -C Chain-AVM clean
+	make -C AppleCore clean
+	make -C Assembly clean

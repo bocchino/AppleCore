@@ -6,7 +6,7 @@ DECLS=${LIB-AC}/ac/IO.ac:${LIB-AC}/ac/STRING.ac:${LIB-AC}/ac/CHAR.ac:${LIB-AC}/a
 
 ACC += -decls=${DECLS} -tf=${TF}
 
-SC-AVM-ASM += -i ../avm
+SC-AVM-ASM += -i ../Assembly/avm
 
 all : obj all-avm
 	${SC-AVM-ASM} avm/RODS.COLOR.PATTERN.avm

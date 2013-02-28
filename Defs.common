@@ -1,6 +1,6 @@
 LIB=${APPLECORE}/Lib
-LIB-AC=${LIB}/Lib-AC
-LIB-AVM=${LIB}/Lib-AVM
+LIB-AC=${LIB}/AppleCore
+LIB-AVM=${LIB}/Assembly
 RUNTIME=${APPLECORE}/Runtime
 
 ACC = ${APPLECORE}/Compiler/bin/acc
