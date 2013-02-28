@@ -59,7 +59,7 @@ To set up your Mac to use AppleCore, do the following:
 4.  Include ${APPLECORE}/Compiler/bin, ${APPLECORE}/Assembler/bin, and
     ${APPLECORE}/Scripts in your UNIX PATH.
 
-5.  Build the assembler, compiler, and examples:
+5.  Build the project:
 
     `cd ${APPLECORE}`
 
