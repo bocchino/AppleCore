@@ -1,7 +1,7 @@
 all :
-	make -C ac
-	make -C avm
+	make -C Chain-AC
+	make -C Chain-AVM
 
 clean :
-	make -C ac clean
-	make -C avm clean
+	make -C Chain-AC clean
+	make -C Chain-AVM clean

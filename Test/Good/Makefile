@@ -1,8 +1,8 @@
-LIB=../../Lib
-DECLS=${LIB}/ac/IO.ac:${LIB}/ach/MON.ach:${LIB}/ach/BOOLEAN.ach:${LIB}/ac/GRAPHICS.ac:${LIB}/ac/STRING.ac
-ACC = ${APPLECORE}/Compiler/bin/acc -decls=${DECLS}
+include ${APPLECORE}/Defs.common
 
-SC-AVM-ASM = ${APPLECORE}/Assembler/bin/sc-avm-asm -i ${APPLECORE}/Lib/avm:${APPLECORE}/Lib-AVM/avm:${APPLECORE}/Runtime/avm -d obj ${OPTS}
+DECLS=${LIB-AC}/ac/IO.ac:${LIB-AC}/ach/MON.ach:${LIB-AC}/ach/BOOLEAN.ach:${LIB-AC}/ac/GRAPHICS.ac:${LIB-AC}/ac/STRING.ac
+
+ACC += -decls=${DECLS}
 
 all : obj all-avm
 	${MAKE_ALL} avm obj
@@ -10,4 +10,4 @@ all : obj all-avm
 obj/${FILE}.obj : avm/${FILE}.avm obj
 	${SC-AVM-ASM} avm/${FILE}.avm
 
-include ../../Makefile.ac.common
+include ${APPLECORE}/Makefile.ac.common

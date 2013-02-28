@@ -1,7 +1,7 @@
-LIB=../../Lib
-DECLS=${LIB}/ach/MON.ach:${LIB}/ac/IO.ac:${LIB}/ac/PRINT.WORDS.ac:${LIB}/ac/DOS.ac
-ACC = ${APPLECORE}/Compiler/bin/acc -decls=${DECLS} -tf=HELLO.OBJ
-SC-AVM-ASM = ${APPLECORE}/Assembler/bin/sc-avm-asm -i ${APPLECORE}/Lib/avm:${APPLECORE}/Lib-AVM/avm:${APPLECORE}/Runtime/avm:avm -d obj ${OPTS}
+include ${APPLECORE}/Defs.common
+
+DECLS=${LIB-AC}/ach/MON.ach:${LIB-AC}/ac/IO.ac:${LIB-AC}/ac/PRINT.WORDS.ac:${LIB-AC}/ac/DOS.ac
+ACC += -decls=${DECLS} -tf=HELLO.OBJ
 
 all : obj all-avm
 	${SC-AVM-ASM} avm/HELLO.avm

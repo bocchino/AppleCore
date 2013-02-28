@@ -1,9 +1,11 @@
+include ${APPLECORE}/Defs.common
+
 TARGET=BWV.1030.3
-LIB=${APPLECORE}/Lib
 TF=$(TARGET).OBJ
-DECLS=${LIB}/ach/MON.ach:${LIB}/ac/IO.ac:${LIB}/ac/STRING.ac:${LIB}/ach/BOOLEAN.ach:${LIB}/ac/GRAPHICS.ac:${LIB}/ac/TONES.ac:${LIB}/ach/PITCHES.440.EQUAL.ach
-ACC = ${APPLECORE}/Compiler/bin/acc -decls=${DECLS} -tf=${TF}
-SC-AVM-ASM = ${APPLECORE}/Assembler/bin/sc-avm-asm -i ${APPLECORE}/Lib/avm:${APPLECORE}/Lib-AVM/avm:${APPLECORE}/Runtime/avm:../avm/ -d obj ${OPTS}
+
+DECLS=${LIB-AC}/ach/MON.ach:${LIB-AC}/ac/IO.ac:${LIB-AC}/ac/STRING.ac:${LIB-AC}/ach/BOOLEAN.ach:${LIB-AC}/ac/GRAPHICS.ac:${LIB-AC}/ac/TONES.ac:${LIB-AC}/ach/PITCHES.440.EQUAL.ach
+
+ACC += -decls=${DECLS} -tf=${TF}
 
 all : obj all-avm
 	${SC-AVM-ASM} avm/$(TARGET).avm

@@ -1,9 +1,13 @@
-LIB=${APPLECORE}/Lib
+include ${APPLECORE}/Defs.common
+
 INCLUDE=./Include
 OBJ=EDIFY.OBJ
-DECLS=${INCLUDE}/ac/EDIFY.INPUT.ac:${INCLUDE}/ac/EDIFY.BUFFER.ac:${LIB}/ac/IO.ac:${LIB}/ac/STRING.ac:${LIB}/ac/CHAR.ac:${LIB}/ac/COPY.ac:${LIB}/ach/MON.ach:${LIB}/ach/BOOLEAN.ach
-ACC = ${APPLECORE}/Compiler/bin/acc -decls=${DECLS} -tf=${OBJ}
-SC-AVM-ASM = ${APPLECORE}/Assembler/bin/sc-avm-asm -i ${APPLECORE}/Lib/avm:${APPLECORE}/Lib-AVM/avm:${APPLECORE}/Runtime/avm:Include/avm -d obj ${OPTS}
+
+DECLS=${INCLUDE}/ac/EDIFY.INPUT.ac:${INCLUDE}/ac/EDIFY.BUFFER.ac:${LIB-AC}/ac/IO.ac:${LIB-AC}/ac/STRING.ac:${LIB-AC}/ac/CHAR.ac:${LIB-AC}/ac/COPY.ac:${LIB-AC}/ach/MON.ach:${LIB-AC}/ach/BOOLEAN.ach
+
+ACC += -decls=${DECLS} -tf=${OBJ}
+
+SC-AVM-ASM += -i Include/avm
 
 all-include : obj all-avm
 	make -C Include

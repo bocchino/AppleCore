@@ -1,3 +1,5 @@
-ACC     = ${APPLECORE}/Compiler/bin/acc -include -decls=ac/CHAR.ac:ach/MON.ach:ach/BOOLEAN.ach:ach/SOFT.SWITCHES.ach:ac/IO.ac
+all :
+	make -C Lib-AC
 
-include ${APPLECORE}/Makefile.ac.common
+clean :
+	make -C Lib-AC clean

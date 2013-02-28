@@ -1,7 +1,7 @@
 #
 # Makefile for translating AVM files
 #
-SC-AVM-ASM ?= ${APPLECORE}/Assembler/bin/sc-avm-asm -i ${APPLECORE}/Lib/avm:${APPLECORE}/Lib-AVM/avm:${APPLECORE}/Runtime/avm -d obj ${OPTS}
+SC-AVM-ASM ?= ${APPLECORE}/Assembler/bin/sc-avm-asm -i ${APPLECORE}/Lib/avm:${APPLECORE}/Lib-AVM/avm:${APPLECORE}/Runtime/avm:avm -d obj ${OPTS}
 
 all-obj : obj
 	${SC-AVM-ASM} avm/${TARGET}.avm

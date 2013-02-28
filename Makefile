@@ -1,14 +1,8 @@
-all :
-	make -C Compiler
-	make -C Assembler/sc-avm-asm
-	make -C Lib
-	make -C Programs
-	make -C ShellEditor
+DIRS=Assembler Compiler Lib ShellEditor Programs
 
-clean :
-	make -C Compiler clean
-	make -C Assembler/sc-avm-asm clean
-	make -C Lib clean
-	make -C Programs clean
-	make -C ShellEditor clean
+all:
+	@(for dir in $(DIRS); do make -C $$dir; done)
+
+clean:
+	@(for dir in $(DIRS); do make -C $$dir clean; done)
 

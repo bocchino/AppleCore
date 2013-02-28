@@ -1,5 +1,7 @@
-LIB=${APPLECORE}/Lib
-DECLS=${LIB}/ac/IO.ac:${LIB}/ac/STRING.ac:${LIB}/ac/CHAR.ac:${LIB}/ach/MON.ach:${LIB}/ach/BOOLEAN.ach:${LIB}/ac/GRAPHICS.ac:${LIB}/ac/PRINT.WORDS.ac:ac/ARTIST.1.ac:ac/ARTIST.2.ac:../ac/ARTIST.ac:${LIB}/ac/DOS.ac:${LIB}/ac/COPY.ac
-ACC = ${APPLECORE}/Compiler/bin/acc -decls=${DECLS} -include
+include ${APPLECORE}/Defs.common
+
+DECLS=${LIB-AC}/ac/IO.ac:${LIB-AC}/ac/STRING.ac:${LIB-AC}/ac/CHAR.ac:${LIB-AC}/ach/MON.ach:${LIB-AC}/ach/BOOLEAN.ach:${LIB-AC}/ac/GRAPHICS.ac:${LIB-AC}/ac/PRINT.WORDS.ac:ac/ARTIST.1.ac:ac/ARTIST.2.ac:../ac/ARTIST.ac:${LIB-AC}/ac/DOS.ac:${LIB-AC}/ac/COPY.ac
+
+ACC += -decls=${DECLS} -include
 
 include ${APPLECORE}/Makefile.ac.common

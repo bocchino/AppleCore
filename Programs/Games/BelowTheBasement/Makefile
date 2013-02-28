@@ -3,16 +3,16 @@ all : BTB
 	cp ${APPLECORE}/ROMs/ROM.77.EDITOR.OBJ BTB
 	cp ${APPLECORE}/ShellEditor/INT/* BTB
 	make -C Boot
-	make -C ac
-	make -C avm
+	make -C BTB-AC
+	make -C BTB-AVM
 	cp Boot/obj/* BTB
-	cp avm/obj/* BTB
+	cp BTB-AVM/obj/* BTB
 
 BTB :
 	mkdir $@
 
 clean :
 	make -C Boot clean
-	make -C ac clean
-	make -C avm clean
+	make -C BTB-AC clean
+	make -C BTB-AVM clean
 	rm -Rf BTB

@@ -1,9 +1,10 @@
 include ${APPLECORE}/Defs.common
 
-SC-AVM-ASM += -i ../Editor/avm
+SC-AVM-ASM += -i ../BTB-AC/avm
 
-TARGET=INSTALL.APPLESOFT
+TARGET=BTB
 
 include ${APPLECORE}/Makefile.avm.common
+
 
 

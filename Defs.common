@@ -1,0 +1,9 @@
+LIB=${APPLECORE}/Lib
+LIB-AC=${LIB}/Lib-AC
+LIB-AVM=${LIB}/Lib-AVM
+RUNTIME=${APPLECORE}/Runtime
+
+ACC = ${APPLECORE}/Compiler/bin/acc
+
+SC-AVM-ASM = ${APPLECORE}/Assembler/bin/sc-avm-asm -i ${LIB-AC}/avm:${LIB-AVM}/avm:${RUNTIME}/avm:avm -d obj ${OPTS}
+
