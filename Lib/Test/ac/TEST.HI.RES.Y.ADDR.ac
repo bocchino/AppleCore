@@ -1,0 +1,26 @@
+# -------------------------------------
+# TEST CALCULATION OF HI-RES Y ADDR
+# -------------------------------------
+
+FN MAIN() {
+  VAR LEN:1;
+  VAR Y:1;
+  VAR ADDR:@;
+  GET_LINE();
+  STR_TO_NUM(MON_IN,10,@Y,1);
+  DO_PAGE(Y,1);
+  DO_PAGE(Y,2);
+}
+
+FN DO_PAGE(Y:1,PAGE:1) {
+  VAR ADDR:@=HI_RES_Y_ADDR(Y,PAGE);
+  NUM_TO_STR(@ADDR,2,16,MON_IN);
+  PRINT_CHAR('$');
+  PRINT_STRING(MON_IN);
+  MON_CROUT();
+}
+
+INCLUDE "IO.AVM";
+INCLUDE "GRAPHICS.AVM";
+INCLUDE "STRING.AVM";
+INCLUDE "CHAR.AVM";
