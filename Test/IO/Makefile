@@ -1,4 +1,4 @@
-LIB=../../Lib
+LIB=${APPLECORE}/Lib
 DECLS=${LIB}/ac/IO.ac:${LIB}/ach/MON.ach:${LIB}/ach/BOOLEAN.ach
 ACC = ${APPLECORE}/Compiler/bin/acc -decls=${DECLS}
 
@@ -10,4 +10,4 @@ all : obj all-avm
 obj/${FILE}.obj : avm/${FILE}.avm obj
 	${SC-AVM-ASM} avm/${FILE}.avm
 
-include ../../Makefile.ac.common
+include ${APPLECORE}/Makefile.ac.common
