@@ -56,29 +56,34 @@ end
 open Term
 
 (* An expression is a single term or a binary operation
-   comprising a term and an expression *)
+   comprising an expression and a term. Binary operations
+   are left-recursive. *)
 datatype t =
 	 Term of Term.t
-       | Add of Term.t * t
-       | Sub of Term.t * t
-       | Mul of Term.t * t
-       | Div of Term.t * t
-		
+       | Add of t * Term.t
+       | Sub of t * Term.t
+       | Mul of t * Term.t
+       | Div of t * Term.t
+
+(* Parse an expression. Binary operations are left-
+   associative. *)
 fun parse substr =
-    let fun binop oper t substr =
-	    case parse substr of
-		SOME (e,substr'') => SOME (oper(t,e),substr'')
-              | _                 => raise AssemblyError BadAddress
+    let
+        fun parse' e substr =
+	    case getc substr of
+		SOME (#"+",substr') => binop e Add substr'
+	      | SOME (#"-",substr') => binop e Sub substr'
+	      | SOME (#"*",substr') => binop e Mul substr'
+	      | SOME (#"/",substr') => binop e Div substr'
+	      | _                   => SOME (e,substr)
+	and binop e oper substr =
+	    case Term.parse substr of
+		SOME (t,substr') => parse' (oper (e,t)) substr'
+	      | _                => raise AssemblyError BadAddress
     in
 	case Term.parse (dropl isSpace substr) of
-	    SOME (t,substr') =>
-	    (case getc (dropl isSpace substr') of
-		SOME (#"+",substr'') => binop Add t substr''
-              | SOME (#"-",substr'') => binop Sub t substr''
-              | SOME (#"*",substr'') => binop Mul t substr''
-              | SOME (#"/",substr'') => binop Div t substr''
-	      | _                    => SOME (Term t,substr'))
-          | _ => NONE
+	    SOME (t,substr') => parse' (Term t) substr'
+	  | NONE             => NONE
     end
 
 fun parseArg substr =
@@ -88,13 +93,13 @@ fun parseArg substr =
 			    
 fun eval (addr,map) expr =
     let 
-	fun evalBinop(lhs,constr,oper,rhs) =
+	fun evalBinop (lhs,constr,oper,rhs) =
 	    let
-		val lhs = Term.eval (addr,map) lhs
-		val rhs = eval (addr,map) rhs
+		val lhs = eval (addr,map) lhs
+		val rhs = Term.eval (addr,map) rhs
 	    in
 		case (lhs,rhs) of
-		    (Number n,Term (Number n')) =>
+		    (Term (Number n),Number n') =>
 		    Term (Number (oper(n,n')))
 		  | _ => constr (lhs,rhs)
 	    end
