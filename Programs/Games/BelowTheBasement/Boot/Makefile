@@ -1,11 +1,8 @@
-include ${APPLECORE}/Defs.common
+include $(APPLECORE)/Defs.common
 
-DECLS=${LIB-AC}/ach/MON.ach:${LIB-AC}/ac/IO.ac:${LIB-AC}/ac/DOS.ac:${LIB-AC}/ac/BANK.SWITCHES.ac
-ACC += -decls=${DECLS} -tf=HELLO.OBJ
+TARGET=HELLO
+ACC-DECLS=$(LIB-AC)/ach/MON.ach:$(LIB-AC)/ac/IO.ac:$(LIB-AC)/ac/DOS.ac:$(LIB-AC)/ac/BANK.SWITCHES.ac
 
-all : obj all-avm
-	${SC-AVM-ASM} avm/HELLO.avm
-
-include ${APPLECORE}/Makefile.ac.common
+include $(APPLECORE)/Makefile.ac.common
 
 

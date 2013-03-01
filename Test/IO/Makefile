@@ -1,12 +1,5 @@
-include ${APPLECORE}/Defs.common
+include $(APPLECORE)/Defs.common
 
-DECLS=${LIB-AC}/ac/IO.ac:${LIB-AC}/ach/MON.ach:${LIB-AC}/ach/BOOLEAN.ach
-ACC += -decls=${DECLS}
+ACC-DECLS=$(LIB-AC)/ac/IO.ac:$(LIB-AC)/ach/MON.ach:$(LIB-AC)/ach/BOOLEAN.ach
 
-all : obj all-avm
-	${MAKE_ALL} avm obj
-
-obj/${FILE}.obj : avm/${FILE}.avm obj
-	${SC-AVM-ASM} avm/${FILE}.avm
-
-include ${APPLECORE}/Makefile.ac.common
+include $(APPLECORE)/Makefile.ac.several.common

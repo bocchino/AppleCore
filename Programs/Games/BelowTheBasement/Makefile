@@ -1,7 +1,7 @@
 all : BTB
-	make -C ${APPLECORE}/ShellEditor
-	cp ${APPLECORE}/ROMs/ROM.77.EDITOR.OBJ BTB
-	cp ${APPLECORE}/ShellEditor/INT/* BTB
+	make -C $(APPLECORE)/ShellEditor
+	cp $(APPLECORE)/ROMs/ROM.77.EDITOR.OBJ BTB
+	cp $(APPLECORE)/ShellEditor/INT/* BTB
 	make -C Boot
 	make -C AppleCore
 	make -C Assembly

@@ -1,0 +1,10 @@
+#
+# Makefile for translating top-level AppleCore source file,
+# that includes other files.
+#
+SRCS += Include/ac/*.ac
+SC-AVM-ASM += -i Include/avm
+MAKE-OBJ= make -C Include
+MAKE-CLEAN= make -C Include clean
+
+include $(APPLECORE)/Makefile.ac.common

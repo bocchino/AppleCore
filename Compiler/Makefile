@@ -14,11 +14,10 @@ ${wildcard java/AppleCoreCompiler/CodeGen/*java} \
 ${wildcard java/AppleCoreCompiler/Errors/*java} \
 ${wildcard java/AppleCoreCompiler/Warnings/*java} \
 
-all : classes ${SRCS}
-	javac -d classes ${SRCS}
-
-classes :
+classes : ${SRCS}
+	rm -rf classes
 	mkdir classes
+	javac -d classes ${SRCS}
 
 clean ::
 	rm -rf classes

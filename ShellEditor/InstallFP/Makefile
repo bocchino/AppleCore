@@ -1,9 +1,9 @@
-include ${APPLECORE}/Defs.common
+include $(APPLECORE)/Defs.common
 
 SC-AVM-ASM += -i ../Editor/avm
 
 TARGET=INSTALL.APPLESOFT
 
-include ${APPLECORE}/Makefile.avm.common
+include $(APPLECORE)/Makefile.avm.common
 
 

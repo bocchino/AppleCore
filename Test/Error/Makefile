@@ -1,3 +1,3 @@
-MAKE_ALL=perl ${APPLECORE}/Scripts/make-all-error.pl
+MAKE_ALL=perl $(APPLECORE)/Scripts/make-all-error.pl
 
-include ${APPLECORE}/Makefile.ac.common
+include $(APPLECORE)/Makefile.ac.several.common

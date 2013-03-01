@@ -7,12 +7,12 @@ all : FP INT
 	cp BootFP/obj/* FP
 	cp InstallFP/obj/* FP
 	cp InstallINT/obj/* FP
-	cp ${APPLECORE}/ROMs/ROM.77.EDITOR.OBJ FP
+	cp $(APPLECORE)/ROMs/ROM.77.EDITOR.OBJ FP
 	cp Editor/obj/* FP
 	cp BootINT/obj/* INT
 	cp InstallINT/obj/* INT
 	cp Editor/obj/* INT
-	cp ${APPLECORE}/ROMs/ROM.77.EDITOR.OBJ INT
+	cp $(APPLECORE)/ROMs/ROM.77.EDITOR.OBJ INT
 
 FP : 
 	mkdir $@

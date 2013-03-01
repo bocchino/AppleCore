@@ -1,14 +1,9 @@
 include ${APPLECORE}/Defs.common
 
-TF=RODS.COLOR.PATTERN.OBJ
+TARGET=RODS.COLOR.PATTERN
 
-DECLS=${LIB-AC}/ac/IO.ac:${LIB-AC}/ac/STRING.ac:${LIB-AC}/ac/CHAR.ac:${LIB-AC}/ach/MON.ach:${LIB-AC}/ach/BOOLEAN.ach:${LIB-AC}/ac/GRAPHICS.ac:${LIB-AC}/ac/PRINT.WORDS.ac:${LIB-AC}/ach/SOFT.SWITCHES.ach
-
-ACC += -decls=${DECLS} -tf=${TF}
+ACC-DECLS=${LIB-AC}/ac/IO.ac:${LIB-AC}/ac/STRING.ac:${LIB-AC}/ac/CHAR.ac:${LIB-AC}/ach/MON.ach:${LIB-AC}/ach/BOOLEAN.ach:${LIB-AC}/ac/GRAPHICS.ac:${LIB-AC}/ac/PRINT.WORDS.ac:${LIB-AC}/ach/SOFT.SWITCHES.ach
 
 SC-AVM-ASM += -i ../Assembly/avm
-
-all : obj all-avm
-	${SC-AVM-ASM} avm/RODS.COLOR.PATTERN.avm
 
 include ${APPLECORE}/Makefile.ac.common

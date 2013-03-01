@@ -1,9 +1,6 @@
-include ${APPLECORE}/Defs.common
+include $(APPLECORE)/Defs.common
 
-DECLS=${LIB-AC}/ac/IO.ac
-ACC += -decls=${DECLS} -tf=HELLO.WORLD.OBJ
+ACC-DECLS=$(LIB-AC)/ac/IO.ac
+TARGET=HELLO.WORLD
 
-all : obj all-avm
-	${SC-AVM-ASM} avm/HELLO.WORLD.avm
-
-include ${APPLECORE}/Makefile.ac.common
+include $(APPLECORE)/Makefile.ac.common

@@ -1,9 +1,22 @@
+#
+# Common definitions for AppleCore makefiles
+#
+
+# AppleCore source files
+SRCS = ${wildcard ac/*.ac}
+
+# AppleCore libraries
 LIB=${APPLECORE}/Lib
 LIB-AC=${LIB}/AppleCore
 LIB-AVM=${LIB}/Assembly
+
+# AppleCore runtime
 RUNTIME=${APPLECORE}/Runtime
 
+# AppleCore compiler
 ACC = ${APPLECORE}/Compiler/bin/acc
 
-SC-AVM-ASM = ${APPLECORE}/Assembler/bin/sc-avm-asm -i ${LIB-AC}/avm:${LIB-AVM}/avm:${RUNTIME}/avm:avm -d obj ${OPTS}
+# AppleCore/6502 assembler
+SC-AVM-ASM = ${APPLECORE}/Assembler/bin/sc-avm-asm\
+ -i ${LIB-AC}/avm:${LIB-AVM}/avm:${RUNTIME}/avm:avm -d obj ${OPTS}
 
