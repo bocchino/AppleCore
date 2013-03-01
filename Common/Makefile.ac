@@ -1,5 +1,5 @@
 #
-# Makefile for translating AppleCore source files.
+# Makefile for translating several AppleCore source files.
 #
 ACC      ?= $(APPLECORE)/Compiler/bin/acc
 SRCS     ?= $(wildcard ac/*.ac)
@@ -9,17 +9,17 @@ ifdef ACC-DECLS
       ACC += -decls=$(ACC-DECLS)
 endif
 
-ifdef TARGET
-      ACC += -tf=$(TARGET).OBJ
-endif
-
-# Build object code
+# Build all files avm/*.avm into obj/*.OBJ
 obj : $(SRCS)
+	$(MAKE-OBJ)
 	make avm
 	rm -Rf obj
 	mkdir obj
-	$(MAKE-OBJ)
-	$(SC-AVM-ASM) avm/$(TARGET).avm
+	$(MAKE_ALL) avm obj
+
+# Build one file avm/FILE.avm into obj/FILE.OBJ
+obj/$(FILE).obj : avm/$(FILE).avm obj
+	$(SC-AVM-ASM) avm/$(FILE).avm
 
 # Build all files ac/*.ac into avm/*.avm
 avm : $(SRCS)
