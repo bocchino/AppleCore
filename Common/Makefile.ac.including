@@ -7,4 +7,4 @@ SC-AVM-ASM += -i Include/avm
 MAKE-OBJ= make -C Include
 MAKE-CLEAN= make -C Include clean
 
-include $(APPLECORE)/Makefile.ac.common
+include $(APPLECORE)/Common/Makefile.ac

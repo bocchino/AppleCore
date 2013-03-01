@@ -1,9 +1,9 @@
-include $(APPLECORE)/Defs.common
+include $(APPLECORE)/Common/Defs
 
 SC-AVM-ASM += -i ../Editor/avm
 
 TARGET=INSTALL.ROM.77
 
-include $(APPLECORE)/Makefile.avm.common
+include $(COMMON)/Makefile.avm
 
 

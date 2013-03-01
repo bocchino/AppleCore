@@ -1,7 +1,7 @@
-include $(APPLECORE)/Defs.common
+include $(APPLECORE)/Common/Defs
 
 TARGET=SHELL.EDITOR
 
-include $(APPLECORE)/Makefile.avm.common
+include $(COMMON)/Makefile.avm
 
 

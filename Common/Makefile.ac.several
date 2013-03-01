@@ -5,7 +5,9 @@ ACC      ?= $(APPLECORE)/Compiler/bin/acc
 SRCS     ?= $(wildcard ac/*.ac)
 MAKE_ALL ?= perl $(APPLECORE)/Scripts/make-all.pl
 
-ACC += -decls=$(ACC-DECLS)
+ifdef ACC-DECLS
+      ACC += -decls=$(ACC-DECLS)
+endif
 
 # Build all files avm/*.avm into obj/*.OBJ
 obj : $(SRCS)

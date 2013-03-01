@@ -1,7 +1,7 @@
-include ${APPLECORE}/Defs.common
+include $(APPLECORE)/Common/Defs
 
 SC-AVM-ASM += -i ../AppleCore/avm
 TARGET=CHAIN
 
-include ${APPLECORE}/Makefile.avm.common
+include $(COMMON)/Makefile.avm
 

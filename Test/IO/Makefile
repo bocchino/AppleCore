@@ -1,5 +1,5 @@
-include $(APPLECORE)/Defs.common
+include $(APPLECORE)/Common/Defs
 
 ACC-DECLS=$(LIB-AC)/ac/IO.ac:$(LIB-AC)/ach/MON.ach:$(LIB-AC)/ach/BOOLEAN.ach
 
-include $(APPLECORE)/Makefile.ac.several.common
+include $(COMMON)/Makefile.ac.several
