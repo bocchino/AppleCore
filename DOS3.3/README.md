@@ -3,11 +3,11 @@ AppleCore/DOS3.3
 
 This directory contains the following Apple II DOS 3.3 disk images:
 
-1.  EXAMPLES.dsk: Object code for the programs in AppleCore/Examples,
+1.  PROGRAMS.dsk: Object code for the programs in AppleCore/Programs,
     except for Below the Basement.
 
 2.  BTB.dsk: Object code for the program "Below the Basement" in
-    AppleCore/Examples/BelowTheBasement.
+    AppleCore/Programs/Games/BelowTheBasement.
 
 3.  SHELL.EDITOR.FP.dsk: Applesoft version of the shell editor.
 
