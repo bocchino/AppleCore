@@ -1,12 +1,18 @@
 #
-# Makefile for translating AVM files
+# Makefile for translating top-level AVM files, when there is no
+# AppleCore source.
 #
-SC-AVM-ASM ?= $(APPLECORE)/Assembler/bin/sc-avm-asm -i $(APPLECORE)/Lib/avm:$(APPLECORE)/Lib-AVM/avm:$(APPLECORE)/Runtime/avm:avm -d obj $(OPTS)
+SRCS     ?= $(wildcard avm/*.avm)
 
-obj :
+# Build all files avm/*.avm into obj/*.OBJ
+obj : $(SRCS)
 	rm -Rf $@
 	mkdir $@
-	$(SC-AVM-ASM) avm/$(TARGET).avm
+	$(MAKE_ALL) avm obj
+
+# Build one file avm/FILE.avm into obj/FILE.OBJ
+obj/$(FILE).obj : avm/$(FILE).avm obj
+	$(SC-AVM-ASM) avm/$(FILE).avm
 
 clean :
 	rm -Rf obj

@@ -21,3 +21,5 @@ ACC = $(APPLECORE)/Compiler/bin/acc
 SC-AVM-ASM = $(APPLECORE)/Assembler/bin/sc-avm-asm\
  -i $(LIB-AC)/avm:$(LIB-AVM)/avm:$(RUNTIME)/avm:avm -d obj $(OPTS)
 
+# Build script
+MAKE_ALL = perl $(APPLECORE)/Scripts/make-all.pl

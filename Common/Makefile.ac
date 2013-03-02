@@ -1,20 +1,17 @@
 #
-# Makefile for translating several AppleCore source files.
+# Makefile for translating AppleCore source files
 #
-ACC      ?= $(APPLECORE)/Compiler/bin/acc
-SRCS     ?= $(wildcard ac/*.ac)
-MAKE_ALL ?= perl $(APPLECORE)/Scripts/make-all.pl
+SRCS += $(wildcard ac/*.ac)
 
 ifdef ACC-DECLS
       ACC += -decls=$(ACC-DECLS)
 endif
 
 # Build all files avm/*.avm into obj/*.OBJ
-obj : $(SRCS)
+obj : avm
 	$(MAKE-OBJ)
-	make avm
-	rm -Rf obj
-	mkdir obj
+	rm -Rf $@
+	mkdir $@
 	$(MAKE_ALL) avm obj
 
 # Build one file avm/FILE.avm into obj/FILE.OBJ
@@ -23,8 +20,8 @@ obj/$(FILE).obj : avm/$(FILE).avm obj
 
 # Build all files ac/*.ac into avm/*.avm
 avm : $(SRCS)
-	rm -Rf avm
-	mkdir avm
+	rm -Rf $@
+	mkdir $@
 	$(MAKE_ALL) ac avm
 
 # Build one file ac/FILE.ac into avm/FILE.avm
@@ -35,4 +32,4 @@ clean :
 	rm -Rf avm obj
 	$(MAKE-CLEAN)
 
-.PHONY: clean obj-dir
+.PHONY: clean
