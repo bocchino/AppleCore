@@ -1,24 +1,39 @@
-all : FP INT
-	make -C BootFP
-	make -C BootINT
+EDITOR-ROM=$(APPLECORE)/ROMs/ROM.77.EDITOR.OBJ
+EDITOR-MON=$(APPLECORE)/ROMS/MON.77.EDITOR.OBJ
+
+all : INT FP
+
+INT : BootINT/obj InstallINT/obj Editor/obj $(EDITOR-ROM)
+	rm -Rf $@
+	mkdir $@
+	cp BootINT/obj/* $@
+	cp InstallINT/obj/* $@
+	cp Editor/obj/* $@
+	cp $(EDITOR-ROM) $@
+
+FP : BootFP/obj InstallFP/obj Editor/obj $(EDITOR-ROM) $(EDITOR-MON)
+	rm -Rf $@
+	mkdir $@
+	cp BootFP/obj/* $@
+	cp InstallFP/obj/* $@
+	cp Editor/obj/* $@
+	cp $(EDITOR-ROM) $@
+	cp $(EDITOR-MON) $@
+
+BootINT/obj :
+	make -C BootInt
+
+InstallINT/obj :
 	make -C InstallINT
+
+BootFP/obj :
+	make -C BootFP
+
+InstallFP/obj :
 	make -C InstallFP
+
+Editor/obj :
 	make -C Editor
-	cp BootFP/obj/* FP
-	cp InstallFP/obj/* FP
-	cp InstallINT/obj/* FP
-	cp $(APPLECORE)/ROMs/ROM.77.EDITOR.OBJ FP
-	cp Editor/obj/* FP
-	cp BootINT/obj/* INT
-	cp InstallINT/obj/* INT
-	cp Editor/obj/* INT
-	cp $(APPLECORE)/ROMs/ROM.77.EDITOR.OBJ INT
-
-FP : 
-	mkdir $@
-
-INT : 
-	mkdir $@
 
 clean :
 	make -C BootFP clean
