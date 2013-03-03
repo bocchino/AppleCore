@@ -9,6 +9,7 @@ SRCS = $(wildcard ac/*.ac)
 # AppleCore libraries
 LIB=$(APPLECORE)/Lib
 LIB-AC=$(LIB)/AppleCore
+LIB-ACH=$(LIB)/AppleCore/ach
 LIB-AVM=$(LIB)/Assembly
 
 # AppleCore runtime
