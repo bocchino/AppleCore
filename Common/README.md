@@ -24,6 +24,8 @@ automatically linked in during assembly), then do the following:
    ACC-DECLS that provides the argument to -decls on the acc command
    line, then includes Makefile.ac from this directory.
 
+**Example:** ${APPLECORE}/Programs/Games/Snake
+
 Issuing make does the following:
 
 1. Compiles ac to a new directory avm, using ACC-DECLS to find the
@@ -36,15 +38,13 @@ Issuing make does the following:
 Directory obj contains a compiled binary PROGRAM.OBJ which you can
 load directly into Virtual ][.
 
-_Example:_ ${APPLECORE}/Programs/Games/Snake
-
 Multiple programs, each consisting of a single file, can be compiled
 this way.  For example, if directory ac contains PROGRAM1.ac and
 PROGRAM2.ac, both of which are complete AppleCore programs, then
 issuing make will create an obj directory containing the compiled
 binaries PROGRAM1.OBJ and PROGRAM2.OBJ.
 
-_Example:_ ${APPLECORE}/Test/Good
+**Example:** ${APPLECORE}/Test/Good
 
 If your program includes handwritten avm files, then see item XX
 below.
@@ -82,7 +82,7 @@ Issuing make in the top-level directory does the following:
 
 The directory obj contains the compiled binary TOP.LEVEL.OBJ.
 
-_Example:_ ${APPLECORE}/Programs/Games/Snake
+**Example:** ${APPLECORE}/Programs/Games/Snake
 
 Multiple top-level programs can be compiled this way, as described in
 item 1 above.
@@ -111,7 +111,7 @@ following:
    That line tells the assembler where to find the included assembly
    files.
 
-_Example:_ ${APPLECORE}/Programs/Graphics/RodsColorPattern
+**Example:** ${APPLECORE}/Programs/Graphics/RodsColorPattern
 
 4\. Top-level handwritten assembly files
 ----------------------------------------
