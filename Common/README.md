@@ -12,7 +12,7 @@ release.
 1\. Single top-level AppleCore source files
 -------------------------------------------
 
-**Single program:** If your program consists of a single AppleCore
+**Single program:** If your program comprises a single AppleCore
 source file (not counting the AppleCore library files, which are
 precompiled and automatically linked in during assembly), then do the
 following:
@@ -30,7 +30,8 @@ also includes the line
 
   `ACC += -native`
 
-which instructs acc to generate native code.
+which instructs acc to generate native code. To generate interpreted
+AVM code, you would take that line out.
 
 Issuing make does the following:
 
@@ -57,9 +58,10 @@ assembly files, then see item 3 below.
 2\. Top-level and included AppleCore source files
 -------------------------------------------------
 
-If your program consists of a top-level AppleCore source file that
-includes code compiled from other AppleCore source files (again not
-counting the AppleCore library files), then do the following:
+**Single program:** If your program comprises a top-level AppleCore
+source file that includes code compiled from other AppleCore source
+files (again not counting the AppleCore library files), then do the
+following:
 
 1. Give the top-level source file the suffix ac and put it in a
    directory ac, e.g., ac/TOP.LEVEL.ac.
@@ -77,7 +79,7 @@ counting the AppleCore library files), then do the following:
    b. Write a makefile as in step 2 above, except that it includes
       $(COMMON)/Makefile.ac.included.
 
-**Example:** ${APPLECORE}/Programs/Games/Snake
+*Example:* ${APPLECORE}/Programs/Games/Snake
 
 Issuing make in the top-level directory does the following:
 
@@ -89,11 +91,11 @@ Issuing make in the top-level directory does the following:
 
 The directory obj contains the compiled binary TOP.LEVEL.OBJ.
 
-Multiple top-level programs can be compiled this way, as described in
-item 1 above.
+**Multiple programs:** Multiple top-level programs can be compiled
+this way, as described in item 1 above.
 
-If your program includes handwritten assembly files, then see item 3
-below.
+**Handwritten assembly files:** If your program includes handwritten
+assembly files, then see item 3 below.
 
 3\. Included handwritten assembly files
 ----------------------------------------
@@ -117,7 +119,7 @@ files.  To do that, do the following:
    That line tells the assembler where to find the included assembly
    files.
 
-**Example:** ${APPLECORE}/Programs/Graphics/RodsColorPattern
+*Example:* ${APPLECORE}/Programs/Graphics/RodsColorPattern
 
 Invoking make in the AppleCore directory produces a file obj with the
 generated object code.
@@ -151,12 +153,12 @@ that case, do the following:
    files in include mode, as in the Include directory described in
    item 2 above.
 
-**Examples:** ${APPLECORE}/Programs/Examples/Chain,
+*Examples:* ${APPLECORE}/Programs/Examples/Chain,
 ${APPLECORE}/Programs/Games/BelowTheBasement
 
 Running make in AppleCore, then running make in Assembly creates a
 file Assembly/obj with the compiled object code.  As shown in the
-examples, you can write a simple top-level makefile providing a single
+examples, you can write a simple top-level makefile with a single
 target that carries out both of these steps.
 
 
