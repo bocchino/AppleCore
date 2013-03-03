@@ -1,5 +1,5 @@
 include $(APPLECORE)/Common/Defs
 
-ACC-DECLS=$(LIB-AC)/ac/IO.ac:$(LIB-AC)/ac/STRING.ac:$(LIB-AC)/ac/CHAR.ac:$(LIB-ACH)/MON.ach:$(LIB-ACH)/BOOLEAN.ach:$(LIB-AC)/ac/GRAPHICS.ac:$(LIB-AC)/ac/PRINT.WORDS.ac:Include/ac/MASTERMIND.INCLUDE.ac:
+ACC-DECLS=$(LIB-AC)/IO.ac:$(LIB-AC)/STRING.ac:$(LIB-AC)/CHAR.ac:$(LIB-ACH)/MON.ach:$(LIB-ACH)/BOOLEAN.ach:$(LIB-AC)/GRAPHICS.ac:$(LIB-AC)/PRINT.WORDS.ac:Include/ac/MASTERMIND.INCLUDE.ac:
 
 include $(COMMON)/Makefile.ac.including
