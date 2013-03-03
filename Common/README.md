@@ -143,6 +143,7 @@ that case, do the following:
    $(APPLECORE)/Common/Defs, then contains the following lines
 
    `TARGET=TOP.LEVEL`
+
    `SC-AVM-ASM += -i ../AppleCore/avm`
 
    then includes $(COMMON)/Makefile.avm.  Change TOP.LEVEL to your
