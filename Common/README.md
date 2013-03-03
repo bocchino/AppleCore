@@ -12,19 +12,20 @@ release.
 1\. Single top-level AppleCore source files
 -------------------------------------------
 
-If your program consists of a single AppleCore source file (not
-counting the AppleCore library files, which are precompiled and
-automatically linked in during assembly), then do the following:
+**Single program:** If your program consists of a single AppleCore
+source file (not counting the AppleCore library files, which are
+precompiled and automatically linked in during assembly), then do the
+following:
 
 1. Give the source file the suffix ac and put it in a directory
    ac, e.g., ac/PROGRAM.ac.
 
 2. At the same level as the ac directory, write a makefile that
    includes $(APPLECORE)/Common/Defs, then defines a variable
-   ACC-DECLS that providing the argument to -decls on the acc command
-   line, then includes $(COMMON)/Makefile.ac.
+   ACC-DECLS providing the argument to -decls on the acc command line,
+   then includes $(COMMON)/Makefile.ac.
 
-**Example:** ${APPLECORE}/Programs/Games/Snake
+*Example:* ${APPLECORE}/Programs/Games/Snake
 
 Issuing make does the following:
 
@@ -37,16 +38,16 @@ Issuing make does the following:
 Directory obj contains a compiled binary PROGRAM.OBJ which you can
 load directly into Virtual ][.
 
-Multiple programs, each consisting of a single file, can be compiled
-this way.  For example, if directory ac contains PROGRAM1.ac and
-PROGRAM2.ac, both of which are complete AppleCore programs, then
-issuing make will create an obj directory containing the compiled
-binaries PROGRAM1.OBJ and PROGRAM2.OBJ.
+**Multiple programs:** Multiple programs, each consisting of a single
+file, can be compiled this way.  For example, if directory ac contains
+PROGRAM1.ac and PROGRAM2.ac, both of which are complete AppleCore
+programs, then issuing make will create an obj directory containing
+the compiled binaries PROGRAM1.OBJ and PROGRAM2.OBJ.
 
-**Example:** ${APPLECORE}/Test/Good
+*Example:* ${APPLECORE}/Test/Good
 
-If your program includes handwritten assembly files, then see item 3
-below.
+**Handwritten assembly files:** If your program includes handwritten
+assembly files, then see item 3 below.
 
 2\. Top-level and included AppleCore source files
 -------------------------------------------------
