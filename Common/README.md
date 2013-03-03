@@ -109,14 +109,7 @@ files.  To do that, do the following:
 2. In the Assembly directory, create a directory avm that includes
    your assembly files with the suffix avm, e.g., ASSEMBLY.avm.
 
-3. In the AppleCore directory, Proceed as in item 1 or 2 above, but
-   add the following line to the top-level makefile, just after the
-   definition of ACC-DECLS:
-
-   `SC-AVM-ASM += -i ../Assembly/avm`
-
-   That line tells the assembler where to find the included assembly
-   files.
+3. In the AppleCore directory, Proceed as in item 1 or 2 above.
 
 *Example:* ${APPLECORE}/Programs/Graphics/RodsColorPattern
 
@@ -140,11 +133,9 @@ that case, do the following:
    TOP.LEVEL.avm.
 
 3. In the Assembly directory, write a makefile that includes
-   $(APPLECORE)/Common/Defs, then contains the following lines
+   $(APPLECORE)/Common/Defs, then contains the line
 
    `TARGET=TOP.LEVEL`
-
-   `SC-AVM-ASM += -i ../AppleCore/avm`
 
    then includes $(COMMON)/Makefile.avm.  Change TOP.LEVEL to your
    actual program name, of course.
