@@ -12,10 +12,10 @@ release.
 1\. Single top-level AppleCore source files
 -------------------------------------------
 
-**Single program:** If your program comprises a single AppleCore
-source file (not counting the AppleCore library files, which are
-precompiled and automatically linked in during assembly), then do the
-following:
+**Single program:** If you want to compile a single program comprising
+a single AppleCore source file (not counting the AppleCore library
+files, which are precompiled and automatically linked in during
+assembly), then do the following:
 
 1. Give the source file the suffix ac and put it in a directory
    ac, e.g., ac/PROGRAM.ac.
@@ -58,10 +58,9 @@ assembly files, then see item 3 below.
 2\. Including AppleCore source files
 ------------------------------------
 
-**Single program:** If your program comprises a top-level AppleCore
-source file that includes code compiled from other AppleCore source
-files (again not counting the AppleCore library files), then do the
-following:
+**Single program:** If you want to compile a single program comprising
+several AppleCore source files (again not counting the AppleCore
+library files), then do the following:
 
 1. Give the top-level source file the suffix ac and put it in a
    directory ac, e.g., ac/TOP.LEVEL.ac.
