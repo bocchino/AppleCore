@@ -10,17 +10,18 @@ SRCS = $(wildcard ac/*.ac)
 LIB=$(APPLECORE)/Lib
 LIB-AC=$(LIB)/AppleCore
 LIB-ACH=$(LIB)/AppleCore/ach
-LIB-AVM=$(LIB)/Assembly
+LIB-AC-AVM=$(LIB)/AppleCore/avm
+LIB-AVM=$(LIB)/Assembly/avm
 
 # AppleCore runtime
-RUNTIME=$(APPLECORE)/Runtime
+RUNTIME=$(APPLECORE)/Runtime/avm
 
 # AppleCore compiler
 ACC = $(APPLECORE)/Compiler/bin/acc
 
 # AppleCore/6502 assembler
 SC-AVM-ASM = $(APPLECORE)/Assembler/bin/sc-avm-asm\
- -i $(LIB-AC)/avm:$(LIB-AVM)/avm:$(RUNTIME)/avm:avm -d obj $(OPTS)
+ -i $(LIB-AC-AVM):$(LIB-AVM):$(RUNTIME):avm -d obj $(OPTS)
 
 # Build script
 MAKE_ALL = perl $(APPLECORE)/Scripts/make-all.pl
