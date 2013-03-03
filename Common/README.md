@@ -55,8 +55,8 @@ the compiled binaries PROGRAM1.OBJ and PROGRAM2.OBJ.
 **Handwritten assembly files:** If your program includes handwritten
 assembly files, then see item 3 below.
 
-2\. Top-level and included AppleCore source files
--------------------------------------------------
+2\. Including AppleCore source files
+------------------------------------
 
 **Single program:** If your program comprises a top-level AppleCore
 source file that includes code compiled from other AppleCore source
@@ -97,7 +97,7 @@ this way, as described in item 1 above.
 **Handwritten assembly files:** If your program includes handwritten
 assembly files, then see item 3 below.
 
-3\. Included handwritten assembly files
+3\. Including handwritten assembly files
 ----------------------------------------
 
 If you need a routine that runs very fast, then you can write most of
