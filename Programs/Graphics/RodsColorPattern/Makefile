@@ -1,4 +1,6 @@
-all :
+all : AppleCore/obj
+
+AppleCore/obj :
 	make -C AppleCore
 
 clean :
