@@ -4,11 +4,11 @@
 #
 SRCS     ?= $(wildcard avm/*.avm)
 
-# Build all files avm/*.avm into obj/*.OBJ
+# Build target file
 obj : $(SRCS)
 	rm -Rf $@
 	mkdir $@
-	$(MAKE_ALL) avm obj
+	make obj/$(TARGET).obj FILE=$(TARGET)
 
 # Build one file avm/FILE.avm into obj/FILE.OBJ
 obj/$(FILE).obj : avm/$(FILE).avm obj
