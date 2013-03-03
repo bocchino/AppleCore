@@ -20,9 +20,9 @@ automatically linked in during assembly), then do the following:
    ac, e.g., ac/PROGRAM.ac.
 
 2. At the same level as the ac directory, write a makefile that
-   includes the file Defs from this directory, then defines a variable
+   includes $(APPLECORE)/Common/Defs, then defines a variable
    ACC-DECLS that provides the argument to -decls on the acc command
-   line, then includes Makefile.ac from this directory.
+   line, then includes $(COMMON)/Makefile.ac.
 
 **Example:** ${APPLECORE}/Programs/Games/Snake
 
@@ -46,7 +46,7 @@ binaries PROGRAM1.OBJ and PROGRAM2.OBJ.
 
 **Example:** ${APPLECORE}/Test/Good
 
-If your program includes handwritten avm files, then see item XX
+If your program includes handwritten assembly files, then see item 3
 below.
 
 2\. Top-level and included AppleCore source files
@@ -87,15 +87,15 @@ The directory obj contains the compiled binary TOP.LEVEL.OBJ.
 Multiple top-level programs can be compiled this way, as described in
 item 1 above.
 
-If your program includes handwritten avm files, then see item XX
+If your program includes handwritten assembly files, then see item 3
 below.
 
 3\. Included handwritten assembly files
 ----------------------------------------
 
-Sometimes it's useful to write AVM or 6502 assembly files by hand, if
-you need a routine that runs really fast.  To do that, do the
-following:
+If you need a routine that runs very fast, then you can write most of
+your program in AppleCore but include one or more handwritten assembly
+files.  To do that, do the following:
 
 1. At the top level, create directories AppleCore and Assembly for the
    AppleCore and assembly parts of your program.
@@ -104,7 +104,8 @@ following:
    your assembly files with the suffix avm, e.g., ASSEMBLY.avm.
 
 3. In the AppleCore directory, Proceed as in item 1 or 2 above, but
-   add the following line to the top-level makefile:
+   add the following line to the top-level makefile, just after the
+   definition of ACC-DECLS:
 
    `SC-AVM-ASM += -i ../Assembly/avm`
 
@@ -113,8 +114,44 @@ following:
 
 **Example:** ${APPLECORE}/Programs/Graphics/RodsColorPattern
 
+Invoking make in the AppleCore directory produces a file obj with the
+generated object code.
+
 4\. Top-level handwritten assembly files
 ----------------------------------------
 
-TODO
+If you need finer-grained control over the layout of parts of your
+program than is provided by the acc compiler options, then you can
+write a top-level assembly program that includes one or more assembly
+files (either compiled from AppleCore, or handwritten, or both).  In
+that case, do the following:
+
+1. At the top level, create directories AppleCore and Assembly for the
+   AppleCore and assembly parts of your program.
+
+2. In the Assembly directory, create a directory avm that includes
+   your top-level assembly file with the suffix avm, e.g.,
+   TOP.LEVEL.avm.
+
+3. In the Assembly directory, write a makefile that includes
+   $(APPLECORE)/Common/Defs, then contains the following lines
+
+   `TARGET=TOP.LEVEL`
+   `SC-AVM-ASM += -i ../AppleCore/avm`
+
+   then includes $(COMMON)/Makefile.avm.  Change TOP.LEVEL to your
+   actual program name, of course.
+
+4. Set up the AppleCore directory so that it compiles your AppleCore
+   files in include mode, as in the Include directory described in
+   item 2 above.
+
+**Examples:** ${APPLECORE}/Programs/Examples/Chain,
+${APPLECORE}/Programs/Games/BelowTheBasement
+
+Running make in AppleCore, then running make in Assembly creates a
+file Assembly/obj with the compiled object code.  As shown in the
+examples, you can write a simple top-level makefile providing a single
+target that carries out both of these steps.
+
 
