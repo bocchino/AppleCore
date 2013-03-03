@@ -3,9 +3,6 @@
 #
 COMMON=$(APPLECORE)/Common
 
-# AppleCore source files
-SRCS = $(wildcard ac/*.ac)
-
 # AppleCore libraries
 LIB=$(APPLECORE)/Lib
 LIB-AC=$(LIB)/AppleCore/ac

@@ -2,12 +2,16 @@
 # Makefile for translating AppleCore source files,
 # to be included in top-level compilation.
 #
+
+# AppleCore source files
 SRCS += $(wildcard ac/*.ac)
 
+# Add user-specified decls to acc command line
 ifdef ACC-DECLS
       ACC += -decls=$(ACC-DECLS)
 endif
 
+# Compile in include mode
 ACC += -include
 
 # Build all files ac/*.ac into avm/*.avm

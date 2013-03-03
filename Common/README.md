@@ -109,7 +109,7 @@ files.  To do that, do the following:
 2. In the Assembly directory, create a directory avm that includes
    your assembly files with the suffix avm, e.g., ASSEMBLY.avm.
 
-3. In the AppleCore directory, Proceed as in item 1 or 2 above.
+3. In the AppleCore directory, proceed as in item 1 or 2 above.
 
 *Example:* ${APPLECORE}/Programs/Graphics/RodsColorPattern
 

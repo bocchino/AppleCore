@@ -2,7 +2,9 @@
 # Makefile for translating top-level AVM files, when there is no
 # AppleCore source.
 #
-SRCS     ?= $(wildcard avm/*.avm)
+
+# AVM source files
+SRCS += $(wildcard avm/*.avm)
 
 # Build target file
 obj : $(SRCS)

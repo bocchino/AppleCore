@@ -1,8 +1,11 @@
 #
 # Makefile for translating AppleCore source files
 #
+
+# AppleCore source files
 SRCS += $(wildcard ac/*.ac)
 
+# Add user-specified decls to acc command line
 ifdef ACC-DECLS
       ACC += -decls=$(ACC-DECLS)
 endif
