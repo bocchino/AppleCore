@@ -25,7 +25,12 @@ following:
    ACC-DECLS providing the argument to -decls on the acc command line,
    then includes $(COMMON)/Makefile.ac.
 
-*Example:* ${APPLECORE}/Programs/Games/Snake
+*Example:* ${APPLECORE}/Programs/Games/Snake. Notice that the Makefile
+also includes the line
+
+  `ACC += -native`
+
+which instructs acc to generate native code.
 
 Issuing make does the following:
 
