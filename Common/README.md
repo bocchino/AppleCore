@@ -29,8 +29,8 @@ following:
 
 Issuing make does the following:
 
-1. Compiles ac to a new directory avm, using the definitions given in
-   the files listed in ACC-DECLS.
+1. Compiles ac to a new directory avm, reading definitions from the
+   files listed in ACC-DECLS.
 
 2. Compiles avm to a new directroy obj.  The AppleCore libraries
    and runtime are automatically made available during this step.
