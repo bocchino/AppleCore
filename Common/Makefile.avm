@@ -6,6 +6,9 @@
 # AVM source files
 SRCS += $(wildcard avm/*.avm)
 
+# Add generated assembly files to include path
+SC-AVM-ASM += -i ../AppleCore/avm:../AppleCore/Include/avm
+
 # Build target file
 obj : $(SRCS)
 	rm -Rf $@

@@ -18,7 +18,7 @@ ACC = $(APPLECORE)/Compiler/bin/acc
 
 # AppleCore/6502 assembler
 SC-AVM-ASM = $(APPLECORE)/Assembler/bin/sc-avm-asm\
- -i $(LIB-AC-AVM):$(LIB-AVM):$(RUNTIME):avm:../Assembly/avm:../Applecore/avm -d obj $(OPTS)
+ -i $(LIB-AC-AVM):$(LIB-AVM):$(RUNTIME):avm:../Assembly/avm -d obj $(OPTS)
 
 # Build script
 MAKE_ALL = perl $(APPLECORE)/Scripts/make-all.pl
