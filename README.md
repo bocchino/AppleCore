@@ -153,7 +153,7 @@ See the Virtual ][ documentation for more details.
 -------------------------------
 
 The acc options are described below.  If you use one of the predefined
-compilation strategies in ${APPLECORE}/Common, then you can avoid
+compilation patterns in ${APPLECORE}/Common, then you can avoid
 invoking acc or specifying these options directly.  See
 ${APPLECORE}/Common/README.md.
 
@@ -249,7 +249,7 @@ You can get documentation on the SC Macro Assembler format and
 directives here: http://stjarnhimlen.se/apple2/.  
 
 **Options:** The sc-avm-scm options are described below.  If you use
-one of the predefined compilation strategies in ${APPLECORE}/Common,
+one of the predefined compilation patterns in ${APPLECORE}/Common,
 then you can avoid invoking sc-avm-scm or specifying these options
 directly.  See ${APPLECORE}/Common/README.md.
 
