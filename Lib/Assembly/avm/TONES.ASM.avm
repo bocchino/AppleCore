@@ -1,22 +1,32 @@
 * -------------------------------
 * SIMPLE TONE GENERATOR
 * -------------------------------
+* STORAGE FOR LOOP COUNTER
+* -------------------------------
 COUNTER .BS 3
+* -------------------------------
+* TONE GENERATION
+* -------------------------------
 TONE.ASM
+* OUTER LOOP HAS 8 REPS
 	LDA #8
 	STA COUNTER+2
+* SAVE REPS TO COUNTER[0,2]
 .1	LDA REPS
 	STA COUNTER
 	LDA REPS+1
 	STA COUNTER+1
+* CLICK SPEAKER, OR NOT (FOR REST)
 .2	LDY #0
 	LDA ($44),Y
+* DELAY LOOP TO GOVERN PITCH
 	LDX DELAY+1
 .3	LDY DELAY
 .4	DEY
 	BNE .4
 	DEX
 	BNE .3
+* DECREMENT COUNTER FOR NUMBER OF REPS
 	LDA COUNTER
 	ORA COUNTER+1
 	BEQ .5
