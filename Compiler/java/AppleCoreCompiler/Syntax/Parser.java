@@ -66,7 +66,8 @@ public class Parser {
 	FileReader fr = null;
 	try {
 	    fr = new FileReader(sourceFileName);
-	    scanner = new Scanner(new BufferedReader(fr));
+	    scanner = new Scanner(new BufferedReader(fr),
+				  sourceFileName);
 	    scanner.getNextToken();
 	    sourceFile = parseSourceFile();
 	}
@@ -138,6 +139,7 @@ public class Parser {
 	    break;
 	default:
 	    throw SyntaxError.expected("declaration",
+				       sourceFileName,
 				       token);
 	}
 	return result;
@@ -494,6 +496,7 @@ public class Parser {
 	Expression expr = parseExpression();
 	if (!(expr instanceof CallExpression)) {
 	    throw new SyntaxError("not a statement",
+				  sourceFileName,
 				  scanner.getLineNumber());
 	}
 	callStmt.expr = (CallExpression) expr;
@@ -558,7 +561,9 @@ public class Parser {
 	    break;
 	}
 	if (result == null) {
-	    throw SyntaxError.expected("expression", token);
+	    throw SyntaxError.expected("expression", 
+				       sourceFileName,
+				       token);
 	}
 	while (true) {
 	    // Check for binary op
@@ -683,7 +688,8 @@ public class Parser {
 		}
 	    }
 	}
-	throw SyntaxError.expected("register name", token);
+	throw SyntaxError.expected("register name",
+				   sourceFileName, token);
     }
 
     /**
@@ -792,6 +798,7 @@ public class Parser {
 	if (intConstant.valueAsBigInteger().compareTo(BigInteger.ZERO) < 0 ||
 	    intConstant.valueAsBigInteger().compareTo(MAX_SIZE) > 0) {
 	    throw new SyntaxError(intConstant + " out of range",
+				  sourceFileName,
 				  scanner.getLineNumber());
 	}
 	return intConstant.valueAsBigInteger().intValue();
@@ -894,7 +901,8 @@ public class Parser {
 	if (intConstant != null) return intConstant;
 	Token token = scanner.getCurrentToken();
 	if (token != Token.CHAR_CONST) {
-	    throw SyntaxError.expected("numeric constant", token);
+	    throw SyntaxError.expected("numeric constant", 
+				       sourceFileName, token);
 	}
 	printStatus();
 	CharConstant charConstant = new CharConstant();
@@ -913,6 +921,7 @@ public class Parser {
 	IntegerConstant result = parsePossibleIntConstant();
 	if (result == null)
 	    throw SyntaxError.expected ("integer constant", 
+					sourceFileName,
 					scanner.getCurrentToken());
 	return result;
     }
@@ -951,6 +960,7 @@ public class Parser {
 	Token currentToken = scanner.getCurrentToken();
 	if (token != currentToken)
 	    throw SyntaxError.expected(token.expectedString(),
+				       sourceFileName,
 				       currentToken);
 	printStatus();
     }
@@ -965,10 +975,11 @@ public class Parser {
     }
 
     /**
-     * Set the line number of an AST node to the current line
-     * recorded in the scanner.
+     * Set the source file and line number of an AST node to the
+     * current line recorded in the scanner.
      */
     private void setLineNumberOf(Node node) {
+	node.sourceFileName = this.sourceFileName;
 	node.lineNumber = scanner.getLineNumber();
     }
 

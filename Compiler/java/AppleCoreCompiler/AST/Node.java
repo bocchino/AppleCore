@@ -12,6 +12,11 @@ import AppleCoreCompiler.AVM.*;
 public abstract class Node {
 
     /**
+     * The name of the source file containing this node.
+     */
+    public String sourceFileName;
+
+    /**
      * The line number where the first token of this node appeared in
      * the source file.
      */

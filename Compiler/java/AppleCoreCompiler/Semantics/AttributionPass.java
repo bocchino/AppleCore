@@ -58,7 +58,7 @@ public class AttributionPass
 	// Enter the built-in functions
 	enterBuiltInFunctions();
 	// Enter decls from files specified on command line
-	enterImportedDecls(sourceFile.name);
+	enterImportedDecls(sourceFile);
 	// Enter all the top-level declarations from the source file
 	// except constant decls, which may not be forward declared.
 	for (Declaration decl : sourceFile.decls) {
@@ -82,11 +82,11 @@ public class AttributionPass
 	enterDeclsFrom(builtInFns);
     }
 
-    private void enterImportedDecls(String sourceFile) 
+    private void enterImportedDecls(SourceFile sourceFile) 
 	throws ACCError
     {
 	for (String declFile : declFiles) {
-	    if (!declFile.equals(sourceFile)) {
+	    if (!declFile.equals(sourceFile.name)) {
 		enterDeclsFrom(declFile);
 	    }
 	}
@@ -98,6 +98,7 @@ public class AttributionPass
 	Parser parser = new Parser(declFile);
 	try {
 	    SourceFile sourceFile = parser.parse();
+	    // TODO: Move this to the main constant evaluation pass
 	    ConstantEvaluationPass cePass = 
 		new ConstantEvaluationPass();
 	    cePass.runOn(sourceFile);
@@ -106,11 +107,6 @@ public class AttributionPass
 		sourceFileMap.put(decl,sourceFile.name);
 	    }
 	}
-        catch (ACCError e) {
-	    System.err.print("acc: line " + e.getLineNumber() + " of " + 
-			     declFile + ": ");
-	    System.err.println(e.getMessage());
-        }
 	catch (FileNotFoundException e) {
 	    System.err.println("acc: file " + declFile + " not found");
 	}
@@ -134,7 +130,9 @@ public class AttributionPass
 	    throws SemanticError, ACCError
 	{
 	    printStatus("Adding symbol for ", node);
-	    node.expr.accept(AttributionPass.this);
+	    // Attribute the expression, for later constant evaluation
+	    if (node.expr != null)
+		node.expr.accept(AttributionPass.this);
 	    addMapping(node.label,node,map);
 	}
 	public void visitDataDecl(DataDecl node) 

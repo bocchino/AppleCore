@@ -12,14 +12,16 @@ public class SyntaxError extends ACCError {
 	super(message);
     }
 
-    public SyntaxError(String message, int lineNumber) {
-	super(message, lineNumber);
+    public SyntaxError(String message, String sourceFileName,
+		       int lineNumber) {
+	super(message, sourceFileName, lineNumber);
     }
 
     public static SyntaxError expected(String expected,
+				       String sourceFileName,
 				       Token found) {
 	return new SyntaxError("expected " + expected + " but found " +
-			       found, found.lineNumber);
+			       found, sourceFileName, found.lineNumber);
     }
 
 }

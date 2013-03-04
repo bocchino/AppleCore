@@ -12,13 +12,15 @@ public class SemanticError extends ACCError {
     }
 
     public SemanticError(String message, Node node) {
-	super(message, node.lineNumber);
+	super(message, node.sourceFileName, node.lineNumber);
     }
 
     public static SyntaxError expected(String expected,
+				       String sourceFileName,
 				       Node found) {
 	return new SyntaxError("expected " + expected + " but found " +
-			       found, found.lineNumber);
+			       found, sourceFileName,
+			       found.lineNumber);
     }
 
 }

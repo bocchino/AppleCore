@@ -18,7 +18,7 @@ public class Scanner {
         try {
             System.err.println("Scanning " + args[0] + "...");
             FileReader fr = new FileReader(args[0]);
-            Scanner scanner = new Scanner(new BufferedReader(fr));
+            Scanner scanner = new Scanner(new BufferedReader(fr),args[0]);
             Token token;
             do {
                 token = scanner.getNextToken();
@@ -55,11 +55,17 @@ public class Scanner {
     private Token currentToken;
 
     /**
+     * Stores the name of the file being scanned
+     */
+    private final String fileName;
+
+    /**
      * Constructs a new Scanner object that stores the input stream to
      * be scanned
      */
-    public Scanner(Reader input) {
+    public Scanner(Reader input, String fileName) {
 	reader = new ACCReader(input);
+	this.fileName = fileName;
     }
 
     /**
@@ -213,6 +219,7 @@ public class Scanner {
 	}
 	catch(NumberFormatException e) {
 	    throw new SyntaxError("Bad number format $" + str, 
+				  fileName,
 				  currentToken.getLineNumber());
 	}
     }
@@ -222,6 +229,7 @@ public class Scanner {
     {
 	if (val.compareTo(Token.MAX_INT) > 0) {
 	    throw new SyntaxError("integer value out of range",
+				  fileName,
 				  currentToken.getLineNumber());
 	}
     }
@@ -268,6 +276,7 @@ public class Scanner {
 	}
 	catch(NumberFormatException e) {
 	    throw new SyntaxError("Bad number format $" + str, 
+				  fileName,
 				  reader.getLineNumber());
 	}
     }
@@ -285,6 +294,7 @@ public class Scanner {
     {
 	if (ch == -1)
 	    throw new SyntaxError("Unterminated string",
+				  fileName,
 				  reader.getLineNumber());
     }
 
@@ -297,6 +307,7 @@ public class Scanner {
 	int ch2 = reader.read();
 	if (ch1 < 0 || ch2 != '\'') {
 	    throw new SyntaxError("Unterminated char literal",
+				  fileName,
 				  currentToken.getLineNumber());
 	}
 	currentToken.setStringValue(Character.toString((char)ch1));
@@ -331,6 +342,7 @@ public class Scanner {
 	    currentToken.setLineNumber(reader.getLineNumber());
 	    throw new SyntaxError("Invalid character \""
 				  + (char) ch + "\"", 
+				  fileName,
 				  currentToken.getLineNumber());
 	}
     }

@@ -17,7 +17,7 @@ public class ACCInternalError extends ACCError {
 
     public ACCInternalError(String message, Node node) {
 	super("internal compiler error: " + message, 
-	      node.lineNumber);
+	      node.sourceFileName, node.lineNumber);
     }
 
 }

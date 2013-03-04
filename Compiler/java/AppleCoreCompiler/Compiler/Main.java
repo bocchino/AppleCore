@@ -152,9 +152,7 @@ public class Main {
 	    writer.runOn(sourceFile);
 	}
 	catch (ACCError e) {
-	    System.err.print("acc: line " + e.getLineNumber() + " of " + 
-			     sourceFileName + ": ");
-	    System.err.println(e.getMessage());
+	    e.show();
 	    System.exit(1);
 	}
 	catch (FileNotFoundException e) {

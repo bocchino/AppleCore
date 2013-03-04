@@ -5,15 +5,27 @@ package AppleCoreCompiler.Errors;
 
 public abstract class ACCError extends Exception {
 
+    /**
+     * The name of the source file that produced the error
+     */
+    private String sourceFileName;
+
+    /**
+     * The line number where the error occurred
+     */
+    private int lineNumber;
+
     // CONSTRUCTORS
 
-    public ACCError(String message) {
+    public ACCError(String message, String sourceFileName,
+		    int lineNumber) {
 	super(message);
+	this.sourceFileName = sourceFileName;
+	this.lineNumber = lineNumber;
     }
 
-    public ACCError(String message, int lineNumber) {
-	super(message);
-	this.lineNumber = lineNumber;
+    public ACCError(String message) {
+	this(message, null, 0);
     }
 
     // INSTANCE METHODS
@@ -33,8 +45,12 @@ public abstract class ACCError extends Exception {
     }
 
     /**
-     * The line number where the exception occurred.
+     * Display an error message
      */
-    private int lineNumber;
+    public void show() {
+	System.err.print("acc: line " + lineNumber + " of " + 
+			 sourceFileName + ": ");
+	System.err.println(this.getMessage());
+    }
 
 }
