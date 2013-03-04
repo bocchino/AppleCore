@@ -131,9 +131,10 @@ public class AttributionPass
 	    decl.accept(this);
 	}
 	public void visitConstDecl(ConstDecl node) 
-	    throws SemanticError
+	    throws SemanticError, ACCError
 	{
 	    printStatus("Adding symbol for ", node);
+	    node.expr.accept(AttributionPass.this);
 	    addMapping(node.label,node,map);
 	}
 	public void visitDataDecl(DataDecl node) 
