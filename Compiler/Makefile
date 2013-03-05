@@ -15,9 +15,11 @@ ${wildcard java/AppleCoreCompiler/Errors/*java} \
 ${wildcard java/AppleCoreCompiler/Warnings/*java} \
 
 classes : ${SRCS}
-	rm -rf classes
-	mkdir classes
-	javac -d classes ${SRCS}
+	rm -rf $@
+	mkdir $@
+	javac -d $@ ${SRCS}
 
-clean ::
+clean :
 	rm -rf classes
+
+.PHONY : clean
