@@ -37,12 +37,14 @@ public class AttributionPass
     /**
      * A map for symbols in the global namespace
      */
-    Map<String,Node> globalSymbols = new HashMap<String,Node>();
+    private final Map<String,Node> globalSymbols = 
+	new HashMap<String,Node>();
 
     /**
      * A map for symbols in the function-local namespace
      */
-    Map<String,Node> localSymbols = new HashMap<String,Node>();
+    private final Map<String,Node> localSymbols = 
+	new HashMap<String,Node>();
 
     /**
      * The source file being attributed
