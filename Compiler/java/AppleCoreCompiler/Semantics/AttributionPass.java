@@ -45,9 +45,9 @@ public class AttributionPass
     Map<String,Node> localSymbols = new HashMap<String,Node>();
 
     /**
-     * Map to store the source file name of a node
+     * The source file being attributed
      */
-    Map<Node,String> sourceFileMap = new HashMap<Node,String>();
+    private SourceFile sourceFile;
 
     /**
      * Attribute the AST
@@ -55,10 +55,11 @@ public class AttributionPass
     public void runOn(SourceFile sourceFile) 
 	throws ACCError
     {
+	this.sourceFile = sourceFile;
 	// Enter the built-in functions
-	enterBuiltInFunctions(sourceFile);
+	enterBuiltInFunctions();
 	// Enter decls from files specified on command line
-	enterImportedDecls(sourceFile);
+	enterImportedDecls();
 	// Enter all the top-level declarations from the source file
 	// except constant decls, which may not be forward declared.
 	for (Declaration decl : sourceFile.decls) {
@@ -70,7 +71,7 @@ public class AttributionPass
 	scan(sourceFile);
     }
 
-    private void enterBuiltInFunctions(SourceFile sourceFile) 
+    private void enterBuiltInFunctions()
 	throws ACCError
     {
 	String appleCore = System.getenv("APPLECORE");
@@ -79,21 +80,20 @@ public class AttributionPass
 	}
 	String builtInFns = appleCore + 
 	    "/Compiler/java/AppleCoreCompiler/Semantics/BUILT.IN.FNS.ac";
-	enterDeclsFrom(sourceFile, builtInFns);
+	enterDeclsFrom(builtInFns);
     }
 
-    private void enterImportedDecls(SourceFile sourceFile) 
+    private void enterImportedDecls() 
 	throws ACCError
     {
 	for (String declFile : declFiles) {
 	    if (!declFile.equals(sourceFile.name)) {
-		enterDeclsFrom(sourceFile, declFile);
+		enterDeclsFrom(declFile);
 	    }
 	}
     }
 
-    private void enterDeclsFrom(SourceFile sourceFile,
-				String importFileName) 
+    private void enterDeclsFrom(String importFileName) 
 	throws ACCError
     {
 	Parser parser = new Parser(importFileName);
@@ -104,7 +104,6 @@ public class AttributionPass
 		= new LinkedList<Declaration>();
 	    for (Declaration decl : importFile.decls) {
 		insertDecl.insert(decl, globalSymbols);
-		sourceFileMap.put(decl,importFile.name);
 		if (decl instanceof ConstDecl) {
 		    // Collect imported constant decls, in the order
 		    // seen
@@ -174,10 +173,11 @@ public class AttributionPass
 	Node priorEntry = map.put(name, node);
 	// Check for symbol redefinition
 	if (priorEntry != null && priorEntry != node) {
-	    String sourceFileName = sourceFileMap.get(priorEntry);
-	    StringBuffer sb = new StringBuffer(name + " already defined at line " +
-					       priorEntry.lineNumber);
-	    if (sourceFileName != null) {
+	    String sourceFileName = node.sourceFileName;
+	    StringBuffer sb = 
+		new StringBuffer(name + " already defined at line " +
+				 priorEntry.lineNumber);
+	    if (!sourceFileName.equals(sourceFile.name)) {
 		sb.append(" of " + sourceFileName);
 	    }
 	    throw new SemanticError(sb.toString(), node);
