@@ -56,7 +56,7 @@ public class AttributionPass
 	throws ACCError
     {
 	// Enter the built-in functions
-	enterBuiltInFunctions();
+	enterBuiltInFunctions(sourceFile);
 	// Enter decls from files specified on command line
 	enterImportedDecls(sourceFile);
 	// Enter all the top-level declarations from the source file
@@ -70,7 +70,7 @@ public class AttributionPass
 	scan(sourceFile);
     }
 
-    private void enterBuiltInFunctions() 
+    private void enterBuiltInFunctions(SourceFile sourceFile) 
 	throws ACCError
     {
 	String appleCore = System.getenv("APPLECORE");
@@ -79,7 +79,7 @@ public class AttributionPass
 	}
 	String builtInFns = appleCore + 
 	    "/Compiler/java/AppleCoreCompiler/Semantics/BUILT.IN.FNS.ac";
-	enterDeclsFrom(builtInFns);
+	enterDeclsFrom(sourceFile, builtInFns);
     }
 
     private void enterImportedDecls(SourceFile sourceFile) 
@@ -87,28 +87,40 @@ public class AttributionPass
     {
 	for (String declFile : declFiles) {
 	    if (!declFile.equals(sourceFile.name)) {
-		enterDeclsFrom(declFile);
+		enterDeclsFrom(sourceFile, declFile);
 	    }
 	}
     }
 
-    private void enterDeclsFrom(String declFile) 
+    private void enterDeclsFrom(SourceFile sourceFile,
+				String importFileName) 
 	throws ACCError
     {
-	Parser parser = new Parser(declFile);
+	Parser parser = new Parser(importFileName);
 	try {
-	    SourceFile sourceFile = parser.parse();
-	    // TODO: Move this to the main constant evaluation pass
-	    ConstantEvaluationPass cePass = 
-		new ConstantEvaluationPass();
-	    cePass.runOn(sourceFile);
-	    for (Declaration decl : sourceFile.decls) {
+	    SourceFile importFile = parser.parse();
+	    // Make a fresh list of declarations
+	    List<Declaration> newDecls
+		= new LinkedList<Declaration>();
+	    for (Declaration decl : importFile.decls) {
 		insertDecl.insert(decl, globalSymbols);
-		sourceFileMap.put(decl,sourceFile.name);
+		sourceFileMap.put(decl,importFile.name);
+		if (decl instanceof ConstDecl) {
+		    // Collect imported constant decls, in the order
+		    // seen
+		    newDecls.add(decl);
+		}
 	    }
+	    // Prepend imported constant decls, so they can be
+	    // attributed, error-checked, and evaluated along with the
+	    // rest.
+	    newDecls.addAll(sourceFile.decls);
+	    // Sub in the new list
+	    sourceFile.decls = newDecls;
 	}
 	catch (FileNotFoundException e) {
-	    System.err.println("acc: file " + declFile + " not found");
+	    System.err.println("acc: file " + importFileName + 
+			       " not found");
 	}
 	catch (IOException e) {
 	    System.err.println("acc: I/O exception");
@@ -118,9 +130,8 @@ public class AttributionPass
     private InsertDecl insertDecl = new InsertDecl();
     private class InsertDecl extends NodeVisitor {
 
-	Map<String,Node> map;
-	void insert(Declaration decl, 
-		    Map<String,Node> map) 
+	private Map<String,Node> map;
+	void insert(Declaration decl, Map<String,Node> map) 
 	    throws ACCError
 	{
 	    this.map = map;
@@ -130,9 +141,6 @@ public class AttributionPass
 	    throws SemanticError, ACCError
 	{
 	    printStatus("Adding symbol for ", node);
-	    // Attribute the expression, for later constant evaluation
-	    if (node.expr != null)
-		node.expr.accept(AttributionPass.this);
 	    addMapping(node.label,node,map);
 	}
 	public void visitDataDecl(DataDecl node) 
