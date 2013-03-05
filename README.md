@@ -1,6 +1,6 @@
 The AppleCore Programming Language, v1.0
 ========================================
-Copyright (C) 2011-12 by Rob Bocchino
+Copyright (C) 2011-13 by Rob Bocchino
 
 1\. Introduction and Rationale
 ------------------------------
