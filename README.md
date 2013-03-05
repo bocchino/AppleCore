@@ -6,8 +6,7 @@ Copyright (C) 2011-12 by Rob Bocchino
 ------------------------------
 
 The goal of AppleCore is to provide a "low-level high-level" language
-for writing programs that run on the Apple II series of computers.  A
-cross-compiler that runs on Mac OS X systems is currently available.
+for writing programs that run on the Apple II series of computers.
 For more information on the design and goals of AppleCore, see
 Docs/AppleCore-Spec-v1.0.pdf.
 
@@ -28,19 +27,26 @@ particular, other than what it actually does do when you run it.
 3\. System Requirements
 -----------------------
 
-To use the AppleCore installation, you need the following:
+If you just want to run the sample programs located in the DOS3.3
+directory, then you can use any Apple II emulator that reads DOS3.3
+disk images.
+
+To compile AppleCore programs from source, you will need the
+following:
 
 1.  An Apple Macintosh computer running OS X 10.4 or later, with XCode
     command line tools installed.
 
-2.  A Java 6 Virtual Machine and javac compiler.
+2.  The Virtual ][ emulator, available at http://www.virtualii.com/.
 
-3.  The Virtual ][ emulator, available at
-    http://www.virtualii.com/.
+3.  A Java 6 Virtual Machine and javac compiler.
 
 4.  A Standard ML of New Jersey (SML/NJ) installation, available via
     macports (http://www.macports.org) or via the developers
     (http://www.smlnj.org/dist/working/110.74/index.html).
+
+With minor modifications it should also be possible to use a different
+emulator and/or a different host OS (e.g., Windows).
 
 4\. Mac Setup
 -------------
