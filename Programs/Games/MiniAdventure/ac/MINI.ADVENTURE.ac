@@ -49,5 +49,4 @@ INCLUDE "MA.STATE.AVM";
 # -----------------------------------
 INCLUDE "IO.AVM";
 INCLUDE "STRING.AVM";
-INCLUDE "CHAR.AVM";
 INCLUDE "PRINT.WORDS.AVM";

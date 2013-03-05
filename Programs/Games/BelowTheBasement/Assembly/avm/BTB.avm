@@ -37,7 +37,6 @@
 * -------------------------------
 * LIB FILES
 * -------------------------------
-	.IN CHAR.AVM
 	.IN COPY.AVM
 	.IN DOS.AVM
 	.IN IO.AVM
