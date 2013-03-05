@@ -46,7 +46,9 @@ following:
     (http://www.smlnj.org/dist/working/110.74/index.html).
 
 With minor modifications it should also be possible to use a different
-emulator and/or a different host OS (e.g., Windows).
+emulator and/or a different host OS (Linux should be straightforward;
+Windows will require the usual modifications of build scripts to
+replace Unix-style paths with Windows paths).
 
 4\. Mac Setup
 -------------
