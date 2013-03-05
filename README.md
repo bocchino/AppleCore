@@ -45,7 +45,7 @@ following:
     macports (http://www.macports.org) or via the developers
     (http://www.smlnj.org/dist/working/110.74/index.html).
 
-With minor modifications it should also be possible to use a different
+With minor modifications it should be possible to use a different
 emulator and/or a different host OS (Linux should be straightforward;
 Windows will require the usual modifications of build scripts to
 replace Unix-style paths with Windows paths).
