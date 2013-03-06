@@ -25,7 +25,7 @@ assembly), then do the following:
    ACC-DECLS providing the argument to -decls on the acc command line,
    then includes $(COMMON)/Makefile.ac.
 
-*Example:* ${APPLECORE}/Programs/Games/Snake. Notice that the Makefile
+*Example:* $APPLECORE/Programs/Games/Snake. Notice that the Makefile
 also includes the line
 
   `ACC += -native`
@@ -50,7 +50,7 @@ PROGRAM1.ac and PROGRAM2.ac, both of which are complete AppleCore
 programs, then issuing make will create an obj directory containing
 the compiled binaries PROGRAM1.OBJ and PROGRAM2.OBJ.
 
-*Example:* ${APPLECORE}/Test/Good
+*Example:* $APPLECORE/Test/Good
 
 **Handwritten assembly files:** If your program includes handwritten
 assembly files, then see item 3 below.
@@ -78,7 +78,7 @@ library files), then do the following:
    b. Write a makefile as in step 2 above, except that it includes
       $(COMMON)/Makefile.ac.included.
 
-*Example:* ${APPLECORE}/Programs/Games/Snake
+*Example:* $APPLECORE/Programs/Games/Snake
 
 Issuing make in the top-level directory does the following:
 
@@ -111,7 +111,7 @@ files.  To do that, do the following:
 
 3. In the AppleCore directory, proceed as in item 1 or 2 above.
 
-*Example:* ${APPLECORE}/Programs/Graphics/RodsColorPattern
+*Example:* $APPLECORE/Programs/Graphics/RodsColorPattern
 
 Invoking make in the AppleCore directory produces a file obj with the
 generated object code.
@@ -144,8 +144,8 @@ that case, do the following:
    files in include mode, as in the Include directory described in
    item 2 above.
 
-*Examples:* ${APPLECORE}/Programs/Examples/Chain,
-${APPLECORE}/Programs/Games/BelowTheBasement
+*Examples:* $APPLECORE/Programs/Examples/Chain,
+$APPLECORE/Programs/Games/BelowTheBasement
 
 Running make in AppleCore, then running make in Assembly creates a
 file Assembly/obj with the compiled object code.  As shown in the
