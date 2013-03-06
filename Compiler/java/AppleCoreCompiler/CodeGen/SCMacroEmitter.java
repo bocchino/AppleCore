@@ -200,10 +200,13 @@ public class SCMacroEmitter
 	{
 	    if (expr == null) throw new ACCInternalError();
 	    expr.accept(this);
+	}
+
+	private void emitPadding(boolean emitOnes) {
 	    if (paddingSize > 0) {
 		emit("\t.HS ");
 		for (int i = 0; i < paddingSize; ++i) {
-		    emit("00");
+		    emit(emitOnes ? "FF" : "00");
 		}
 		emit("\n");
 	    }
@@ -218,6 +221,9 @@ public class SCMacroEmitter
 		emit(byteAsHexString(expr.valueAtIndex(i)).toUpperCase());
 	    }
 	    emit("\n");
+	    boolean emitOnes = expr.isSigned && 
+		((expr.valueAtIndex(dataSize-1) & 0x80) != 0);
+	    emitPadding(emitOnes);
 	}
 
 	@Override
@@ -225,6 +231,7 @@ public class SCMacroEmitter
 	    throws ACCError
 	{
 	    emitAbsoluteInstruction(".DA","#'"+expr.value+"'");
+	    emitPadding(false);
 	}
 
 	@Override
@@ -237,6 +244,7 @@ public class SCMacroEmitter
 	    else {
 		emitAbsoluteInstruction(".DA",makeLabel(expr.name));
 	    }
+	    emitPadding(false);
 	}
 
 	@Override
@@ -247,6 +255,7 @@ public class SCMacroEmitter
 	    case ADDRESS:
 		if (unop.expr instanceof Identifier) {
 		    unop.expr.accept(this);
+		    emitPadding(false);
 		}
 		else {
 		    throw new ACCInternalError();
@@ -265,7 +274,5 @@ public class SCMacroEmitter
 	}
 
     }
-
-
 
 }
