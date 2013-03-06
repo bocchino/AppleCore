@@ -28,7 +28,7 @@ particular, other than what it actually does do when you run it.
 -----------------------
 
 If you just want to run the sample programs located in the DOS3.3
-directory, then you can use any Apple II emulator that reads DOS3.3
+directory, then you can use any Apple II emulator that reads DOS 3.3
 disk images.
 
 To compile AppleCore programs from source, you will need the
@@ -64,12 +64,12 @@ To set up your Mac to use AppleCore, do the following:
 3.  Set the environment variable APPLECORE to point to the top-level
     directory of the AppleCore distribution.
 
-4.  Include ${APPLECORE}/Compiler/bin, ${APPLECORE}/Assembler/bin, and
-    ${APPLECORE}/Scripts in your UNIX PATH.
+4.  Include $APPLECORE/Compiler/bin, $APPLECORE/Assembler/bin, and
+    $APPLECORE/Scripts in your UNIX PATH.
 
 5.  Build the project:
 
-    `cd ${APPLECORE}`
+    `cd $APPLECORE`
 
     `make`
 
@@ -80,12 +80,12 @@ and try again until it works.
 ------------------------------
 
 Currently the best documentation for the AppleCore language is the
-spec (${APPLECORE}/Docs/AppleCore-Spec-v1.0.pdf).  However, like most
+spec ($APPLECORE/Docs/AppleCore-Spec-v1.0.pdf).  However, like most
 language specs it's a bit dry and conveys all the details without
 enough worked examples.  Unfortunately there's no tutorial
 documentation yet.  However, after browsing the spec to get the
 general idea of what's going on, you should be able to read the
-examples in ${APPLECORE}/Programs to get a better idea of how to write
+examples in $APPLECORE/Programs to get a better idea of how to write
 programs in AppleCore.
 
 6\. Compiling AppleCore Programs
@@ -102,7 +102,7 @@ steps:
     assembly files into binary files that can be run on the Apple II.
 
 To see how this is done, go to the directory
-`${APPLECORE}/Programs/Examples/HelloWorld`.  First, peek at the
+`$APPLECORE/Programs/Examples/HelloWorld`.  First, peek at the
 source program ac/HELLO.WORLD.ac.  That's the program we'll compile.
 Next, type `make clean` and then `make`.  A directory `obj` should
 appear containing the binary executable file `HELLO.WORLD.OBJ`.
@@ -117,7 +117,7 @@ assembled into the final program.
 
 Notice also that the compiler and the assembler both require options
 indicating where to find included files.  Those options are specified
-in the file ${APPLECORE}/Programs/Examples/HelloWorld/Makefile.  See
+in the file $APPLECORE/Programs/Examples/HelloWorld/Makefile.  See
 sections 8 and 9 below for more information about these options.
 
 7\. Running AppleCore Programs
@@ -134,7 +134,7 @@ inside the emulator can "see" the files in the mounted directory as
 Apple II DOS files.
 
 For example, to run the "hello world" program, drag
-`${APPLECORE}/Programs/Examples/HelloWorld/obj` into one of the
+`$APPLECORE/Programs/Examples/HelloWorld/obj` into one of the
 drives, say drive 1.  Virtual ][ will display a dialog box asking you
 about the file format.  You want "No Conversion" (the default), so
 just click OK.  The disk should mount in the drive.  Next say `BRUN
@@ -161,9 +161,9 @@ See the Virtual ][ documentation for more details.
 -------------------------------
 
 The acc options are described below.  If you use one of the predefined
-compilation patterns in ${APPLECORE}/Common, then you can avoid
+compilation patterns in $APPLECORE/Common, then you can avoid
 invoking acc or specifying these options directly.  See
-${APPLECORE}/Common/README.md.
+$APPLECORE/Common/README.md.
 
 acc accepts exactly one source file name SF (including UNIX path info)
 on the command line, translates that file, and writes the results to
@@ -217,7 +217,7 @@ include mode and writing a short assembly language program to glue the
 pieces together.  You might do this if the whole program won't fit in
 memory, or if you need the program to occupy discontinuous parts of
 memory (e.g., to wrap it around the hi-res graphics pages).  See
-${APPLECORE}/Programs/Examples/Chain for an example of how to do this.
+$APPLECORE/Programs/Examples/Chain for an example of how to do this.
 
 9\. The SC-AVM-ASM Assembler
 ----------------------------
@@ -245,7 +245,7 @@ using the SC Macro Assembler format:
     The assembler translates this assembly language to byte code that
     is interpreted by the AVM runtime.  For more details on how this
     works, see the AVM specification
-    (${APPLECORE}/Docs/AVM-Spec-v1.0.pdf).
+    ($APPLECORE/Docs/AVM-Spec-v1.0.pdf).
 
 3.  A subset of the SC Macro Assembler directives.  Most directives
     are supported, except for the ones that don't make sense when
@@ -257,9 +257,9 @@ You can get documentation on the SC Macro Assembler format and
 directives here: http://stjarnhimlen.se/apple2/.  
 
 **Options:** The sc-avm-scm options are described below.  If you use
-one of the predefined compilation patterns in ${APPLECORE}/Common,
+one of the predefined compilation patterns in $APPLECORE/Common,
 then you can avoid invoking sc-avm-scm or specifying these options
-directly.  See ${APPLECORE}/Common/README.md.
+directly.  See $APPLECORE/Common/README.md.
 
 acc accepts the following command-line options:
 
@@ -298,8 +298,8 @@ acc accepts the following command-line options:
 The neat thing about the .TF directive is that it lets you assemble a
 single logical program into multiple output files.  This is handy, for
 example, when your whole program won't fit into memory.  See
-${APPLECORE}/Programs/Examples/Chain and
-${APPLECORE}/Programs/Games/BelowTheBasement for examples of the .TF
+$APPLECORE/Programs/Examples/Chain and
+$APPLECORE/Programs/Games/BelowTheBasement for examples of the .TF
 directive in action.
 
 9\. Integration with BASIC and DOS
@@ -342,5 +342,5 @@ editor that's fun to use from the monitor or BASIC prompt and is
 automatically invoked by any program that does a JSR to $FD6F (GETLN1)
 to get line input.  It works quite nicely with the old monitor and the
 solid flashing cursor!  For more details, see the documentation in
-${APPLECORE}/DOS3.3/README.md and the source code in
-${APPLECORE}/ShellEditor.
+$APPLECORE/DOS3.3/README.md and the source code in
+$APPLECORE/ShellEditor.
