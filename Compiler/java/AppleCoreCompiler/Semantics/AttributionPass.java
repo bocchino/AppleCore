@@ -190,10 +190,10 @@ public class AttributionPass
 	throws ACCError
     {
 	printStatus("Attributing const decl ", node);
-	// Insert the decl in the constant namespace now
-	insertDecl.insert(node, globalSymbols);
 	// Attribute the expression
 	super.visitConstDecl(node);	
+	// Insert the decl in the constant namespace now
+	insertDecl.insert(node, globalSymbols);
     }
 
     public void visitFunctionDecl(FunctionDecl node) 
