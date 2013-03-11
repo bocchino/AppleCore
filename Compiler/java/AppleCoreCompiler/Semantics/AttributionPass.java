@@ -105,11 +105,15 @@ public class AttributionPass
 	    List<Declaration> newDecls
 		= new LinkedList<Declaration>();
 	    for (Declaration decl : importFile.decls) {
-		insertDecl.insert(decl, globalSymbols);
 		if (decl instanceof ConstDecl) {
-		    // Collect imported constant decls, in the order
-		    // seen
+		    // If it's a constant decl, collect it for later
+		    // processing in the order seen
 		    newDecls.add(decl);
+		}
+		else {
+		    // Otherwise insert the decl in the global
+		    // namespace
+		    insertDecl.insert(decl, globalSymbols);
 		}
 	    }
 	    // Prepend imported constant decls, so they can be
