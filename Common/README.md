@@ -78,7 +78,7 @@ library files), then do the following:
    b. Write a makefile as in step 2 above, except that it includes
       $(COMMON)/Makefile.ac.included.
 
-*Example:* $APPLECORE/Programs/Games/Snake
+*Example:* $APPLECORE/Programs/Games/Mastermind
 
 Issuing make in the top-level directory does the following:
 
