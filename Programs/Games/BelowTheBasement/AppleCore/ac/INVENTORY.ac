@@ -5,7 +5,7 @@ CONST MAX_CARRIED 5;
 # -----------------------------------
 # ADD OBJECT
 # -----------------------------------
-FN:1 ADD_TO_INV() {
+FN ADD_TO_INV():1 {
   IF (NUM_CARRIED=MAX_CARRIED)
     RETURN FALSE;
   SET (@INVENTORY)[NUM_CARRIED,1]=OBJ_ID;
@@ -25,7 +25,7 @@ FN REMOVE_FROM_INV() {
 # -----------------------------------
 VAR INV_IDX:1;
 
-FN:1 FIND_OBJ_IN_INV(NAME:@) {
+FN FIND_OBJ_IN_INV(NAME:@):1 {
   VAR ID:1;
   SET INV_IDX=0;
   WHILE (INV_IDX < NUM_CARRIED) {
@@ -40,7 +40,7 @@ FN:1 FIND_OBJ_IN_INV(NAME:@) {
 # -----------------------------------
 # FIND OBJECT BY ID
 # -----------------------------------
-FN:1 FIND_OBJ_ID_IN_INV(OBJ_ID:1) {
+FN FIND_OBJ_ID_IN_INV(OBJ_ID:1):1 {
   SET INV_IDX=0;
   WHILE (INV_IDX < NUM_CARRIED) {
     IF ((@INVENTORY)[INV_IDX,1]=OBJ_ID)

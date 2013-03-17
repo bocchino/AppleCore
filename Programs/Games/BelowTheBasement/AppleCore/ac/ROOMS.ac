@@ -64,7 +64,7 @@ FN PRINT_RM(RM:1) {
 # -----------------------------------
 # GET ROOM EXIT
 # -----------------------------------
-FN:1 RM_EXIT(RM:1,DIR:1) {
+FN RM_EXIT(RM:1,DIR:1):1 {
   # HANDLE SPECIAL CASES
   IF (RM=RM_BASEMENT AND DIR=DOWN AND NOT USED_SWITCH)
     RETURN RM_NONE;
@@ -125,21 +125,21 @@ FN SET_RM_LIST_PTR() {
 # -----------------------------------
 # GET OBJECT AT RM_LIST_IDX
 # -----------------------------------
-FN:1 GET_RM_OBJ_AT_IDX() {
+FN GET_RM_OBJ_AT_IDX():1 {
   RETURN RM_LIST_PTR[RM_LIST_IDX+1,1] 
     AND NOT OBJ_HIDE_FLAG;
 }
 # -----------------------------------
 # IS OBJECT AT RM_LIST_IDX VISIBLE?
 # -----------------------------------
-FN:1 RM_OBJ_VISIBLE() {
+FN RM_OBJ_VISIBLE():1 {
   RETURN (RM_LIST_PTR[RM_LIST_IDX+1,1]
     AND OBJ_HIDE_FLAG)=0;    
 }
 # -----------------------------------
 # FIND OBJECT IN ROOM BY NAME
 # -----------------------------------
-FN:1 FIND_OBJ_IN_RM(NAME:@) {
+FN FIND_OBJ_IN_RM(NAME:@):1 {
   VAR ID:1;
   SET_RM_LIST_PTR();
   WHILE (RM_LIST_IDX < RM_LIST_LEN) {
@@ -154,7 +154,7 @@ FN:1 FIND_OBJ_IN_RM(NAME:@) {
 # -----------------------------------
 # FIND OBJECT IN ROOM BY ID
 # -----------------------------------
-FN:1 FIND_OBJ_ID_IN_RM(OBJ_ID:1) {
+FN FIND_OBJ_ID_IN_RM(OBJ_ID:1):1 {
   SET_RM_LIST_PTR();
   WHILE (RM_LIST_IDX < RM_LIST_LEN) {
     IF (GET_RM_OBJ_AT_IDX()=OBJ_ID)
@@ -174,7 +174,7 @@ FN REMOVE_OBJ_FROM_RM() {
 # -----------------------------------
 # ADD OBJECT TO ROOM
 # -----------------------------------
-FN:1 ADD_OBJ_TO_RM(OVERRIDE:1) {
+FN ADD_OBJ_TO_RM(OVERRIDE:1):1 {
   SET_RM_LIST_PTR();
   IF (RM_LIST_LEN=RM_OBJ_LIST_SIZE-2
    AND NOT OVERRIDE)
@@ -189,7 +189,7 @@ FN:1 ADD_OBJ_TO_RM(OVERRIDE:1) {
 # -----------------------------------
 DATA NEED_OUTLET "YOU NEED AN ELECTRIC OUTLET.";
 
-FN:1 HAVE_OUTLET() {
+FN HAVE_OUTLET():1 {
   IF (FIND_OBJ_ID_IN_RM(OBJ_OUTLET))
     RETURN TRUE;
   RESPOND(NEED_OUTLET);

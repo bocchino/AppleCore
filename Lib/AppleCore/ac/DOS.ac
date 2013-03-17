@@ -33,7 +33,7 @@ CONST DOS_ENTRY               $9DEA;
 # --------------------------------------
 # GET DOS ERROR
 # --------------------------------------
-FN:1 GET_DOS_ERRNO() {
+FN GET_DOS_ERRNO():1 {
   RETURN DOS_ERRNO[0,1];
 }
 # -------------------------------
@@ -43,7 +43,7 @@ FN:1 GET_DOS_ERRNO() {
 # -------------------------------
 FN READ_LINE_ASM();
 
-FN:1 READ_LINE() {
+FN READ_LINE():1 {
   READ_LINE_ASM();
   RETURN ^X;
 }

@@ -29,7 +29,7 @@ CONST OBJ_NONE     -1;
 # -----------------------------------
 # OBJECT NAMES
 # -----------------------------------
-FN:@ OBJ_NAME(OBJ:1) {
+FN OBJ_NAME(OBJ:1):@ {
   RETURN OBJ_NAMES[OBJ*2,@];
 }
 
@@ -128,7 +128,7 @@ DATA SELF "YOU ARE WEARING A TUNIC AND BOOTS.";
 # CARRIED OBJECTS
 # -----------------------------------
 CONST MAX_CARRIED 4;
-FN:1 CARRIED_OBJ(I:1) {
+FN CARRIED_OBJ(I:1):1 {
   RETURN (@CARRIED)[I,1];
 }
 FN SET_CARRIED(I:1,OBJ:1) {
@@ -142,31 +142,31 @@ VAR SECOND_OBJ:1;
 # -----------------------------------
 # OBJECT FIELD GETTERS
 # -----------------------------------
-FN:@ OBJ_BASE(OBJ:1) {
+FN OBJ_BASE(OBJ:1):@ {
   RETURN OBJ_DATA+OBJ*OBJ_DATA_SIZE;
 }
-FN:@ OBJ_DESC_PTR(OBJ:1) {
+FN OBJ_DESC_PTR(OBJ:1):@ {
   RETURN OBJ_BASE(OBJ)+OBJ_DESC_IDX;
 }
-FN:@ OBJ_DESC_FN(OBJ:1) {
+FN OBJ_DESC_FN(OBJ:1):@ {
   RETURN OBJ_DESC_PTR(OBJ)[0,@];
 }
-FN:@ OBJ_RM_PTR(OBJ:1) {
+FN OBJ_RM_PTR(OBJ:1):@ {
   RETURN OBJ_BASE(OBJ)+OBJ_RM_IDX;
 }
-FN:1 OBJ_RM(OBJ:1) {
+FN OBJ_RM(OBJ:1):1 {
   RETURN OBJ_RM_PTR(OBJ)[0,1];
 }
-FN:@ OBJ_TAKE_PTR(OBJ:1) {
+FN OBJ_TAKE_PTR(OBJ:1):@ {
   RETURN OBJ_BASE(OBJ)+OBJ_TAKE_IDX;
 }
-FN:@ OBJ_TAKE_FN(OBJ:1) {
+FN OBJ_TAKE_FN(OBJ:1):@ {
   RETURN OBJ_TAKE_PTR(OBJ)[0,@];
 }
 # -----------------------------------
 # PLURAL OBJECTS
 # -----------------------------------
-FN:1 OBJ_IS_PLURAL(OBJ:1) {
+FN OBJ_IS_PLURAL(OBJ:1):1 {
   RETURN (OBJ=OBJ_BOLTS) OR
    (OBJ=OBJ_SHELVES) OR
    (OBJ=OBJ_SPIDERS);

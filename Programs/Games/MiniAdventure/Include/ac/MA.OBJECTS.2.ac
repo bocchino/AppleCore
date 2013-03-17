@@ -5,23 +5,23 @@
 # -----------------------------------
 CONST DROPPED_FLAG $80;
 
-FN:1 WAS_DROPPED(OBJ:1) {
+FN WAS_DROPPED(OBJ:1):1 {
   RETURN NOT ((OBJ_RM(OBJ) AND DROPPED_FLAG)=0);
 }
 # -----------------------------------
 # IS OBJECT HERE?
 # -----------------------------------
-FN:1 IS_HERE(OBJ:1,RM:1) {
+FN IS_HERE(OBJ:1,RM:1):1 {
   RETURN IS_CARRIED(OBJ) OR
    IS_IN_ROOM(OBJ,RM);
 }
-FN:1 IS_CARRIED(OBJ:1) {
+FN IS_CARRIED(OBJ:1):1 {
   RETURN (OBJ_RM(OBJ)=RM_TAKEN);
 }
-FN:1 IS_IN_ROOM(OBJ:1,RM:1) {
+FN IS_IN_ROOM(OBJ:1,RM:1):1 {
   RETURN (OBJ_RM(OBJ) AND $7F)=RM;
 }
-FN:1 IN_ROOM_NOT_DROPPED(OBJ:1,RM:1) {
+FN IN_ROOM_NOT_DROPPED(OBJ:1,RM:1):1 {
   RETURN IS_IN_ROOM(OBJ,RM) AND NOT WAS_DROPPED(OBJ);
 }
 # -----------------------------------

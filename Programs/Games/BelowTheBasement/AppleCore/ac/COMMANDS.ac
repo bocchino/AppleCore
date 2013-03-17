@@ -183,7 +183,7 @@ FN CMD_REST_FN() {
 # -----------------------------------
 # PROMPT FOR FILE NAME
 # -----------------------------------
-FN:1 GET_FILE_NAME(PROMPT:@) {
+FN GET_FILE_NAME(PROMPT:@):1 {
   VAR LEN:1;
   PRINT_STRING(PROMPT);
   SET LEN=GET_LINE();

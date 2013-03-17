@@ -42,7 +42,7 @@ FN CLEAR_CB() {
 # -----------------------------------
 # GET LINE TO ADD TO BUFFER
 # -----------------------------------
-FN:1 GET_BUF_LINE(NUM:1) {
+FN GET_BUF_LINE(NUM:1):1 {
   IF (PRINT_LINE_NUMS) {
     PRINT_LINE_NUM(NUM);
     PRINT_CHAR(' ');

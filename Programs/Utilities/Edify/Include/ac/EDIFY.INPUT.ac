@@ -72,7 +72,7 @@ FN INIT_VARS() {
 # -----------------------------------
 # PROMPT AND GET INPUT
 # -----------------------------------
-FN:1 GET_INPUT(PROMPT:@) {
+FN GET_INPUT(PROMPT:@):1 {
   PRINT_STRING(PROMPT);
   RETURN GET_LINE();
 }
@@ -191,7 +191,7 @@ DATA			 NUM_HANDLER;
 # NO_CHAR IF THERE ARE NO MORE CHARS 
 # IN THE LINE.
 # -----------------------------------
-FN:1 READ_CHAR() {
+FN READ_CHAR():1 {
   IF (INPUT_IDX >= INPUT_LEN)
     RETURN NO_CHAR;
   RETURN (@INPUT)[INPUT_IDX,1];
@@ -217,7 +217,7 @@ FN ERROR(MSG:@) {
 # -----------------------------------
 # PARSE NUMERIC ARGUMENT
 # -----------------------------------
-FN:2 PARSE_NUM() {
+FN PARSE_NUM():2 {
   VAR CH:1=READ_CHAR();
   IF (EQ_CHAR(CH,'K')) {
     RETURN K_AS_NUM();
@@ -236,14 +236,14 @@ FN:2 PARSE_NUM() {
 # -----------------------------------
 # GET VALUE OF E, ERROR IF NONE
 # -----------------------------------
-FN:2 E_AS_NUM() {
+FN E_AS_NUM():2 {
   NEXT_CHAR();
   RETURN BUF_SIZE;
 }
 # -----------------------------------
 # GET VALUE OF K, ERROR IF NONE
 # -----------------------------------
-FN:2 K_AS_NUM() {
+FN K_AS_NUM():2 {
   NEXT_CHAR();
   IF (BUF_SIZE=0) {
     ERROR(BUFFER_EMPTY);
@@ -258,7 +258,7 @@ FN:2 K_AS_NUM() {
 # -----------------------------------
 # GET VALUE OF N, ERROR IF NONE
 # -----------------------------------
-FN:2 N_AS_NUM() {
+FN N_AS_NUM():2 {
   NEXT_CHAR();
   IF (BUF_SIZE=0) {
     ERROR(BUFFER_EMPTY);
@@ -269,14 +269,14 @@ FN:2 N_AS_NUM() {
 # -----------------------------------
 # GET VALUE OF W, ERROR IF NONE
 # -----------------------------------
-FN:2 W_AS_NUM() {
+FN W_AS_NUM():2 {
   NEXT_CHAR();
   RETURN W;
 }
 # -----------------------------------
 # PARSE LITERAL NUMBER
 # -----------------------------------
-FN:2 LITERAL_NUM() {
+FN LITERAL_NUM():2 {
   VAR I:1=0;
   VAR DONE:1=FALSE;
   VAR NUM:2;
@@ -303,7 +303,7 @@ FN:2 LITERAL_NUM() {
 # -----------------------------------
 # IS CH A DIGIT?
 # -----------------------------------
-FN:1 IS_DIGIT(CH:1) {
+FN IS_DIGIT(CH:1):1 {
   SET CH=CH AND $7F;
   RETURN (CH >= '0') AND (CH <= '9');
 }

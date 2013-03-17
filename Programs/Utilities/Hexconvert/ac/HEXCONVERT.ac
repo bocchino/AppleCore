@@ -70,7 +70,7 @@ FN MAIN() {
 # -----------------------------------
 # SET THE SIZE
 # -----------------------------------
-FN:1 SET_SIZE() {
+FN SET_SIZE():1 {
   VAR OK:1;
   VAR NEW_SIZE:1;
   SET OK=STR_TO_NUM(MON_IN+1,10,@NEW_SIZE,1);
@@ -84,7 +84,7 @@ FN:1 SET_SIZE() {
 # -----------------------------------
 # CONVERT HEX TO DEC
 # -----------------------------------
-FN:1 HEX_TO_DEC() {
+FN HEX_TO_DEC():1 {
   VAR OK:1;
   VAR VAL:@=ALLOCATE(SIZE);
   SET OK=STR_TO_NUM(MON_IN+1,16,VAL,SIZE);
@@ -99,7 +99,7 @@ FN:1 HEX_TO_DEC() {
 # -----------------------------------
 # CONVERT DEC TO HEX
 # -----------------------------------
-FN:1 DEC_TO_HEX() {
+FN DEC_TO_HEX():1 {
   VAR OK:1;
   VAR VAL:@=ALLOCATE(SIZE);
   SET OK=STR_TO_NUM(MON_IN,10,VAL,SIZE);

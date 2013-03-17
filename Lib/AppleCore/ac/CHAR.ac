@@ -4,7 +4,7 @@
 # --------------------------------------
 # CONVERT DIGIT TO CHAR
 # --------------------------------------
-FN:1 DIGIT_TO_CHAR(DIGIT:1) {
+FN DIGIT_TO_CHAR(DIGIT:1):1 {
   IF (DIGIT < 10) {
      RETURN DIGIT+'0';
   }
@@ -13,7 +13,7 @@ FN:1 DIGIT_TO_CHAR(DIGIT:1) {
 # --------------------------------------
 # CONVERT CHAR TO DIGIT AT RADIX
 # --------------------------------------
-FN:1 CHAR_TO_DIGIT(CHAR:1,RADIX:1) {
+FN CHAR_TO_DIGIT(CHAR:1,RADIX:1):1 {
   VAR DIGIT:1=$FF;
   SET CHAR=CHAR AND $7F;
   IF (CHAR>='0' AND CHAR<='9') {
@@ -29,7 +29,7 @@ FN:1 CHAR_TO_DIGIT(CHAR:1,RADIX:1) {
 # --------------------------------------
 # COMPARE ASCII VALUES (LOWER 7 BITS)
 # --------------------------------------
-FN:1S CMP_CHAR(CHAR1:1,CHAR2:1) {
+FN CMP_CHAR(CHAR1:1,CHAR2:1):1S {
   VAR ASCII1:1=CHAR1 AND $7F;
   VAR ASCII2:1=CHAR2 AND $7F;
   IF (ASCII1<ASCII2) RETURN -1;
@@ -39,6 +39,6 @@ FN:1S CMP_CHAR(CHAR1:1,CHAR2:1) {
 # --------------------------------------
 # EQUAL ASCII VALUES?
 # --------------------------------------
-FN:1 EQ_CHAR(CHAR1:1,CHAR2:1) {
+FN EQ_CHAR(CHAR1:1,CHAR2:1):1 {
   RETURN NOT CMP_CHAR(CHAR1,CHAR2);
 }

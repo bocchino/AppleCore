@@ -4,7 +4,7 @@
 # --------------------------------------
 # READ KEYBOARD AND CLEAR STROBE
 # --------------------------------------
-FN:1 READ_KBD() {
+FN READ_KBD():1 {
   VAR CHAR:1=KBD_STROBE[0,1];
   IF (CHAR > $7F)
     SET CLEAR_KBD_STROBE[0,1]=0;
@@ -13,7 +13,7 @@ FN:1 READ_KBD() {
 # --------------------------------------
 # WAS KEY PRESSED?
 # --------------------------------------
-FN:1 KEY_PRESSED() {
+FN KEY_PRESSED():1 {
   RETURN READ_KBD() > $7F;
 }
 # --------------------------------------
@@ -27,7 +27,7 @@ FN WAIT_KEYPRESS() {
 # GET NULL-TERMINATED LINE INTO MON_IN
 # RETURN - NUMBER OF CHARS READ
 # --------------------------------------
-FN:1 GET_LINE() {
+FN GET_LINE():1 {
   MON_GETLN1();
   SET MON_IN[^X,1]=0;
   RETURN ^X;
@@ -81,7 +81,7 @@ FN NORMAL() {
 # --------------------------------------
 # PADDLE BUTTON DOWN?
 # --------------------------------------
-FN:1 PDL_BUTTON_DOWN(PDL:1) {
+FN PDL_BUTTON_DOWN(PDL:1):1 {
   RETURN PDL_BUTTON[PDL,1] > $7F;
 }
 # --------------------------------------
@@ -97,7 +97,7 @@ FN SET_TEXT() {
 CONST MAX_WIDTH 40;
 CONST MAX_HEIGHT 24;
 
-FN:1 BOUND_WINDOW(VAL:1,MAX:1) {
+FN BOUND_WINDOW(VAL:1,MAX:1):1 {
   IF (VAL > MAX) SET VAL = MAX;
   RETURN VAL;
 }

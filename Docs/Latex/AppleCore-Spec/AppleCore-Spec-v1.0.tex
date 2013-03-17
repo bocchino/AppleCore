@@ -328,13 +328,13 @@ $$\nonterm{var-decl} ::= \mbox{\kwd{VAR} \nonterm{identifier} \kwd{:}
   \nonterm{type} \opt{\kwd{=} \nonterm{expr}} \kwd{;}}$$
 
 \bfhead{Function declarations} A function declaration consists of the
-keyword \kwd{FN}, an optional return type, an identifier representing
-the function name, the function parameters enclosed in parentheses,
+keyword \kwd{FN}, an identifier representing the function name, the
+function parameters enclosed in parentheses, an optional return type,
 and the function body:
 
-$$\nonterm{fn-decl} ::= \mbox{\kwd{FN} \opt{\kwd{:} \nonterm{type}}
-    \nonterm{identifier} \kwd{(} \nonterm{fn-params} \kwd{)}
-    \nonterm{fn-body}}$$
+$$\nonterm{fn-decl} ::= \mbox{\kwd{FN} \nonterm{identifier} \kwd{(}
+  \nonterm{fn-params} \kwd{)} \opt{\kwd{:} \nonterm{type}}
+  \nonterm{fn-body}}$$
 
 \noindent
 The function parameters are a comma-separated list of zero or more

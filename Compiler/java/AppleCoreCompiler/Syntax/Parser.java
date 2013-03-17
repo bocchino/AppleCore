@@ -251,6 +251,10 @@ public class Parser {
     {
 	FunctionDecl functionDecl = new FunctionDecl();
 	setLineNumberOf(functionDecl);
+	functionDecl.name = parseName();
+	expectAndConsume(Token.LPAREN);
+	parseFunctionParams(functionDecl.params);
+	expectAndConsume(Token.RPAREN);
 	if (scanner.getCurrentToken() == Token.COLON) {
 	    scanner.getNextToken();
 	    if (parsePossibleToken(Token.AT)) {
@@ -262,10 +266,6 @@ public class Parser {
 		functionDecl.isSigned = parseIsSigned();
 	    }
 	}
-	functionDecl.name = parseName();
-	expectAndConsume(Token.LPAREN);
-	parseFunctionParams(functionDecl.params);
-	expectAndConsume(Token.RPAREN);
 	if (scanner.getCurrentToken() == Token.LBRACE) {
 	    scanner.getNextToken();
 	    parseVarDecls(functionDecl.varDecls,true);

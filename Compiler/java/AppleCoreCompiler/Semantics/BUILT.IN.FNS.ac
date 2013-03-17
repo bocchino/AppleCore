@@ -3,10 +3,10 @@
 # BUILT-IN FUNCTION DECLARATIONS
 # --------------------------------------
 
-FN    ADD(A:@,B:@,SUM:@,SIZE:1);
-FN    SUB(A:@,B:@,DIFF:@,SIZE:1);
-FN    MUL(A:@,B:@,PROD:@,SIZE:1);
-FN    DIV(A:@,B:@,QUOT:@,REM:@,SIZE:1);
-FN:1S CMP(A:@,B:@,SIZE:1);
-FN:@  ALLOCATE(SIZE:1);
-FN    EXIT();
+FN ADD(A:@,B:@,SUM:@,SIZE:1);
+FN SUB(A:@,B:@,DIFF:@,SIZE:1);
+FN MUL(A:@,B:@,PROD:@,SIZE:1);
+FN DIV(A:@,B:@,QUOT:@,REM:@,SIZE:1);
+FN CMP(A:@,B:@,SIZE:1):1S;
+FN ALLOCATE(SIZE:1):@;
+FN EXIT();

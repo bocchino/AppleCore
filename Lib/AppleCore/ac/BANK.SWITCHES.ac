@@ -35,10 +35,10 @@ FN SELECT_RD_ROM_WR_RAM_2() {
 # --------------------------------------
 # TEST FUNCTIONS
 # --------------------------------------
-FN:1 BANK_1_SELECTED() {
+FN BANK_1_SELECTED():1 {
    RETURN (RDBNK2[0,1] AND $80)=0;
 }
-FN:1 READING_ROM() {
+FN READING_ROM():1 {
    RETURN (RDLCRAM[0,1] AND $80)=0;
 }
 

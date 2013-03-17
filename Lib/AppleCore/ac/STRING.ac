@@ -36,7 +36,7 @@ FN NUM_TO_STR(N:@,SIZE:1,RADIX:1,STR:@) {
 # N     - POINTER TO NUMBER
 # SIZE  - SIZE OF NUMBER
 # --------------------------------------
-FN:1 STR_TO_NUM(STR:@,RADIX:1,N:@,SIZE:1) {
+FN STR_TO_NUM(STR:@,RADIX:1,N:@,SIZE:1):1 {
   VAR I:1=0;
   VAR DIGIT:@=ALLOCATE(SIZE);
   VAR RDX_ADJ:@=ALLOCATE(SIZE);
@@ -75,7 +75,7 @@ FN REVERSE_STRING(STR:@,RIGHT:2) {
 # --------------------------------------
 # COMPARE STRINGS
 # --------------------------------------
-FN:1S CMP_STRING(STR1:@,STR2:@) {
+FN CMP_STRING(STR1:@,STR2:@):1S {
   VAR CHAR1:1;
   VAR CHAR2:1;
   WHILE (TRUE) {
@@ -98,7 +98,7 @@ FN:1S CMP_STRING(STR1:@,STR2:@) {
 # --------------------------------------
 # COMPUTE STRING LENGTH
 # --------------------------------------
-FN:2 STRING_LEN(STR:@) {
+FN STRING_LEN(STR:@):2 {
   VAR LEN:2=0;
   WHILE (NOT (STR[LEN,1]=0)) {
     INCR LEN;
@@ -114,7 +114,7 @@ FN:2 STRING_LEN(STR:@) {
 # --------------------------------------
 FN MATCH_ASM();
 
-FN:@ MATCH(STR:@,PAT:@) {
+FN MATCH(STR:@,PAT:@):@ {
   SET MON_A1[0,@]=STR;
   SET MON_A2[0,@]=PAT;
   MATCH_ASM();

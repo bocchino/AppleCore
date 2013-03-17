@@ -17,7 +17,7 @@ FN MAIN() {
    MON_CROUT();
 }
 
-FN:4 RTN(N:4) {
+FN RTN(N:4):4 {
    RETURN N;
 }
 

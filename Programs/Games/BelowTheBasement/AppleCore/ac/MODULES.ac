@@ -27,7 +27,7 @@ FN SET_MODULE_TO(IDX:1) {
 # -----------------------------------
 DATA RMS_STR "ROOMS.";
 
-FN:1 LOAD_RM_MODULE_FOR(RM:1) {
+FN LOAD_RM_MODULE_FOR(RM:1):1 {
   SET_MODULE_TO(RM);
   IF (NOT (GET_RM_MODULE()=MODULE)) {
     SET (@FILE_NAME)[0,6]=RMS_STR[0,6];
@@ -40,7 +40,7 @@ FN:1 LOAD_RM_MODULE_FOR(RM:1) {
 # -----------------------------------
 # GET CURRENT ROOM MODULE
 # -----------------------------------
-FN:1 GET_RM_MODULE() {
+FN GET_RM_MODULE():1 {
   RETURN RM_MODULE[0,1];
 }
 # -----------------------------------
@@ -48,7 +48,7 @@ FN:1 GET_RM_MODULE() {
 # -----------------------------------
 DATA OBJS_STR "OBJECTS.";
 
-FN:1 LOAD_OBJ_MODULE_FOR(OBJ:1) {
+FN LOAD_OBJ_MODULE_FOR(OBJ:1):1 {
   SET_MODULE_TO(OBJ);
   IF (NOT (GET_OBJ_MODULE()=MODULE)) {
     SET (@FILE_NAME)[0,8]=OBJS_STR[0,8];
@@ -61,7 +61,7 @@ FN:1 LOAD_OBJ_MODULE_FOR(OBJ:1) {
 # -----------------------------------
 # GET CURRENT OBJECT MODULE
 # -----------------------------------
-FN:1 GET_OBJ_MODULE() {
+FN GET_OBJ_MODULE():1 {
   RETURN OBJ_MODULE[0,1];
 }
 
