@@ -13,7 +13,7 @@ EXIT
 * EXIT THROUGH RESET VECTOR
 	JMP ($3F2)
 * -------------------------------
-* FN:2 ALLOCATE(S:1)
+* FN:@ ALLOCATE(S:1)
 * RETURN PTR TO S ZEROS ON STACK
 * -------------------------------
 ALLOCATE
@@ -31,7 +31,7 @@ ALLOCATE
 	LDA AVM.IP+1
 	JMP AVM.PUSH.A
 * -------------------------------
-* FN ADD(A:2,B:2,C:2,S:1)
+* FN ADD(A:@,B:@,C:@,S:1)
 * SET C[0,S]=A[0,S]+B[0,2][0,S]
 * -------------------------------
 ADD
@@ -44,7 +44,7 @@ ADD.1
 	JSR AVM.ADD
 	JMP AVM.BUILT.IN.ASSN
 * -------------------------------
-* FN SUB(A:2,B:2,C:2,S:1)
+* FN SUB(A:@,B:@,C:@,S:1)
 * SET C[0,S]=A[0,S]-B[2,2][0,S]
 * -------------------------------
 SUB
@@ -57,7 +57,7 @@ SUB.1
 	JSR AVM.SUB
 	JMP AVM.BUILT.IN.ASSN
 * -------------------------------
-* FN MUL(A:2,B:2,C:2,S:1)
+* FN MUL(A:@,B:@,C:@,S:1)
 * SET C[0,S]=A[0,S]*B[0,S]
 * -------------------------------
 MUL
@@ -71,7 +71,7 @@ MUL.1
 	JSR AVM.MUL
 	JMP AVM.BUILT.IN.ASSN
 * -------------------------------
-* FN DIV(A:2,B:2,Q:2,R:2,S:1)
+* FN DIV(A:@,B:@,Q:@,R:@,S:1)
 * SET Q[0,S]=A[0,S]/B[0,S]
 * SET R[0,S]=A[0,S]%B[0,S]
 * -------------------------------
@@ -93,7 +93,7 @@ DIV.1
 	LDY #6
 	JMP AVM.BUILT.IN.ASSN.1
 * -------------------------------
-* FN:1S CMP(A:2,B:2,S:1)
+* FN:1S CMP(A:@,B:@,S:1)
 * COMPARE A[0,S] WITH B[0,S]
 * RETURN -1=LT,0=EQ,1=GT
 * -------------------------------
