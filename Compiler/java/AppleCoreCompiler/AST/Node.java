@@ -57,6 +57,8 @@ public abstract class Node {
 	public boolean includeMode;
 	public boolean nativeMode;
 	public int origin;
+	public final List<Declaration> importedDecls =
+	    new LinkedList<Declaration>();
 	public List<Declaration> decls = 
 	    new LinkedList<Declaration>();
 

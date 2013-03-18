@@ -121,6 +121,8 @@ public class Main {
 	    sourceFile.targetFile = (targetFileName == null) ?
 		defaultTargetFile(sourceFile.name) :
 		targetFileName;
+
+	    importDecls(sourceFile);
 	    
 	    AttributionPass attributionPass = 
 		new AttributionPass(declFiles);
@@ -162,6 +164,39 @@ public class Main {
 	catch (IOException e) {
 	    System.err.println("acc: I/O exception");
 	    System.exit(1);
+	}
+    }
+
+    private static void importDecls(SourceFile sourceFile) 
+	throws ACCError, IOException
+    {
+	// Import decls for built-in functions
+	String appleCore = System.getenv("APPLECORE");
+	if (appleCore == null) {
+	    throw new SemanticError("environment variable APPLECORE not set");
+	}
+	String builtInFns = appleCore + 
+	    "/Compiler/java/AppleCoreCompiler/Semantics/BUILT.IN.FNS.ac";
+	importDeclsFrom(builtInFns, sourceFile);
+	// Import decls specified on command line
+	for (String declFile : declFiles) {
+	    if (!declFile.equals(sourceFileName)) {
+		importDeclsFrom(declFile, sourceFile);
+	    }
+	}
+    }
+
+    private static void importDeclsFrom(String importFileName,
+					SourceFile sourceFile) 
+	throws ACCError, IOException
+    {
+	Parser parser = new Parser(importFileName);
+	SourceFile importFile = parser.parse();
+	for (Declaration decl : importFile.decls) {
+	    if (!(decl instanceof IncludeDecl)) {
+		decl.isExternal = true;
+		sourceFile.importedDecls.add(decl);
+	    }
 	}
     }
 

@@ -22,7 +22,24 @@ public class ConstantEvaluationPass
     public void runOn(SourceFile sourceFile) 
 	throws ACCError
     {
+	scan(sourceFile.importedDecls);
 	scan(sourceFile);
+    }
+
+    public void visitDataDecl(DataDecl node) 
+	throws ACCError
+    {
+	if (!node.isExternal) {
+	    super.visitDataDecl(node);
+	}
+    }
+
+    public void visitVarDecl(VarDecl node) 
+	throws ACCError
+    {
+	if (!node.isExternal) {
+	    super.visitVarDecl(node);
+	}
     }
 
     public void visitIdentifier(Identifier node) 

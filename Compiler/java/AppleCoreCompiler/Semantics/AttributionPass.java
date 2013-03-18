@@ -58,85 +58,29 @@ public class AttributionPass
 	throws ACCError
     {
 	this.sourceFile = sourceFile;
-	// Enter the built-in functions
-	enterBuiltInFunctions();
-	// Enter decls from files specified on command line
-	enterImportedDecls();
-	// Enter all the top-level declarations from the source file
-	// except constant decls, which may not be forward declared.
-	for (Declaration decl : sourceFile.decls) {
+	// Enter all the top-level declarations except constant decls,
+	// which may not be forward declared.
+	for (Declaration decl : sourceFile.importedDecls) {
 	    if (!(decl instanceof ConstDecl)) {
-		insertDecl.insert(decl, globalSymbols);
+		enterDecl.enter(decl, globalSymbols);
 	    }
 	}
+	for (Declaration decl : sourceFile.decls) {
+	    if (!(decl instanceof ConstDecl)) {
+		enterDecl.enter(decl, globalSymbols);
+	    }
+	}
+	// Attribute the imported decls
+	scan(sourceFile.importedDecls);
 	// Attribute the source file
 	scan(sourceFile);
     }
 
-    private void enterBuiltInFunctions()
-	throws ACCError
-    {
-	String appleCore = System.getenv("APPLECORE");
-	if (appleCore == null) {
-	    throw new SemanticError("environment variable APPLECORE not set");
-	}
-	String builtInFns = appleCore + 
-	    "/Compiler/java/AppleCoreCompiler/Semantics/BUILT.IN.FNS.ac";
-	enterDeclsFrom(builtInFns);
-    }
-
-    private void enterImportedDecls() 
-	throws ACCError
-    {
-	for (String declFile : declFiles) {
-	    if (!declFile.equals(sourceFile.name)) {
-		enterDeclsFrom(declFile);
-	    }
-	}
-    }
-
-    private void enterDeclsFrom(String importFileName) 
-	throws ACCError
-    {
-	Parser parser = new Parser(importFileName);
-	try {
-	    SourceFile importFile = parser.parse();
-	    // Make a fresh list of declarations
-	    List<Declaration> newDecls
-		= new LinkedList<Declaration>();
-	    for (Declaration decl : importFile.decls) {
-		if (decl instanceof ConstDecl) {
-		    // If it's a constant decl, collect it for later
-		    // processing in the order seen
-		    newDecls.add(decl);
-		}
-		else {
-		    // Otherwise insert the decl in the global
-		    // namespace
-		    insertDecl.insert(decl, globalSymbols);
-		}
-	    }
-	    // Prepend imported constant decls, so they can be
-	    // attributed, error-checked, and evaluated along with the
-	    // rest.
-	    newDecls.addAll(sourceFile.decls);
-	    // Sub in the new list
-	    sourceFile.decls = newDecls;
-	}
-	catch (FileNotFoundException e) {
-	    System.err.println("acc: file " + importFileName + 
-			       " not found");
-	}
-	catch (IOException e) {
-	    System.err.println("acc: I/O exception");
-	}
-    }
-
-    private InsertDecl insertDecl = new InsertDecl();
-    private class InsertDecl extends NodeVisitor {
+    private EnterDecl enterDecl = new EnterDecl();
+    private class EnterDecl extends NodeVisitor {
 
 	private Map<String,Node> map;
-	void insert(Declaration decl, Map<String,Node> map) 
+	void enter(Declaration decl, Map<String,Node> map) 
 	    throws ACCError
 	{
 	    this.map = map;
@@ -196,22 +140,22 @@ public class AttributionPass
 	printStatus("Attributing const decl ", node);
 	// Attribute the expression
 	super.visitConstDecl(node);	
-	// Insert the decl in the constant namespace now
-	insertDecl.insert(node, globalSymbols);
+	// Enter the decl in the constant namespace now
+	enterDecl.enter(node, globalSymbols);
     }
 
     public void visitFunctionDecl(FunctionDecl node) 
 	throws ACCError
     {
 	printStatus("Attributing function decl ", node);
-	// Insert the parameters into the local namespace
+	// Enter the parameters into the local namespace
 	for (Declaration decl : node.params) {
-	    insertDecl.insert(decl, localSymbols);
+	    enterDecl.enter(decl, localSymbols);
 	}
-
 	// Attribute the function
-	super.visitFunctionDecl(node);
-
+	if (!node.isExternal) {
+	    super.visitFunctionDecl(node);
+	}
 	// Reset the local namespace
 	localSymbols.clear();
     }
@@ -221,9 +165,21 @@ public class AttributionPass
     {
 	if (node.isLocalVariable) {
 	    printStatus("Attributing ",node);
+	}
+	if (!node.isExternal) {
+	    super.visitVarDecl(node);
+	}
+	if (node.isLocalVariable) {
 	    addMapping(node.name, node, localSymbols);
 	}
-	super.visitVarDecl(node);
+    }
+
+    public void visitDataDecl(DataDecl node) 
+	throws ACCError
+    {
+	if (!node.isExternal) {
+	    super.visitDataDecl(node);
+	}
     }
 
     private Node findSymbol(String name) {
