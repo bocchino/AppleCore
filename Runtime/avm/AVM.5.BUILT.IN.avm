@@ -13,7 +13,7 @@ EXIT
 * EXIT THROUGH RESET VECTOR
 	JMP ($3F2)
 * -------------------------------
-* FN:@ ALLOCATE(S:1)
+* FN ALLOCATE(S:1):@
 * RETURN PTR TO S ZEROS ON STACK
 * -------------------------------
 ALLOCATE
@@ -93,7 +93,7 @@ DIV.1
 	LDY #6
 	JMP AVM.BUILT.IN.ASSN.1
 * -------------------------------
-* FN:1S CMP(A:@,B:@,S:1)
+* FN CMP(A:@,B:@,S:1):1S
 * COMPARE A[0,S] WITH B[0,S]
 * RETURN -1=LT,0=EQ,1=GT
 * -------------------------------
