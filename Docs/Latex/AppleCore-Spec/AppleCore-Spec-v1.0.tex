@@ -590,9 +590,9 @@ more declarations specified by the user, usually as a compiler option.
 The option must allow the user to specify (1) the files from which to
 read the declarations and (2) the order in which to read the files.
 
-Each declaration so encountered is logically prepended to the source
-file under translation, in the order encountered, subject to the
-following rules:
+Except for include declarations, each declaration so encountered is
+logically prepended to the source file under translation, in the order
+encountered, subject to the following rules:
 %
 \begin{enumerate}
 %
@@ -610,6 +610,10 @@ following rules:
   variable declaration in C).
 %
 \end{enumerate}
+%
+External include declarations are not imported, because they do not
+contain any information that the compiler needs for attribution or
+code generation.
 
 \subsection{Attribution}
 \label{sec:semantics:attr}
