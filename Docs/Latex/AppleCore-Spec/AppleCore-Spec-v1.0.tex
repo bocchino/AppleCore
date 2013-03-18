@@ -582,16 +582,48 @@ and ``false.''  These names and values are not built into the
 language, but one can easily declare constants \kwd{TRUE} and
 \kwd{FALSE} with the values 1 and 0.
 
+\subsection{Imported Declarations}
+\label{sec:semantics:import}
+
+Before performing any semantic checks, the compiler imports zero or
+more declarations specified by the user, usually as a compiler option.
+The option must allow the user to specify (1) the files from which to
+read the declarations and (2) the order in which to read the files.
+
+Each declaration so encountered is logically prepended to the source
+file under translation, in the order encountered, subject to the
+following rules:
+%
+\begin{enumerate}
+%
+\item Constant declarations are prepended as if they were
+  literally included in the source file.
+%
+\item Function declarations are prepended as if they were literally
+  included in the source file, but with a semicolon instead of a body
+  (if any).
+%
+\item Variable and data declarations are prepended storing their name
+  and size only; no variable initializer or data information is
+  included for attribution (Section~\ref{sec:semantics:attr}), and
+  these declarations generate no code (similar to an \kwd{extern}
+  variable declaration in C).
+%
+\end{enumerate}
+
 \subsection{Attribution}
 \label{sec:semantics:attr}
 
 The first semantic check performed by the compiler is to match each
 identifier appearing in the source file with its corresponding
-definition; this step is called \emph{attribution}.  For purposes of
-these rules, a \emph{definition} is a constant declaration, data
-declaration, variable declaration, function parameter declaration, or
-function declaration.  A \emph{use} is any identifier appearing in the
-source file not as the identifier of a definition.
+definition; this step is called \emph{attribution}.  Identifiers
+appearing in imported variable and data declarations
+(Section~\ref{sec:semantics:import}) do not appear in the source file
+for purposes of this rule.  A \emph{definition} is a constant
+declaration, data declaration, variable declaration, function
+parameter declaration, or function declaration.  A \emph{use} is any
+identifier appearing in the source file not as the identifier of a
+definition.
 
 The compiler matches definitions with uses in the following way:
 %
@@ -940,10 +972,12 @@ will result.
 \subsection{Global Declarations}
 \label{sec:code-gen:global-decls}
 
-Global declarations are translated as stated below.  To the extent
-that translation produces actual bytes of code, data, or reserved
-storage, the bytes must be laid out in the order in which the
-translated constructs are encountered in the source file.
+Global declarations are translated as stated below, except for
+imported declarations (Section~\ref{sec:semantics:import}), which
+generate no code.  To the extent that translation produces actual
+bytes of code, data, or reserved storage, the bytes must be laid out
+in the order in which the translated constructs are encountered in the
+source file.
 
 \bfhead{Constant declarations} If the constant declaration
 \nonterm{const-decl} contains an expression \nonterm{expr}, then the
