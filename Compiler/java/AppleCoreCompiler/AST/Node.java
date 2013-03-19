@@ -160,6 +160,7 @@ public abstract class Node {
 	extends Declaration 
     {
 	public String name;
+	public Expression sizeExpr;
 	public int size;
 	public boolean representsAddress;
 	public boolean isSigned;
@@ -197,10 +198,13 @@ public abstract class Node {
     public static class FunctionDecl 
 	extends Declaration 
     {
+	public String name;
+
+	public Expression sizeExpr;
 	public int size;
 	public boolean isSigned;
 	public boolean representsAddress;
-	public String name;
+
 	public final List<VarDecl> params = 
 	    new LinkedList<VarDecl>();
 	public final List<VarDecl> varDecls =
@@ -392,10 +396,12 @@ public abstract class Node {
     public static abstract class Expression 
 	extends Node 
     {
+
 	/**
 	 * The size of the value represented by this expression;
 	 * filled in during semantic checking.
 	 */
+	public Expression sizeExpr;
 	public int size;
 
 	/**

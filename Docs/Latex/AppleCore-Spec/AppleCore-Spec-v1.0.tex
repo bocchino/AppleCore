@@ -17,7 +17,7 @@ Pittsburgh, PA}
 
 AppleCore is a C-like programming language for the Apple II series of
 computers.  A cross-compiler from Java (e.g., running on a Mac or PC)
-to the Apple II is under development.
+to the Apple II is currently available.
 
 The idea of AppleCore is to provide a ``core language for programming
 the Apple II.''  The motivation is as follows:
@@ -52,37 +52,51 @@ the Apple II.''  The motivation is as follows:
 The goal of AppleCore is to rectify this situation by providing a
 ``low-level high-level'' language (at about the same level of
 abstraction as C, but without structs) that's both useful and fun to
-program with.  First, it's a compiled language, so it should run
-faster than Applesoft.  Second, it's modular and supports separate
-compilation. The entire core language needs only a few kilobytes of
-support routines; additional routines can be linked in as needed.
-Third, AppleCore strikes a balance between power and efficiency.
-Notably, it supports integer arithmetic on fixed-size variables of up
-to 255 bytes.  This power does come at a cost in terms of speed for
-single-byte arithmetic that could be done in registers; however, if
-that speed is needed, one can easily call into assembly language
-arithmetic routines.  Fourth, it provides easy integration with
-assembly language routines: you can say things like ``load `A' into
-the accumulator and call \$FDED'' that are impossible to say directly
-in Applesoft.
+program with.  AppleCore is quite expressive for low-level
+programming: it supports all the usual assembly-language techniques
+such as symbolic constants, calling addresses as functions, passing
+and storing functions as addresses, laying out data tables and jump
+tables, etc.  However, AppleCore also provides higher-level
+abstractions such as loops, functions, and multi-byte variables,
+making it much easier to program than assembly.  The dollar notation
+for hexadecimal numbers is supported, so addresses, masks, ASCII
+codes, etc. can be expressed in a convenient, Apple II-friendly style.
 
-The main things that AppleCore lacks, and that Applesoft provides, are
-automatic memory management and floating-point computation.  I've left
-out memory management to keep things very simple.  Basically, as a
-programmer I can't live happily without control abstractions (loops
-and functions); but once I have them I'm perfectly content to
-synthesize data abstractions on my own.  If this becomes too much of a
-pain, a library for memory management can be added without difficulty,
-after the fashion of C.  (Applesoft actually provides garbage
-collection, but it works very poorly, causing the machine to seize up
-when the memory limit is reached.)  I've left out floating-point
-computation mainly because I'm most interested in text processing and
-integer computations; but again, FP computations can be added without
-too much difficulty.  In the mean time, one can fake FP computations
-by encoding FP literals as string data and calling into the Applesoft
-FP routines to convert from strings to FP numbers and back, and to
-compute using the FP numbers.  Applesoft is actually quite good at
-this.
+AppleCore supports separate compilation, so libraries can be
+statically linked in as needed; together with function abstraction,
+this capability provides a simple but powerful kind of
+extensibility. For example, unlike Applesoft, which has many built-in
+keywords pertaining to graphics operations, AppleCore has a very small
+set of built-in keywords.  Capabilities pertaining to graphics, IO,
+sound, etc., are provided as libraries.
+
+The language also incorporates several unusual features that are
+perhaps novel or interesting.  First, AppleCore natively supports
+integer arithmetic (both signed and unsigned) on fixed-size variables
+of up to 255 bytes.  For example, you can declare and initialize
+variables \kwd{A} and \kwd{B}, each of size 16 bytes unsigned, and
+then the expression \kwd{A+B} also has size 16, and it represents the
+16-byte unsigned addition of \kwd{A} and \kwd{B} in the obvious way.
+(Variable-sized arithmetic, i.e., where the size is not known at
+compile time, is supported via a library.)  Second, a simple type
+system keeps track of size and signedness.  The programmer specifies
+the size (as a compile-time constant-value expression) and signedness
+of each variable and function return value in the program, and the
+compiler infers the rest.  Third, \emph{register expressions} allow
+AppleCore programs to read and write 6502 registers.  This seems
+cleaner than inline assembly (which isn't supported), and it's
+essential for low-level routines, e.g., a character printing routine
+that loads a value into the accumulator and then calls
+\kwd{MON\_COUT}.
+
+The main things that AppleCore lacks are heap memory management (stack
+allocation is supported) and floating-point computation.  I've left
+out both of these features to keep things very simple, and because
+they aren't needed for the programming projects I am interested in.
+Either or both could be added without difficulty.  One can also carry
+out FP computations by encoding FP literals as string data and calling
+into the Applesoft FP routines to convert from strings to FP numbers
+and back, and to compute using the FP numbers.
 
 \section{Lexical Structure}
 
@@ -266,9 +280,6 @@ The syntax description below uses the following conventions:
   \nonterm{string-const}, and \nonterm{char-const} stand for integer,
   string, and character constants as defined in
   Section~\ref{sec:lexical:constants}.
-%
-\item The nonterminal \nonterm{size} refers to an integer constant
-  whose value is between 1 and 255 (inclusive).
 %
 \item Text and symbols in \kwd{typewriter} font (including
   non-italicized parentheses and brackets) denote literal program
@@ -531,11 +542,14 @@ $$\nonterm{typed-expr} ::= \mbox{\nonterm{expr} \kwd{:}
   \nonterm{type}}$$
 
 \subsection{Types}
+\label{sec:syntax:types}
 
 A type is an unsigned size, a signed size, or an address type:
 
-$$\nonterm{type} ::= \mbox{\nonterm{size} \opt{\kwd{S}} $|$ \kwd{@}}$$
+$$\nonterm{type} ::= \mbox{\nonterm{expr} \opt{\kwd{S}} $|$ \kwd{@}}$$
 
+\noindent
+The size expression may not be a binary operation \kwd{=}.
 
 \section{Semantic Checking}
 \label{sec:semantics}
@@ -600,34 +614,33 @@ encountered, subject to the following rules:
   literally included in the source file.
 %
 \item Function declarations are prepended as if they were literally
-  included in the source file, but with a semicolon instead of a body
-  (if any).
+  included in the source file, but with a semicolon instead of the
+  actual body (if any).
 %
 \item Variable and data declarations are prepended storing their name
   and size only; no variable initializer or data information is
   included for attribution (Section~\ref{sec:semantics:attr}), and
-  these declarations generate no code (similar to an \kwd{extern}
-  variable declaration in C).
+  these declarations generate no code.
 %
 \end{enumerate}
 %
 External include declarations are not imported, because they do not
 contain any information that the compiler needs for attribution or
-code generation.
+code generation of the source file.
 
 \subsection{Attribution}
 \label{sec:semantics:attr}
 
 The first semantic check performed by the compiler is to match each
 identifier appearing in the source file with its corresponding
-definition; this step is called \emph{attribution}.  Identifiers
-appearing in imported variable and data declarations
+definition; this step is called \emph{attribution}.  A
+\emph{definition} is a constant declaration, data declaration,
+variable declaration, function parameter declaration, or function
+declaration.  A \emph{use} is any identifier appearing in the source
+file not as the identifier of a definition. Identifiers appearing in
+imported variable and data declarations
 (Section~\ref{sec:semantics:import}) do not appear in the source file
-for purposes of this rule.  A \emph{definition} is a constant
-declaration, data declaration, variable declaration, function
-parameter declaration, or function declaration.  A \emph{use} is any
-identifier appearing in the source file not as the identifier of a
-definition.
+for purposes of this rule.
 
 The compiler matches definitions with uses in the following way:
 %
@@ -675,10 +688,15 @@ constant-value expression is one of the following:
 \item A parentheses expression, where the expression inside the
   parentheses is a compile-time constant-value expression.
 %
-\item A typed expression, where the subexpression is a compile-time
-  constant-value expression.
+\item A typed expression, where the value subexpression is a
+  compile-time constant-value expression.
 %
 \end{enumerate}
+%
+The following must be compile-time constant-value expressions: (1) Any
+expression appearing in a constant declaration
+(Section~\ref{sec:syntax:decls}); and (2) any expression appearing in
+the size expression of a type (Section~\ref{sec:syntax:types}).
 
 \bfhead{Assembly-time constant-value expressions} An assembly-time
 constant-value expression is one of the following:
@@ -699,29 +717,10 @@ constant-value expression is one of the following:
   for the address of a global variable).
 %
 \end{enumerate}
-
-\subsection{Expressions Appearing at Global Scope}
-\label{sec:semantic:global-expr}
-
-The following rules pertain to expressions appearing at global scope:
 %
-\begin{enumerate}
-%
-\item Any expression appearing in a constant declaration must be a
-  compile-time constant-value expression
-  (Section~\ref{sec:semantics:constant-value-expr}).
-%
-\item Any expression appearing in a data declaration or as the
-  initializer of a global variable declaration must be an
-  assembly-time constant-value expression
-  (Section~\ref{sec:semantics:constant-value-expr}).
-%
-\end{enumerate}
-%
-These rules are designed so that the compiler can do a single pass
-over all the expressions \nonterm{expr} appearing at global scope, in
-the order in which they appear in the source file, and generate code
-as described in Section~\ref{sec:code-gen:global-decls}.
+Any expression appearing in a data declaration or as the initializer
+of a global variable declaration (Section~\ref{sec:syntax:decls}) must
+be an assembly-time constant-value expression.
 
 \subsection{Size, Signedness, and Addresses}
 \label{sec:semantics:size}
@@ -734,10 +733,23 @@ errors such as dereferencing a variable's contents instead of its
 address (for example, writing \kwd{X[0,1]} instead of
 \kwd{(@X)[0,1]}).
 
-\bfhead{Size and signedness associated with type} The type
-\nonterm{size} with no trailing \kwd{S} has size \nonterm{size} and is
-unsigned.  The type \nonterm{size} \kwd{S} has size \nonterm{size} and
-is signed.  The type \kwd{@} has size 2 and is unsigned.
+\bfhead{Size and signedness associated with type} The compiler
+assigns an size and signedness to each type appearing in the program
+as follows:
+%
+\begin{enumerate}
+%
+\item If the type has the form \nonterm{expr}, then use the rules in
+  Section~\ref{sec:code-gen:expressions} to evaluate \nonterm{expr} to
+  a numeric constant \nonterm{size}, which must be between 1 and 255
+  inclusive.  The type has size \nonterm{size} and is unsigned.
+%
+\item If the type has the form \nonterm{expr} \kwd{S}, then proceed as
+  in case 1, except that the resulting type is signed.
+%
+\item The type \kwd{@} has size 2 and is unsigned.
+%
+\end{enumerate}
 
 \bfhead{Computing the size and signedness of an expression} For a
 constant-value typed expression
@@ -1235,7 +1247,7 @@ function call stack slot for that register
 \bfhead{Call expressions} The procedure depends on the kind of the
 called expression.
 
-\ithead{(1) Declared functions:} If the called expression is an
+\ithead{(1) Declared functions} If the called expression is an
 identifier corresponding to a function declaration, then do the
 following.  (a) Evaluate each argument and store it to its slot on the
 stack in the new frame, adjusting the argument sizes
@@ -1247,12 +1259,12 @@ values saved in their slots on the stack.  (d) Do a \kwd{JSR} to the
 code for the function body (Section~\ref{sec:code-gen:fn-bodies}). (e)
 Save all the saved registers to their slots.
 
-\ithead{(2) Compile-time constants:} If the called expression
+\ithead{(2) Compile-time constants} If the called expression
 evaluates to a compile-time constant, then (a) restore the registers
 as in (1)(c), (b) \kwd{JSR} to the constant address, and (c) save the
 registers as in (1)(e).
 
-\ithead{(3) Callee address unknown:} Otherwise the callee address is
+\ithead{(3) Callee address unknown} Otherwise the callee address is
 not known at compile time.  In this case proceed as in case 2, but in
 step (2)(b) store the value to zero-page memory and do a \kwd{JSR} to
 an indirect \kwd{JMP} to the address.
@@ -1320,8 +1332,9 @@ Negation is two's complement negation (i.e., \kwd{NOT} plus 1).
 \bfhead{Parentheses expressions} Evaluate the expression inside the
 parentheses.
 
-\bfhead{Typed expressions} Evaluate the subexpression.  Adjust the
-size to generate a new value of the correct size for the given type.
+\bfhead{Typed expressions} Evaluate the value subexpression.  Adjust
+the size to generate a new value of the correct size for the given
+type.
 
 \subsection{Address Computation for Semantic LValues}
 \label{sec:code-gen:lvalues}

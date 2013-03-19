@@ -1,7 +1,8 @@
 /**
- * Scan the AST and fill in the size and signedness of each expression
- * node, and whether each node represents an address.  Also do
- * semantic checking relating to size, signedness, and addresses.
+ * Scan the AST and infer size and signedness for each expression node
+ * that does not explicitly declare them.  Also infer whether each
+ * node represents an address.  Also do semantic checking relating to
+ * size, signedness, and addresses.
  */
 package AppleCoreCompiler.Semantics;
 
@@ -12,7 +13,7 @@ import AppleCoreCompiler.Errors.*;
 import java.util.*;
 import java.math.*;
 
-public class SizePass 
+public class InferredSizePass 
     extends ASTScanner 
     implements Pass
 {
@@ -128,10 +129,6 @@ public class SizePass
     {
 	super.visitIndexedExpression(node);
 	requireAddress(node.indexed);
-	if (node.size < 1 || node.size > 256) {
-	    throw new SemanticError("index size " + node.size + 
-				    " out of range", node);
-	}
 	printStatus(node);
     }
 

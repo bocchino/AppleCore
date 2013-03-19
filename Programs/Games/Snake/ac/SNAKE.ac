@@ -93,7 +93,7 @@ DATA SEG_BUF 19; # TAIL X
 DATA         20; # TAIL Y
 DATA	     20; # HEAD X
 DATA	     20; # HEAD Y
-DATA	     (0:252);
+DATA	     0:256-4;
 # -------------------------------------
 # POINTERS TO HEAD AND TAIL
 # -------------------------------------

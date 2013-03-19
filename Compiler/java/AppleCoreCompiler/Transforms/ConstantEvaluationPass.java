@@ -37,6 +37,7 @@ public class ConstantEvaluationPass
     public void visitVarDecl(VarDecl node) 
 	throws ACCError
     {
+	node.sizeExpr = transform(node.sizeExpr);
 	if (!node.isExternal) {
 	    super.visitVarDecl(node);
 	}
@@ -56,9 +57,11 @@ public class ConstantEvaluationPass
     public void visitTypedExpression(TypedExpression node)
 	throws ACCError
     {
+	node.sizeExpr = transform(node.sizeExpr);
 	super.visitTypedExpression(node);
 	if (node.expr instanceof NumericConstant) {
 	    node.expr.size = node.size;
+	    node.expr.sizeExpr = node.sizeExpr;
 	    node.expr.isSigned = node.isSigned;
 	    result = node.expr;
 	}
@@ -67,6 +70,7 @@ public class ConstantEvaluationPass
     public void visitIndexedExpression(IndexedExpression node) 
 	throws ACCError
     {
+	node.sizeExpr = transform(node.sizeExpr);
 	super.visitIndexedExpression(node);
 	if (node.indexed instanceof NumericConstant &&
 	    node.index instanceof NumericConstant) {
@@ -100,11 +104,11 @@ public class ConstantEvaluationPass
 	    ic.lineNumber = node.lineNumber;
 	    switch (node.operator) {
 	    case SHL:
-		SizePass.checkShift(node);
+		InferredSizePass.checkShift(node);
 		ic.setValue(leftValue.shiftLeft(rightValue.intValue()));
 		break;
 	    case SHR:
-		SizePass.checkShift(node);
+		InferredSizePass.checkShift(node);
 		ic.setValue(leftValue.shiftRight(rightValue.intValue()));
 		break;
 	    case TIMES:

@@ -138,9 +138,12 @@ public class Main {
 	    GlobalExpressionPass globalExpressionPass =
 		new GlobalExpressionPass();
 	    globalExpressionPass.runOn(sourceFile);
+
+	    DeclaredSizePass declaredSizePass = new DeclaredSizePass();
+	    declaredSizePass.runOn(sourceFile);
 	    
-	    SizePass sizePass = new SizePass();
-	    sizePass.runOn(sourceFile);
+	    InferredSizePass inferredSizePass = new InferredSizePass();
+	    inferredSizePass.runOn(sourceFile);
 	    
 	    LValuePass lvaluePass = new LValuePass();
 	    lvaluePass.runOn(sourceFile);

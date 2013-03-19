@@ -11,9 +11,6 @@ import AppleCoreCompiler.Syntax.*;
 
 public class Parser {
 
-    public static final BigInteger MAX_SIZE = 
-	new BigInteger("255");
-
     /**
      * Construct a new Parser object with the specified input file
      */
@@ -231,7 +228,7 @@ public class Parser {
 	    varDecl.representsAddress = true;
 	} 
 	else {
-	    varDecl.size = parseSize();
+	    varDecl.sizeExpr = parseLValueExpression();
 	    varDecl.isSigned = parseIsSigned();
 	}
 	if (scanner.getCurrentToken() == Token.EQUALS) {
@@ -262,7 +259,7 @@ public class Parser {
 		functionDecl.representsAddress = true;
 	    }
 	    else {
-		functionDecl.size = parseSize();
+		functionDecl.sizeExpr = parseLValueExpression();
 		functionDecl.isSigned = parseIsSigned();
 	    }
 	}
@@ -300,7 +297,7 @@ public class Parser {
 		param.representsAddress = true;
 	    }
 	    else {
-		param.size = parseSize();
+		param.sizeExpr = parseLValueExpression();
 		param.isSigned = parseIsSigned();
 	    }
 	    params.add(param);
@@ -612,7 +609,7 @@ public class Parser {
 	    indexedExp.representsAddress = true;
 	}
 	else {
-	    indexedExp.size = parseSize();
+	    indexedExp.sizeExpr = parseLValueExpression();
 	    indexedExp.isSigned = parseIsSigned();
 	}
 	expectAndConsume(Token.RBRACKET);
@@ -634,7 +631,7 @@ public class Parser {
 	    sizedExp.representsAddress = true;
 	}
 	else {
-	    sizedExp.size = parseSize();
+	    sizedExp.sizeExpr = parseLValueExpression();
 	    sizedExp.isSigned = parseIsSigned();
 	}
 	return sizedExp;
@@ -786,22 +783,6 @@ public class Parser {
 	    return true;
 	}
 	return false;	
-    }
-
-    /**
-     * Parse a size.
-     */
-    private int parseSize() 
-	throws SyntaxError, IOException
-    {
-	IntegerConstant intConstant = parseIntConstant();
-	if (intConstant.valueAsBigInteger().compareTo(BigInteger.ZERO) < 0 ||
-	    intConstant.valueAsBigInteger().compareTo(MAX_SIZE) > 0) {
-	    throw new SyntaxError(intConstant + " out of range",
-				  sourceFileName,
-				  scanner.getLineNumber());
-	}
-	return intConstant.valueAsBigInteger().intValue();
     }
 
     /**

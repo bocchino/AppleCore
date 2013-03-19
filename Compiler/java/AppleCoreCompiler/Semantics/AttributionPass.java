@@ -153,6 +153,7 @@ public class AttributionPass
 	    enterDecl.enter(decl, localSymbols);
 	}
 	// Attribute the function
+	scan(node.sizeExpr);
 	if (!node.isExternal) {
 	    super.visitFunctionDecl(node);
 	}
@@ -166,6 +167,7 @@ public class AttributionPass
 	if (node.isLocalVariable) {
 	    printStatus("Attributing ",node);
 	}
+	scan(node.sizeExpr);
 	if (!node.isExternal) {
 	    super.visitVarDecl(node);
 	}
