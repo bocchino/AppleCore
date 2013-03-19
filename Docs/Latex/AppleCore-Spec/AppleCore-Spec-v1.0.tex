@@ -16,8 +16,8 @@ Pittsburgh, PA}
 \section{Introduction and Rationale}
 
 AppleCore is a C-like programming language for the Apple II series of
-computers.  A cross-compiler from Java (e.g., running on a Mac or PC)
-to the Apple II is currently available.
+computers.  A cross-compiler from Mac OS X to the Apple II is
+currently available.
 
 The idea of AppleCore is to provide a ``core language for programming
 the Apple II.''  The motivation is as follows:
@@ -31,7 +31,7 @@ the Apple II.''  The motivation is as follows:
   overhead in space or time).  The programming model must also provide
   (1) tight control over the layout of generated code and (2) easy
   integration with assembly-language support routines such as those
-  provided by the System Monitor or Applesoft.
+  provided by the system monitor or Applesoft.
 %
 \item The native programming models on the Apple II are inadequate.
   Assembly language is powerful but painfully low-level.  Applesoft,
@@ -54,18 +54,19 @@ The goal of AppleCore is to rectify this situation by providing a
 abstraction as C, but without structs) that's both useful and fun to
 program with.  AppleCore is quite expressive for low-level
 programming: it supports all the usual assembly-language techniques
-such as symbolic constants, calling addresses as functions, passing
-and storing functions as addresses, laying out data tables and jump
+such as symbolic constants, calling subroutines as functions, passing
+and storing subroutines as addresses, laying out data tables and jump
 tables, etc.  However, AppleCore also provides higher-level
-abstractions such as loops, functions, and multi-byte variables,
-making it much easier to program than assembly.  The dollar notation
-for hexadecimal numbers is supported, so addresses, masks, ASCII
-codes, etc. can be expressed in a convenient, Apple II-friendly style.
+abstractions such as loops, function prototypes, multi-byte variables
+and arithmetic, and multi-byte loads and stores to memory, making it
+much easier to program than assembly.  The dollar notation for
+hexadecimal numbers is supported, so addresses, masks, ASCII codes,
+etc. can be expressed in a convenient, Apple II-friendly style.
 
 AppleCore supports separate compilation, so libraries can be
 statically linked in as needed; together with function abstraction,
 this capability provides a simple but powerful kind of
-extensibility. For example, unlike Applesoft, which has many built-in
+extensibility. For example, whereas Applesoft specifies many built-in
 keywords pertaining to graphics operations, AppleCore has a very small
 set of built-in keywords.  Capabilities pertaining to graphics, IO,
 sound, etc., are provided as libraries.
@@ -78,16 +79,17 @@ variables \kwd{A} and \kwd{B}, each of size 16 bytes unsigned, and
 then the expression \kwd{A+B} also has size 16, and it represents the
 16-byte unsigned addition of \kwd{A} and \kwd{B} in the obvious way.
 (Variable-sized arithmetic, i.e., where the size is not known at
-compile time, is supported via a library.)  Second, a simple type
-system keeps track of size and signedness.  The programmer specifies
-the size (as a compile-time constant-value expression) and signedness
-of each variable and function return value in the program, and the
-compiler infers the rest.  Third, \emph{register expressions} allow
-AppleCore programs to read and write 6502 registers.  This seems
-cleaner than inline assembly (which isn't supported), and it's
-essential for low-level routines, e.g., a character printing routine
-that loads a value into the accumulator and then calls
-\kwd{MON\_COUT}.
+compile time, is supported by library functions.)  Second, a simple
+type system keeps track of size and signedness.  The programmer
+specifies the size (as a compile-time constant-value expression) and
+signedness of each variable and function return value in the program,
+and the compiler infers the rest.  Third, \emph{register expressions}
+allow AppleCore programs to read and write 6502 registers.  This
+solution is cleaner than inline assembly, and it's essential for
+low-level routines, e.g., a character printing routine that loads a
+value into the accumulator and then calls \kwd{MON\_COUT}.  Inline
+assembly is not supported, but it's easy to link against handwritten
+assembly and call it from within AppleCore code.
 
 The main things that AppleCore lacks are heap memory management (stack
 allocation is supported) and floating-point computation.  I've left
@@ -178,9 +180,9 @@ or more hexadecimal digits \kwd{0} through \kwd{9} or \kwd{A} through
 valid integer constants in hexadecimal form.
 
 Integer constants represent values with up to 255 bytes of precision
-(i.e., in the range $0$ through $2^{255 \cdot 8}-1$, inclusive).  It
-is a compile-time error to write an integer constant with a value
-larger than that.
+(i.e., in the range $0$ through $2^{255 \cdot 8}-1$, inclusive, when
+interpreted as unsigned integers).  It is a compile-time error to
+write an integer constant with a value larger than that.
 
 \bfhead{String constants} A string constant is a sequence of
 characters enclosed in double quotes (\kwd{"..."}).  A string constant
@@ -1133,7 +1135,7 @@ following:
 This calling convention is designed so that from the point of view of
 the caller, a call to an AppleCore function that takes no arguments
 and returns no result is indistinguishable from a \kwd{JSR} to a
-non-AppleCore function (for example, in the System Monitor).  That
+non-AppleCore function (for example, in the system monitor).  That
 way, non-AppleCore assembly language functions can be called in the
 same way as AppleCore functions.  In particular, if \kwd{V} is a
 variable, then a call expression \kwd{V()} has the same meaning
@@ -1259,13 +1261,13 @@ values saved in their slots on the stack.  (d) Do a \kwd{JSR} to the
 code for the function body (Section~\ref{sec:code-gen:fn-bodies}). (e)
 Save all the saved registers to their slots.
 
-\ithead{(2) Compile-time constants} If the called expression
-evaluates to a compile-time constant, then (a) restore the registers
+\ithead{(2) Assembly-time constants} If the called expression
+evaluates to an assembly-time constant, then (a) restore the registers
 as in (1)(c), (b) \kwd{JSR} to the constant address, and (c) save the
 registers as in (1)(e).
 
 \ithead{(3) Callee address unknown} Otherwise the callee address is
-not known at compile time.  In this case proceed as in case 2, but in
+not known at assembly time.  In this case proceed as in case 2, but in
 step (2)(b) store the value to zero-page memory and do a \kwd{JSR} to
 an indirect \kwd{JMP} to the address.
 
