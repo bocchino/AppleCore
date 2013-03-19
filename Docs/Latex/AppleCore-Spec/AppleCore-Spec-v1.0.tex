@@ -72,15 +72,15 @@ set of built-in keywords.  Capabilities pertaining to graphics, IO,
 sound, etc., are provided as libraries.
 
 The language also incorporates several unusual features that are
-perhaps novel or interesting.  First, AppleCore natively supports
-integer arithmetic (both signed and unsigned) on fixed-size variables
-of up to 255 bytes.  For example, you can declare and initialize
-variables \kwd{A} and \kwd{B}, each of size 16 bytes unsigned, and
-then the expression \kwd{A+B} also has size 16, and it represents the
-16-byte unsigned addition of \kwd{A} and \kwd{B} in the obvious way.
-(Variable-sized arithmetic, i.e., where the size is not known at
-compile time, is supported by library functions.)  Second, a simple
-type system keeps track of size and signedness.  The programmer
+perhaps interesting as a matter of language design.  First, AppleCore
+natively supports integer arithmetic (both signed and unsigned) on
+fixed-size variables of up to 255 bytes.  For example, you can declare
+and initialize variables \kwd{A} and \kwd{B}, each of size 16 bytes
+unsigned, and then the expression \kwd{A+B} also has size 16, and it
+represents the 16-byte unsigned addition of \kwd{A} and \kwd{B} in the
+obvious way.  (Variable-sized arithmetic, i.e., where the size is not
+known at compile time, is supported by library functions.)  Second, a
+simple type system keeps track of size and signedness.  The programmer
 specifies the size (as a compile-time constant-value expression) and
 signedness of each variable and function return value in the program,
 and the compiler infers the rest.  Third, \emph{register expressions}
