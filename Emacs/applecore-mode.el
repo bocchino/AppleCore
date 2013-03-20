@@ -24,7 +24,7 @@
     ("'.'" . 'font-lock-constant-face)
     ("\\$[[:xdigit:]]*" . 'font-lock-constant-face)
     ("^[[:digit:]]+" . 'font-lock-constant-face)
-    ("[^_A-Za-z]\\([[:digit:]]+\\)" .
+    ("[^_A-Za-z0-9]\\([[:digit:]]+\\)" .
      (1 'font-lock-constant-face)))
   ;; File extensions
   '("\\.ach?$")
