@@ -67,7 +67,11 @@ To set up your Mac to use AppleCore, do the following:
 4.  Include $APPLECORE/Compiler/bin, $APPLECORE/Assembler/bin, and
     $APPLECORE/Scripts in your UNIX PATH.
 
-5.  Build the project:
+5.  _Optional:_ If you use Emacs, add the AppleCore and AVM modes to
+    your Emacs installation. See $APPLECORE/Emacs/README.md for
+    details.
+
+6.  Build the project:
 
     `cd $APPLECORE`
 
@@ -87,10 +91,6 @@ documentation yet.  However, after browsing the spec to get the
 general idea of what's going on, you should be able to read the
 examples in $APPLECORE/Programs to get a better idea of how to write
 programs in AppleCore.
-
-The directory $APPLECORE/Emacs contains simple Emacs modes that
-provide syntax highlighting for AppleCore programs.  See the README
-file in that directory for more details.
 
 6\. Compiling AppleCore Programs
 --------------------------------
