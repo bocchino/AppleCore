@@ -230,7 +230,7 @@ public class SCMacroEmitter
 	public void visitCharConstant(CharConstant expr)
 	    throws ACCError
 	{
-	    emitAbsoluteInstruction(".DA","#'"+expr.value+"'");
+	    emitAbsoluteInstruction(".DA","#'"+expr.value);
 	    emitPadding(false);
 	}
 
