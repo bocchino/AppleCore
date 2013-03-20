@@ -88,6 +88,10 @@ general idea of what's going on, you should be able to read the
 examples in $APPLECORE/Programs to get a better idea of how to write
 programs in AppleCore.
 
+The directory $APPLECORE/Emacs contains simple Emacs modes that
+provide syntax highlighting for AppleCore programs.  See the README
+file in that directory for more details.
+
 6\. Compiling AppleCore Programs
 --------------------------------
 
