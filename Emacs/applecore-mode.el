@@ -58,13 +58,12 @@
   (insert "# -------------------------------------"))
 
 (defun ac-indent ()
-  (let (in-decl)
+  (let ((want-relative 0))
     (save-excursion
       (beginning-of-line)
       (if (looking-at "^[ \t]*\\(CONST\\|DATA\\)")
-	  (setq in-decl 1)
-	(setq in-decl 0)))
-    (if (= in-decl 1)
+	  (setq want-relative 1)))
+    (if (= want-relative 1)
 	(indent-relative)
       (ac-indent-decl))))
     
