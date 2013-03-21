@@ -9,28 +9,35 @@ and assembly files. The modes provide the following features:
 2.  A caps lock minor mode, which is on by default.  It can be turned
     off by toggling `caps-lock-mode`.
 
-3.  Minimal indentation support, as follows:
+3.  Comment support: Pressing ESC-c moves the point to the beginning
+    of the line and inserts a comment character, a space, and 37
+    dashes.  This is useful for AppleCore-style comments, which are
+    inspired by the old SC Macro Assembler style of comment.  These
+    comments really stand out, and they show at a glance how the code
+    is organized.  See the programs in $APPLECORE/Programs for
+    examples.
 
-    - AVM files, and CONST and DATA declarations in AppleCore files,
-      use Emacs-standard relative indentation. Pressing TAB inserts
-      enough space to move the cursor position to the start of the
-      next word in the previous line, or to the next tab stop if there
-      is no word in the previous line. This indentation style is
-      useful for for lining up labels and declarations.
+4.  Minimal indentation support, as follows:
 
-    - For other declarations in AppleCore files, inserting space in
-      the middle of the line doesn't make sense; and in the case of
-      statement blocks, the indentation should occur from the left.
-      Therefore these declarations use the following simple strategy:
-      TAB indents the entire line by the current tab width (the
-      default is 2) unless the current line is to the left of the
-      previous line, in which case the line is pushed over to match
-      the previous line.
+  - AVM files, and CONST and DATA declarations in AppleCore files, use
+    Emacs-standard relative indentation. Pressing TAB inserts enough
+    space to move the cursor position to the start of the next word in
+    the previous line, or to the next tab stop if there is no word in
+    the previous line. This indentation style is useful for for lining
+    up labels and declarations.
+
+  - For other declarations in AppleCore files, inserting space in the
+    middle of the line doesn't make sense; and in the case of
+    statement blocks, the indentation should occur from the left.
+    Therefore these declarations use the following simple strategy:
+    TAB indents the entire line by the current tab width (the default
+    is 2) unless the current line is left of the previous line, in
+    which case the line is pushed over to match the previous line.
 
 This simple indentation scheme seems to work fairly well. Implementing
-full-fledged auto-indentation requires parsing the code, and I have
-not been able to find good tool support for this.  Writing a parser
-from scratch does not seem warranted at this time.
+full-fledged auto-indentation requires parsing, and I have not been
+able to find adequate tool support for this.  Writing a parser from
+scratch does not seem warranted at this time.
 
 To use the modes, include the following lines in your .emacs file:
 
