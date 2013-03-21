@@ -45,6 +45,12 @@
 (defun avm-setup ()
   (setq-default indent-tabs-mode nil)
   (setq indent-line-function 'indent-relative)
+  (local-set-key (kbd "M-c") 'avm-separator)
   (caps-lock-mode 1))
+
+(defun avm-separator ()
+  (interactive)
+  (beginning-of-line)
+  (insert "* -------------------------------------"))
 
 (provide 'avm-mode)

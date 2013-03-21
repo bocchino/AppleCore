@@ -29,7 +29,7 @@
      (1 'font-lock-variable-name-face))
     ("VAR[[:space:]]+\\([A-Za-z0-9_]*\\)" . 
      (1 'font-lock-variable-name-face))
-    ("DATA[[:space:]]+\\([A-Za-z0-9_]+\\)[[:space:]]+.*;" . 
+    ("DATA[[:space:]]+\\([A-Za-z0-9_]+\\)[[:space:]]+\.+;" . 
      (1 'font-lock-variable-name-face))
     ("FN[[:space:]]+\\([A-Za-z0-9_]*\\)" . 
      (1 'font-lock-function-name-face))
@@ -45,22 +45,37 @@
   "Major mode for AppleCore source files"
 )
 
-(defun ac-indent ()
-  (interactive)
-  (defvar prev 0)
-  (defvar curr 0)
-  (forward-line -1)
-  (setq prev (current-indentation))
-  (forward-line 1)
-  (setq curr (current-indentation))
-  (if (< curr prev)
-      (indent-line-to prev)
-    (indent-line-to (+ curr tab-width))))
-
 (defun ac-setup ()
-  (setq tab-stop-list '(2 4 6 8 10))
   (setq-default indent-tabs-mode nil)
-  (setq-default indent-line-function 'indent-relative)
+  (setq-default tab-width 2)
+  (setq-default indent-line-function 'ac-indent)
+  (local-set-key (kbd "M-c") 'ac-separator)
   (caps-lock-mode 1))
+
+(defun ac-separator ()
+  (interactive)
+  (beginning-of-line)
+  (insert "# -------------------------------------"))
+
+(defun ac-indent ()
+  (let (in-decl)
+    (save-excursion
+      (beginning-of-line)
+      (if (looking-at "^[ \t]*\\(CONST\\|DATA\\)")
+	  (setq in-decl 1)
+	(setq in-decl 0)))
+    (if (= in-decl 1)
+	(indent-relative)
+      (ac-indent-decl))))
+    
+(defun ac-indent-decl ()
+  (let (prev curr)
+    (save-excursion
+      (forward-line -1)
+      (setq prev (current-indentation)))
+    (setq curr (current-indentation))
+    (if (< curr prev)
+	(indent-line-to prev)
+      (indent-line-to (+ curr tab-width)))))
 
 (provide 'applecore-mode)

@@ -41,7 +41,7 @@ DATA          RM_NONE;
 
 # RUBBER
 DATA          RM_NONE;
-DATA	      RM_FEATHERS;
+DATA          RM_FEATHERS;
 DATA          RM_NONE;
 DATA          RM_CLOSET;
 DATA          RM_NONE;
@@ -49,7 +49,7 @@ DATA          RM_NONE;
 
 # CLOSET
 DATA          RM_NONE;
-DATA	      RM_NONE;
+DATA	        RM_NONE;
 DATA          RM_RUBBER;
 DATA          RM_NONE;
 DATA          RM_NONE;
@@ -57,7 +57,7 @@ DATA          RM_NONE;
 
 # MUDDY
 DATA          RM_FEATHERS;
-DATA	      RM_NONE;
+DATA	        RM_NONE;
 DATA          RM_RESERVOIR;
 DATA          RM_BRIGHT;
 DATA          RM_NONE;

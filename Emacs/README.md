@@ -9,13 +9,25 @@ and assembly files. The modes provide the following features:
 2.  A caps lock minor mode, which is on by default.  It can be turned
     off by toggling `caps-lock-mode`.
 
-3.  Relative indentation.  Pressing TAB lines the cursor up with the
-    next word in the previous line or (if there is no word in the
-    previous line) with the next tab stop.  For AppleCore files, there
-    are five tab stops set at two-space intervals.
+3.  Minimal indentation support, as follows:
 
-Relative indentation works fairly well for this language, and it
-requires no implementation.  On the other hand, implementing
+    - AVM files, and CONST and DATA declarations in AppleCore files,
+      use Emacs-standard relative indentation. Pressing TAB inserts
+      enough space to move the cursor position to the start of the
+      next word in the previous line, or to the next tab stop if there
+      is no word in the previous line. This indentation style is
+      useful for for lining up labels and declarations.
+
+    - For other declarations in AppleCore files, inserting space in
+      the middle of the line doesn't make sense; and in the case of
+      statement blocks, the indentation should occur from the left.
+      Therefore these declarations use the following simple strategy:
+      TAB indents the entire line by the current tab width (the
+      default is 2) unless the current line is to the left of the
+      previous line, in which case the line is pushed over to match
+      the previous line.
+
+This simple indentation scheme seems to work fairly well. Implementing
 full-fledged auto-indentation requires parsing the code, and I have
 not been able to find good tool support for this.  Writing a parser
 from scratch does not seem warranted at this time.
