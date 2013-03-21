@@ -24,6 +24,9 @@ software is provided "as is" without any warranty, express or implied,
 that it conforms to its specification or otherwise does anything in
 particular, other than what it actually does do when you run it.
 
+The file Emacs/caps-lock.el is subject to the GNU General Public
+License, v3.  See the Emacs directory for further details.
+
 3\. System Requirements
 -----------------------
 
