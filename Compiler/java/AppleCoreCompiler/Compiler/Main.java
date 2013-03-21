@@ -193,13 +193,18 @@ public class Main {
 					SourceFile sourceFile) 
 	throws ACCError, IOException
     {
-	Parser parser = new Parser(importFileName);
-	SourceFile importFile = parser.parse();
-	for (Declaration decl : importFile.decls) {
-	    if (!(decl instanceof IncludeDecl)) {
-		decl.isExternal = true;
-		sourceFile.importedDecls.add(decl);
+	try {
+	    Parser parser = new Parser(importFileName);
+	    SourceFile importFile = parser.parse();
+	    for (Declaration decl : importFile.decls) {
+		if (!(decl instanceof IncludeDecl)) {
+		    decl.isExternal = true;
+		    sourceFile.importedDecls.add(decl);
+		}
 	    }
+	}
+	catch (FileNotFoundException e) {
+	    throw new FileNotFoundError(importFileName);
 	}
     }
 
