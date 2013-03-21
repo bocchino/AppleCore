@@ -9,16 +9,13 @@ and assembly files. The modes provide the following features:
 2.  A caps lock minor mode, which is on by default.  It can be turned
     off by toggling `caps-lock-mode`.
 
-3.  For AppleCore files, minimal tab indentation (relative indentation
-    works just fine for AVM files).  In applecore mode, pressing TAB
-    indents the current line by the tab width (the default is two)
-    unless the current line is to the left of the previous line, in
-    which case the current line is indented to line up with the
-    previous line.
+3.  Relative indentation.  Pressing TAB lines the cursor up with the
+    next word in the previous line or (if there is no word in the
+    previous line) with the next tab stop.  For AppleCore files, there
+    are five tab stops set at two-space intervals.
 
-The minimal indentation strategy works surprisingly well for entering
-code.  Of course there are many things it won't do: for example, it
-won't automatically un-indent closing braces.  However, implementing a
+Relative indentation works fairly well for this language, and it
+requires no implementation.  On the other hand, implementing
 full-fledged auto-indentation requires parsing the code, and I have
 not been able to find good tool support for this.  Writing a parser
 from scratch does not seem warranted at this time.

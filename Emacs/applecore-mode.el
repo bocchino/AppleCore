@@ -58,9 +58,9 @@
     (indent-line-to (+ curr tab-width))))
 
 (defun ac-setup ()
+  (setq tab-stop-list '(2 4 6 8 10))
   (setq-default indent-tabs-mode nil)
-  (setq-default tab-width 2)
-  (setq indent-line-function 'ac-indent)
+  (setq-default indent-line-function 'indent-relative)
   (caps-lock-mode 1))
 
 (provide 'applecore-mode)

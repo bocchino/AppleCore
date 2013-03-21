@@ -43,6 +43,7 @@
 )
 
 (defun avm-setup ()
+  (setq-default indent-tabs-mode nil)
   (setq indent-line-function 'indent-relative)
   (caps-lock-mode 1))
 
