@@ -8,11 +8,11 @@ CONST BASIC_PTR           $E3D0;
 # ------------------------------------
 # 6502 INSTRUCTIONS
 # ------------------------------------
-CONST JMP	            $4C;
+CONST JMP	                $4C;
 # ------------------------------------
 # MAIN PROGRAM
 # ------------------------------------
-CONST HELLO                $803;
+CONST HELLO               $803;
 
 VAR PASS:1=0;
 VAR RESETV:3;

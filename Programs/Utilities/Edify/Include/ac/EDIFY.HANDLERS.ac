@@ -18,7 +18,7 @@ FN A_HANDLER() {
       ELSE {
         COPY(CB_START,CB_LEN,BUF_END);
         SET BUF_END=BUF_END+CB_LEN;
-	SET BUF_SIZE=BUF_SIZE+CB_SIZE;
+	      SET BUF_SIZE=BUF_SIZE+CB_SIZE;
       }
     }
   }
@@ -129,13 +129,13 @@ FN H_HANDLER() {
       MON_CROUT();
       IF (DOS_ERRNO[0,1]=0) {
         PRINT_STRING(MON_IN);
-	MON_CROUT();
+	      MON_CROUT();
         INCR LN;
       }
       IF (LN >= MON_WNDBTM[0,1]-3) {
         SET ^A=' '+$80;
         MON_KEYIN();
-	SET LN=0;
+	      SET LN=0;
       }
     }
     PRINT_STRING(DOS_CLOSE);
@@ -161,8 +161,8 @@ FN I_HANDLER() {
       ELSE {
         SET COPY_LEN=BUF_END-N_PTR;
         COPY(N_PTR,COPY_LEN,N_PTR+CB_LEN);
-	COPY(CB_START,CB_LEN,N_PTR);
-	SET BUF_SIZE=BUF_SIZE+CB_SIZE;
+	      COPY(CB_START,CB_LEN,N_PTR);
+	      SET BUF_SIZE=BUF_SIZE+CB_SIZE;
       }
     }
   }

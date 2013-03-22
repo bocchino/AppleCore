@@ -34,22 +34,22 @@ CONST HI_RES_PAGE_2 $4000;
 # --------------------------------------
 # COLORS
 # --------------------------------------
-CONST BLACK		0;
-CONST RED		1;
-CONST DARK_BLUE		2;
-CONST VIOLET		3;
-CONST DARK_GREEN	4;
-CONST DARK_GREY		5;
-CONST MED_BLUE		6;
-CONST LIGHT_BLUE	7;
-CONST BROWN		8;
-CONST ORANGE		9;
-CONST LIGHT_GREY	10;
-CONST PINK		11;
-CONST LIGHT_GREEN	12;
-CONST YELLOW		13;
-CONST TURQUOISE		14;
-CONST WHITE		15;
+CONST BLACK             0;
+CONST RED		            1;
+CONST DARK_BLUE		      2;
+CONST VIOLET		        3;
+CONST DARK_GREEN	      4;
+CONST DARK_GREY		      5;
+CONST MED_BLUE		      6;
+CONST LIGHT_BLUE	      7;
+CONST BROWN		          8;
+CONST ORANGE		        9;
+CONST LIGHT_GREY	      10;
+CONST PINK		          11;
+CONST LIGHT_GREEN	      12;
+CONST YELLOW		        13;
+CONST TURQUOISE		      14;
+CONST WHITE		          15;
 # --------------------------------------
 # SET LO-RES COLOR
 # --------------------------------------
