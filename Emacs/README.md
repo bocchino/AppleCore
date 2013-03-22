@@ -26,9 +26,8 @@ and assembly files. The modes provide the following features:
     the previous line. This indentation style is useful for for lining
     up labels and declarations.
 
-  - In AppleCore files, lines beginning with FN or INCLUDE
-    (discounting leading spaces) shouldn't ever be indented, so TAB
-    does nothing for these lines.
+  - In AppleCore files, lines beginning with FN or INCLUDE shouldn't
+    ever be indented, so TAB does nothing for these lines.
 
   - In AppleCore files, lines beginning with a close brace are
     indented to the previous line's indentation minus the current tab
