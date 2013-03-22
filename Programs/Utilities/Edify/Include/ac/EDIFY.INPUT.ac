@@ -89,7 +89,7 @@ FN EXIT_EDIFY() {
     IF (EQ_CHAR(MON_IN[0,1],'Y')) {
       IF (STRING_LEN(@FILE_NAME)=0) {
         GET_INPUT(FNAME_PROMPT);
-	SET (@FILE_NAME)[0,32]=MON_IN[0,32];
+	      SET (@FILE_NAME)[0,32]=MON_IN[0,32];
       }
       IF (STRING_LEN(@FILE_NAME)>0)
         S_HANDLER();

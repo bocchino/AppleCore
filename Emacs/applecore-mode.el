@@ -58,14 +58,17 @@
   (insert "# -------------------------------------"))
 
 (defun ac-indent ()
-  (let ((want-relative 0))
+  (let ((select 0))
     (save-excursion
       (beginning-of-line)
       (if (looking-at "^[ \t]*\\(CONST\\|DATA\\)")
-	  (setq want-relative 1)))
-    (if (= want-relative 1)
-	(indent-relative)
-      (ac-indent-decl))))
+	  (setq select 1))
+      (if (looking-at "^[ \t]*\\(FN\\|INCLUDE\\)")
+	  (setq select 2)))
+    (when (= select 0)
+      (ac-indent-decl))
+    (when (= select 1)
+      (ac-indent-relative))))
     
 (defun ac-indent-decl ()
   (let (prev curr)
@@ -73,8 +76,18 @@
       (forward-line -1)
       (setq prev (current-indentation)))
     (setq curr (current-indentation))
-    (if (< curr prev)
+    (beginning-of-line)
+    (if (looking-at "[ \t]*\\}")
+	(indent-line-to (- prev tab-width))
+      (if (< curr prev)
 	(indent-line-to prev)
-      (indent-line-to (+ curr tab-width)))))
+	(indent-line-to (+ curr tab-width))))))
+
+(defun ac-indent-relative ()
+  (let ((prev (preceding-char)))
+    (when (or 
+	   (not (looking-at "[^[:space:]]"))
+	   (string-match "[ \t]" (string prev)))
+      (indent-relative))))
 
 (provide 'applecore-mode)

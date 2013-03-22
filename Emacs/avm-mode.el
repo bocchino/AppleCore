@@ -44,7 +44,7 @@
 
 (defun avm-setup ()
   (setq-default indent-tabs-mode nil)
-  (setq indent-line-function 'indent-relative)
+  (setq indent-line-function 'avm-indent-relative)
   (local-set-key (kbd "M-c") 'avm-separator)
   (caps-lock-mode 1))
 
@@ -52,5 +52,13 @@
   (interactive)
   (beginning-of-line)
   (insert "* -------------------------------------"))
+
+(defun avm-indent-relative ()
+  (let ((prev (preceding-char)))
+    (when (or 
+	   (not (looking-at "[^[:space:]]"))
+	   (string-match "[ \t]" (string prev)))
+      (indent-relative))))
+
 
 (provide 'avm-mode)
