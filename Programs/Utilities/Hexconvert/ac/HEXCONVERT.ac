@@ -52,7 +52,7 @@ FN MAIN() {
       ELSE {
         SET OK=TRUE;
         NUM_TO_STR(@SIZE,1,10,MON_IN);
-	PRINT_CHAR('=');
+	      PRINT_CHAR('=');
         PRINT_STRING(MON_IN);
         MON_CROUT();
       }

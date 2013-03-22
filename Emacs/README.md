@@ -20,11 +20,11 @@ and assembly files. The modes provide the following features:
 4.  Minimal indentation support, as follows:
 
   - AVM files, and CONST and DATA declarations in AppleCore files, use
-    a modified form of relative indentation. Pressing TAB inserts the
-    spacing needed to move the point to the start of the next word in
-    the previous line, or to the next tab stop if there is no word in
-    the previous line. This indentation style is useful for for lining
-    up labels and declarations.
+    a modified form of relative indentation. Pressing TAB inserts
+    spacing to move the point to the start of the next word in the
+    previous line, or to the next tab stop if there is no word in the
+    previous line. This indentation style is useful for for lining up
+    labels and declarations.
 
   - In AppleCore files, lines beginning with FN or INCLUDE shouldn't
     ever be indented, so TAB does nothing for these lines.
