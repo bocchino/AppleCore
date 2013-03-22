@@ -84,10 +84,13 @@
 	(indent-line-to (+ curr tab-width))))))
 
 (defun ac-indent-relative ()
-  (let ((prev (preceding-char)))
-    (when (or 
-	   (not (looking-at "[^[:space:]]"))
-	   (string-match "[ \t]" (string prev)))
-      (indent-relative))))
+  (if (looking-at "[^[:space:]]")
+    (progn
+      (re-search-backward "\\(^\\|[ \t]\\)")
+      (when (looking-at "[ \t]")
+	(forward-char 1))
+      (when (not (looking-at "\\(CONST\\|DATA\\)"))
+	(indent-relative)))
+    (indent-relative)))
 
 (provide 'applecore-mode)

@@ -6,7 +6,7 @@
 CONST BINDING_CHAR    ':';
 CONST DEFAULT_W       10;
 CONST NO_K            0;
-CONST NO_CHAR	      0;
+CONST NO_CHAR         0;
 CONST MAX_STACK_SIZE  256;
 # -----------------------------------
 # ERROR MESSAGES
@@ -22,7 +22,7 @@ DATA MARK_NOT_SET       "MARK NOT SET";
 DATA PATTERN_NOT_SET    "PATTERN NOT SET";
 DATA EXPECTED_PATTERN   "EXPECTED PATTERN";
 DATA FILE_NOT_FOUND     "FILE NOT FOUND";
-DATA DISK_ERROR		"DISK ERROR";
+DATA DISK_ERROR         "DISK ERROR";
 # -----------------------------------
 # VARIABLES
 # -----------------------------------
@@ -89,7 +89,7 @@ FN EXIT_EDIFY() {
     IF (EQ_CHAR(MON_IN[0,1],'Y')) {
       IF (STRING_LEN(@FILE_NAME)=0) {
         GET_INPUT(FNAME_PROMPT);
-	      SET (@FILE_NAME)[0,32]=MON_IN[0,32];
+        SET (@FILE_NAME)[0,32]=MON_IN[0,32];
       }
       IF (STRING_LEN(@FILE_NAME)>0)
         S_HANDLER();
@@ -142,50 +142,50 @@ FN DO_COMMAND() {
 # -----------------------------------
 # TABLE OF COMMANDS
 # -----------------------------------
-DATA COMMAND_TBL 'A';
-DATA 		 'B';
-DATA		 'C';
-DATA		 'D';
-DATA		 'E';
-DATA		 'F';
-DATA		 'H';
-DATA		 'I';
-DATA		 'K';
-DATA		 'N';
-DATA		 'M';
-DATA		 'R';
-DATA		 'S';
-DATA		 'V';
-DATA		 'W';
-DATA		 'X';
-DATA		 'Y';
-DATA		 '+';
-DATA		 '-';
-DATA		 '#';
-DATA		 NO_CHAR;
+DATA COMMAND_TBL  'A';
+DATA              'B';
+DATA              'C';
+DATA              'D';
+DATA              'E';
+DATA              'F';
+DATA              'H';
+DATA              'I';
+DATA              'K';
+DATA              'N';
+DATA              'M';
+DATA              'R';
+DATA              'S';
+DATA              'V';
+DATA              'W';
+DATA              'X';
+DATA              'Y';
+DATA              '+';
+DATA              '-';
+DATA              '#';
+DATA              NO_CHAR;
 # -----------------------------------
 # TABLE OF COMMAND HANDLERS
 # -----------------------------------
 DATA COMMAND_HANDLER_TBL A_HANDLER;
-DATA 			 B_HANDLER;
-DATA			 C_HANDLER;
-DATA			 D_HANDLER;
-DATA			 E_HANDLER;
-DATA			 F_HANDLER;
-DATA			 H_HANDLER;
-DATA			 I_HANDLER;
-DATA			 K_HANDLER;
-DATA			 N_HANDLER;
-DATA			 M_HANDLER;
-DATA			 R_HANDLER;
-DATA			 S_HANDLER;
-DATA			 V_HANDLER;
-DATA			 W_HANDLER;
-DATA			 X_HANDLER;
-DATA			 Y_HANDLER;
-DATA			 PLUS_HANDLER;
-DATA			 MINUS_HANDLER;
-DATA			 NUM_HANDLER;
+DATA                     B_HANDLER;
+DATA                     C_HANDLER;
+DATA                     D_HANDLER;
+DATA                     E_HANDLER;
+DATA                     F_HANDLER;
+DATA                     H_HANDLER;
+DATA                     I_HANDLER;
+DATA                     K_HANDLER;
+DATA                     N_HANDLER;
+DATA                     M_HANDLER;
+DATA                     R_HANDLER;
+DATA                     S_HANDLER;
+DATA                     V_HANDLER;
+DATA                     W_HANDLER;
+DATA                     X_HANDLER;
+DATA                     Y_HANDLER;
+DATA                     PLUS_HANDLER;
+DATA                     MINUS_HANDLER;
+DATA                     NUM_HANDLER;
 # -----------------------------------
 # READ INPUT LINE AT IDX.  RETURN
 # NO_CHAR IF THERE ARE NO MORE CHARS 
