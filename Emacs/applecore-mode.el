@@ -78,7 +78,7 @@
     (setq curr (current-indentation))
     (beginning-of-line)
     (if (looking-at "[ \t]*\\}")
-	(indent-line-to (- prev tab-width))
+	(indent-line-to (max 0 (- prev tab-width)))
       (if (< curr prev)
 	(indent-line-to prev)
 	(indent-line-to (+ curr tab-width))))))
