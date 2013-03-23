@@ -8,19 +8,19 @@ CONST BASIC_PTR           $E3D0;
 # ------------------------------------
 # 6502 INSTRUCTIONS
 # ------------------------------------
-CONST JMP                 $4C;
+CONST JMP                       $4C;
 # ------------------------------------
 # MAIN PROGRAM
 # ------------------------------------
-CONST HELLO               $803;
+CONST HELLO                     $803;
 
 VAR PASS:1=0;
 VAR RESETV:3;
 VAR BASIC:3;
 
-DATA ROM_77     "ROM.77.EDITOR.OBJ";
+DATA ROM_77         "ROM.77.EDITOR.OBJ";
 DATA INSTALL_EDITOR "INSTALL.SHELL.EDITOR.OBJ";
-DATA BTB      "BTB.OBJ";
+DATA BTB            "BTB.OBJ";
 
 FN MAIN() {
   IF (PASS=0) { # PASS 0
