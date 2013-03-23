@@ -6,19 +6,19 @@ BTB : $(APPLECORE)/ROMs/ROM.77.EDITOR.OBJ $(APPLECORE)/ShellEditor/INT Boot/obj 
 	cp Boot/obj/* $@
 	cp Assembly/obj/* $@
 
-$(APPLECORE)/ShellEditor/INT :
+$(APPLECORE)/ShellEditor/INT ::
 	make -C $(APPLECORE)/ShellEditor
 
-Boot/obj :
+Boot/obj ::
 	make -C Boot
 
-AppleCore/avm :
+AppleCore/avm ::
 	make -C AppleCore
 
-Assembly/obj :
+Assembly/obj ::
 	make -C Assembly
 
-clean :
+clean ::
 	make -C Boot clean
 	make -C AppleCore clean
 	make -C Assembly clean
