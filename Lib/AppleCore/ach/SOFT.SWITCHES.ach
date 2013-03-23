@@ -5,50 +5,50 @@
 # I/O HARDWARE
 # --------------------------------------
 # TOGGLE SPEAKER
-CONST SPEAKER			$C030;
+CONST SPEAKER                   $C030;
 # READ KEYBOARD
-CONST KBD_STROBE		$C000;
+CONST KBD_STROBE                $C000;
 # CLEAR KEYBOARD STROBE
-CONST CLEAR_KBD_STROBE		$C010;
+CONST CLEAR_KBD_STROBE          $C010;
 # READ PADDLE BUTTON
-CONST PDL_BUTTON		$C061;
+CONST PDL_BUTTON                $C061;
 # --------------------------------------
 # GRAPHICS AND TEXT
 # --------------------------------------
-CONST GRAPHICS			$C050;
-CONST TEXT			$C051;
-CONST NO_TEXT_WINDOW		$C052;
-CONST TEXT_WINDOW		$C053;
-CONST PAGE_1			$C054;
-CONST PAGE_2			$C055;
-CONST LO_RES			$C056;
-CONST HI_RES			$C057;
+CONST GRAPHICS                  $C050;
+CONST TEXT                      $C051;
+CONST NO_TEXT_WINDOW            $C052;
+CONST TEXT_WINDOW               $C053;
+CONST PAGE_1                    $C054;
+CONST PAGE_2                    $C055;
+CONST LO_RES                    $C056;
+CONST HI_RES                    $C057;
 # --------------------------------------
 # BANK-SWITCHED MEMORY (BANK 1)
 # --------------------------------------
 # READ RAM, NO WRITE
-CONST RD_RAM_1			$C088;
+CONST RD_RAM_1                  $C088;
 # READ ROM, NO WRITE
-CONST RD_ROM_1			$C08A;
+CONST RD_ROM_1                  $C08A;
 # READ RAM, WRITE RAM
-CONST RD_RAM_WR_RAM_1		$C08B;
+CONST RD_RAM_WR_RAM_1           $C08B;
 # READ ROM, WRITE RAM
-CONST RD_ROM_WR_RAM_1		$C089;
+CONST RD_ROM_WR_RAM_1           $C089;
 # --------------------------------------
 # BANK-SWITCHED MEMORY (BANK 2)
 # --------------------------------------
 # READ RAM, NO WRITE
-CONST RD_RAM_2			$C080;
+CONST RD_RAM_2                  $C080;
 # READ ROM, NO WRITE
-CONST RD_ROM_2			$C082;
+CONST RD_ROM_2                  $C082;
 # READ RAM, WRITE RAM
-CONST RD_RAM_WR_RAM_2		$C083;
+CONST RD_RAM_WR_RAM_2           $C083;
 # READ ROM, WRITE RAM
-CONST RD_ROM_WR_RAM_2		$C081;
+CONST RD_ROM_WR_RAM_2           $C081;
 # --------------------------------------
 # TEST ADDRESSES FOR MEMORY BANKS
 # --------------------------------------
 # READING BANK 1 OR 2?
-CONST RDBNK2			$C011;
+CONST RDBNK2                    $C011;
 # READING RAM OR ROM?
-CONST RDLCRAM			$C012;
+CONST RDLCRAM                   $C012;
