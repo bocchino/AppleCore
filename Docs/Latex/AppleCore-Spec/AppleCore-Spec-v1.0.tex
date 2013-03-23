@@ -71,11 +71,11 @@ keywords pertaining to graphics operations, AppleCore has a very small
 set of built-in keywords.  Capabilities pertaining to graphics, IO,
 sound, etc., are provided as libraries.
 
-The language also incorporates several unusual features that are
-perhaps interesting as a matter of language design.  First, AppleCore
-natively supports integer arithmetic (both signed and unsigned) on
-fixed-size variables of up to 255 bytes.  For example, you can declare
-and initialize variables \kwd{A} and \kwd{B}, each of size 16 bytes
+The language also has several unusual features that are perhaps
+interesting as a matter of language design.  First, AppleCore natively
+supports integer arithmetic (both signed and unsigned) on fixed-size
+variables of up to 255 bytes.  For example, you can declare and
+initialize variables \kwd{A} and \kwd{B}, each of size 16 bytes
 unsigned, and then the expression \kwd{A+B} also has size 16, and it
 represents the 16-byte unsigned addition of \kwd{A} and \kwd{B} in the
 obvious way.  (Variable-sized arithmetic, i.e., where the size is not
@@ -84,12 +84,13 @@ simple type system keeps track of size and signedness.  The programmer
 specifies the size (as a compile-time constant-value expression) and
 signedness of each variable and function return value in the program,
 and the compiler infers the rest.  Third, \emph{register expressions}
-allow AppleCore programs to read and write 6502 registers.  This
-solution is cleaner than inline assembly, and it's essential for
-low-level routines, e.g., a character printing routine that loads a
-value into the accumulator and then calls \kwd{MON\_COUT}.  Inline
-assembly is not supported, but it's easy to link against handwritten
-assembly and call it from within AppleCore code.
+allow AppleCore programs to read and write 6502 registers.  Register
+access is essential for low-level routines, e.g., a character printing
+routine that loads a value into the accumulator and then calls
+\kwd{MON\_COUT}, and register expressions provide a much cleaner
+solution than inline assembly.  Inline assembly is not supported, but
+it's easy to link against handwritten assembly and call it from within
+AppleCore code.
 
 The main things that AppleCore lacks are heap memory management (stack
 allocation is supported) and floating-point computation.  I've left
