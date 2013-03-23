@@ -62,7 +62,7 @@ FN READ_LINES(READ_FN:@) {
       MON_CROUT();
       IF (DOS_ERRNO[0,1]=0) {
         READ_FN();
-	INCR NUM_READ;
+        INCR NUM_READ;
       }
     }
     PRINT_STRING(DOS_CLOSE);

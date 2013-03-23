@@ -173,10 +173,10 @@ FN PRINT_LINE(LINE_PTR:@,LINE_NUM:2) {
 # PRINT A FORMATTED LINE NUMBER
 # -----------------------------------
 DATA PLACES     1000;
-DATA 		 100;
-DATA		   0;
-DATA		  10;
-DATA		   0;
+DATA             100;
+DATA               0;
+DATA              10;
+DATA               0;
 
 FN PRINT_LINE_NUM(LINE_NUM:2) {
   VAR I:1=0;
@@ -214,8 +214,8 @@ FN SET_N(NEW_N:2) {
 # -----------------------------------
 FN SET_K(NEW_K:2) {
   IF (K=NO_K) {
-	 SET K=1;
-	 SET K_PTR=BUF_START;
+         SET K=1;
+         SET K_PTR=BUF_START;
   }
   WHILE (K < NEW_K) {
     NEXT_LINE_PTR(@K_PTR);

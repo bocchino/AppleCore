@@ -100,9 +100,9 @@ DATA          OBJ_SPIDERS_DESC_FN;
 DATA          RM_GRIMY;
 DATA          OBJ_TAKE_OK;
 
-DATA	      OBJ_SCROLL_DESC_FN;
-DATA	      RM_NONE;
-DATA	      OBJ_TAKE_OK;
+DATA          OBJ_SCROLL_DESC_FN;
+DATA          RM_NONE;
+DATA          OBJ_TAKE_OK;
 
 DATA          OBJ_TABLET_DESC_FN;
 DATA          RM_NONE;

@@ -29,7 +29,7 @@
      (1 'font-lock-variable-name-face))
     ("VAR[[:space:]]+\\([A-Za-z0-9_]*\\)" . 
      (1 'font-lock-variable-name-face))
-    ("DATA[[:space:]]+\\([A-Za-z0-9_]+\\)[[:space:]]+\.+;" . 
+    ("DATA[[:space:]]+\\([A-Za-z0-9_]+\\)[ \t\n]+[^ \t\n]+.*;" . 
      (1 'font-lock-variable-name-face))
     ("FN[[:space:]]+\\([A-Za-z0-9_]*\\)" . 
      (1 'font-lock-function-name-face))

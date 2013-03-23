@@ -22,7 +22,7 @@ DATA           CMD_NAME_DOWN;
 DATA           CMD_NAME_LOOK;
 DATA           CMD_NAME_INV;
 DATA           CMD_NAME_HELP;
-DATA	       CMD_NAME_CMDS;
+DATA           CMD_NAME_CMDS;
 DATA           CMD_NAME_CAT;
 
 DATA CMD_NAME_QUIT  "QUIT";
