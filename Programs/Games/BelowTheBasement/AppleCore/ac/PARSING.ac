@@ -47,11 +47,11 @@ CONST NUM_SKIP_WORDS 7;
 
 DATA WORD_PTRS WORD_AT;
 DATA           WORD_WITH;
-DATA	       WORD_IN;
+DATA           WORD_IN;
 DATA           WORD_THE;
 DATA           WORD_A;
 DATA           WORD_TO;
-DATA	       WORD_OF;
+DATA           WORD_OF;
 
 DATA WORD_AT       "AT";
 DATA WORD_WITH     "WITH";

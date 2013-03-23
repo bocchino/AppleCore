@@ -21,7 +21,7 @@ VAR DESC_PADDING:6;
 # -----------------------------------
 # PIT EDGE
 DATA          RM_NONE;
-DATA	      RM_NONE;
+DATA          RM_NONE;
 DATA          RM_BEAR;
 DATA          RM_NONE;
 DATA          RM_NONE;
@@ -29,7 +29,7 @@ DATA          RM_PIT_BOTTOM;
 
 # PIT
 DATA          RM_NONE;
-DATA	      RM_NONE;
+DATA          RM_NONE;
 DATA          RM_NONE;
 DATA          RM_NONE;
 DATA          RM_PIT_EDGE;
@@ -56,8 +56,8 @@ FN RM_PIT_EDGE_DESC() {
 }
 
 DATA IN_PIT "YOU ARE AT THE BOTTOM OF THE PIT. "\;
-DATA 	    "THE ONLY EXIT IS UP.";
-DATA CROSS_HERE   "\$0D\$0DON THE FLOOR OF THE PIT IS A METAL CROSS.";
+DATA        "THE ONLY EXIT IS UP.";
+DATA CROSS_HERE "\$0D\$0DON THE FLOOR OF THE PIT IS A METAL CROSS.";
 
 FN RM_PIT_BOTTOM_DESC() {
   RESPOND(IN_PIT);

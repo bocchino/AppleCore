@@ -20,26 +20,26 @@ DATA          VB_EXAMINE_NAME;
 DATA          VB_INSPECT_NAME;
 DATA          VB_TAKE_NAME;
 DATA          VB_GET_NAME;
-DATA	      VB_DROP_NAME;
+DATA          VB_DROP_NAME;
 DATA          VB_USE_NAME;
 DATA          VB_SAY_NAME;
 DATA          VB_KILL_NAME;
 DATA          VB_OPEN_NAME;
-DATA	      VB_READ_NAME;
+DATA          VB_READ_NAME;
 
 DATA VB_IDS   VB_LOOK;
-DATA 	      VB_LOOK;
-DATA	      VB_LOOK;
-DATA	      VB_LOOK;
-DATA	      VB_TAKE;
-DATA	      VB_TAKE;
-DATA	      VB_DROP;
-DATA	      VB_USE;
-DATA	      VB_SAY;
-DATA	      VB_KILL;
-DATA	      VB_OPEN;
-DATA	      VB_READ;
-  
+DATA          VB_LOOK;
+DATA          VB_LOOK;
+DATA          VB_LOOK;
+DATA          VB_TAKE;
+DATA          VB_TAKE;
+DATA          VB_DROP;
+DATA          VB_USE;
+DATA          VB_SAY;
+DATA          VB_KILL;
+DATA          VB_OPEN;
+DATA          VB_READ;
+    
 DATA VB_LOOK_NAME    "LOOK";
 DATA VB_SEARCH_NAME  "SEARCH";
 DATA VB_EXAMINE_NAME "EXAMINE";
@@ -85,9 +85,9 @@ FN DO_VERB_PHRASE() {
     IF (NOT RESPONDED) {
       IF (VB_ID=VB_LOOK AND 
        NOT (OBJ_ID=OBJ_NONE)) {
-	PRINT_WORDS(NOTHING_SPECIAL);
-	PRINT_WORDS(OBJ_NAMES[4*OBJ_ID+2,@]);
-	PRINT_CHAR('.');
+       PRINT_WORDS(NOTHING_SPECIAL);
+       PRINT_WORDS(OBJ_NAMES[4*OBJ_ID+2,@]);
+       PRINT_CHAR('.');
       }
       ELSE PRINT_WORDS(CANT_DO);
     }
