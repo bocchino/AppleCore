@@ -8,6 +8,7 @@ all: $(TARGET).pdf
 $(TARGET).pdf : ${TEXFILES} #$(TARGET).ps
 	pdflatex $<
 	pdflatex $<
+	cp $@ ../../
 
 clean:
 		rm -f *.aux *.bbl *.log *.toc *.blg *~
