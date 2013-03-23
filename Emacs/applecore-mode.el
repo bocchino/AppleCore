@@ -91,6 +91,11 @@
 	(forward-char 1))
       (when (not (looking-at "\\(CONST\\|DATA\\)"))
 	(indent-relative)))
-    (indent-relative)))
+    (progn
+      (when (looking-at ".*[^[:space:]]")
+	(progn
+	  (re-search-forward "[^[:space:]]")
+	  (backward-char 1)))
+      (indent-relative))))
 
 (provide 'applecore-mode)
