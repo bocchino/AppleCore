@@ -75,40 +75,40 @@ FN DO_INTERVAL() {
 # -----------------------------------
 # COMMAND CHARS
 # -----------------------------------
-CONST LEFT_CHAR 	$08;
+CONST LEFT_CHAR         $08;
 CONST DOWN_CHAR         $0A;
-CONST UP_CHAR		$0B;
+CONST UP_CHAR           $0B;
 CONST CTRL_C_CHAR       $03;
-CONST CTRL_L_CHAR	$0C;
-CONST CTRL_S_CHAR	$13;
-CONST RIGHT_CHAR	$15;
-CONST ESC_CHAR 		$1B;
-CONST QUEST_CHAR	'?';
+CONST CTRL_L_CHAR       $0C;
+CONST CTRL_S_CHAR       $13;
+CONST RIGHT_CHAR        $15;
+CONST ESC_CHAR          $1B;
+CONST QUEST_CHAR        '?';
 # -----------------------------------
 # TABLE OF COMMAND CHARS
 # -----------------------------------
 DATA CMD_CHARS ESC_CHAR;
-DATA 	       LEFT_CHAR;
-DATA	       RIGHT_CHAR;
-DATA	       UP_CHAR;
-DATA	       DOWN_CHAR;
-DATA	       CTRL_C_CHAR;
-DATA	       CTRL_L_CHAR;
-DATA	       CTRL_S_CHAR;
-DATA	       QUEST_CHAR;
-DATA  	       0;
+DATA           LEFT_CHAR;
+DATA           RIGHT_CHAR;
+DATA           UP_CHAR;
+DATA           DOWN_CHAR;
+DATA           CTRL_C_CHAR;
+DATA           CTRL_L_CHAR;
+DATA           CTRL_S_CHAR;
+DATA           QUEST_CHAR;
+DATA           0;
 # -----------------------------------
 # TABLE OF COMMAND HANDLERS
 # -----------------------------------
 DATA CMD_HANDLERS ESC_HANDLER;
-DATA 	       LEFT_HANDLER;
-DATA	       RIGHT_HANDLER;
-DATA	       UP_HANDLER;
-DATA	       DOWN_HANDLER;
-DATA	       CATALOG_HANDLER;
-DATA	       LOAD_HANDLER;
-DATA	       SAVE_HANDLER;
-DATA	       QUEST_HANDLER;
+DATA              LEFT_HANDLER;
+DATA              RIGHT_HANDLER;
+DATA              UP_HANDLER;
+DATA              DOWN_HANDLER;
+DATA              CATALOG_HANDLER;
+DATA              LOAD_HANDLER;
+DATA              SAVE_HANDLER;
+DATA              QUEST_HANDLER;
 # -----------------------------------
 # COMMAND HANDLERS
 # -----------------------------------
