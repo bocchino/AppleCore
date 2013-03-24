@@ -1,7 +1,9 @@
 all : AppleCore/obj
 
-AppleCore/obj :
+AppleCore/obj ::
 	make -C AppleCore
 
-clean :
+clean ::
 	make -C AppleCore clean
+
+.PHONY: clean

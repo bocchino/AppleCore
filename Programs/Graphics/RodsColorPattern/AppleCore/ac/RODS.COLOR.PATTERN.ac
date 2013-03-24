@@ -18,7 +18,7 @@ FN MAIN() {
   PRINT_STRING(MSG);
   WHILE (TRUE) DRAW_PATTERN();
 }
-	
+        
 VAR I:1;
 VAR J:1;
 VAR W:1;
@@ -39,8 +39,8 @@ FN DRAW_PATTERN() {
       SET J=0;
       SET IW12=(I*W)/12;
       WHILE (J<=19) {
-	SET COLOR=J*3/(I+3);
-	INNER_LOOP();
+        SET COLOR=J*3/(I+3);
+        INNER_LOOP();
       }
       INCR I;
     }
