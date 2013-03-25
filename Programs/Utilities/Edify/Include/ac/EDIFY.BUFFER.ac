@@ -172,11 +172,9 @@ FN PRINT_LINE(LINE_PTR:@,LINE_NUM:2) {
 # -----------------------------------
 # PRINT A FORMATTED LINE NUMBER
 # -----------------------------------
-DATA PLACES     1000;
-DATA             100;
-DATA               0;
-DATA              10;
-DATA               0;
+DATA PLACES      1000:2;
+DATA             100:2;
+DATA             10:2;
 
 FN PRINT_LINE_NUM(LINE_NUM:2) {
   VAR I:1=0;
