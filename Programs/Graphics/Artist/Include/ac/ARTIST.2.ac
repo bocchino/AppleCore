@@ -148,8 +148,7 @@ DATA		           CMD_CTRL_S;
 DATA		           CMD_CTRL_L;
 DATA		           CMD_CTRL_C;
 DATA		           CMD_ESC;
-DATA		           0;
-DATA		           0;
+DATA		           0:2;
 
 DATA HELP_DSCRS    DSCR_LETTERS;
 DATA 		           DSCR_ARROWS;
