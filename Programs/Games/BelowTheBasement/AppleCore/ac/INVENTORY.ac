@@ -63,7 +63,7 @@ FN PRINT_INV() {
     PRINT_STRING(CARRYING);
     WHILE (I < NUM_CARRIED) {
       IF (I > 0) MON_CROUT();
-      POSITION_CURSOR(18,MON_CV[0,1]);
+      POSITION_CURSOR_X(18);
       PRINT_OBJ_NAME((@INVENTORY)[I,1]);    
       INCR I;
     }
