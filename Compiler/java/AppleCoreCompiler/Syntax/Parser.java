@@ -569,7 +569,8 @@ public class Parser {
 	    if ((op != null) && term) {
 		return result;
 	    }
-	    else if (op != null && (op != BinopExpression.Operator.EQUALS || !lvalue)) {
+	    else if (op != null && (op != BinopExpression.Operator.EQUALS || 
+				    !lvalue)) {
 		scanner.getNextToken();
 		result=parseBinopExpression(result, op);
 	    }
@@ -645,7 +646,7 @@ public class Parser {
 	throws SyntaxError, IOException
     {
 	CallExpression callExp = new CallExpression();
-	callExp.lineNumber = fn.lineNumber;
+	copyLineNumber(fn, callExp);
 	callExp.fn = fn;
 	expectAndConsume(Token.LPAREN);
 	if (scanner.getCurrentToken() == Token.RPAREN) {
@@ -962,6 +963,14 @@ public class Parser {
     private void setLineNumberOf(Node node) {
 	node.sourceFileName = this.sourceFileName;
 	node.lineNumber = scanner.getLineNumber();
+    }
+
+    /**
+     * Copy source file and line number from one node to another
+     */
+    private void copyLineNumber(Node from, Node to) {
+	to.sourceFileName = from.sourceFileName;
+	to.lineNumber = from.lineNumber;
     }
 
 }
