@@ -91,9 +91,9 @@ FN TURN_OVER() {
 # -------------------------------------
 DATA SEG_BUF 19; # TAIL X
 DATA         20; # TAIL Y
-DATA	     20; # HEAD X
-DATA	     20; # HEAD Y
-DATA	     0:256-4;
+DATA         20; # HEAD X
+DATA         20; # HEAD Y
+DATA         0:256-4;
 # -------------------------------------
 # POINTERS TO HEAD AND TAIL
 # -------------------------------------
@@ -211,11 +211,11 @@ FN UPDATE_NEXT_APPLE() {
 # -------------------------------------
 # INPUT
 # -------------------------------------
-CONST LEFT 	$08;
-CONST RIGHT	$15;
-CONST UP	$0B;
-CONST DOWN	$0A;
-CONST ESC	27;
+CONST LEFT  $08;
+CONST RIGHT $15;
+CONST UP  $0B;
+CONST DOWN  $0A;
+CONST ESC 27;
 
 VAR DELTA_X:1=1;
 VAR DELTA_Y:1=0;
