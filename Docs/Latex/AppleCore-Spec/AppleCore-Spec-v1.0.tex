@@ -198,10 +198,9 @@ backslash \kwd{\bs} followed by a dollar sign \kwd{\$} and two
 hexadecimal digits.  The whole sequence represents the single
 character with the ASCII value given by the digits.  For example, the
 string constant
-
+%
 $$\kwd{"Hello, world!\bs\$0D"}$$
-
-\noindent
+%
 represents a string consisting of the characters \kwd{Hello, world!}
 followed by a CR character.  Similarly, the quote character \kwd{"}
 can be embedded in a string constant with the sequence \kwd{\bs\$22}.
@@ -302,7 +301,7 @@ program.
 
 An AppleCore source file is given by zero or more
 declarations (Section~\ref{sec:syntax:decls}):
-
+%
 $$\nonterm{source-file} ::= \nonterm{decl}^*$$
 
 \subsection{Declarations}
@@ -311,7 +310,7 @@ $$\nonterm{source-file} ::= \nonterm{decl}^*$$
 A declaration is a constant declaration, a data declaration, a
 variable declaration, a function declaration, or an include
 declaration:
-
+%
 $$\nonterm{decl} ::= \mbox{\nonterm{const-decl} $|$
   \nonterm{data-decl} $|$ \nonterm{var-decl} $|$ \nonterm{fn-decl}
     $|$ \nonterm{include-decl}}$$
@@ -319,7 +318,7 @@ $$\nonterm{decl} ::= \mbox{\nonterm{const-decl} $|$
 \bfhead{Constant declarations} A constant declaration consists of the
 keyword \kwd{CONST}, an identifier, an optional expression, and a
 terminating semicolon:
-
+%
 $$\nonterm{const-decl} ::= \mbox{\kwd{CONST} \nonterm{identifier}
   \opt{\nonterm{expr}} \kwd{;}}$$
 
@@ -329,7 +328,7 @@ an expression or a string constant, and a terminating semicolon.  A
 backslash may optionally follow the string constant, indicating that
 the string is unterminated (see
 Section~\ref{sec:code-gen:global-decls}).
-
+%
 $$\nonterm{data-decl} ::= \mbox{\kwd{DATA} \opt{\nonterm{identifier}}
   \group{\nonterm{expr} $|$ \group{\nonterm{string-const} \opt{\bs}}}
   \kwd{;}}$$
@@ -337,7 +336,7 @@ $$\nonterm{data-decl} ::= \mbox{\kwd{DATA} \opt{\nonterm{identifier}}
 \bfhead{Variable declarations} A variable declaration consists of the
 keyword \kwd{VAR}, an identifier representing the variable name, a
 type, an optional initializer expression, and a terminating semicolon:
-
+%
 $$\nonterm{var-decl} ::= \mbox{\kwd{VAR} \nonterm{identifier} \kwd{:}
   \nonterm{type} \opt{\kwd{=} \nonterm{expr}} \kwd{;}}$$
 
@@ -345,36 +344,33 @@ $$\nonterm{var-decl} ::= \mbox{\kwd{VAR} \nonterm{identifier} \kwd{:}
 keyword \kwd{FN}, an identifier representing the function name, the
 function parameters enclosed in parentheses, an optional return type,
 and the function body:
-
+%
 $$\nonterm{fn-decl} ::= \mbox{\kwd{FN} \nonterm{identifier} \kwd{(}
   \nonterm{fn-params} \kwd{)} \opt{\kwd{:} \nonterm{type}}
   \nonterm{fn-body}}$$
-
-\noindent
+%
 The function parameters are a comma-separated list of zero or more
 parameters:
-
+%
 $$\nonterm{fn-params} ::= \mbox{\opt{\nonterm{fn-param} \group{\kwd{,}
     \nonterm{fn-param}}$^*$}}$$
-
-\noindent
+%
 A parameter consists of an identifier representing the parameter name
 and type:
-
+%
 $$\nonterm{fn-param} ::= \mbox{\nonterm{identifier} \kwd{:}
   \nonterm{type}}$$
-
-\noindent
+%
 A function body is either zero or more variable declarations and
 statements enclosed in braces, or a semicolon indicating an externally
 defined function:
-
+%
 $$\nonterm{fn-body} ::= \mbox{\kwd{\{} \nonterm{var-decl}$^*$
   \nonterm{stmt}$^*$ \kwd{\}} $|$ \kwd{;}}$$
 
 \bfhead{Include declarations} An include declaration consists of the
 keyword \kwd{INCLUDE}, a string constant, and a terminating semicolon:
-
+%
 $$\nonterm{include-decl} ::= \mbox{\kwd{INCLUDE}
   \nonterm{string-const} \kwd{;}}$$
 
@@ -384,7 +380,7 @@ $$\nonterm{include-decl} ::= \mbox{\kwd{INCLUDE}
 A statement is an if statement, a while statement, a set statement, a
 call statement, and increment statement, a decrement statement, return
 statement, or a block statement:
-
+%
 $$\nonterm{stmt} ::= \mbox{\nonterm{if-stmt} $|$ \nonterm{while-stmt}
   $|$ \nonterm{set-stmt} $|$ \nonterm{call-stmt} $|$
   \nonterm{incr-stmt} $|$ \nonterm{decr-stmt} $|$
@@ -395,164 +391,150 @@ $$\nonterm{stmt} ::= \mbox{\nonterm{if-stmt} $|$ \nonterm{while-stmt}
 statement to execute if the condition is true, and optionally the
 keyword \kwd{ELSE} followed by a statement to execute if the condition
 is false:
-
+%
 $$\nonterm{if-stmt} ::= \mbox{\kwd{IF} \kwd{(} \nonterm{expr} \kwd{)}
   \nonterm{stmt} \opt{\kwd{ELSE} \nonterm{stmt}}}$$
 
 \bfhead{While statements} A while statement consists of the keyword
 \kwd{WHILE}, a test expression enclosed in parentheses, and a
 statement to execute as long as the condition is true:
-
+%
 $$\nonterm{while-stmt} ::= \mbox{\kwd{WHILE} \kwd{(} \nonterm{expr}
   \kwd{)} \nonterm{stmt}}$$
 
 \bfhead{Set statements} A set statement consists of the keyword
-\kwd{SET}, an expression, an equals sign, a right-hand-side
-expression, and a terminating semicolon:
-
-$$\nonterm{set-stmt} ::= \mbox{\kwd{SET} \nonterm{expr} \kwd{=}
+\kwd{SET}, a term, an equals sign, a right-hand-side expression, and a
+terminating semicolon:
+%
+$$\nonterm{set-stmt} ::= \mbox{\kwd{SET} \nonterm{term} \kwd{=}
   \nonterm{expr} \kwd{;}}$$
-
-\noindent
-The left-hand side expression may not be a binary operation \kwd{=}.
 
 \bfhead{Call statements} A call statement consists of a call
 expression followed by a terminating semicolon:
-
+%
 $$\nonterm{call-stmt} ::= \mbox{\nonterm{call-expr} \kwd{;}}$$
 
 \bfhead{Increment statements} An increment statement consists of the
 keyword \kwd{INCR}, an expression, and a terminating semicolon:
-
+%
 $$\nonterm{incr-stmt} ::= \mbox{\kwd{INCR} \nonterm{expr} \kwd{;}}$$
 
 \bfhead{Decrement statements} n decrement statement consists of the
 keyword \kwd{DECR}, an expression, and a terminating semicolon:
-
+%
 $$\nonterm{decr-stmt} ::= \mbox{\kwd{DECR} \nonterm{expr} \kwd{;}}$$
 
 \bfhead{Return statements} A return statement consists of the keyword
 \kwd{RETURN}, an optional expression, and a terminating semicolon:
-
+%
 $$\nonterm{return-stmt} ::= \mbox{\kwd{RETURN} \opt{\nonterm{expr}}
     \kwd{;}}$$
 
 \bfhead{Block statements} A block statement consists of zero or more
 statements enclosed in braces:
-
+%
 $$\nonterm{block-stmt} ::= \mbox{\kwd{\{} \nonterm{stmt}$^*$
   \kwd{\}}}$$
 
 \subsection{Expressions}
 \label{sec:syntax:expressions}
 
-An expression is an identifier, an indexed expression, a register
-expression, a numeric constant, a call expression, a binary operation
-expression, a unary operation expression, a parentheses expression, or
-a typed expression.
-
+An expression is a binary operation or a term:
+%
+$$\nonterm{expr} ::= \mbox{\nonterm{binop-expr} $|$ \nonterm{term}}$$
+%
+A term is an identifier, a numeric constant, a register expression, an
+indexed expression, a call expression, a unary operation expression, a
+parentheses expression, or a typed expression:
+%
 \begin{equation*}
 \begin{split}
 %
-\nonterm{expr} ::= & \mbox{\nonterm{identifier} $|$
-  \nonterm{indexed-expr} $|$ \nonterm{register-expr} $|$
-  \nonterm{numeric-const} $|$ \nonterm{call-expr} $|$} \\
-%
-  & \mbox{\nonterm{binop-expr} $|$ \nonterm{unop-expr} $|$
-  \nonterm{parens-expr} $|$ \nonterm{typed-expr}}
+\nonterm{term} ::= \,\, & \mbox{\nonterm{identifier} $|$
+  \nonterm{numeric-const} $|$
+  \nonterm{register-expr} $|$
+  \nonterm{indexed-expr}} \\
+& \mbox{\nonterm{call-expr} $|$ 
+  \nonterm{unop-expr} $|$
+  \nonterm{parens-expr} $|$ 
+  \nonterm{typed-expr}}
 %
 \end{split}
 \end{equation*}
-
-\noindent
-Except for binary expressions as specified below, any ambiguity in
-parsing is resolved using right recursion.  For example, \kwd{@F()} is
-parsed as \kwd{@(F())} and not \kwd{(@F)()}.
-
-\bfhead{Numeric constants}  A numeric constant is an integer or
-character constant:
-
-$$\nonterm{numeric-const} ::= \mbox{\nonterm{integer-const} $|$
-  \nonterm{char-const}}$$
-
-\bfhead{Call expressions} A call expression consists of an expression
-followed by an argument list enclosed in parentheses:
-
-$$\nonterm{call-expr} ::= \mbox{\nonterm{expr} \kwd{(}
-  \opt{\nonterm{expr} \group{\kwd{,} \nonterm{expr}}$^*$} \kwd{)}}$$
-
-\bfhead{Indexed expressions} An indexed expression consists of a
-base expression, an offset expression, and a type:
-
-$$\nonterm{indexed-expr} ::= \mbox{\nonterm{expr} \kwd{[}
-    \nonterm{expr} \kwd{,} \nonterm{type} \kwd{]}}$$
-
-\bfhead{Register expressions} A register expression consists of a
-caret character followed by a 6502 register name:
-
-$$\nonterm{register-expr} ::= \mbox{\kwd{\textasciicircum} \group{\kwd{A} $|$
-    \kwd{X} $|$ \kwd{Y} $|$ \kwd{P} $|$ \kwd{S}}}$$
+%
+Any ambiguity in parsing terms is resolved using right recursion.  For
+example, \kwd{@F()} is parsed as \kwd{@(F())} and not \kwd{(@F)()}.
 
 \bfhead{Binary operation expressions} A binary operation expression
 consists of a left-hand-side expression, a binary operator, and a
 right-hand-side expression:
-
-$$\nonterm{binop-expr} ::= \mbox{\nonterm{expr} \nonterm{binop} \nonterm{expr}}$$
+%
+$$\nonterm{binop-expr} ::= \mbox{\nonterm{expr} \nonterm{binop}
+  \nonterm{expr}}$$
 %
 $$\nonterm{binop} ::= \mbox{\kwd{>} $|$ \kwd{<} $|$ \kwd{<=} $|$
   \kwd{>=} $|$ \kwd{AND} $|$ \kwd{OR} $|$ \kwd{XOR} $|$ \kwd{+} $|$
   \kwd{-} $|$ \kwd{*} $|$ \kwd{/} $|$ \shl~$|$ \shr~$|$
   \kwd{=}}$$
-
-\noindent
+%
 Parsing of binary operation expressions is disambiguated using the
-following precedence rules:
+following precedence rule.  In any sequence \nonterm{expr-1}
+\nonterm{binop-1} \nonterm{expr-2} \nonterm{binop-2} \nonterm{expr-3},
+the implied parentheses go around the first operation unless the
+second operation has a strictly higher precedence.  There are five
+levels of precedence, from highest to lowest: (1) \kwd{<}\kwd{<} and
+\kwd{>}\kwd{>}; (2) \kwd{*} and \kwd{\bs}; (3) \kwd{+} and \kwd{-};
+(4) \kwd{=}, \kwd{>}, \kwd{<}, \kwd{<=}, and \kwd{>=}; and (5)
+\kwd{AND}, \kwd{OR}, and \kwd{XOR}.
 
-\begin{enumerate}
+\bfhead{Numeric constants}  A numeric constant is an integer or
+character constant:
 %
-\item In any sequence \nonterm{expr-1} \nonterm{binop-1}
-  \nonterm{expr-2} \nonterm{binop-2} \nonterm{expr-3}, the implied
-  parentheses go around the first operation unless the second
-  operation has a strictly higher precedence.  There are five levels
-  of precedence, from highest to lowest: (1) \kwd{<}\kwd{<} and \kwd{>}\kwd{>};
-  (2) \kwd{*} and \kwd{\bs}; (3) \kwd{+} and \kwd{-}; (4) \kwd{=},
-  \kwd{>}, \kwd{<}, \kwd{<=}, and \kwd{>=}; and (5) \kwd{AND},
-  \kwd{OR}, and \kwd{XOR}.
+$$\nonterm{numeric-const} ::= \mbox{\nonterm{integer-const} $|$
+  \nonterm{char-const}}$$
+
+\bfhead{Register expressions} A register expression consists of a
+caret character followed by a 6502 register name:
 %
-\item Binary operators bind more weakly than any other expression
-  combinators.  For example, \kwd{A+B()} is parsed as \kwd{A+(B())}
-  and not \kwd{(A+B)()}; and \kwd{-5+3} is parsed as \kwd{(-5)+3} and
-  not \kwd{-(5+3)}.
+$$\nonterm{register-expr} ::= \mbox{\kwd{\textasciicircum} \group{\kwd{A} $|$
+    \kwd{X} $|$ \kwd{Y} $|$ \kwd{P} $|$ \kwd{S}}}$$
+
+\bfhead{Indexed expressions} An indexed expression consists of a base
+term, an offset expression, and a type:
 %
-\end{enumerate}
+$$\nonterm{indexed-expr} ::= \mbox{\nonterm{term} \kwd{[}
+    \nonterm{expr} \kwd{,} \nonterm{type} \kwd{]}}$$
+
+\bfhead{Call expressions} A call expression consists of a term
+followed by an argument list enclosed in parentheses:
+%
+$$\nonterm{call-expr} ::= \mbox{\nonterm{term} \kwd{(}
+  \opt{\nonterm{expr} \group{\kwd{,} \nonterm{expr}}$^*$} \kwd{)}}$$
 
 \bfhead{Unary operation expressions} A unary operation expression
-consists of a unary operator followed by an expression:
-
-$$\nonterm{unop-expr} ::= \mbox{\nonterm{unop} \nonterm{expr}}$$
-
+consists of a unary operator followed by a term:
+%
+$$\nonterm{unop-expr} ::= \mbox{\nonterm{unop} \nonterm{term}}$$
+%
 $$\nonterm{unop} ::= \mbox{\kwd{@} $|$ \kwd{NOT} $|$ \kwd{-}}$$
 
 \bfhead{Parentheses expressions} A parentheses expression is an
 expression surrounded by parentheses:
-
+%
 $$\nonterm{parens-expr} ::= \mbox{\kwd{(} \nonterm{expr} \kwd{)}}$$
 
-\bfhead{Typed expressions} A typed expression is an expression with
-an explicit type:
-
-$$\nonterm{typed-expr} ::= \mbox{\nonterm{expr} \kwd{:}
+\bfhead{Typed expressions} A typed expression is a term with an
+explicit type:
+%
+$$\nonterm{typed-expr} ::= \mbox{\nonterm{term} \kwd{:}
   \nonterm{type}}$$
 
 \subsection{Types}
 \label{sec:syntax:types}
 
 A type is an unsigned size, a signed size, or an address type:
-
-$$\nonterm{type} ::= \mbox{\nonterm{expr} \opt{\kwd{S}} $|$ \kwd{@}}$$
-
-\noindent
-The size expression may not be a binary operation \kwd{=}.
+%
+$$\nonterm{type} ::= \mbox{\nonterm{term} \opt{\kwd{S}} $|$ \kwd{@}}$$
 
 \section{Semantic Checking}
 \label{sec:semantics}

@@ -228,7 +228,7 @@ public class Parser {
 	    varDecl.representsAddress = true;
 	} 
 	else {
-	    varDecl.sizeExpr = parseLValueExpression();
+	    varDecl.sizeExpr = parseTerm();
 	    varDecl.isSigned = parseIsSigned();
 	}
 	if (scanner.getCurrentToken() == Token.EQUALS) {
@@ -259,7 +259,7 @@ public class Parser {
 		functionDecl.representsAddress = true;
 	    }
 	    else {
-		functionDecl.sizeExpr = parseLValueExpression();
+		functionDecl.sizeExpr = parseTerm();
 		functionDecl.isSigned = parseIsSigned();
 	    }
 	}
@@ -297,7 +297,7 @@ public class Parser {
 		param.representsAddress = true;
 	    }
 	    else {
-		param.sizeExpr = parseLValueExpression();
+		param.sizeExpr = parseTerm();
 		param.isSigned = parseIsSigned();
 	    }
 	    params.add(param);
@@ -409,7 +409,7 @@ public class Parser {
     }
 
     /**
-     * Set-Stmt ::= SET Expr '=' Expr ';'
+     * Set-Stmt ::= SET Term '=' Expr ';'
      */
     private SetStatement parseSetStatement() 
 	throws SyntaxError, IOException
@@ -417,7 +417,7 @@ public class Parser {
 	SetStatement setStmt =  new SetStatement();
 	setLineNumberOf(setStmt);
 	expectAndConsume(Token.SET);
-	setStmt.lhs = parseLValueExpression();
+	setStmt.lhs = parseTerm();
 	expectAndConsume(Token.EQUALS);
 	setStmt.rhs = parseExpression();
 	expectAndConsume(Token.SEMI);
@@ -490,7 +490,7 @@ public class Parser {
     {
 	CallStatement callStmt = new CallStatement();
 	setLineNumberOf(callStmt);
-	Expression expr = parseExpression();
+	Expression expr = parseTerm();
 	if (!(expr instanceof CallExpression)) {
 	    throw new SyntaxError("not a statement",
 				  sourceFileName,
@@ -502,35 +502,31 @@ public class Parser {
     }
 
     /**
-     * LValueExpr ::= Ident | Indexed-Expr | Register-Expr |
-     *                Parens-Expr
+     * Expr ::= Binop-Expr | Term
      */
-    private Expression parseLValueExpression() 
+    private Expression parseExpression()
 	throws SyntaxError, IOException
     {
-	return parseExpOrTerm(false,true);
+	Token token = scanner.getCurrentToken();
+	Expression result = parseTerm();
+	while (true) {
+	    // Check for binary op
+	    Node.BinopExpression.Operator op =
+		getBinaryOperatorFor(scanner.getCurrentToken());
+	    if (op == null) {
+		return result;
+	    }
+	    scanner.getNextToken();
+	    result=parseBinopExpression(result, op);
+	}
     }
 
     /**
-     * Expr ::= LValue-Expr | Binop-Expr | Sized-Expr | Term 
+     * Term ::= Identifier | Numeric-Const | Register-Expr |
+     *          Indexed-Expr | Call-Expr | Unop-Expr |
+     *          Parens-Expr | Typed-Expr
      */
-    private Expression parseExpression() 
-	throws SyntaxError, IOException
-    {
-	return parseExpOrTerm(false, false);
-    }
-
-    /**
-     * Term ::= Call-Expr | Set-Expr | Unop-Expr | Numeric-Const
-     */
-    private Expression parseTerm() 
-	throws SyntaxError, IOException
-    {
-	return parseExpOrTerm(true, false);
-    }
-
-    private Expression parseExpOrTerm(boolean term, 
-				      boolean lvalue) 
+    private Expression parseTerm()
 	throws SyntaxError, IOException
     {
 	Token token = scanner.getCurrentToken();
@@ -539,15 +535,15 @@ public class Parser {
 	case IDENT:
 	    result = parseIdentifier();
 	    break;
+	case CHAR_CONST:
+	case INT_CONST:
+	    result = parseNumericConstant();
+	    break;
 	case CARET:
 	    result = parseRegisterExpr();
 	    break;
 	case LPAREN:
 	    result = parseParensExpr();
-	    break;
-	case CHAR_CONST:
-	case INT_CONST:
-	    result = parseNumericConstant();
 	    break;
 	default:
 	    Node.UnopExpression.Operator op =
@@ -563,30 +559,19 @@ public class Parser {
 				       token);
 	}
 	while (true) {
-	    // Check for binary op
-	    Node.BinopExpression.Operator op =
-		getBinaryOperatorFor(scanner.getCurrentToken());
-	    if ((op != null) && term) {
-		return result;
-	    }
-	    else if (op != null && (op != BinopExpression.Operator.EQUALS || 
-				    !lvalue)) {
-		scanner.getNextToken();
-		result=parseBinopExpression(result, op);
-	    }
 	    // Check for call expr
-	    else if (scanner.getCurrentToken() 
-		     == Token.LPAREN) {
+	    if (scanner.getCurrentToken() == 
+		Token.LPAREN) {
 		result = parseCallExpression(result);
 	    }
 	    // Check for indexed expr
-	    else if (scanner.getCurrentToken() 
-		     == Token.LBRACKET) {
+	    else if (scanner.getCurrentToken() == 
+		     Token.LBRACKET) {
 		result = parseIndexedExpression(result);
 	    }
-	    // Check for sized expr
-	    else if (scanner.getCurrentToken()
-		     == Token.COLON && !lvalue) {
+	    // Check for typed expr
+	    else if (scanner.getCurrentToken() == 
+		     Token.COLON) {
 		result = parseTypedExpression(result);
 	    }
 	    else return result;
@@ -594,7 +579,8 @@ public class Parser {
     }
 
     /**
-     * IndexedExpr ::= Expr '[' Expr,Size ']'
+     * IndexedExpr ::= Term '[' Expr ',' Type ']'
+     * Type ::= Term ['S'] | '@'
      */
     private IndexedExpression parseIndexedExpression(Expression indexed) 
 	throws SyntaxError, IOException
@@ -610,7 +596,7 @@ public class Parser {
 	    indexedExp.representsAddress = true;
 	}
 	else {
-	    indexedExp.sizeExpr = parseLValueExpression();
+	    indexedExp.sizeExpr = parseTerm();
 	    indexedExp.isSigned = parseIsSigned();
 	}
 	expectAndConsume(Token.RBRACKET);
@@ -618,7 +604,7 @@ public class Parser {
     }
 
     /**
-     * TypedExpr ::= Expr ':' Size ['S']
+     * TypedExpr ::= Expr ':' Type
      */
     private TypedExpression parseTypedExpression(Expression expr)
 	throws SyntaxError, IOException
@@ -632,14 +618,14 @@ public class Parser {
 	    sizedExp.representsAddress = true;
 	}
 	else {
-	    sizedExp.sizeExpr = parseLValueExpression();
+	    sizedExp.sizeExpr = parseTerm();
 	    sizedExp.isSigned = parseIsSigned();
 	}
 	return sizedExp;
     }
 
     /**
-     * Call-Expr ::= Expr '(' Args ')'
+     * Call-Expr ::= Term '(' Args ')'
      * Args      ::= [Expr [',' Expr]*]
      */
     private CallExpression parseCallExpression(Expression fn)
