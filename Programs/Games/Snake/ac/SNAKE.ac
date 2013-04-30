@@ -213,9 +213,9 @@ FN UPDATE_NEXT_APPLE() {
 # -------------------------------------
 CONST LEFT  $08;
 CONST RIGHT $15;
-CONST UP  $0B;
+CONST UP    $0B;
 CONST DOWN  $0A;
-CONST ESC 27;
+CONST ESC   27;
 
 VAR DELTA_X:1=1;
 VAR DELTA_Y:1=0;
