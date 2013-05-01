@@ -184,10 +184,10 @@ FN GET_INPUT() {
 # -----------------------------------
 # PROCESS A CHARACTER OF INPUT
 # -----------------------------------
-CONST CR    $0D;
+CONST CR          $0D;
 CONST LEFT_ARROW  $08;
 CONST RIGHT_ARROW $15;
-CONST ESC   27;
+CONST ESC         27;
 
 FN PROCESS_CHAR(CHAR:1) {
   VAR I:1=0;
