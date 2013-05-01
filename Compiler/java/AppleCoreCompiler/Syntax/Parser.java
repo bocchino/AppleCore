@@ -211,7 +211,7 @@ public class Parser {
     }
 
     /**
-     * Var-Decl ::= VAR Ident ':' Size ['S'] ['=' Expr] ';'
+     * Var-Decl ::= VAR Ident ':' Type ['=' Expr] ';'
      */
     private VarDecl parseVarDecl(boolean isLocalVariable)
 	throws SyntaxError, IOException
@@ -240,7 +240,7 @@ public class Parser {
     }
 
     /**
-     * Fn-Decl ::= FN [':' Size ['S']] Ident '(' Params ')' Fn-Body
+     * Fn-Decl ::= FN [':' Type] Ident '(' Params ')' Fn-Body
      * Fn-Body ::= '{' Var-Decl* Stmt* '}' | ';'
      */
     private FunctionDecl parseFunctionDecl()
@@ -278,7 +278,7 @@ public class Parser {
 
     /**
      * Params ::= [ Param (',' Param)* ]
-     * Param  ::= IDENT ':' Size ['S']
+     * Param  ::= IDENT ':' Type
      */
     private void parseFunctionParams(List<VarDecl> params)
 	throws SyntaxError, IOException
@@ -580,7 +580,6 @@ public class Parser {
 
     /**
      * IndexedExpr ::= Term '[' Expr ',' Type ']'
-     * Type ::= Term ['S'] | '@'
      */
     private IndexedExpression parseIndexedExpression(Expression indexed) 
 	throws SyntaxError, IOException
