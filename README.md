@@ -62,7 +62,7 @@ To set up your Mac to use AppleCore, do the following:
 
 2.  Download the AppleCore distribution from the git repository:
 
-    `git checkout git://github.com/bocchino/AppleCore.git`
+    `git clone git://github.com/bocchino/AppleCore.git`
 
 3.  Set the environment variable APPLECORE to point to the top-level
     directory of the AppleCore distribution.
