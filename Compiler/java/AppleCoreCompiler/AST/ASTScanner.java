@@ -72,6 +72,7 @@ public class ASTScanner extends NodeVisitor {
 	throws ACCError 
     {
 	visitBeforeScan(node);
+	scan(node.type);
 	scan(node.init);
 	visitAfterScan(node);
     }
@@ -81,6 +82,7 @@ public class ASTScanner extends NodeVisitor {
 	visitBeforeScan(node);
 	scan(node.params);
 	scan(node.varDecls);
+	scan(node.type.sizeExpr);
 	scan(node.statements);
 	visitAfterScan(node);
     }
@@ -187,6 +189,13 @@ public class ASTScanner extends NodeVisitor {
     {
 	visitBeforeScan(node);
 	scan(node.expr);
+	visitAfterScan(node);
+    }
+    public void visitType(Type node)
+	throws ACCError
+    {
+	visitBeforeScan(node);
+	scan(node.sizeExpr);
 	visitAfterScan(node);
     }
     public void visitNode(Node node) 

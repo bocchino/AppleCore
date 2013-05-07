@@ -38,7 +38,7 @@ public class GlobalExpressionPass
     public void visitVarDecl(VarDecl node) 
 	throws ACCError
     {
-	requireCompileConst(node.sizeExpr,node);
+	requireCompileConst(node.type.sizeExpr,node);
 	if (!node.isLocalVariable) {
 	    requireAssembleConst(node.init,node);
 	}
@@ -47,7 +47,7 @@ public class GlobalExpressionPass
     public void visitFunctionDecl(FunctionDecl node)
 	throws ACCError
     {
-	requireCompileConst(node.sizeExpr,node);
+	requireCompileConst(node.type.sizeExpr,node);
     }
 
     public void visitBeforeScan(Node node)
@@ -55,7 +55,7 @@ public class GlobalExpressionPass
     {
 	if (node instanceof Expression) {
 	    Expression expr = (Expression) node;
-	    requireCompileConst(expr.sizeExpr,expr);
+	    requireCompileConst(expr.type.sizeExpr,expr);
 	}
     }
 

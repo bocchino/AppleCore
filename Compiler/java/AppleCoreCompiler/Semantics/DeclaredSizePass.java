@@ -31,8 +31,8 @@ public class DeclaredSizePass
     public void visitVarDecl(VarDecl node)
 	throws ACCError
     {
-	if (node.sizeExpr != null) {
-	    node.size = getSizeFrom(node.sizeExpr);	
+	if (node.type.sizeExpr != null) {
+	    node.type.size = getSizeFrom(node.type.sizeExpr);	
 	}
 	if (!node.isExternal) {
 	    super.visitVarDecl(node);
@@ -50,8 +50,8 @@ public class DeclaredSizePass
     public void visitFunctionDecl(FunctionDecl node) 
 	throws ACCError
     {
-	if (node.sizeExpr != null) {
-	    node.size = getSizeFrom(node.sizeExpr);	
+	if (node.type.sizeExpr != null) {
+	    node.type.size = getSizeFrom(node.type.sizeExpr);	
 	}
 	scan(node.params);
 	if (!node.isExternal) {
@@ -65,8 +65,9 @@ public class DeclaredSizePass
     {
 	if (node instanceof Expression) {
 	    Expression expr = (Expression) node;
-	    if (expr.sizeExpr != null) {
-		expr.size = getSizeFrom(expr.sizeExpr);	
+	    expr.createType();
+	    if (expr.type.sizeExpr != null) {
+		expr.type.size = getSizeFrom(expr.type.sizeExpr);	
 	    }
 	}
     }
@@ -75,8 +76,8 @@ public class DeclaredSizePass
 	throws ACCError
     {
 	super.visitTypedExpression(node);
-	if (node.sizeExpr != null) {
-	    node.size = getSizeFrom(node.sizeExpr);	
+	if (node.type.sizeExpr != null) {
+	    node.type.size = getSizeFrom(node.type.sizeExpr);	
 	}
     }
 

@@ -185,14 +185,14 @@ public class SCMacroEmitter
 	public ExpressionEmitter(Expression expr, 
 				 int targetSize) {
 	    this.expr = expr;
-	    this.dataSize = (expr.size > targetSize) ?
-		targetSize : expr.size;
-	    this.paddingSize = (expr.size < targetSize) ?
-		targetSize - expr.size : 0;
+	    this.dataSize = (expr.getSize() > targetSize) ?
+		targetSize : expr.getSize();
+	    this.paddingSize = (expr.getSize() < targetSize) ?
+		targetSize - expr.getSize() : 0;
 	}
 
 	public ExpressionEmitter(Expression expr) {
-	    this(expr,expr.size);
+	    this(expr,expr.getSize());
 	}
 
 	public void emitExpression()
@@ -221,7 +221,7 @@ public class SCMacroEmitter
 		emit(byteAsHexString(expr.valueAtIndex(i)).toUpperCase());
 	    }
 	    emit("\n");
-	    boolean emitOnes = expr.isSigned && 
+	    boolean emitOnes = expr.isSigned() && 
 		((expr.valueAtIndex(dataSize-1) & 0x80) != 0);
 	    emitPadding(emitOnes);
 	}

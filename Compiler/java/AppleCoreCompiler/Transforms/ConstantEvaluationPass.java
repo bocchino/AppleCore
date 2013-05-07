@@ -37,8 +37,10 @@ public class ConstantEvaluationPass
     public void visitVarDecl(VarDecl node) 
 	throws ACCError
     {
-	node.sizeExpr = transform(node.sizeExpr);
-	if (!node.isExternal) {
+	if (node.isExternal) {
+	    node.type.sizeExpr = transform(node.type.sizeExpr);
+	}
+	else {
 	    super.visitVarDecl(node);
 	}
     }
@@ -57,12 +59,9 @@ public class ConstantEvaluationPass
     public void visitTypedExpression(TypedExpression node)
 	throws ACCError
     {
-	node.sizeExpr = transform(node.sizeExpr);
 	super.visitTypedExpression(node);
 	if (node.expr instanceof NumericConstant) {
-	    node.expr.size = node.size;
-	    node.expr.sizeExpr = node.sizeExpr;
-	    node.expr.isSigned = node.isSigned;
+	    node.expr.type = node.type;
 	    result = node.expr;
 	}
     }
@@ -70,7 +69,6 @@ public class ConstantEvaluationPass
     public void visitIndexedExpression(IndexedExpression node) 
 	throws ACCError
     {
-	node.sizeExpr = transform(node.sizeExpr);
 	super.visitIndexedExpression(node);
 	if (node.indexed instanceof NumericConstant &&
 	    node.index instanceof NumericConstant) {

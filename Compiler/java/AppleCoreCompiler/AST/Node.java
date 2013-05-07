@@ -160,10 +160,7 @@ public abstract class Node {
 	extends Declaration 
     {
 	public String name;
-	public Expression sizeExpr;
-	public int size;
-	public boolean representsAddress;
-	public boolean isSigned;
+	public Type type;
 	public Expression init;
 
 	public boolean isLocalVariable;
@@ -174,9 +171,15 @@ public abstract class Node {
 	    v.visitVarDecl(this);
 	}
 
-	public int getSize() { return size; }
-	public boolean representsAddress() { return this.representsAddress; }
-	public boolean isSigned() { return this.isSigned; }
+	public int getSize() { 
+	    return type.getSize(); 
+	}
+	public boolean representsAddress() { 
+	    return type.representsAddress(); 
+	}
+	public boolean isSigned() { 
+	    return type.isSigned(); 
+	}
 	public int getOffset() { return offset; }
 	public void setOffset(int offset) {
 	    this.offset = offset;
@@ -188,10 +191,8 @@ public abstract class Node {
 	
 	public String toString() {
 	    if (isFunctionParam)
-		return "fn param " + name + ":" + 
-		    typeAsString(size,isSigned,representsAddress);
-	    return "var decl " + name + ":" + 
-		typeAsString(size,isSigned,representsAddress);
+		return "fn param " + name + ":" + type;
+	    return "var decl " + name + ":" + type;
 	}
     }
 
@@ -199,11 +200,7 @@ public abstract class Node {
 	extends Declaration 
     {
 	public String name;
-
-	public Expression sizeExpr;
-	public int size;
-	public boolean isSigned;
-	public boolean representsAddress;
+	public Type type;
 
 	public final List<VarDecl> params = 
 	    new LinkedList<VarDecl>();
@@ -227,9 +224,15 @@ public abstract class Node {
 	 */
 	public int frameSize;
 
-	public int getSize() { return size; }
-	public boolean isSigned() { return this.isSigned; }
-	public boolean representsAddress() { return this.representsAddress; }
+	public int getSize() { 
+	    return type.getSize(); 
+	}
+	public boolean isSigned() { 
+	    return type.isSigned(); 
+	}
+	public boolean representsAddress() { 
+	    return type.representsAddress(); 
+	}
 
 	public boolean endsInReturnStatement() {
 	    return (statements.size() > 0 && 
@@ -240,9 +243,9 @@ public abstract class Node {
 	public String toString() {
 	    StringBuffer sb = 
 		new StringBuffer("FN");
-	    if (size > 0) {
+	    if (this.getSize() > 0) {
 		sb.append(':');
-		sb.append(typeAsString(size,isSigned,representsAddress));
+		sb.append(type.toString());
 	    }
 	    sb.append(" ");
 	    sb.append(name);
@@ -398,21 +401,21 @@ public abstract class Node {
     {
 
 	/**
-	 * The size of the value represented by this expression;
-	 * filled in during semantic checking.
+	 * The type of the expression
 	 */
-	public Expression sizeExpr;
-	public int size;
+	public Type type;
 
 	/**
-	 * Whether this expression represents a pointer value.
+	 * Fill in the type, copying over the source file and line
+	 * number.
 	 */
-	public boolean representsAddress;
-
-	/**
-	 * Whether the value represented by this expression is signed.
-	 */
-	public boolean isSigned;
+	public void createType() {
+	    if (type == null) {
+		type = new Type();
+		type.sourceFileName = this.sourceFileName;
+		type.lineNumber = this.lineNumber;
+	    }
+	}
 
 	/**
 	 * Whether this is a compile-time constant-value expression
@@ -426,16 +429,15 @@ public abstract class Node {
 	    return isCompileConst();
 	}
 
-	/**
-	 * Whether this is a constant value expression
-	 */
-	public final boolean isConst() { 
-	    return isCompileConst() || isAssembleConst();
+	public int getSize() { 
+	    return type.getSize(); 
 	}
-
-	public int getSize() { return size; }
-	public boolean isSigned() { return this.isSigned; }
-	public boolean representsAddress() { return this.representsAddress; }
+	public boolean isSigned() { 
+	    return type.isSigned(); 
+	}
+	public boolean representsAddress() { 
+	    return type.representsAddress(); 
+	}
 	public boolean isZero() { return false; }
 	public boolean isTrue() { return false; }
 	public boolean isFalse() { return false; }
@@ -453,7 +455,7 @@ public abstract class Node {
 	}
 
 	public String toString() {
-	    return size + "-byte indexed expr" ;
+	    return getSize() + "-byte indexed expr" ;
 	}
     }
 
@@ -660,8 +662,7 @@ public abstract class Node {
 	}
 
 	public String toString() {
-	    return "typed expr: " + 
-		typeAsString(size,isSigned,representsAddress);
+	    return "typed expr: " + type;
 	}
     }
 
@@ -732,7 +733,7 @@ public abstract class Node {
 	public boolean wasHexInSource;
 	public boolean isZero() { return value.equals(BigInteger.ZERO); }
 	public boolean representsAddress() {
-	    return this.size > 0 && this.size <= 2 && !this.isSigned;
+	    return this.getSize() > 0 && this.getSize() <= 2;
 	}
 
 	/**
@@ -752,8 +753,9 @@ public abstract class Node {
 	    if (value.compareTo(Token.MAX_INT.negate().shiftRight(1))<=0) {
 		value = Token.MAX_INT.add(BigInteger.ONE).subtract(value.negate().and(Token.MAX_INT));
 	    }
-	    this.size = setSize();
-	    this.isSigned = (value.compareTo(BigInteger.ZERO) < 0);
+	    createType();
+	    type.size = setSize();
+	    type.isSigned = (value.compareTo(BigInteger.ZERO) < 0);
 	}
 
 	/**
@@ -862,6 +864,46 @@ public abstract class Node {
 	}
     }
 
+    /**
+     * Types
+     */
+    public static class Type
+	extends Node
+    {
+	/**
+	 * The size represented by this type; filled in during
+	 * semantic checking.
+	 */
+	public Expression sizeExpr;
+	public int size;
+	public int getSize() { return size; }
+
+	/**
+	 * Whether this expression represents a pointer value.
+	 */
+	public boolean representsAddress;
+	public boolean representsAddress() {
+	    return representsAddress;
+	}
+
+	/**
+	 * Whether the value represented by this expression is signed.
+	 */
+	public boolean isSigned;
+	public boolean isSigned() {
+	    return isSigned;
+	}
+
+	public void accept(Visitor v) throws ACCError {
+	    v.visitType(this);
+	}
+
+	public String toString() {
+	    return "type: " + 
+		typeAsString(size,isSigned,representsAddress);
+	}
+    }
+
     public static String typeAsString(int size, boolean isSigned, 
 				      boolean representsAddress) {
 	if (representsAddress)
@@ -951,6 +993,9 @@ public abstract class Node {
 	    throws ACCError;
 	public abstract void 
 	    visitCharConstant(CharConstant node) 
+	    throws ACCError;
+	public abstract void
+	    visitType(Type node)
 	    throws ACCError;
     }
 }

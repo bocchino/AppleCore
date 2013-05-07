@@ -153,8 +153,10 @@ public class AttributionPass
 	    enterDecl.enter(decl, localSymbols);
 	}
 	// Attribute the function
-	scan(node.sizeExpr);
-	if (!node.isExternal) {
+	if (node.isExternal) {
+	    scan(node.type.sizeExpr);
+	}
+	else {
 	    super.visitFunctionDecl(node);
 	}
 	// Reset the local namespace
@@ -167,8 +169,10 @@ public class AttributionPass
 	if (node.isLocalVariable) {
 	    printStatus("Attributing ",node);
 	}
-	scan(node.sizeExpr);
-	if (!node.isExternal) {
+	if (node.isExternal) {
+	    scan(node.type);
+	}
+	else {
 	    super.visitVarDecl(node);
 	}
 	if (node.isLocalVariable) {

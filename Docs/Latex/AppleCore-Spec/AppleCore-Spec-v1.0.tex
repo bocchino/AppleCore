@@ -803,11 +803,14 @@ an address:
 %
 \begin{itemize}
 %
+\item \ithead{Integer constants} An integer constant represents an
+  address if its size is 1 or 2.
+%
 \item \ithead{Identifiers} An identifier represents an address if its
-  associated definition (1) is a constant declaration of size 1 or 2
-  unsigned; or (2) is a data declaration; or (3) is a function
-  declaration; or (4) is a variable or function parameter declaration
-  whose type is \kwd{@}.
+  associated definition (1) is a constant declaration of size 1 or 2;
+  or (2) is a data declaration; or (3) is a function declaration; or
+  (4) is a variable or function parameter declaration whose type is
+  \kwd{@}.
 %
 \item \ithead{Indexed expressions} An indexed expression represents an
   address if its \nonterm{type} component is \kwd{@}.
@@ -844,7 +847,7 @@ they are constant-value expressions:
 \item \ithead{Indexed expressions} The base expression (before the
   first bracket) of an indexed expression must represent an address.
   The index expression (immediately after the first bracket) must have
-  size 1 or 2 and be unsigned.
+  size 1 or 2.
 %
 \item \ithead{Call expressions} (1) The called expression must
   represent an address.  (2) Each argument expression must have
@@ -881,11 +884,9 @@ assignment, treating the contained expression as the right-hand side,
 and treating the left-hand side as a fresh variable whose type is the
 return type of the enclosing function.
 
-\bfhead{Valid address assignments} (1) If the left-hand side of an
+\bfhead{Valid address assignments} If the left-hand side of an
 assignment represents an address, then the right-hand side must also
-represent an address. (2) If the right-hand side of an assignment
-represents and address and is not a constant-value expression, then
-the left-hand side must also represent an address.
+represent an address.
 
 \bfhead{Function frame sizes} The \emph{frame size} of a function
 declaration that contains a body equals the sum of the sizes of all

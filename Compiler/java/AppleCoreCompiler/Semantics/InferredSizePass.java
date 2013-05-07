@@ -22,12 +22,12 @@ public class InferredSizePass
 
     public void printStatus(Expression node) {
 	if (debug) {
-	    System.out.print("line " + node.lineNumber + ": size of " 
-			     + node + " is " + node.size + " " + 
-			     (node.isSigned ? "signed" : "unsigned"));
-	    if (node.representsAddress)
-		System.out.print(", represents address");
-	    System.out.println();
+	    System.err.print("line " + node.lineNumber + ": size of " 
+			     + node + " is " + node.getSize() + " " + 
+			     (node.isSigned() ? "signed" : "unsigned"));
+	    if (node.representsAddress())
+		System.err.print(", represents address");
+	    System.err.println();
 	}
     }
     
@@ -45,7 +45,7 @@ public class InferredSizePass
 	currentFunction = node;
 	super.visitFunctionDecl(node);
 	if (!node.isExternal) {
-	    if (node.size > 0) {
+	    if (node.getSize() > 0) {
 		if (node.statements.size() == 0 || 
 		    !(node.statements.get(node.statements.size()-1) 
 		      instanceof ReturnStatement)) {
@@ -56,10 +56,10 @@ public class InferredSizePass
 	}
 	int frameSize = 0;
 	for (VarDecl param : node.params) {
-	    frameSize += param.size;
+	    frameSize += param.type.size;
 	}
 	for (VarDecl localVar : node.varDecls) {
-	    frameSize += localVar.size;
+	    frameSize += localVar.type.size;
 	}
 	if (frameSize > 256)
 	    throw new SemanticError("frame size of " + node + " is too large",
@@ -74,11 +74,11 @@ public class InferredSizePass
 	throws ACCError
     {
 	super.visitReturnStatement(node);
-	int exprSize = (node.expr == null) ? 0 : node.expr.size;
-	if (currentFunction.size == 0 && exprSize > 0) {
+	int exprSize = (node.expr == null) ? 0 : node.expr.getSize();
+	if (currentFunction.getSize() == 0 && exprSize > 0) {
 	    throw new SemanticError("function has no return value",node);
 	}
-	if (exprSize == 0 && currentFunction.size > 0) {
+	if (exprSize == 0 && currentFunction.getSize() > 0) {
 	    throw new SemanticError("function requires return value",node);
 	}
 	if (exprSize > 0) {
@@ -93,14 +93,14 @@ public class InferredSizePass
 	throws ACCError
     {
 	super.visitVarDecl(node);
-	if (node.size == 0) {
+	if (node.getSize() == 0) {
 	    throw new SemanticError(node.name + " has zero size", node);
 	}
 	if (node.init != null) {
 	    // See comment in visitDataDecl
 	    if (!node.isLocalVariable && !node.init.isCompileConst()) {
-		node.init.size = 2;
-		node.init.isSigned = false;
+		node.init.type.size = 2;
+		node.init.type.isSigned = false;
 	    }
 	    checkAssignment(node,node.init,node);
 	}
@@ -114,8 +114,8 @@ public class InferredSizePass
 	// the assembler, so the compiler gives them size 2 unsigned.
 	// See AppleCore spec s.4.5
 	if (node.expr != null && !node.expr.isCompileConst()) {
-	    node.expr.size = 2;
-	    node.expr.isSigned = false;
+	    node.expr.type.size = 2;
+	    node.expr.type.isSigned = false;
 	}
     }
 
@@ -129,6 +129,11 @@ public class InferredSizePass
     {
 	super.visitIndexedExpression(node);
 	requireAddress(node.indexed);
+	if (node.index.getSize() == 0 ||
+	    node.index.getSize() > 2) {
+	    throw new SemanticError("index size must be 1 or 2",
+				    node);
+	}
 	printStatus(node);
     }
 
@@ -151,9 +156,9 @@ public class InferredSizePass
 	    Node def = id.def;
 	    if (def instanceof FunctionDecl) {
 		hasDecl = true;
-		node.size = def.getSize();
-		node.representsAddress = def.representsAddress();
-		node.isSigned = def.isSigned();
+		node.type.size = def.getSize();
+		node.type.representsAddress = def.representsAddress();
+		node.type.isSigned = def.isSigned();
 		// Check address assignment rules
 		FunctionDecl functionDecl = (FunctionDecl) def;
 		Iterator<VarDecl> I = functionDecl.params.iterator();
@@ -166,9 +171,9 @@ public class InferredSizePass
 	if (!hasDecl) {
 	    // We're calling a label with no prototype info
 	    requireAddress(node.fn);
-	    node.size = 0;
-	    node.representsAddress = true;
-	    node.isSigned = false;
+	    node.type.size = 0;
+	    node.type.representsAddress = true;
+	    node.type.isSigned = false;
 	}
 	printStatus(node);
     }
@@ -194,21 +199,15 @@ public class InferredSizePass
 	    throw new SemanticError("cannot assign " + rhs +
 				    " to address variable " + lhs,
 				    parent);
-	if (!rhs.isConst()) {
-	    if (rhs.representsAddress() && !lhs.representsAddress())
-		throw new SemanticError("cannot assign address variable " + rhs +
-					" to " + lhs,
-					parent);
-	}
     }
 
     /**
      * The size of a register expression is 1.  It is always unsigned.
      */
     public void visitRegisterExpression(RegisterExpression node) {
-	node.size = 1;
-	node.representsAddress = false;
-	node.isSigned = false;
+	node.type.size = 1;
+	node.type.representsAddress = false;
+	node.type.isSigned = false;
 	printStatus(node);
     }
 
@@ -219,14 +218,14 @@ public class InferredSizePass
     public void visitIdentifier(Identifier node) {
 	if (node.def instanceof FunctionDecl ||
 	    node.def instanceof DataDecl) {
-	    node.size=2;
-	    node.representsAddress = true;
-	    node.isSigned=false;
+	    node.type.size=2;
+	    node.type.representsAddress = true;
+	    node.type.isSigned=false;
 	}
 	else {
-	    node.size = node.def.getSize();
-	    node.representsAddress = node.def.representsAddress();
-	    node.isSigned = node.def.isSigned();
+	    node.type.size = node.def.getSize();
+	    node.type.representsAddress = node.def.representsAddress();
+	    node.type.isSigned = node.def.isSigned();
 	}
 	printStatus(node);
     }
@@ -258,28 +257,29 @@ public class InferredSizePass
 	super.visitBinopExpression(node);
 	switch (node.operator) {
 	case EQUALS: case GT: case LT: case GEQ: case LEQ:
-	    node.size = 1;
-	    node.representsAddress = false;
-	    node.isSigned = false;
+	    node.type.size = 1;
+	    node.type.representsAddress = false;
+	    node.type.isSigned = false;
 	    break;
 	case SHL: case SHR:
-	    node.size = node.left.size;
-	    node.representsAddress = node.left.representsAddress;
-	    node.isSigned = node.left.isSigned;
+	    node.type = node.left.type;
 	    checkShift(node);
 	    break;
 	default:
-	    node.size = Math.max(node.left.size,node.right.size);
+	    node.type.size = 
+		Math.max(node.left.getSize(),node.right.getSize());
 	    if (node.operator == BinopExpression.Operator.DIVIDE) {
-		node.representsAddress = node.left.representsAddress &&
-		    !node.right.representsAddress;
+		node.type.representsAddress = 
+		    node.left.representsAddress() &&
+		    !node.right.representsAddress();
 	    }
 	    else {
-		node.representsAddress = node.left.representsAddress ?
-		    !node.right.representsAddress : node.right.representsAddress;
+		node.type.representsAddress = 
+		    node.left.representsAddress() ||
+		    node.right.representsAddress();
 	    }
-	    node.isSigned = (node.left.isSigned || 
-			     node.right.isSigned);
+	    node.type.isSigned = (node.left.isSigned() || 
+				  node.right.isSigned());
 	    break;
 	}
 	printStatus(node);
@@ -292,16 +292,15 @@ public class InferredSizePass
     public static void checkShift(BinopExpression node)
 	throws ACCError
     {
-	if (node.right.isSigned ||
-	    node.right.representsAddress ||
-	    node.right.size != 1) {
+	if (node.right.isSigned() ||
+	    node.right.getSize() != 1) {
 	    throw new SemanticError("shift amount must be 1 byte unsigned",
 				    node);
 	}
     }
     
     /**
-     * The size and signedness of a unop expression come from the
+     * The size and signedness of an unop expression come from the
      * operand except in the following cases:
      *
      * 1. An address operation @ is two bytes unsigned.
@@ -314,19 +313,18 @@ public class InferredSizePass
 	super.visitUnopExpression(node);
 	switch (node.operator) {
 	case ADDRESS:
-	    node.size = 2;
-	    node.representsAddress = true;
-	    node.isSigned = false;
+	    node.type.size = 2;
+	    node.type.representsAddress = true;
+	    node.type.isSigned = false;
 	    break;
 	case NEG:
-	    node.size = node.expr.size;
-	    node.representsAddress = false;
-	    node.isSigned = true;
+	    node.type.size = node.expr.type.size;
+	    node.type.representsAddress = false;
+	    node.type.isSigned = true;
 	    break;
 	default:
-	    node.size = node.expr.size;
-	    node.representsAddress = false;
-	    node.isSigned = node.expr.isSigned;
+	    node.type = node.expr.type;
+	    node.type.representsAddress = false;
 	}
     }
 
@@ -338,15 +336,13 @@ public class InferredSizePass
 	throws ACCError
     {
 	super.visitParensExpression(node);
-	node.size = node.expr.size;
-	node.representsAddress = node.expr.representsAddress();
-	node.isSigned = node.expr.isSigned;
+	node.type = node.expr.type;
     }
 
     public void visitCharConstant(CharConstant node) {
-	node.size = 1;
-	node.representsAddress = false;
-	node.isSigned = false;
+	node.type.size = 1;
+	node.type.representsAddress = false;
+	node.type.isSigned = false;
     }
 
     /**

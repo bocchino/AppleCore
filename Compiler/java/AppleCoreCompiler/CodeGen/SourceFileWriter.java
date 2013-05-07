@@ -144,11 +144,11 @@ public class SourceFileWriter
     {
 	emitter.emitLabel(node.name);
 	if (node.init == null) {
-	    emitter.emitBlockStorage(node.size);
+	    emitter.emitBlockStorage(node.getSize());
 	}
 	else {
 	    try {
-		emitter.emitSizedExpression(node.init, node.size);
+		emitter.emitSizedExpression(node.init, node.getSize());
 	    }
 	    catch (ACCError e) {
 		throw new ACCInternalError("illegal initializer for ", node);

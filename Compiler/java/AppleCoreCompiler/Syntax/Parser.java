@@ -223,14 +223,7 @@ public class Parser {
 	varDecl.isLocalVariable = isLocalVariable;
 	varDecl.name = parseName();
 	expectAndConsume(Token.COLON);
-	if (parsePossibleToken(Token.AT)) {
-	    varDecl.size = 2;
-	    varDecl.representsAddress = true;
-	} 
-	else {
-	    varDecl.sizeExpr = parseTerm();
-	    varDecl.isSigned = parseIsSigned();
-	}
+	varDecl.type = parseType();
 	if (scanner.getCurrentToken() == Token.EQUALS) {
 	    scanner.getNextToken();
 	    varDecl.init = parseExpression();
@@ -254,14 +247,11 @@ public class Parser {
 	expectAndConsume(Token.RPAREN);
 	if (scanner.getCurrentToken() == Token.COLON) {
 	    scanner.getNextToken();
-	    if (parsePossibleToken(Token.AT)) {
-		functionDecl.size = 2;
-		functionDecl.representsAddress = true;
-	    }
-	    else {
-		functionDecl.sizeExpr = parseTerm();
-		functionDecl.isSigned = parseIsSigned();
-	    }
+	    functionDecl.type = parseType();
+	}
+	else {
+	    functionDecl.type = new Type();
+	    setLineNumberOf(functionDecl.type);
 	}
 	if (scanner.getCurrentToken() == Token.LBRACE) {
 	    scanner.getNextToken();
@@ -292,14 +282,7 @@ public class Parser {
 	    setLineNumberOf(param);
 	    param.name = name;
 	    expectAndConsume(Token.COLON);
-	    if (parsePossibleToken(Token.AT)) {
-		param.size = 2;
-		param.representsAddress = true;
-	    }
-	    else {
-		param.sizeExpr = parseTerm();
-		param.isSigned = parseIsSigned();
-	    }
+	    param.type = parseType();
 	    params.add(param);
 	    name = null;
 	    if (scanner.getCurrentToken() == Token.COMMA) {
@@ -590,14 +573,7 @@ public class Parser {
 	expectAndConsume(Token.LBRACKET);
 	indexedExp.index = parseExpression();
 	expectAndConsume(Token.COMMA);
-	if (parsePossibleToken(Token.AT)) {
-	    indexedExp.size = 2;
-	    indexedExp.representsAddress = true;
-	}
-	else {
-	    indexedExp.sizeExpr = parseTerm();
-	    indexedExp.isSigned = parseIsSigned();
-	}
+	indexedExp.type = parseType();
 	expectAndConsume(Token.RBRACKET);
 	return indexedExp;
     }
@@ -608,19 +584,12 @@ public class Parser {
     private TypedExpression parseTypedExpression(Expression expr)
 	throws SyntaxError, IOException
     {
-	TypedExpression sizedExp = new TypedExpression();
-	setLineNumberOf(sizedExp);
-	sizedExp.expr = expr;
+	TypedExpression typedExp = new TypedExpression();
+	setLineNumberOf(typedExp);
+	typedExp.expr = expr;
 	expectAndConsume(Token.COLON);
-	if (parsePossibleToken(Token.AT)) {
-	    sizedExp.size = 2;
-	    sizedExp.representsAddress = true;
-	}
-	else {
-	    sizedExp.sizeExpr = parseTerm();
-	    sizedExp.isSigned = parseIsSigned();
-	}
-	return sizedExp;
+	typedExp.type = parseType();
+	return typedExp;
     }
 
     /**
@@ -915,6 +884,26 @@ public class Parser {
 	    scanner.getNextToken();
 	}
 	return result;
+    }
+
+    /**
+     * Type ::= Term [S] | '@'
+     */
+    private Type parseType()
+	throws SyntaxError, IOException
+    {
+	printStatus("parsing type");
+	Type type = new Type();
+	setLineNumberOf(type);
+	if (parsePossibleToken(Token.AT)) {
+	    type.size = 2;
+	    type.representsAddress = true;
+	} 
+	else {
+	    type.sizeExpr = parseTerm();
+	    type.isSigned = parseIsSigned();
+	}
+	return type;
     }
 
     /**

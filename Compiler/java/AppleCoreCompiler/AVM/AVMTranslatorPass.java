@@ -90,7 +90,7 @@ public class AVMTranslatorPass
 	    }
 	    if (!needAddress) {
 		// Use the address to get the value.
-		emit(new MTSInstruction(node.size));
+		emit(new MTSInstruction(node.getSize()));
 	    }
 	}
 	else if (def instanceof ConstDecl) {
@@ -146,10 +146,10 @@ public class AVMTranslatorPass
 	    needAddress = false;
 	    scan(node.init);
 	    // Adjust the size
-	    adjustSize(node.size,node.init.size,node.init.isSigned);
+	    adjustSize(node.getSize(),node.init.getSize(),node.init.isSigned());
 	    // Do the assignment.
 	    emit(new PVAInstruction(node.getOffset()));
-	    emit(new STMInstruction(node.size));
+	    emit(new STMInstruction(node.getSize()));
 	}
     }
 
@@ -233,7 +233,7 @@ public class AVMTranslatorPass
 	needAddress = false;
 	scan(node.rhs);
 	adjustSize(node.lhs.getSize(),node.rhs.getSize(),
-		   node.rhs.isSigned);
+		   node.rhs.isSigned());
 	// Evaluate LHS as address.
 	needAddress = true;
 	scan(node.lhs);
@@ -245,8 +245,8 @@ public class AVMTranslatorPass
 	throws ACCError
     {
 	super.visitCallStatement(node);
-	if (node.expr.size > 0) {
-	    emit(new DSPInstruction(node.expr.size));
+	if (node.expr.getSize() > 0) {
+	    emit(new DSPInstruction(node.expr.getSize()));
 	}
     }
 
@@ -255,7 +255,7 @@ public class AVMTranslatorPass
     {
 	needAddress = true;
 	scan(node.expr);
-	emit(new ICRInstruction(node.expr.size));
+	emit(new ICRInstruction(node.expr.getSize()));
     }
 
     public void visitDecrStatement(DecrStatement node)
@@ -263,7 +263,7 @@ public class AVMTranslatorPass
     {
 	needAddress = true;
 	scan(node.expr);
-	emit(new DCRInstruction(node.expr.size));
+	emit(new DCRInstruction(node.expr.getSize()));
     }
 
     public void visitReturnStatement(ReturnStatement node)
@@ -273,10 +273,10 @@ public class AVMTranslatorPass
 	    // Evaluate expression
 	    needAddress = false;
 	    scan(node.expr);
-	    adjustSize(currentFunction.size,node.expr.size,
-		       node.expr.isSigned);
+	    adjustSize(currentFunction.getSize(),node.expr.getSize(),
+		       node.expr.isSigned());
 	}
-	emit(new RAFInstruction(currentFunction.size));
+	emit(new RAFInstruction(currentFunction.getSize()));
     }
 
     public void visitBlockStatement(BlockStatement node) 
@@ -295,20 +295,20 @@ public class AVMTranslatorPass
 	needAddress = false;
 	scan(node.indexed);
 	// Pad to 2 bytes if necessary
-	adjustSize(2,node.indexed.size,false);
+	adjustSize(2,node.indexed.getSize(),false);
 	if (!node.index.isZero()) {
 	    // Evaluate index expr.
 	    needAddress = false;
 	    scan(node.index);
 	    // Pad to 2 bytes if necessary
-	    adjustSize(2,node.index.size,node.index.isSigned);
+	    adjustSize(2,node.index.getSize(),node.index.isSigned());
 	    // Pull LHS address and RHS index, add them, and put
 	    // result on the stack.
 	    emit(new ADDInstruction(2));
 	}
 	// If parent wanted a value, compute it now.
 	if (!parentNeedsAddress) {
-	    emit(new MTSInstruction(node.size));
+	    emit(new MTSInstruction(node.getSize()));
 	}
     }
 
@@ -362,8 +362,8 @@ public class AVMTranslatorPass
 		needAddress = false;
 		scan(arg);
 		// Adjust sizes to match.
-		adjustSize(param.size,arg.size,arg.isSigned);
-		bumpSize += param.size;
+		adjustSize(param.getSize(),arg.getSize(),arg.isSigned());
+		bumpSize += param.getSize();
 	    }
 	    // Bump SP back down to new FP for function entry
 	    emit(new DSPInstruction(bumpSize));
@@ -391,7 +391,7 @@ public class AVMTranslatorPass
     {
 	needAddress = false;
 	scan(node);
-	adjustSize(2,node.size,node.isSigned);
+	adjustSize(2,node.getSize(),node.isSigned());
 	restoreRegisters();
 	emit(new CFIInstruction());
 	saveRegisters();
@@ -409,20 +409,20 @@ public class AVMTranslatorPass
     public void visitBinopExpression(BinopExpression node) 
 	throws ACCError
     {
-	int size = Math.max(node.left.size,node.right.size);
+	int size = Math.max(node.left.getSize(),node.right.getSize());
  	// Evaluate left
 	needAddress = false;
 	scan(node.left);
-	adjustSize(size,node.left.size,node.left.isSigned);
+	adjustSize(size,node.left.getSize(),node.left.isSigned());
  	// Evaluate right
 	needAddress = false;
 	scan(node.right);
 	if (node.operator.compareTo(BinopExpression.Operator.SHR) > 0) {
-	    adjustSize(size,node.right.size,node.right.isSigned);
+	    adjustSize(size,node.right.getSize(),node.right.isSigned());
 	}
 	// Do the operation
 	boolean signed =
-	    node.left.isSigned || node.right.isSigned;
+	    node.left.isSigned() || node.right.isSigned();
 	switch (node.operator) {
 	case SHL:
 	    emit(new SHLInstruction(size));
@@ -480,12 +480,12 @@ public class AVMTranslatorPass
 	case NOT:
 	    needAddress = false;
 	    scan(node.expr);
-	    emit(new NOTInstruction(node.expr.size));
+	    emit(new NOTInstruction(node.expr.getSize()));
 	    break;
 	case NEG:
 	    needAddress = false;
 	    scan(node.expr);
-	    emit(new NEGInstruction(node.expr.size));
+	    emit(new NEGInstruction(node.expr.getSize()));
 	    break;
 	default:
 	    throw new ACCInternalError("unhandled unary operator",node);
@@ -505,7 +505,7 @@ public class AVMTranslatorPass
 	// Scan the component expression
 	scan(node.expr);
 	// Adjust the size
-	adjustSize(node.size,node.expr.size,node.expr.isSigned);
+	adjustSize(node.getSize(),node.expr.getSize(),node.expr.isSigned());
     }
 
     /* Helper methods */

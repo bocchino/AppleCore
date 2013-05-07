@@ -61,6 +61,7 @@ public class ExpressionTransformer
 	throws ACCError 
     {
 	visitBeforeScan(node);
+	node.type.sizeExpr = transform(node.type.sizeExpr);
 	node.init = transform(node.init);
 	visitAfterScan(node);
     }
@@ -126,6 +127,7 @@ public class ExpressionTransformer
 	visitBeforeScan(node);
 	node.indexed = transform(node.indexed);
 	node.index   = transform(node.index);
+	node.type.sizeExpr = transform(node.type.sizeExpr);
 	visitAfterScan(node);
 	result = node;
     }
@@ -168,6 +170,7 @@ public class ExpressionTransformer
     {
 	visitBeforeScan(node);
 	node.expr = transform(node.expr);
+	node.type.sizeExpr = transform(node.type.sizeExpr);
 	visitAfterScan(node);
 	result = node;
     }
