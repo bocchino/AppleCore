@@ -72,7 +72,7 @@ FN PROCESS_CHAR(CHAR:1) {
       CMD_HANDLERS[I<<1,@]();
     }
     INCR I;
-  }	
+  } 
 }
 # -----------------------------------
 # MOVE CURSOR TO NEW COORDS
@@ -126,7 +126,7 @@ FN NORMALIZE(PTR:@,BOUND:1) {
 DATA HEADER "DRAW COLORFUL PICTURES ON YOUR APPLE II!\$0D\$0D";
 
 DATA CMD_LETTERS   "LETTERS A-P";
-DATA CMD_ARROWS	   "ARROWS";
+DATA CMD_ARROWS    "ARROWS";
 DATA CMD_APPLE     "OPEN APPLE";
 DATA CMD_CTRL_S    "CONTROL-S";
 DATA CMD_CTRL_L    "CONTROL-L";
@@ -142,21 +142,21 @@ DATA DSCR_CTRL_C   "CATALOG DISK";
 DATA DSCR_ESC      "QUIT";
 
 DATA HELP_CMDS     CMD_LETTERS;
-DATA 		           CMD_ARROWS;
-DATA		           CMD_APPLE;
-DATA		           CMD_CTRL_S;
-DATA		           CMD_CTRL_L;
-DATA		           CMD_CTRL_C;
-DATA		           CMD_ESC;
-DATA		           0:2;
+DATA               CMD_ARROWS;
+DATA               CMD_APPLE;
+DATA               CMD_CTRL_S;
+DATA               CMD_CTRL_L;
+DATA               CMD_CTRL_C;
+DATA               CMD_ESC;
+DATA               0:2;
 
 DATA HELP_DSCRS    DSCR_LETTERS;
-DATA 		           DSCR_ARROWS;
-DATA		           DSCR_APPLE;
-DATA		           DSCR_CTRL_S;
-DATA		           DSCR_CTRL_L;
-DATA		           DSCR_CTRL_C;
-DATA		           DSCR_ESC;
+DATA               DSCR_ARROWS;
+DATA               DSCR_APPLE;
+DATA               DSCR_CTRL_S;
+DATA               DSCR_CTRL_L;
+DATA               DSCR_CTRL_C;
+DATA               DSCR_ESC;
 
 DATA NOTE    "NOTE: YOU CAN APPEND ";
 DATA D1      ",D1";
