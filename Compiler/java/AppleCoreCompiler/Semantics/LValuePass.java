@@ -65,14 +65,11 @@ public class LValuePass
 	super.visitUnopExpression(node);
 	switch (node.operator) {
 	case ADDRESS:
-	    if (!isLValue(node.expr)) {
-		throw new SemanticError("deref of non-lvalue",
+	    if (!isLValue(node.expr) ||
+		node.expr instanceof RegisterExpression) {
+		throw new SemanticError("can't take address of " + node.expr,
 					node);
 	    }	    
-	    if (node.expr instanceof RegisterExpression) {
-		throw new SemanticError("deref of register",
-					node);
-	    }
 	    break;
 	}
     }
