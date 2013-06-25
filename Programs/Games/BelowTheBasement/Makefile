@@ -25,3 +25,5 @@ clean ::
 	rm -Rf BTB
 
 .PHONY: clean
+
+.NOTPARALLEL: ;

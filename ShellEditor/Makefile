@@ -43,3 +43,4 @@ clean :
 	make -C Editor clean
 	rm -Rf FP INT
 
+.NOTPARALLEL : ;
