@@ -24,8 +24,8 @@ software is provided "as is" without any warranty, express or implied,
 that it conforms to its specification or otherwise does anything in
 particular, other than what it actually does do when you run it.
 
-The file Emacs/caps-lock.el is subject to the GNU General Public
-License, v3.  See the Emacs directory for further details.
+The file Editors/Emacs/caps-lock.el is subject to the GNU General Public
+License, v3.  See the directory Editors/Emacs for further details.
 
 3\. System Requirements
 -----------------------
@@ -70,9 +70,8 @@ To set up your Mac to use AppleCore, do the following:
 4.  Include $APPLECORE/Compiler/bin, $APPLECORE/Assembler/bin, and
     $APPLECORE/Scripts in your UNIX PATH.
 
-5.  _Optional:_ If you use Emacs, add the AppleCore and AVM modes to
-    your Emacs installation. See $APPLECORE/Emacs/README.md for
-    details.
+5.  _Optional:_ If you use Emacs, add the AppleCore and AVM modes to your
+    Emacs installation. See $APPLECORE/Editors/Emacs/README.md for details.
 
 6.  Build the project:
 
