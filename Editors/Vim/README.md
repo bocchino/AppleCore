@@ -7,12 +7,12 @@ features:
 
 1.  Syntax highlighting.
 
-2.  Comment support: Pressing * moves the point to the beginning of the
-line and inserts a comment character, a space, and 37 dashes.  This is
-useful for AppleCore-style comments, which are inspired by the old SC Macro
-Assembler style of comment.  These comments really stand out, and they show at
-a glance how the program is divided into groups of related code.  See the
-programs in $APPLECORE/Programs for examples.
+2.  Comment support: In command mode, pressing * moves the point to the
+beginning of the line and inserts a comment character, a space, and 37 dashes.
+This is useful for AppleCore-style comments, which are inspired by the old SC
+Macro Assembler style of comment.  These comments really stand out, and they
+show at a glance how the program is divided into groups of related code.  See
+the programs in $APPLECORE/Programs for examples.
 
 3.  For AppleCore files, indentation support based on Vim's cindent feature.
 
