@@ -21,7 +21,7 @@
   nil
   ;; Other highlighting
   '(("^\\*.*$" . 'font-lock-comment-face)
-    ("^[A-Za-z0-9\\.]*[\t ]+[A-Za-z0-9\\.]+ [^[:space:]]+[\t ]+\\(.+\\)$" . 
+    ("^[A-Za-z0-9\\.]*[\t ]+[A-Za-z0-9\\.]+ [^[:space:]]*[\t ]+\\(.+\\)$" . 
      (1 'font-lock-comment-face))
     ("^[A-Za-z0-9\\.]+" . 'font-lock-function-name-face)
     ("^[[:space:]]+\\([A-Za-z0-9\\.]+\\)" . 
