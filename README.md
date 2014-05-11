@@ -46,7 +46,7 @@ following:
 
 4.  A Standard ML of New Jersey (SML/NJ) installation, available via
     macports (http://www.macports.org) or via the developers
-    (http://www.smlnj.org/dist/working/110.74/index.html).
+    (http://http://smlnj.cs.uchicago.edu/dist/working/110.76/index.html).
 
 With minor modifications it should be possible to use a different
 emulator and/or a different host OS (Linux should be straightforward;
@@ -67,12 +67,21 @@ To set up your Mac to use AppleCore, do the following:
 3.  Set the environment variable APPLECORE to point to the top-level
     directory of the AppleCore distribution.
 
-4.  Include $APPLECORE/Compiler/bin, $APPLECORE/Assembler/bin, and
+4.  Set the environment variable SML_NJ to point to the directory that
+    contains the bin directory of your SML/NJ installation. (If you
+    installed SML/NJ via MacPorts, this should be /opt/local/share/smlnj.
+    If you installed SML/NJ from the developers' web site, this is the
+    top-level installation directory.) 
+
+5.  Include $APPLECORE/Compiler/bin, $APPLECORE/Assembler/bin, and
     $APPLECORE/Scripts in your UNIX PATH.
 
-5.  _Optional:_ If you use Emacs and/or Vim, add the AppleCore and AVM support to your Emacs and/or Vim installations.  See $APPLECORE/Editors/Emacs/README.md and $APPLECORE/Editors/Vim/README.md for details.
+6.  _Optional:_ If you use Emacs and/or Vim, add the AppleCore and AVM support
+    to your Emacs and/or Vim installations.  See
+    $APPLECORE/Editors/Emacs/README.md and $APPLECORE/Editors/Vim/README.md 
+    for details.
 
-6.  Build the project:
+7.  Build the project:
 
     `cd $APPLECORE`
 
@@ -349,3 +358,4 @@ to get line input.  It works quite nicely with the old monitor and the
 solid flashing cursor!  For more details, see the documentation in
 $APPLECORE/DOS3.3/README.md and the source code in
 $APPLECORE/ShellEditor.
+
