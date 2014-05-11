@@ -17,7 +17,7 @@ sig
 
     (* A source associated with a label *)
     type source = {sourceLine:File.line,
-		   address:int}
+                   address:int}
 
     (* Create a fresh map *)
     val fresh : map

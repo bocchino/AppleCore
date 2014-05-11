@@ -9,12 +9,12 @@ sig
 
     (* Parse a number, including negative and hex numbers *)
     val parse : Substring.substring -> 
-		(IntInf.int * Substring.substring) option
+                (IntInf.int * Substring.substring) option
 
     (* Parse numeric digits, given a radix *)
     val parseDigits : Substring.substring -> 
-		      StringCvt.radix -> 
-		      (IntInf.int * Substring.substring) option
+                      StringCvt.radix -> 
+                      (IntInf.int * Substring.substring) option
 
     (* Normalize a number to the given range.
        Throw 'range error' if number is out of range. *)
