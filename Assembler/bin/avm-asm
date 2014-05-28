@@ -1,5 +1,10 @@
 #!/usr/bin/perl
 
+# ---------------------------------------------------------------------- 
+# avm-asm: convert AVM programs to a form that can be assembled by
+# the S-C Assembler
+# ---------------------------------------------------------------------- 
+
 use strict;
 
 sub get_size_from_arg(@);

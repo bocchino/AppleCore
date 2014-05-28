@@ -1,3 +1,9 @@
+#!/usr/bin/env sh
+
+# ----------------------------------------------------------------------
+# sc-avm-asm: run the SC AVM assembler
+# ----------------------------------------------------------------------
+
 BIN=${APPLECORE}/Assembler/bin
 BUILD=${APPLECORE}/Assembler/sc-avm-asm/
 
