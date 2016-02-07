@@ -67,8 +67,8 @@ To set up your Mac to use AppleCore, do the following:
 3.  Set the environment variable APPLECORE to point to the top-level
     directory of the AppleCore distribution.
 
-4.  Set the environment variable SML_NJ to point to the directory that
-    contains the bin directory of your SML/NJ installation. (If you
+4.  Set the environment variable SMLNJ_HOME to point to the directory
+    containing the bin directory of your SML/NJ installation. (If you
     installed SML/NJ via MacPorts, this should be /opt/local/share/smlnj.
     If you installed SML/NJ from the developers' web site, this is the
     top-level installation directory.) 

@@ -4,4 +4,5 @@
 # ml-run: run an ML program
 # ----------------------------------------------------------------------
 
-${SML_NJ}/bin/.run/run.x86-darwin @SMLcmdname=./sml @SMLload="$@"
+eval `${SMLNJ_HOME}/bin/.arch-n-opsys`
+${SMLNJ_HOME}/bin/.run/run.$ARCH-$OPSYS @SMLcmdname="$0" @SMLload="$@"

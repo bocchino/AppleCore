@@ -1,3 +1,5 @@
+#!/usr/bin/env sh
+
 CLASSES=${APPLECORE}/Compiler/classes
 
 java -cp ${CLASSES} AppleCoreCompiler/Compiler/Main $@
